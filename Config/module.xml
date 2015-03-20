@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://thelia.net/schema/dic/module"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/module http://thelia.net/schema/dic/module/module-2_1.xsd">
+    <fullnamespace>Dealer\Dealer</fullnamespace>
+    <descriptive locale="en_US">
+        <title>Dealer</title>
+        <subtitle>Dealer module for Thelia</subtitle>
+    </descriptive>
+    <descriptive locale="fr_FR">
+        <title>Point de vente</title>
+        <subtitle>Module de gestion de point de vente pour Thelia</subtitle>
+    </descriptive>
+    <!-- <logo></logo> -->
+    <languages>
+        <language>en_US</language>
+        <language>fr_FR</language>
+    </languages>
+    <version>0.1</version>
+    <author>
+        <name>Penalver Antony</name>
+        <email>apenalver@openstudio.fr</email>
+    </author>
+    <type>classic</type>
+    <thelia>2.1.2</thelia>
+    <stability>other</stability>
+</module>

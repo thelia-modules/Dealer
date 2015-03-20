@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns="http://symfony.com/schema/routing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+  <!--
+
+    if a /admin/module/dealer/ route is provided, a "Configuration" button will be displayed
+    for the module in the module list. Clicking this button will invoke this route.
+
+    <route id="my_route_id" path="/admin/module/dealer">
+        <default key="_controller">Dealer\Full\Class\Name\Of\YourConfigurationController::methodName</default>
+    </route>
+
+    <route id="my_route_id" path="/admin/module/dealer/route-name">
+        <default key="_controller">Dealer\Full\Class\Name\Of\YourAdminController::methodName</default>
+    </route>
+
+    <route id="my_route_id" path="/my/route/name">
+        <default key="_controller">Dealer\Full\Class\Name\Of\YourOtherController::methodName</default>
+    </route>
+
+    ...add as many routes as required.
+
+    <route>
+    ...
+    </route>
+    -->
+  <route id="dealer.dealer_tab.list" path="/admin/module/Dealer/dealer_tab" methods="get">
+    <default key="_controller">Dealer:DealerTab:default</default>
+  </route>
+  <route id="dealer.dealer_tab.create" path="/admin/module/Dealer/dealer_tab" methods="post">
+    <default key="_controller">Dealer:DealerTab:create</default>
+  </route>
+  <route id="dealer.dealer_tab.view" path="/admin/module/Dealer/dealer_tab/edit" methods="get">
+    <default key="_controller">Dealer:DealerTab:update</default>
+  </route>
+  <route id="dealer.dealer_tab.edit" path="/admin/module/Dealer/dealer_tab/edit" methods="post">
+    <default key="_controller">Dealer:DealerTab:processUpdate</default>
+  </route>
+  <route id="dealer.dealer_tab.delete" path="/admin/module/Dealer/dealer_tab/delete" methods="post">
+    <default key="_controller">Dealer:DealerTab:delete</default>
+  </route>
+</routes>

@@ -1,0 +1,347 @@
+{extends file="admin-layout.tpl"}
+{default_translation_domain domain='dealer.bo.default'}
+
+{block name="no-return-functions"}
+    {$admin_current_location = 'tools'}
+{/block}
+
+{block name="page-title"}{intl l='DealerTab' d='dealer.bo.default'}{/block}
+
+{block name="check-resource"}admin.module{/block}
+{block name="check-access"}view{/block}
+{block name="check-module"}Dealer{/block}
+
+{block name="main-content"}
+    <div id="wrapper" class="container">
+
+        {if $general_error}
+            <div class="alert alert-danger">
+                {$general_error}
+            </div>
+        {/if}
+
+        <!-- DealerTab list -->
+        <div class="general-block-decorator">
+            <div class="table-responsive">
+                <table class="table table-striped table-condensed" id="dealer_tab-table">
+                    <caption class="clearfix">
+                        {intl l="Dealer" d='dealer.bo.default'}
+
+                        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+                            <div class="pull-right">
+                                <a class="btn btn-default btn-primary" title="{intl l='Create a new DealerTab entry' d='dealer.bo.default'}" data-target="#dealer_tab-create" data-toggle="modal">
+                                    <i class="glyphicon glyphicon-plus-sign"></i>
+                                </a>
+                            </div>
+                        {/loop}
+                    </caption>
+
+                    <thead>
+                    <tr>
+                        <th>
+                            {admin_sortable_header
+                                current_order=$order
+                                order='id'
+                                reverse_order='id-reverse'
+                                path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                                label="{intl l='Id' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {admin_sortable_header
+                                current_order=$order
+                                order='company'
+                                reverse_order='company-reverse'
+                                path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                                label="{intl l='Company' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {admin_sortable_header
+                                current_order=$order
+                                order='address1'
+                                reverse_order='address1-reverse'
+                                path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                                label="{intl l='Address1' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {admin_sortable_header
+                                current_order=$order
+                                order='zipcode'
+                                reverse_order='zipcode-reverse'
+                                path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                                label="{intl l='Zipcode' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {admin_sortable_header
+                                current_order=$order
+                                order='city'
+                                reverse_order='city-reverse'
+                                path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                                label="{intl l='City' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {admin_sortable_header
+                                current_order=$order
+                                order='phone_number'
+                                reverse_order='phone_number-reverse'
+                                path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                                label="{intl l='PhoneNumber' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {admin_sortable_header
+                                current_order=$order
+                                order='web_site'
+                                reverse_order='web_site-reverse'
+                                path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                                label="{intl l='WebSite' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {intl l="Actions"}
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {loop name="dealer-tab-list" type="dealer-tab" order=$order}
+                        <tr>
+                            <td>
+                                <a href="{url path='/admin/module/Dealer/dealer_tab/edit' dealer_tab_id=$ID}">{$ID}</a>
+                            </td>
+                            <td>
+                                {$COMPANY}
+                            </td>
+                            <td>
+                                {$ADDRESS1}
+                            </td>
+                            <td>
+                                {$ZIPCODE}
+                            </td>
+                            <td>
+                                {$CITY}
+                            </td>
+                            <td>
+                                {$PHONE_NUMBER}
+                            </td>
+                            <td>
+                                <a href="http://{$WEB_SITE}" target="_blank">{$WEB_SITE}</a>
+                            </td>
+                            {* Actions *}
+                            <td>
+                                <div class="btn-group">
+                                    {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
+                                        <a class="btn btn-default btn-xs" title="{intl l='Edit this DealerTab' d='dealer.bo.default'}"  href="{url path='/admin/module/Dealer/dealer_tab/edit' dealer_tab_id=$ID}">
+                                            <i class="glyphicon glyphicon-edit"></i>
+                                        </a>
+                                    {/loop}
+                                    {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                                        <a class="btn btn-default btn-xs dealer_tab-delete" title="{intl l='Delete this DealerTab' d='dealer.bo.default'}" data-target="#dealer_tab-delete" data-toggle="modal" data-id="{$ID}">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                    {/loop}
+                                </div>
+                            </td>
+                        </tr>
+                    {/loop}
+                    {elseloop rel="dealer-tab-list"}
+                        <tr>
+                            <td colspan="1000">
+                                <div class="alert alert-info">
+                                    {intl l="There is no DealerTab" d="dealer.bo.default"}
+                                </div>
+                            </td>
+                        </tr>
+                    {/elseloop}
+                    </tbody>
+
+                    {ifloop rel="dealer-tab-list"}
+                    <tfoot>
+                        <tr>
+                            <td colspan="7">
+                                {include
+                                file           = "includes/pagination.html"
+
+                                loop_ref       = "dealer-tab-list"
+                                max_page_count = 20
+                                page_url       = "{url path="/admin/module/Dealer/dealer_tab" order=$order target='dealer_tab-table'}"
+                                }
+                            </td>
+                        </tr>
+                    </tfoot>
+                    {/ifloop}
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    {* CREATE Modal *}
+
+    {form name="dealer_tab.create"}
+    {capture "dealer_tab_create"}
+        {form_hidden_fields form=$form}
+
+
+        {render_form_field form=$form field="success_url" value={url path='/admin/module/Dealer/dealer_tab/edit?dealer_tab_id=_ID_'}}
+
+        {form_field form=$form field="company"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="company"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$COMPANY}" placeholder="{intl l='The DealerTab company'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="address1"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="address1"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS1}" placeholder="{intl l='The DealerTab address1'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="address2"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="address2"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2}" placeholder="{intl l='The DealerTab address2'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="zipcode"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="zipcode"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ZIPCODE}" placeholder="{intl l='The DealerTab zipcode'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="city"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="city"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CITY}" placeholder="{intl l='The DealerTab city'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="description"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="description"}{$message}{/form_error}
+
+                <textarea class="form-control" name="{$name}" id="{$label_attr.for}"placeholder="{intl l='The DealerTab description'}">{$DESCRIPTION}</textarea>
+            </div>
+        {/form_field}
+        {form_field form=$form field="schedule"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="schedule"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$SCHEDULE}" placeholder="{intl l='The DealerTab schedule'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="phone_number"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="phone_number"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$PHONE_NUMBER}" placeholder="{intl l='The DealerTab phone_number'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="web_site"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="web_site"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$WEB_SITE}" placeholder="{intl l='The DealerTab web_site'}" />
+            </div>
+        {/form_field}
+    {/capture}
+
+    {include file="includes/generic-create-dialog.html"
+
+
+        dialog_id       = "dealer_tab-create"
+        dialog_title    = {intl l="Create an entry of DealerTab" d="dealer.bo.default"}
+        dialog_body     = {$smarty.capture.dealer_tab_create nofilter}
+
+        dialog_ok_label     = {intl l="Create"}
+        dialog_cancel_label = {intl l="Cancel"}
+
+        form_action        = {$current_url}
+        form_enctype       = {form_enctype form=$form}
+    }
+    {/form}
+
+
+    {* DELETE modal *}
+
+    {capture "dealer_tab_delete"}
+        {intl l="Do you really want to delete this Dealer entry ?" d="dealer.bo.default"}
+        <input type="hidden" name="dealer_tab_id" id="dealer_tab_delete_id" value="" />
+    {/capture}
+
+    {include file="includes/generic-confirm-dialog.html"
+
+        dialog_id       = "dealer_tab-delete"
+        dialog_title    = {intl l="Delete an entry of DealerTab" d="dealer.bo.default"}
+        dialog_message  = {$smarty.capture.dealer_tab_delete nofilter}
+
+        dialog_ok_label     = {intl l="Delete"}
+        dialog_cancel_label = {intl l="Cancel"}
+
+        form_action         = {token_url path='/admin/module/Dealer/dealer_tab/delete'}
+    }
+{/block}
+
+{block name="javascript-initialization"}
+    <script>
+        $(function() {
+            $('a.dealer_tab-delete').click(function(ev) {
+                $('#dealer_tab_delete_id').val($(this).data('id'));
+            });
+        });
+    </script>
+{/block}

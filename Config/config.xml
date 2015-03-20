@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://thelia.net/schema/dic/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+  <commands>
+    <!--
+        <command class="Dealer\Command\MySuperCommand" />
+        -->
+  </commands>
+  <!--
+    <services>
+
+    </services>
+    -->
+  <hooks>
+    <hook id="dealer.admin.hook" class="Dealer\Hook\AdminInterfaceHook" scope="request">
+      <tag name="hook.event_listener" event="main.top-menu-tools" type="back" method="onTopMenuTools"/>
+      <argument type="service" id="router.dealer"/>
+    </hook>
+  </hooks>
+  <!--
+    <exports>
+
+    </exports>
+    -->
+  <!--
+    <imports>
+
+    </imports>
+    -->
+  <forms>
+    <form name="dealer_tab.create" class="Dealer\Form\DealerTabCreateForm"/>
+    <form name="dealer_tab.update" class="Dealer\Form\DealerTabUpdateForm"/>
+  </forms>
+  <loops>
+    <loop name="dealer-tab" class="Dealer\Loop\DealerTab"/>
+  </loops>
+  <services>
+    <service id="action.dealer.dealer_tab_table" class="Dealer\Action\DealerTabAction">
+      <tag name="kernel.event_subscriber"/>
+    </service>
+    <service id="dealer.form.type.dealer_tab_id" class="Dealer\Form\Type\DealerTabIdType">
+      <argument id="thelia.translator" type="service"/>
+      <tag name="thelia.form.type"/>
+    </service>
+  </services>
+</config>
