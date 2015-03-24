@@ -2,7 +2,7 @@
 
 author : Penalver Antony <apenalver@openstudio.fr>
 
-This module generate CRUD interface for dealer
+This module Thelia generate CRUD interface for dealer.
 
 ## Installation
 
@@ -35,10 +35,10 @@ Dealer
 |**web_site**       | filter by website                                                                             |
 |**latitude**       | filter by latitude                                                                            |
 |**longitude**      | filter by longitude                                                                           |
-|**order**          | order result by "id","id-reverse","company","company-reverse","address1","address1-reverse",  |
-|                   | "address2","address2-reverse","zipcode","zipcode-reverse","city","city-reverse","description",|
-|                   | "description-reverse","schedule","schedule-reverse","phone_number","phone_number-reverse",    |
-|                   | "web_site", "web_site-reverse","latitude","latitude-reverse","longitude","longitude-reverse", |
+|**order**          | order result by "id","id-reverse","company","company-reverse","address1","address1-reverse",
+ "address2","address2-reverse","zipcode","zipcode-reverse","city","city-reverse","description",
+"description-reverse","schedule","schedule-reverse","phone_number","phone_number-reverse",    
+"web_site", "web_site-reverse","latitude","latitude-reverse","longitude","longitude-reverse", |
 
 
 ### Output arguments
@@ -60,7 +60,7 @@ Dealer
 
 
 ### Exemple
- <code>
+```
                     {loop name="dealer-tab-list" type="dealer-tab" order=$order}
                         <tr>
                             <td>
@@ -101,5 +101,5 @@ Dealer
                             </td>
                         </tr>
                     {/loop}
- </code>
+```
 
