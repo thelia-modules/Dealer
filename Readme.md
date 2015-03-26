@@ -86,7 +86,7 @@ Dealer
             <div class="btn-group">
                 {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
                     <a class="btn btn-default btn-xs" title="{intl l='Edit this DealerTab' d='dealer.bo.default'}"  href="{url path='/admin/module/Dealer/dealer_tab/edit' dealer_tab_id=$ID}">
-    <i class="glyphicon glyphicon-edit"></i>
+                        <i class="glyphicon glyphicon-edit"></i>
                     </a>
                 {/loop}
                 {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
