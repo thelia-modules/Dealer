@@ -58,45 +58,45 @@ Dealer
 
 ### Exemple
 ```
-                    {loop name="dealer-tab-list" type="dealer-tab" order=$order}
-                        <tr>
-                            <td>
-                                <a href="{url path='/admin/module/Dealer/dealer_tab/edit' dealer_tab_id=$ID}">{$ID}</a>
-                            </td>
-                            <td>
-                                {$COMPANY}
-                            </td>
-                            <td>
-                                {$ADDRESS1}
-                            </td>
-                            <td>
-                                {$ZIPCODE}
-                            </td>
-                            <td>
-                                {$CITY}
-                            </td>
-                            <td>
-                                {$PHONE_NUMBER}
-                            </td>
-                            <td>
-                                <a href="http://{$WEB_SITE}" target="_blank">{$WEB_SITE}</a>
-                            </td>
-                            {* Actions *}
-                            <td>
-                                <div class="btn-group">
-                                    {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
-                                        <a class="btn btn-default btn-xs" title="{intl l='Edit this DealerTab' d='dealer.bo.default'}"  href="{url path='/admin/module/Dealer/dealer_tab/edit' dealer_tab_id=$ID}">
-                                            <i class="glyphicon glyphicon-edit"></i>
-                                        </a>
-                                    {/loop}
-                                    {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-                                        <a class="btn btn-default btn-xs dealer_tab-delete" title="{intl l='Delete this DealerTab' d='dealer.bo.default'}" data-target="#dealer_tab-delete" data-toggle="modal" data-id="{$ID}">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </a>
-                                    {/loop}
-                                </div>
-                            </td>
-                        </tr>
-                    {/loop}
+{loop name="dealer-tab-list" type="dealer-tab" order=$order}
+    <tr>
+        <td>
+            <a href="{url path='/admin/module/Dealer/dealer_tab/edit' dealer_tab_id=$ID}">{$ID}</a>
+        </td>
+        <td>
+            {$COMPANY}
+        </td>
+        <td>
+            {$ADDRESS1}
+        </td>
+        <td>
+            {$ZIPCODE}
+        </td>
+        <td>
+            {$CITY}
+        </td>
+        <td>
+            {$PHONE_NUMBER}
+        </td>
+        <td>
+            <a href="http://{$WEB_SITE}" target="_blank">{$WEB_SITE}</a>
+        </td>
+        {* Actions *}
+        <td>
+            <div class="btn-group">
+                {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
+                    <a class="btn btn-default btn-xs" title="{intl l='Edit this DealerTab' d='dealer.bo.default'}"  href="{url path='/admin/module/Dealer/dealer_tab/edit' dealer_tab_id=$ID}">
+    <i class="glyphicon glyphicon-edit"></i>
+                    </a>
+                {/loop}
+                {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                    <a class="btn btn-default btn-xs dealer_tab-delete" title="{intl l='Delete this DealerTab' d='dealer.bo.default'}" data-target="#dealer_tab-delete" data-toggle="modal" data-id="{$ID}">
+                        <i class="glyphicon glyphicon-trash"></i>
+                    </a>
+                {/loop}
+            </div>
+        </td>
+    </tr>
+{/loop}
 ```
 
