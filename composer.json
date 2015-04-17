@@ -1,0 +1,17 @@
+{
+    "name": "thelia/dealer-module",
+    "version":"1.0.0",
+    "license": "LGPL-3.0+",
+    "type": "thelia-module",
+    "authors":[
+    	{
+            "name":"Penalver Antony"
+        }
+    ],
+    "require": {
+        "thelia/installer": "~1.1"
+    },
+    "extra": {
+        "installer-name": "Dealer"
+    }
+}
