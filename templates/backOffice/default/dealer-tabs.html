@@ -85,6 +85,15 @@
                         </th>
                         <th>
                             {admin_sortable_header
+                            current_order=$order
+                            order='country'
+                            reverse_order='city-reverse'
+                            path={url path='/admin/module/Dealer/dealer_tab' target='dealer_tab-table'}
+                            label="{intl l='Country' d='dealer.bo.default'}"
+                            }
+                        </th>
+                        <th>
+                            {admin_sortable_header
                                 current_order=$order
                                 order='phone_number'
                                 reverse_order='phone_number-reverse'
@@ -124,6 +133,9 @@
                             </td>
                             <td>
                                 {$CITY}
+                            </td>
+                            <td>
+                                {$COUNTRY}
                             </td>
                             <td>
                                 {$PHONE_NUMBER}
@@ -248,6 +260,18 @@
                 {form_error form=$form field="city"}{$message}{/form_error}
 
                 <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CITY}" placeholder="{intl l='The DealerTab city'}" />
+            </div>
+        {/form_field}
+        {form_field form=$form field="country"}
+            <div class="form-group">
+                <label class="control-label" for="{$label_attr.for}">
+                    {intl l="{$label}" d="dealer.bo.default"}
+                    {if $required}<span class="required">*</span>{/if}
+                </label>
+
+                {form_error form=$form field="country"}{$message}{/form_error}
+
+                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$COUNTRY}" placeholder="{intl l='The DealerTab country'}" />
             </div>
         {/form_field}
         {form_field form=$form field="description"}

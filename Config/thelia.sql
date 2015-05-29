@@ -17,6 +17,7 @@ CREATE TABLE `dealer_tab`
     `address2` VARCHAR(255),
     `zipcode` VARCHAR(10) NOT NULL,
     `city` VARCHAR(255) NOT NULL,
+    `country` VARCHAR(255) NOT NULL,
     `description` TEXT,
     `schedule` VARCHAR(255),
     `phone_number` VARCHAR(255),

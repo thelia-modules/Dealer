@@ -1,4 +1,4 @@
-# Dealer V 0.1
+# Dealer
 
 author : Penalver Antony <apenalver@openstudio.fr>
 
@@ -37,12 +37,13 @@ Dealer
 |**address2**       | filter by address2                                                                            |
 |**zipcode**        | filter by zipcode                                                                             |
 |**city**           | filter by city                                                                                |
+|**country**        | filter by country                                                                             |
 |**schedule**       | filter by schedule                                                                            |
 |**phone_number**   | filter by phone_number                                                                        |
 |**web_site**       | filter by website                                                                             |
 |**latitude**       | filter by latitude                                                                            |
 |**longitude**      | filter by longitude                                                                           |
-|**order**          | order result by "id","id-reverse","company","company-reverse","address1","address1-reverse", "address2","address2-reverse","zipcode","zipcode-reverse","city","city-reverse","description", "description-reverse","schedule","schedule-reverse","phone_number","phone_number-reverse", "web_site", "web_site-reverse","latitude","latitude-reverse","longitude","longitude-reverse" |
+|**order**          | order result by "id","id-reverse","company","company-reverse","address1","address1-reverse", "address2","address2-reverse","zipcode","zipcode-reverse","city","country","country-reverse","city-reverse","description", "description-reverse","schedule","schedule-reverse","phone_number","phone_number-reverse", "web_site", "web_site-reverse","latitude","latitude-reverse","longitude","longitude-reverse" |
 
 
 ### Output arguments
@@ -55,6 +56,7 @@ Dealer
 |$ADDRESS2      | Second element address    |
 |$ZIPCODE       | Address zip code          |
 |$CITY          | City name                 |
+|$COUNTRY       | Country name              |
 |$DESCRIPTION   | Dealer description        |
 |$SCHEDULE      | Dealer schedule           |
 |$PHONE_NUMBER  | Dealer phone number       |

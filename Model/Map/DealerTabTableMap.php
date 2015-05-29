@@ -14,7 +14,6 @@ use Propel\Runtime\Map\RelationMap;
 use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Map\TableMapTrait;
 
-
 /**
  * This class defines the structure of the 'dealer_tab' table.
  *
@@ -58,7 +57,7 @@ class DealerTabTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 14;
+    const NUM_COLUMNS = 15;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +67,7 @@ class DealerTabTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 14;
+    const NUM_HYDRATE_COLUMNS = 15;
 
     /**
      * the column name for the ID field
@@ -99,6 +98,11 @@ class DealerTabTableMap extends TableMap
      * the column name for the CITY field
      */
     const CITY = 'dealer_tab.CITY';
+
+    /**
+     * the column name for the COUNTRY field
+     */
+    const COUNTRY = 'dealer_tab.COUNTRY';
 
     /**
      * the column name for the DESCRIPTION field
@@ -151,13 +155,13 @@ class DealerTabTableMap extends TableMap
      * first dimension keys are the type constants
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
-    protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Company', 'Address1', 'Address2', 'Zipcode', 'City', 'Description', 'Schedule', 'PhoneNumber', 'WebSite', 'Latitude', 'Longitude', 'CreatedAt', 'UpdatedAt', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'company', 'address1', 'address2', 'zipcode', 'city', 'description', 'schedule', 'phoneNumber', 'webSite', 'latitude', 'longitude', 'createdAt', 'updatedAt', ),
-        self::TYPE_COLNAME       => array(DealerTabTableMap::ID, DealerTabTableMap::COMPANY, DealerTabTableMap::ADDRESS1, DealerTabTableMap::ADDRESS2, DealerTabTableMap::ZIPCODE, DealerTabTableMap::CITY, DealerTabTableMap::DESCRIPTION, DealerTabTableMap::SCHEDULE, DealerTabTableMap::PHONE_NUMBER, DealerTabTableMap::WEB_SITE, DealerTabTableMap::LATITUDE, DealerTabTableMap::LONGITUDE, DealerTabTableMap::CREATED_AT, DealerTabTableMap::UPDATED_AT, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'COMPANY', 'ADDRESS1', 'ADDRESS2', 'ZIPCODE', 'CITY', 'DESCRIPTION', 'SCHEDULE', 'PHONE_NUMBER', 'WEB_SITE', 'LATITUDE', 'LONGITUDE', 'CREATED_AT', 'UPDATED_AT', ),
-        self::TYPE_FIELDNAME     => array('id', 'company', 'address1', 'address2', 'zipcode', 'city', 'description', 'schedule', 'phone_number', 'web_site', 'latitude', 'longitude', 'created_at', 'updated_at', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+    protected static $fieldNames = array(
+        self::TYPE_PHPNAME       => array('Id', 'Company', 'Address1', 'Address2', 'Zipcode', 'City', 'Country', 'Description', 'Schedule', 'PhoneNumber', 'WebSite', 'Latitude', 'Longitude', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'company', 'address1', 'address2', 'zipcode', 'city', 'country', 'description', 'schedule', 'phoneNumber', 'webSite', 'latitude', 'longitude', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(DealerTabTableMap::ID, DealerTabTableMap::COMPANY, DealerTabTableMap::ADDRESS1, DealerTabTableMap::ADDRESS2, DealerTabTableMap::ZIPCODE, DealerTabTableMap::CITY, DealerTabTableMap::COUNTRY, DealerTabTableMap::DESCRIPTION, DealerTabTableMap::SCHEDULE, DealerTabTableMap::PHONE_NUMBER, DealerTabTableMap::WEB_SITE, DealerTabTableMap::LATITUDE, DealerTabTableMap::LONGITUDE, DealerTabTableMap::CREATED_AT, DealerTabTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'COMPANY', 'ADDRESS1', 'ADDRESS2', 'ZIPCODE', 'CITY', 'COUNTRY', 'DESCRIPTION', 'SCHEDULE', 'PHONE_NUMBER', 'WEB_SITE', 'LATITUDE', 'LONGITUDE', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'company', 'address1', 'address2', 'zipcode', 'city', 'country', 'description', 'schedule', 'phone_number', 'web_site', 'latitude', 'longitude', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
     );
 
     /**
@@ -166,13 +170,13 @@ class DealerTabTableMap extends TableMap
      * first dimension keys are the type constants
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
-    protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Company' => 1, 'Address1' => 2, 'Address2' => 3, 'Zipcode' => 4, 'City' => 5, 'Description' => 6, 'Schedule' => 7, 'PhoneNumber' => 8, 'WebSite' => 9, 'Latitude' => 10, 'Longitude' => 11, 'CreatedAt' => 12, 'UpdatedAt' => 13, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'company' => 1, 'address1' => 2, 'address2' => 3, 'zipcode' => 4, 'city' => 5, 'description' => 6, 'schedule' => 7, 'phoneNumber' => 8, 'webSite' => 9, 'latitude' => 10, 'longitude' => 11, 'createdAt' => 12, 'updatedAt' => 13, ),
-        self::TYPE_COLNAME       => array(DealerTabTableMap::ID => 0, DealerTabTableMap::COMPANY => 1, DealerTabTableMap::ADDRESS1 => 2, DealerTabTableMap::ADDRESS2 => 3, DealerTabTableMap::ZIPCODE => 4, DealerTabTableMap::CITY => 5, DealerTabTableMap::DESCRIPTION => 6, DealerTabTableMap::SCHEDULE => 7, DealerTabTableMap::PHONE_NUMBER => 8, DealerTabTableMap::WEB_SITE => 9, DealerTabTableMap::LATITUDE => 10, DealerTabTableMap::LONGITUDE => 11, DealerTabTableMap::CREATED_AT => 12, DealerTabTableMap::UPDATED_AT => 13, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'COMPANY' => 1, 'ADDRESS1' => 2, 'ADDRESS2' => 3, 'ZIPCODE' => 4, 'CITY' => 5, 'DESCRIPTION' => 6, 'SCHEDULE' => 7, 'PHONE_NUMBER' => 8, 'WEB_SITE' => 9, 'LATITUDE' => 10, 'LONGITUDE' => 11, 'CREATED_AT' => 12, 'UPDATED_AT' => 13, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'company' => 1, 'address1' => 2, 'address2' => 3, 'zipcode' => 4, 'city' => 5, 'description' => 6, 'schedule' => 7, 'phone_number' => 8, 'web_site' => 9, 'latitude' => 10, 'longitude' => 11, 'created_at' => 12, 'updated_at' => 13, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+    protected static $fieldKeys = array(
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Company' => 1, 'Address1' => 2, 'Address2' => 3, 'Zipcode' => 4, 'City' => 5, 'Country' => 6, 'Description' => 7, 'Schedule' => 8, 'PhoneNumber' => 9, 'WebSite' => 10, 'Latitude' => 11, 'Longitude' => 12, 'CreatedAt' => 13, 'UpdatedAt' => 14, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'company' => 1, 'address1' => 2, 'address2' => 3, 'zipcode' => 4, 'city' => 5, 'country' => 6, 'description' => 7, 'schedule' => 8, 'phoneNumber' => 9, 'webSite' => 10, 'latitude' => 11, 'longitude' => 12, 'createdAt' => 13, 'updatedAt' => 14, ),
+        self::TYPE_COLNAME       => array(DealerTabTableMap::ID => 0, DealerTabTableMap::COMPANY => 1, DealerTabTableMap::ADDRESS1 => 2, DealerTabTableMap::ADDRESS2 => 3, DealerTabTableMap::ZIPCODE => 4, DealerTabTableMap::CITY => 5, DealerTabTableMap::COUNTRY => 6, DealerTabTableMap::DESCRIPTION => 7, DealerTabTableMap::SCHEDULE => 8, DealerTabTableMap::PHONE_NUMBER => 9, DealerTabTableMap::WEB_SITE => 10, DealerTabTableMap::LATITUDE => 11, DealerTabTableMap::LONGITUDE => 12, DealerTabTableMap::CREATED_AT => 13, DealerTabTableMap::UPDATED_AT => 14, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'COMPANY' => 1, 'ADDRESS1' => 2, 'ADDRESS2' => 3, 'ZIPCODE' => 4, 'CITY' => 5, 'COUNTRY' => 6, 'DESCRIPTION' => 7, 'SCHEDULE' => 8, 'PHONE_NUMBER' => 9, 'WEB_SITE' => 10, 'LATITUDE' => 11, 'LONGITUDE' => 12, 'CREATED_AT' => 13, 'UPDATED_AT' => 14, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'company' => 1, 'address1' => 2, 'address2' => 3, 'zipcode' => 4, 'city' => 5, 'country' => 6, 'description' => 7, 'schedule' => 8, 'phone_number' => 9, 'web_site' => 10, 'latitude' => 11, 'longitude' => 12, 'created_at' => 13, 'updated_at' => 14, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
     );
 
     /**
@@ -197,6 +201,7 @@ class DealerTabTableMap extends TableMap
         $this->addColumn('ADDRESS2', 'Address2', 'VARCHAR', false, 255, null);
         $this->addColumn('ZIPCODE', 'Zipcode', 'VARCHAR', true, 10, null);
         $this->addColumn('CITY', 'City', 'VARCHAR', true, 255, null);
+        $this->addColumn('COUNTRY', 'Country', 'VARCHAR', true, 255, null);
         $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', false, null, null);
         $this->addColumn('SCHEDULE', 'Schedule', 'VARCHAR', false, 255, null);
         $this->addColumn('PHONE_NUMBER', 'PhoneNumber', 'VARCHAR', false, 255, null);
@@ -262,8 +267,7 @@ class DealerTabTableMap extends TableMap
      */
     public static function getPrimaryKeyFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-
-            return (int) $row[
+        return (int) $row[
                             $indexType == TableMap::TYPE_NUM
                             ? 0 + $offset
                             : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
@@ -371,6 +375,7 @@ class DealerTabTableMap extends TableMap
             $criteria->addSelectColumn(DealerTabTableMap::ADDRESS2);
             $criteria->addSelectColumn(DealerTabTableMap::ZIPCODE);
             $criteria->addSelectColumn(DealerTabTableMap::CITY);
+            $criteria->addSelectColumn(DealerTabTableMap::COUNTRY);
             $criteria->addSelectColumn(DealerTabTableMap::DESCRIPTION);
             $criteria->addSelectColumn(DealerTabTableMap::SCHEDULE);
             $criteria->addSelectColumn(DealerTabTableMap::PHONE_NUMBER);
@@ -386,6 +391,7 @@ class DealerTabTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.ADDRESS2');
             $criteria->addSelectColumn($alias . '.ZIPCODE');
             $criteria->addSelectColumn($alias . '.CITY');
+            $criteria->addSelectColumn($alias . '.COUNTRY');
             $criteria->addSelectColumn($alias . '.DESCRIPTION');
             $criteria->addSelectColumn($alias . '.SCHEDULE');
             $criteria->addSelectColumn($alias . '.PHONE_NUMBER');
@@ -414,10 +420,10 @@ class DealerTabTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getServiceContainer()->getDatabaseMap(DealerTabTableMap::DATABASE_NAME);
-      if (!$dbMap->hasTable(DealerTabTableMap::TABLE_NAME)) {
-        $dbMap->addTableObject(new DealerTabTableMap());
-      }
+        $dbMap = Propel::getServiceContainer()->getDatabaseMap(DealerTabTableMap::DATABASE_NAME);
+        if (!$dbMap->hasTable(DealerTabTableMap::TABLE_NAME)) {
+            $dbMap->addTableObject(new DealerTabTableMap());
+        }
     }
 
     /**
@@ -433,31 +439,33 @@ class DealerTabTableMap extends TableMap
      */
      public static function doDelete($values, ConnectionInterface $con = null)
      {
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DealerTabTableMap::DATABASE_NAME);
-        }
+         if (null === $con) {
+             $con = Propel::getServiceContainer()->getWriteConnection(DealerTabTableMap::DATABASE_NAME);
+         }
 
-        if ($values instanceof Criteria) {
-            // rename for clarity
+         if ($values instanceof Criteria) {
+             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Dealer\Model\DealerTab) { // it's a model object
+         } elseif ($values instanceof \Dealer\Model\DealerTab) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
-        } else { // it's a primary key, or an array of pks
+         } else { // it's a primary key, or an array of pks
             $criteria = new Criteria(DealerTabTableMap::DATABASE_NAME);
-            $criteria->add(DealerTabTableMap::ID, (array) $values, Criteria::IN);
-        }
+             $criteria->add(DealerTabTableMap::ID, (array) $values, Criteria::IN);
+         }
 
-        $query = DealerTabQuery::create()->mergeWith($criteria);
+         $query = DealerTabQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) { DealerTabTableMap::clearInstancePool();
-        } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) { DealerTabTableMap::removeInstanceFromPool($singleval);
+         if ($values instanceof Criteria) {
+             DealerTabTableMap::clearInstancePool();
+         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
+            foreach ((array) $values as $singleval) {
+                DealerTabTableMap::removeInstanceFromPool($singleval);
             }
-        }
+         }
 
-        return $query->delete($con);
-    }
+         return $query->delete($con);
+     }
 
     /**
      * Deletes all rows from the dealer_tab table.
@@ -491,7 +499,7 @@ class DealerTabTableMap extends TableMap
             $criteria = $criteria->buildCriteria(); // build Criteria from DealerTab object
         }
 
-        if ($criteria->containsKey(DealerTabTableMap::ID) && $criteria->keyContainsValue(DealerTabTableMap::ID) ) {
+        if ($criteria->containsKey(DealerTabTableMap::ID) && $criteria->keyContainsValue(DealerTabTableMap::ID)) {
             throw new PropelException('Cannot insert a value for auto-increment primary key ('.DealerTabTableMap::ID.')');
         }
 
@@ -512,7 +520,6 @@ class DealerTabTableMap extends TableMap
 
         return $pk;
     }
-
 } // DealerTabTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //

@@ -27,7 +27,8 @@ class AdminInterfaceHook extends BaseHook
 {
     protected $router;
 
-    public function __construct(Router $router){
+    public function __construct(Router $router)
+    {
         $this->router = $router;
     }
 
@@ -38,12 +39,10 @@ class AdminInterfaceHook extends BaseHook
         }
 
         return $this->trans($id, $parameters, Dealer::MESSAGE_DOMAIN, $locale);
-
     }
 
     public function onTopMenuTools(HookRenderBlockEvent $event)
     {
-
         $url = $this->router->generate("dealer.dealer_tab.list");
         $lang = $this->getSession()->getLang();
         $title = $this->transQuick("Dealer", $lang->getLocale());

@@ -24,6 +24,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerTabQuery orderByAddress2($order = Criteria::ASC) Order by the address2 column
  * @method     ChildDealerTabQuery orderByZipcode($order = Criteria::ASC) Order by the zipcode column
  * @method     ChildDealerTabQuery orderByCity($order = Criteria::ASC) Order by the city column
+ * @method     ChildDealerTabQuery orderByCountry($order = Criteria::ASC) Order by the country column
  * @method     ChildDealerTabQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     ChildDealerTabQuery orderBySchedule($order = Criteria::ASC) Order by the schedule column
  * @method     ChildDealerTabQuery orderByPhoneNumber($order = Criteria::ASC) Order by the phone_number column
@@ -39,6 +40,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerTabQuery groupByAddress2() Group by the address2 column
  * @method     ChildDealerTabQuery groupByZipcode() Group by the zipcode column
  * @method     ChildDealerTabQuery groupByCity() Group by the city column
+ * @method     ChildDealerTabQuery groupByCountry() Group by the country column
  * @method     ChildDealerTabQuery groupByDescription() Group by the description column
  * @method     ChildDealerTabQuery groupBySchedule() Group by the schedule column
  * @method     ChildDealerTabQuery groupByPhoneNumber() Group by the phone_number column
@@ -61,6 +63,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerTab findOneByAddress2(string $address2) Return the first ChildDealerTab filtered by the address2 column
  * @method     ChildDealerTab findOneByZipcode(string $zipcode) Return the first ChildDealerTab filtered by the zipcode column
  * @method     ChildDealerTab findOneByCity(string $city) Return the first ChildDealerTab filtered by the city column
+ * @method     ChildDealerTab findOneByCountry(string $country) Return the first ChildDealerTab filtered by the country column
  * @method     ChildDealerTab findOneByDescription(string $description) Return the first ChildDealerTab filtered by the description column
  * @method     ChildDealerTab findOneBySchedule(string $schedule) Return the first ChildDealerTab filtered by the schedule column
  * @method     ChildDealerTab findOneByPhoneNumber(string $phone_number) Return the first ChildDealerTab filtered by the phone_number column
@@ -76,6 +79,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     array findByAddress2(string $address2) Return ChildDealerTab objects filtered by the address2 column
  * @method     array findByZipcode(string $zipcode) Return ChildDealerTab objects filtered by the zipcode column
  * @method     array findByCity(string $city) Return ChildDealerTab objects filtered by the city column
+ * @method     array findByCountry(string $country) Return ChildDealerTab objects filtered by the country column
  * @method     array findByDescription(string $description) Return ChildDealerTab objects filtered by the description column
  * @method     array findBySchedule(string $schedule) Return ChildDealerTab objects filtered by the schedule column
  * @method     array findByPhoneNumber(string $phone_number) Return ChildDealerTab objects filtered by the phone_number column
@@ -172,7 +176,7 @@ abstract class DealerTabQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, COMPANY, ADDRESS1, ADDRESS2, ZIPCODE, CITY, DESCRIPTION, SCHEDULE, PHONE_NUMBER, WEB_SITE, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT FROM dealer_tab WHERE ID = :p0';
+        $sql = 'SELECT ID, COMPANY, ADDRESS1, ADDRESS2, ZIPCODE, CITY, COUNTRY, DESCRIPTION, SCHEDULE, PHONE_NUMBER, WEB_SITE, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT FROM dealer_tab WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -244,7 +248,6 @@ abstract class DealerTabQuery extends ModelCriteria
      */
     public function filterByPrimaryKey($key)
     {
-
         return $this->addUsingAlias(DealerTabTableMap::ID, $key, Criteria::EQUAL);
     }
 
@@ -257,7 +260,6 @@ abstract class DealerTabQuery extends ModelCriteria
      */
     public function filterByPrimaryKeys($keys)
     {
-
         return $this->addUsingAlias(DealerTabTableMap::ID, $keys, Criteria::IN);
     }
 
@@ -445,6 +447,35 @@ abstract class DealerTabQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerTabTableMap::CITY, $city, $comparison);
+    }
+
+    /**
+     * Filter the query on the country column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCountry('fooValue');   // WHERE country = 'fooValue'
+     * $query->filterByCountry('%fooValue%'); // WHERE country LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $country The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerTabQuery The current query, for fluid interface
+     */
+    public function filterByCountry($country = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($country)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $country)) {
+                $country = str_replace('*', '%', $country);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DealerTabTableMap::COUNTRY, $country, $comparison);
     }
 
     /**
@@ -792,16 +823,16 @@ abstract class DealerTabQuery extends ModelCriteria
      */
      public function delete(ConnectionInterface $con = null)
      {
-        if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DealerTabTableMap::DATABASE_NAME);
-        }
+         if (null === $con) {
+             $con = Propel::getServiceContainer()->getWriteConnection(DealerTabTableMap::DATABASE_NAME);
+         }
 
-        $criteria = $this;
+         $criteria = $this;
 
         // Set the correct dbName
         $criteria->setDbName(DealerTabTableMap::DATABASE_NAME);
 
-        $affectedRows = 0; // initialize var to track total num of affected rows
+         $affectedRows = 0; // initialize var to track total num of affected rows
 
         try {
             // use transaction because $criteria could contain info
@@ -809,7 +840,7 @@ abstract class DealerTabQuery extends ModelCriteria
             $con->beginTransaction();
 
 
-        DealerTabTableMap::removeInstanceFromPool($criteria);
+            DealerTabTableMap::removeInstanceFromPool($criteria);
 
             $affectedRows += ModelCriteria::delete($con);
             DealerTabTableMap::clearRelatedInstancePool();
@@ -820,7 +851,7 @@ abstract class DealerTabQuery extends ModelCriteria
             $con->rollBack();
             throw $e;
         }
-    }
+     }
 
     // timestampable behavior
 
@@ -887,5 +918,4 @@ abstract class DealerTabQuery extends ModelCriteria
     {
         return $this->addAscendingOrderByColumn(DealerTabTableMap::CREATED_AT);
     }
-
 } // DealerTabQuery

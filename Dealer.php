@@ -6,6 +6,7 @@
 
 namespace Dealer;
 
+use Dealer\Model\DealerTabQuery;
 use Thelia\Module\BaseModule;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
@@ -23,6 +24,8 @@ class Dealer extends BaseModule
     {
         $database = new Database($con);
 
-        $database->insertSql(null, [__DIR__ . "/Config/create.sql", __DIR__ . "/Config/insert.sql"]);
+        if (DealerTabQuery::create()->findOne() === null) {
+            $database->insertSql(null, [__DIR__ . "/Config/create.sql", __DIR__ . "/Config/insert.sql"]);
+        }
     }
 }

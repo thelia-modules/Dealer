@@ -104,6 +104,18 @@
                                                 <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CITY}" placeholder="{intl l='The DealerTab city'}" />
                                         </div>
                                     {/form_field}
+                                    {form_field form=$form field="country"}
+                                        <div class="form-group">
+                                            <label class="control-label" for="{$label_attr.for}">
+                                                {intl l="{$label}" d="dealer.bo.default"}
+                                                {if $required}<span class="required">*</span>{/if}
+                                            </label>
+
+                                            {form_error form=$form field="country"}{$message}{/form_error}
+
+                                                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$COUNTRY}" placeholder="{intl l='The DealerTab country'}" />
+                                        </div>
+                                    {/form_field}
                                     {form_field form=$form field="description"}
                                         <div class="form-group">
                                             <label class="control-label" for="{$label_attr.for}">

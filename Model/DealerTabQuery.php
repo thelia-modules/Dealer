@@ -4,7 +4,6 @@ namespace Dealer\Model;
 
 use Dealer\Model\Base\DealerTabQuery as BaseDealerTabQuery;
 
-
 /**
  * Skeleton subclass for performing query and update operations on the 'dealer_tab' table.
  *
@@ -17,5 +16,4 @@ use Dealer\Model\Base\DealerTabQuery as BaseDealerTabQuery;
  */
 class DealerTabQuery extends BaseDealerTabQuery
 {
-
 } // DealerTabQuery

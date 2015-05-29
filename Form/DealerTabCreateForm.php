@@ -22,6 +22,7 @@ class DealerTabCreateForm extends BaseDealerTabCreateForm
             "address2" => "Address2",
             "zipcode" => "Zipcode",
             "city" => "City",
+            "country" => "Country",
             "description" => "Description",
             "schedule" => "Schedule",
             "phone_number" => "Phone number",

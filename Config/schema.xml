@@ -10,6 +10,7 @@
         <column name="address2" size="255" type="VARCHAR" />
         <column name="zipcode" required="true" size="10" type="VARCHAR" />
         <column name="city" required="true" size="255" type="VARCHAR" />
+        <column name="country" required="true" size="255" type="VARCHAR" />
         <column name="description" type="LONGVARCHAR" />
         <column name="schedule" size="255" type="VARCHAR" />
         <column name="phone_number" size="255" type="VARCHAR" />

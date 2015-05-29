@@ -91,6 +91,12 @@ abstract class DealerTab implements ActiveRecordInterface
     protected $city;
 
     /**
+     * The value for the country field.
+     * @var        string
+     */
+    protected $country;
+
+    /**
      * The value for the description field.
      * @var        string
      */
@@ -277,7 +283,7 @@ abstract class DealerTab implements ActiveRecordInterface
         }
 
         if (null === $this->getPrimaryKey()
-            || null === $obj->getPrimaryKey())  {
+            || null === $obj->getPrimaryKey()) {
             return false;
         }
 
@@ -427,7 +433,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getId()
     {
-
         return $this->id;
     }
 
@@ -438,7 +443,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getCompany()
     {
-
         return $this->company;
     }
 
@@ -449,7 +453,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getAddress1()
     {
-
         return $this->address1;
     }
 
@@ -460,7 +463,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getAddress2()
     {
-
         return $this->address2;
     }
 
@@ -471,7 +473,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getZipcode()
     {
-
         return $this->zipcode;
     }
 
@@ -482,8 +483,17 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getCity()
     {
-
         return $this->city;
+    }
+
+    /**
+     * Get the [country] column value.
+     *
+     * @return   string
+     */
+    public function getCountry()
+    {
+        return $this->country;
     }
 
     /**
@@ -493,7 +503,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getDescription()
     {
-
         return $this->description;
     }
 
@@ -504,7 +513,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getSchedule()
     {
-
         return $this->schedule;
     }
 
@@ -515,7 +523,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getPhoneNumber()
     {
-
         return $this->phone_number;
     }
 
@@ -526,7 +533,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getWebSite()
     {
-
         return $this->web_site;
     }
 
@@ -537,7 +543,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getLatitude()
     {
-
         return $this->latitude;
     }
 
@@ -548,7 +553,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function getLongitude()
     {
-
         return $this->longitude;
     }
 
@@ -563,7 +567,7 @@ abstract class DealerTab implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getCreatedAt($format = NULL)
+    public function getCreatedAt($format = null)
     {
         if ($format === null) {
             return $this->created_at;
@@ -583,7 +587,7 @@ abstract class DealerTab implements ActiveRecordInterface
      *
      * @throws PropelException - if unable to parse/validate the date/time value.
      */
-    public function getUpdatedAt($format = NULL)
+    public function getUpdatedAt($format = null)
     {
         if ($format === null) {
             return $this->updated_at;
@@ -717,6 +721,27 @@ abstract class DealerTab implements ActiveRecordInterface
 
         return $this;
     } // setCity()
+
+    /**
+     * Set the value of [country] column.
+     *
+     * @param      string $v new value
+     * @return   \Dealer\Model\DealerTab The current object (for fluent API support)
+     */
+    public function setCountry($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->country !== $v) {
+            $this->country = $v;
+            $this->modifiedColumns[DealerTabTableMap::COUNTRY] = true;
+        }
+
+
+        return $this;
+    } // setCountry()
 
     /**
      * Set the value of [description] column.
@@ -896,13 +921,13 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->latitude !== 0) {
-                return false;
-            }
+        if ($this->latitude !== 0) {
+            return false;
+        }
 
-            if ($this->longitude !== 0) {
-                return false;
-            }
+        if ($this->longitude !== 0) {
+            return false;
+        }
 
         // otherwise, everything was equal, so return TRUE
         return true;
@@ -929,8 +954,6 @@ abstract class DealerTab implements ActiveRecordInterface
     public function hydrate($row, $startcol = 0, $rehydrate = false, $indexType = TableMap::TYPE_NUM)
     {
         try {
-
-
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : DealerTabTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
@@ -949,31 +972,34 @@ abstract class DealerTab implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerTabTableMap::translateFieldName('City', TableMap::TYPE_PHPNAME, $indexType)];
             $this->city = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerTabTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerTabTableMap::translateFieldName('Country', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->country = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerTabTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerTabTableMap::translateFieldName('Schedule', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerTabTableMap::translateFieldName('Schedule', TableMap::TYPE_PHPNAME, $indexType)];
             $this->schedule = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerTabTableMap::translateFieldName('PhoneNumber', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerTabTableMap::translateFieldName('PhoneNumber', TableMap::TYPE_PHPNAME, $indexType)];
             $this->phone_number = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerTabTableMap::translateFieldName('WebSite', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerTabTableMap::translateFieldName('WebSite', TableMap::TYPE_PHPNAME, $indexType)];
             $this->web_site = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerTabTableMap::translateFieldName('Latitude', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerTabTableMap::translateFieldName('Latitude', TableMap::TYPE_PHPNAME, $indexType)];
             $this->latitude = (null !== $col) ? (double) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerTabTableMap::translateFieldName('Longitude', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerTabTableMap::translateFieldName('Longitude', TableMap::TYPE_PHPNAME, $indexType)];
             $this->longitude = (null !== $col) ? (double) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerTabTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : DealerTabTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : DealerTabTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 14 + $startcol : DealerTabTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
@@ -986,8 +1012,7 @@ abstract class DealerTab implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 14; // 14 = DealerTabTableMap::NUM_HYDRATE_COLUMNS.
-
+            return $startcol + 15; // 15 = DealerTabTableMap::NUM_HYDRATE_COLUMNS.
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerTab object", 0, $e);
         }
@@ -1046,7 +1071,6 @@ abstract class DealerTab implements ActiveRecordInterface
         $this->hydrate($row, 0, true, $dataFetcher->getIndexType()); // rehydrate
 
         if ($deep) {  // also de-associate any related objects?
-
         } // if (deep)
     }
 
@@ -1181,7 +1205,6 @@ abstract class DealerTab implements ActiveRecordInterface
             }
 
             $this->alreadyInSave = false;
-
         }
 
         return $affectedRows;
@@ -1223,6 +1246,9 @@ abstract class DealerTab implements ActiveRecordInterface
         }
         if ($this->isColumnModified(DealerTabTableMap::CITY)) {
             $modifiedColumns[':p' . $index++]  = 'CITY';
+        }
+        if ($this->isColumnModified(DealerTabTableMap::COUNTRY)) {
+            $modifiedColumns[':p' . $index++]  = 'COUNTRY';
         }
         if ($this->isColumnModified(DealerTabTableMap::DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'DESCRIPTION';
@@ -1276,6 +1302,9 @@ abstract class DealerTab implements ActiveRecordInterface
                         break;
                     case 'CITY':
                         $stmt->bindValue($identifier, $this->city, PDO::PARAM_STR);
+                        break;
+                    case 'COUNTRY':
+                        $stmt->bindValue($identifier, $this->country, PDO::PARAM_STR);
                         break;
                     case 'DESCRIPTION':
                         $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
@@ -1382,27 +1411,30 @@ abstract class DealerTab implements ActiveRecordInterface
                 return $this->getCity();
                 break;
             case 6:
-                return $this->getDescription();
+                return $this->getCountry();
                 break;
             case 7:
-                return $this->getSchedule();
+                return $this->getDescription();
                 break;
             case 8:
-                return $this->getPhoneNumber();
+                return $this->getSchedule();
                 break;
             case 9:
-                return $this->getWebSite();
+                return $this->getPhoneNumber();
                 break;
             case 10:
-                return $this->getLatitude();
+                return $this->getWebSite();
                 break;
             case 11:
-                return $this->getLongitude();
+                return $this->getLatitude();
                 break;
             case 12:
-                return $this->getCreatedAt();
+                return $this->getLongitude();
                 break;
             case 13:
+                return $this->getCreatedAt();
+                break;
+            case 14:
                 return $this->getUpdatedAt();
                 break;
             default:
@@ -1439,14 +1471,15 @@ abstract class DealerTab implements ActiveRecordInterface
             $keys[3] => $this->getAddress2(),
             $keys[4] => $this->getZipcode(),
             $keys[5] => $this->getCity(),
-            $keys[6] => $this->getDescription(),
-            $keys[7] => $this->getSchedule(),
-            $keys[8] => $this->getPhoneNumber(),
-            $keys[9] => $this->getWebSite(),
-            $keys[10] => $this->getLatitude(),
-            $keys[11] => $this->getLongitude(),
-            $keys[12] => $this->getCreatedAt(),
-            $keys[13] => $this->getUpdatedAt(),
+            $keys[6] => $this->getCountry(),
+            $keys[7] => $this->getDescription(),
+            $keys[8] => $this->getSchedule(),
+            $keys[9] => $this->getPhoneNumber(),
+            $keys[10] => $this->getWebSite(),
+            $keys[11] => $this->getLatitude(),
+            $keys[12] => $this->getLongitude(),
+            $keys[13] => $this->getCreatedAt(),
+            $keys[14] => $this->getUpdatedAt(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1505,27 +1538,30 @@ abstract class DealerTab implements ActiveRecordInterface
                 $this->setCity($value);
                 break;
             case 6:
-                $this->setDescription($value);
+                $this->setCountry($value);
                 break;
             case 7:
-                $this->setSchedule($value);
+                $this->setDescription($value);
                 break;
             case 8:
-                $this->setPhoneNumber($value);
+                $this->setSchedule($value);
                 break;
             case 9:
-                $this->setWebSite($value);
+                $this->setPhoneNumber($value);
                 break;
             case 10:
-                $this->setLatitude($value);
+                $this->setWebSite($value);
                 break;
             case 11:
-                $this->setLongitude($value);
+                $this->setLatitude($value);
                 break;
             case 12:
-                $this->setCreatedAt($value);
+                $this->setLongitude($value);
                 break;
             case 13:
+                $this->setCreatedAt($value);
+                break;
+            case 14:
                 $this->setUpdatedAt($value);
                 break;
         } // switch()
@@ -1552,20 +1588,51 @@ abstract class DealerTab implements ActiveRecordInterface
     {
         $keys = DealerTabTableMap::getFieldNames($keyType);
 
-        if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setCompany($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setAddress1($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setAddress2($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setZipcode($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setCity($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setDescription($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setSchedule($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setPhoneNumber($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setWebSite($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setLatitude($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setLongitude($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setCreatedAt($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setUpdatedAt($arr[$keys[13]]);
+        if (array_key_exists($keys[0], $arr)) {
+            $this->setId($arr[$keys[0]]);
+        }
+        if (array_key_exists($keys[1], $arr)) {
+            $this->setCompany($arr[$keys[1]]);
+        }
+        if (array_key_exists($keys[2], $arr)) {
+            $this->setAddress1($arr[$keys[2]]);
+        }
+        if (array_key_exists($keys[3], $arr)) {
+            $this->setAddress2($arr[$keys[3]]);
+        }
+        if (array_key_exists($keys[4], $arr)) {
+            $this->setZipcode($arr[$keys[4]]);
+        }
+        if (array_key_exists($keys[5], $arr)) {
+            $this->setCity($arr[$keys[5]]);
+        }
+        if (array_key_exists($keys[6], $arr)) {
+            $this->setCountry($arr[$keys[6]]);
+        }
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setDescription($arr[$keys[7]]);
+        }
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setSchedule($arr[$keys[8]]);
+        }
+        if (array_key_exists($keys[9], $arr)) {
+            $this->setPhoneNumber($arr[$keys[9]]);
+        }
+        if (array_key_exists($keys[10], $arr)) {
+            $this->setWebSite($arr[$keys[10]]);
+        }
+        if (array_key_exists($keys[11], $arr)) {
+            $this->setLatitude($arr[$keys[11]]);
+        }
+        if (array_key_exists($keys[12], $arr)) {
+            $this->setLongitude($arr[$keys[12]]);
+        }
+        if (array_key_exists($keys[13], $arr)) {
+            $this->setCreatedAt($arr[$keys[13]]);
+        }
+        if (array_key_exists($keys[14], $arr)) {
+            $this->setUpdatedAt($arr[$keys[14]]);
+        }
     }
 
     /**
@@ -1577,20 +1644,51 @@ abstract class DealerTab implements ActiveRecordInterface
     {
         $criteria = new Criteria(DealerTabTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(DealerTabTableMap::ID)) $criteria->add(DealerTabTableMap::ID, $this->id);
-        if ($this->isColumnModified(DealerTabTableMap::COMPANY)) $criteria->add(DealerTabTableMap::COMPANY, $this->company);
-        if ($this->isColumnModified(DealerTabTableMap::ADDRESS1)) $criteria->add(DealerTabTableMap::ADDRESS1, $this->address1);
-        if ($this->isColumnModified(DealerTabTableMap::ADDRESS2)) $criteria->add(DealerTabTableMap::ADDRESS2, $this->address2);
-        if ($this->isColumnModified(DealerTabTableMap::ZIPCODE)) $criteria->add(DealerTabTableMap::ZIPCODE, $this->zipcode);
-        if ($this->isColumnModified(DealerTabTableMap::CITY)) $criteria->add(DealerTabTableMap::CITY, $this->city);
-        if ($this->isColumnModified(DealerTabTableMap::DESCRIPTION)) $criteria->add(DealerTabTableMap::DESCRIPTION, $this->description);
-        if ($this->isColumnModified(DealerTabTableMap::SCHEDULE)) $criteria->add(DealerTabTableMap::SCHEDULE, $this->schedule);
-        if ($this->isColumnModified(DealerTabTableMap::PHONE_NUMBER)) $criteria->add(DealerTabTableMap::PHONE_NUMBER, $this->phone_number);
-        if ($this->isColumnModified(DealerTabTableMap::WEB_SITE)) $criteria->add(DealerTabTableMap::WEB_SITE, $this->web_site);
-        if ($this->isColumnModified(DealerTabTableMap::LATITUDE)) $criteria->add(DealerTabTableMap::LATITUDE, $this->latitude);
-        if ($this->isColumnModified(DealerTabTableMap::LONGITUDE)) $criteria->add(DealerTabTableMap::LONGITUDE, $this->longitude);
-        if ($this->isColumnModified(DealerTabTableMap::CREATED_AT)) $criteria->add(DealerTabTableMap::CREATED_AT, $this->created_at);
-        if ($this->isColumnModified(DealerTabTableMap::UPDATED_AT)) $criteria->add(DealerTabTableMap::UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(DealerTabTableMap::ID)) {
+            $criteria->add(DealerTabTableMap::ID, $this->id);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::COMPANY)) {
+            $criteria->add(DealerTabTableMap::COMPANY, $this->company);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::ADDRESS1)) {
+            $criteria->add(DealerTabTableMap::ADDRESS1, $this->address1);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::ADDRESS2)) {
+            $criteria->add(DealerTabTableMap::ADDRESS2, $this->address2);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::ZIPCODE)) {
+            $criteria->add(DealerTabTableMap::ZIPCODE, $this->zipcode);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::CITY)) {
+            $criteria->add(DealerTabTableMap::CITY, $this->city);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::COUNTRY)) {
+            $criteria->add(DealerTabTableMap::COUNTRY, $this->country);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::DESCRIPTION)) {
+            $criteria->add(DealerTabTableMap::DESCRIPTION, $this->description);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::SCHEDULE)) {
+            $criteria->add(DealerTabTableMap::SCHEDULE, $this->schedule);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::PHONE_NUMBER)) {
+            $criteria->add(DealerTabTableMap::PHONE_NUMBER, $this->phone_number);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::WEB_SITE)) {
+            $criteria->add(DealerTabTableMap::WEB_SITE, $this->web_site);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::LATITUDE)) {
+            $criteria->add(DealerTabTableMap::LATITUDE, $this->latitude);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::LONGITUDE)) {
+            $criteria->add(DealerTabTableMap::LONGITUDE, $this->longitude);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::CREATED_AT)) {
+            $criteria->add(DealerTabTableMap::CREATED_AT, $this->created_at);
+        }
+        if ($this->isColumnModified(DealerTabTableMap::UPDATED_AT)) {
+            $criteria->add(DealerTabTableMap::UPDATED_AT, $this->updated_at);
+        }
 
         return $criteria;
     }
@@ -1637,7 +1735,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function isPrimaryKeyNull()
     {
-
         return null === $this->getId();
     }
 
@@ -1659,6 +1756,7 @@ abstract class DealerTab implements ActiveRecordInterface
         $copyObj->setAddress2($this->getAddress2());
         $copyObj->setZipcode($this->getZipcode());
         $copyObj->setCity($this->getCity());
+        $copyObj->setCountry($this->getCountry());
         $copyObj->setDescription($this->getDescription());
         $copyObj->setSchedule($this->getSchedule());
         $copyObj->setPhoneNumber($this->getPhoneNumber());
@@ -1669,7 +1767,7 @@ abstract class DealerTab implements ActiveRecordInterface
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         if ($makeNew) {
             $copyObj->setNew(true);
-            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+            $copyObj->setId(null); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1706,6 +1804,7 @@ abstract class DealerTab implements ActiveRecordInterface
         $this->address2 = null;
         $this->zipcode = null;
         $this->city = null;
+        $this->country = null;
         $this->description = null;
         $this->schedule = null;
         $this->phone_number = null;
@@ -1735,7 +1834,6 @@ abstract class DealerTab implements ActiveRecordInterface
     {
         if ($deep) {
         } // if ($deep)
-
     }
 
     /**
@@ -1778,7 +1876,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function postSave(ConnectionInterface $con = null)
     {
-
     }
 
     /**
@@ -1797,7 +1894,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function postInsert(ConnectionInterface $con = null)
     {
-
     }
 
     /**
@@ -1816,7 +1912,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function postUpdate(ConnectionInterface $con = null)
     {
-
     }
 
     /**
@@ -1835,7 +1930,6 @@ abstract class DealerTab implements ActiveRecordInterface
      */
     public function postDelete(ConnectionInterface $con = null)
     {
-
     }
 
 
@@ -1879,5 +1973,4 @@ abstract class DealerTab implements ActiveRecordInterface
 
         throw new BadMethodCallException(sprintf('Call to undefined method: %s.', $name));
     }
-
 }
