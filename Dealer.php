@@ -22,9 +22,10 @@ class Dealer extends BaseModule
 
     public function postActivation(ConnectionInterface $con = null)
     {
-        $database = new Database($con);
-
-        if (DealerTabQuery::create()->findOne() === null) {
+        try {
+            DealerTabQuery::create()->findOne();
+        } catch (\Exception $e) {
+            $database = new Database($con);
             $database->insertSql(null, [__DIR__ . "/Config/create.sql", __DIR__ . "/Config/insert.sql"]);
         }
     }
