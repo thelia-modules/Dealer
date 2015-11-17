@@ -23,19 +23,4 @@
     ...
     </route>
     -->
-  <route id="dealer.dealer_tab.list" path="/admin/module/Dealer/dealer_tab" methods="get">
-    <default key="_controller">Dealer:DealerTab:default</default>
-  </route>
-  <route id="dealer.dealer_tab.create" path="/admin/module/Dealer/dealer_tab" methods="post">
-    <default key="_controller">Dealer:DealerTab:create</default>
-  </route>
-  <route id="dealer.dealer_tab.view" path="/admin/module/Dealer/dealer_tab/edit" methods="get">
-    <default key="_controller">Dealer:DealerTab:update</default>
-  </route>
-  <route id="dealer.dealer_tab.edit" path="/admin/module/Dealer/dealer_tab/edit" methods="post">
-    <default key="_controller">Dealer:DealerTab:processUpdate</default>
-  </route>
-  <route id="dealer.dealer_tab.delete" path="/admin/module/Dealer/dealer_tab/delete" methods="post">
-    <default key="_controller">Dealer:DealerTab:delete</default>
-  </route>
 </routes>

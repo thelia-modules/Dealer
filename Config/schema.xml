@@ -1,24 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database defaultIdMethod="native" name="thelia"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="../../../../core/vendor/propel/propel/resources/xsd/database.xsd" >
-    <table name="dealer_tab" namespace="Dealer\Model">
-        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+          xsi:noNamespaceSchemaLocation="../../../../vendor/propel/propel/resources/xsd/database.xsd">
 
-        <column name="company" size="255" type="VARCHAR" required="true"/>
-        <column name="address1" size="255" type="VARCHAR" required="true" />
-        <column name="address2" size="255" type="VARCHAR" />
-        <column name="zipcode" required="true" size="10" type="VARCHAR" />
-        <column name="city" required="true" size="255" type="VARCHAR" />
-        <column name="country" required="true" size="255" type="VARCHAR" />
-        <column name="description" type="LONGVARCHAR" />
-        <column name="schedule" size="255" type="VARCHAR" />
-        <column name="phone_number" size="255" type="VARCHAR" />
-        <column name="web_site" size="255" type="VARCHAR" />
-        <column defaultValue="0" name="latitude" type="FLOAT" />
-        <column defaultValue="0" name="longitude" type="FLOAT" />
+    <table name="dealer" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER"/>
 
-        <behavior name="timestampable" />
+        <column name="title" size="255" type="VARCHAR" required="true"/>
+        <column name="description" type="LONGVARCHAR"/>
+
+        <column name="address1" size="255" type="VARCHAR" required="true"/>
+        <column name="address2" size="255" type="VARCHAR"/>
+        <column name="address3" size="255" type="VARCHAR"/>
+        <column name="zipcode" required="true" size="10" type="VARCHAR"/>
+        <column name="city" required="true" size="255" type="VARCHAR"/>
+
+        <column name="country_id" required="true" type="INTEGER"/>
+
+        <column defaultValue="0" name="latitude" size="16" scale="13" type="DECIMAL"/>
+        <column defaultValue="0" name="longitude" size="16" scale="13" type="DECIMAL"/>
+
+        <foreign-key foreignTable="country" name="fk_dealer_country_id" onDelete="CASCADE">
+            <reference foreign="id" local="country_id"/>
+        </foreign-key>
+
+        <behavior name="timestampable"/>
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="title, description"/>
+        </behavior>
+        <behavior name="versionable">
+            <parameter name="log_created_at" value="true"/>
+            <parameter name="log_created_by" value="true"/>
+        </behavior>
     </table>
-    <external-schema filename="local/config/schema.xml" referenceOnly="true" />
+
+    <table name="dealer_shedules" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="dealer_id" required="true" type="INTEGER"/>
+
+        <column name="day" required="true" type="INTEGER"/>
+        <column name="begin" required="true" type="TIME"/>
+        <column name="end" required="true" type="TIME"/>
+
+        <column name="period_begin" type="DATE"/>
+        <column name="period_end" type="DATE"/>
+
+        <foreign-key foreignTable="dealer" name="fk_dealer_shedules_dealer_id" onDelete="CASCADE">
+            <reference foreign="id" local="dealer_id"/>
+        </foreign-key>
+
+        <behavior name="timestampable"/>
+        <behavior name="versionable">
+            <parameter name="log_created_at" value="true"/>
+            <parameter name="log_created_by" value="true"/>
+        </behavior>
+    </table>
+
+    <table name="dealer_contact" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="dealer_id" required="true" type="INTEGER"/>
+
+        <column name="label" required="true" size="255" type="VARCHAR"/>
+        <foreign-key foreignTable="dealer" name="fk_dealer_contact_dealer_id" onDelete="CASCADE">
+            <reference foreign="id" local="dealer_id"/>
+        </foreign-key>
+
+        <behavior name="timestampable"/>
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="label"/>
+        </behavior>
+        <behavior name="versionable">
+            <parameter name="log_created_at" value="true"/>
+            <parameter name="log_created_by" value="true"/>
+        </behavior>
+    </table>
+
+    <table name="dealer_contact_info" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="contact_id" required="true" type="INTEGER"/>
+
+        <column name="value" required="true" size="255" type="VARCHAR"/>
+        <column name="contact_type" required="true" type="ENUM" valueSet="EMAIL, TEL, FAX, URL"/>
+
+        <foreign-key foreignTable="dealer" name="fk_dealer_contact_info_dealer_contact_id" onDelete="CASCADE">
+            <reference foreign="id" local="contact_id"/>
+        </foreign-key>
+
+        <behavior name="timestampable"/>
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="value"/>
+        </behavior>
+        <behavior name="versionable">
+            <parameter name="log_created_at" value="true"/>
+            <parameter name="log_created_by" value="true"/>
+        </behavior>
+    </table>
+
+
+    <external-schema filename="local/config/schema.xml" referenceOnly="true"/>
 </database>

@@ -6,7 +6,10 @@
 
 namespace Dealer;
 
-use Dealer\Model\DealerTabQuery;
+use Dealer\Model\DealerContactInfoQuery;
+use Dealer\Model\DealerContactQuery;
+use Dealer\Model\DealerQuery;
+use Dealer\Model\DealerShedulesQuery;
 use Thelia\Module\BaseModule;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
@@ -23,7 +26,10 @@ class Dealer extends BaseModule
     public function postActivation(ConnectionInterface $con = null)
     {
         try {
-            DealerTabQuery::create()->findOne();
+            DealerQuery::create()->findOne();
+            DealerContactInfoQuery::create()->findOne();
+            DealerContactQuery::create()->findOne();
+            DealerShedulesQuery::create()->findOne();
         } catch (\Exception $e) {
             $database = new Database($con);
             $database->insertSql(null, [__DIR__ . "/Config/create.sql", __DIR__ . "/Config/insert.sql"]);
