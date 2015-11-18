@@ -20,7 +20,11 @@
     ...add as many routes as required.
 
     <route>
-    ...
+    .../admin/module/Dealer/dealer
     </route>
     -->
+
+  <route id="dealer.list" path="/admin/module/Dealer/dealer">
+    <default key="_controller">Dealer\Controller\DealerController::defaultAction</default>
+  </route>
 </routes>

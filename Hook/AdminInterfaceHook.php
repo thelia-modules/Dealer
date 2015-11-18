@@ -43,7 +43,7 @@ class AdminInterfaceHook extends BaseHook
 
     public function onTopMenuTools(HookRenderBlockEvent $event)
     {
-       // $url = $this->router->generate("");
+        $url = $this->router->generate("dealer.list");
         $lang = $this->getSession()->getLang();
         $title = $this->transQuick("Dealer", $lang->getLocale());
 
@@ -52,7 +52,7 @@ class AdminInterfaceHook extends BaseHook
                 "id" => "dealer",
                 "class" => "",
                 "title" => $title,
-                "url" => /*$url*/ "/admin"
+                "url" => $url
 
             ]
         );

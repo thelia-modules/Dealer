@@ -80,7 +80,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 'id-reverse',
                 'date',
                 'date-reverse'
-            ])
+            ],'id')
         );
     }
 
