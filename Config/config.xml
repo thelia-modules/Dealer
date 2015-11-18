@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://thelia.net/schema/dic/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
-  <commands>
-    <!--
-        <command class="Dealer\Command\MySuperCommand" />
-        -->
-  </commands>
-  <!--
+<config xmlns="http://thelia.net/schema/dic/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
+    <commands>
+        <!--
+            <command class="Dealer\Command\MySuperCommand" />
+            -->
+    </commands>
+
     <services>
-
+        <service id="dealer_service" class="Dealer\Service\DealerService">
+            <call method="setDispatcher">
+                <argument type="service" id="event_dispatcher"/>
+            </call>
+        </service>
     </services>
-    -->
-  <hooks>
-    <hook id="dealer.admin.hook" class="Dealer\Hook\AdminInterfaceHook" scope="request">
-      <tag name="hook.event_listener" event="main.top-menu-tools" type="back" method="onTopMenuTools"/>
-      <argument type="service" id="router.dealer"/>
-    </hook>
-  </hooks>
-  <!--
-    <exports>
 
-    </exports>
-    -->
-  <!--
-    <imports>
+    <hooks>
+        <hook id="dealer.admin.hook" class="Dealer\Hook\AdminInterfaceHook" scope="request">
+            <tag name="hook.event_listener" event="main.top-menu-tools" type="back" method="onTopMenuTools"/>
+            <argument type="service" id="router.dealer"/>
+        </hook>
+    </hooks>
 
-    </imports>
- -->
+    <forms>
+        <form name="dealer.create" class="Dealer\Form\DealerForm"/>
+    </forms>
+
+
+    <loops>
+        <loop name="dealer" class="Dealer\Loop\DealerLoop"/>
+    </loops>
+    <!--
+      <exports>
+
+      </exports>
+      -->
+    <!--
+      <imports>
+
+      </imports>
+   -->
 </config>
