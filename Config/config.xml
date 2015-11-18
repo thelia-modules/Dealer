@@ -25,21 +25,5 @@
     <imports>
 
     </imports>
-    -->
-  <forms>
-    <form name="dealer_tab.create" class="Dealer\Form\DealerTabCreateForm"/>
-    <form name="dealer_tab.update" class="Dealer\Form\DealerTabUpdateForm"/>
-  </forms>
-  <loops>
-    <loop name="dealer-tab" class="Dealer\Loop\DealerTab"/>
-  </loops>
-  <services>
-    <service id="action.dealer.dealer_tab_table" class="Dealer\Action\DealerTabAction">
-      <tag name="kernel.event_subscriber"/>
-    </service>
-    <service id="dealer.form.type.dealer_tab_id" class="Dealer\Form\Type\DealerTabIdType">
-      <argument id="thelia.translator" type="service"/>
-      <tag name="thelia.form.type"/>
-    </service>
-  </services>
+ -->
 </config>
