@@ -13,7 +13,11 @@
 
 namespace Dealer\Form;
 
+use Dealer\Dealer;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
+use Thelia\Model\Country;
+use Thelia\Model\CountryQuery;
 
 /**
  * Class DealerForm
@@ -45,15 +49,76 @@ class DealerForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("title","text")
-            ->add("description","text")
-            ->add("address1","text")
-            ->add("address2","text")
-            ->add("address3","text")
-            ->add("zipcode","text")
-            ->add("city","text")
-            ->add("country_id","choice")
-            ->add("country_id","choice")
+            ->add("title", "text", array(
+                "label" => $this->translator->trans("Title", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.title"],
+                "required" => true,
+                "constraints" => array(new NotBlank(),),
+                "attr" => array()
+            ))
+            ->add("description", "text", array(
+                "label" => $this->translator->trans("Description", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.description"],
+                "required" => false,
+                "attr" => array()
+            ))
+            ->add("address1", "text", array(
+                "label" => $this->translator->trans("Address1", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.address1"],
+                "required" => true,
+                "constraints" => array(new NotBlank(),),
+                "attr" => array()
+            ))
+            ->add("address2", "text", array(
+                "label" => $this->translator->trans("Address2", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.address2"],
+                "required" => false,
+                "attr" => array()
+            ))
+            ->add("address3", "text", array(
+                "label" => $this->translator->trans("Address3", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.address3"],
+                "required" => false,
+                "attr" => array()
+            ))
+            ->add("zipcode", "text", array(
+                "label" => $this->translator->trans("Zipcode", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.zipcode"],
+                "required" => true,
+                "constraints" => array(new NotBlank(),),
+                "attr" => array()
+            ))
+            ->add("city", "text", array(
+                "label" => $this->translator->trans("City", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.city"],
+                "required" => true,
+                "constraints" => array(new NotBlank(),),
+                "attr" => array()
+            ))
+            ->add("country_id", "choice", array(
+                "choices" => $this->getCountries(),
+                "label" => $this->translator->trans("Country", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.country"],
+                "required" => true,
+                "attr" => array()
+            ))
+            ->add("locale", "text", array(
+                "constraints" => array(
+                    new NotBlank(),
+                ),
+                "label_attr" => array("for" => "locale_create"),
+            ))
         ;
+    }
+
+    protected function getCountries(){
+        $countries = CountryQuery::create()->find();
+        $retour = [];
+        /** @var Country $country */
+        foreach($countries as $country){
+            $retour[$country->getId()]=$country->getTitle();
+        }
+
+        return $retour;
     }
 }

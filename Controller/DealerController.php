@@ -14,6 +14,7 @@
 namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
+use Dealer\Model\Dealer;
 
 /**
  * Class DealerController
@@ -48,5 +49,14 @@ class DealerController extends BaseController
     protected function getCreateRenderTemplate()
     {
         // TODO: Implement getCreateRenderTemplate() method.
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getObjectId($object)
+    {
+        /** @var Dealer $object */
+        return $object->getId();
     }
 }

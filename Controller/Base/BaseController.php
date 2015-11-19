@@ -17,6 +17,7 @@ use Dealer\Dealer;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Form\Exception\FormValidationException;
 
 /**
  * Class BaseController
@@ -24,6 +25,7 @@ use Thelia\Core\Security\Resource\AdminResources;
  */
 abstract class BaseController extends BaseAdminController
 {
+    protected $useFallbackTemplate = true;
     /**
      * Name of entity associated with controller
      */
@@ -55,6 +57,12 @@ abstract class BaseController extends BaseAdminController
      */
     abstract protected function getCreateRenderTemplate();
 
+    /**
+     * @return mixed
+     */
+    abstract protected function getObjectId($object);
+
+
     // PUBLIC METHODS
 
     /**
@@ -74,6 +82,53 @@ abstract class BaseController extends BaseAdminController
         return $this->getListRenderTemplate();
     }
 
+    public function createAction()
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+                AccessManager::VIEW)
+        ) {
+            return $response;
+        }
+
+        // Create the Creation Form
+        $creationForm = $this->getCreationForm($this->getRequest());
+
+        try {
+            // Check the form against constraints violations
+            $form = $this->validateForm($creationForm, "POST");
+            // Get the form field values
+            $data = $form->getData();
+
+            $createdObject = $this->getService()->createFromArray($data, $this->getCurrentEditionLocale());
+
+
+            // Substitute _ID_ in the URL with the ID of the created object
+            $successUrl = str_replace('_ID_', $this->getObjectId($createdObject), $creationForm->getSuccessUrl());
+
+            // Redirect to the success URL
+            return $this->generateRedirect($successUrl);
+
+        } catch (FormValidationException $ex) {
+            // Form cannot be validated
+            $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+        } catch (\Exception $ex) {
+            // Any other error
+            $error_msg = $ex->getMessage();
+        }
+        if (false !== $error_msg) {
+            $this->setupFormErrorContext(
+                $this->getTranslator()->trans("%obj creation", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
+                $error_msg,
+                $creationForm,
+                $ex
+            );
+
+            // At this point, the form has error, and should be redisplayed.
+            return $this->getListRenderTemplate();
+        }
+
+    }
 
 
     // HELPERS

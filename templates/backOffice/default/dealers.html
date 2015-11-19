@@ -99,13 +99,13 @@
                     </thead>
 
                     <tbody>
-                    {loop name="dealer-list" type="dealer" order=$order}
+                    {loop name="dealer-list" type="dealer" order=$order force_return=true}
                         <tr>
                             <td>
                                 <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$ID}</a>
                             </td>
                             <td>
-                                {$COMPANY}
+                                {$TITLE}
                             </td>
                             <td>
                                 {$ADDRESS1}
@@ -117,7 +117,9 @@
                                 {$CITY}
                             </td>
                             <td>
-                                {$COUNTRY}
+                                {loop type="country" name="country" id=$COUNTRY_ID limit=1}
+                                    {$TITLE}
+                                {/loop}
                             </td>
                             {* Actions *}
                             <td>
@@ -173,100 +175,7 @@
 
     {form name="dealer.create"}
     {capture "dealer_create"}
-        {form_hidden_fields form=$form}
-
-
-        {render_form_field form=$form field="success_url" value={url path='/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}}
-
-        {form_field form=$form field="title"}
-            <div class="form-group">
-                <label class="control-label" for="{$label_attr.for}">
-                    {intl l="{$label}" d="dealer.bo.default"}
-                    {if $required}<span class="required">*</span>{/if}
-                </label>
-
-                {form_error form=$form field="title"}{$message}{/form_error}
-
-                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$COMPANY}" placeholder="{intl l='The Dealer title'}" />
-            </div>
-        {/form_field}
-        {form_field form=$form field="address1"}
-            <div class="form-group">
-                <label class="control-label" for="{$label_attr.for}">
-                    {intl l="{$label}" d="dealer.bo.default"}
-                    {if $required}<span class="required">*</span>{/if}
-                </label>
-
-                {form_error form=$form field="address1"}{$message}{/form_error}
-
-                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS1}" placeholder="{intl l='The Dealer address1'}" />
-            </div>
-        {/form_field}
-        {form_field form=$form field="address2"}
-            <div class="form-group">
-                <label class="control-label" for="{$label_attr.for}">
-                    {intl l="{$label}" d="dealer.bo.default"}
-                    {if $required}<span class="required">*</span>{/if}
-                </label>
-
-                {form_error form=$form field="address2"}{$message}{/form_error}
-
-                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2}" placeholder="{intl l='The Dealer address2'}" />
-            </div>
-        {/form_field}
-        {form_field form=$form field="address3"}
-            <div class="form-group">
-                <label class="control-label" for="{$label_attr.for}">
-                    {intl l="{$label}" d="dealer.bo.default"}
-                    {if $required}<span class="required">*</span>{/if}
-                </label>
-
-                {form_error form=$form field="address2"}{$message}{/form_error}
-
-                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2}" placeholder="{intl l='The Dealer address3'}" />
-            </div>
-        {/form_field}
-        {form_field form=$form field="zipcode"}
-            <div class="form-group">
-                <label class="control-label" for="{$label_attr.for}">
-                    {intl l="{$label}" d="dealer.bo.default"}
-                    {if $required}<span class="required">*</span>{/if}
-                </label>
-
-                {form_error form=$form field="zipcode"}{$message}{/form_error}
-
-                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ZIPCODE}" placeholder="{intl l='The Dealer zipcode'}" />
-            </div>
-        {/form_field}
-        {form_field form=$form field="city"}
-            <div class="form-group">
-                <label class="control-label" for="{$label_attr.for}">
-                    {intl l="{$label}" d="dealer.bo.default"}
-                    {if $required}<span class="required">*</span>{/if}
-                </label>
-
-                {form_error form=$form field="city"}{$message}{/form_error}
-
-                <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CITY}" placeholder="{intl l='The Dealer city'}" />
-            </div>
-        {/form_field}
-        {form_field form=$form field="country_id"}
-            <div class="form-group">
-
-            </div>
-        {/form_field}
-        {form_field form=$form field="description"}
-            <div class="form-group">
-                <label class="control-label" for="{$label_attr.for}">
-                    {intl l="{$label}" d="dealer.bo.default"}
-                    {if $required}<span class="required">*</span>{/if}
-                </label>
-
-                {form_error form=$form field="description"}{$message}{/form_error}
-
-                <textarea class="form-control" name="{$name}" id="{$label_attr.for}"placeholder="{intl l='The Dealer description'}">{$DESCRIPTION}</textarea>
-            </div>
-        {/form_field}
+       {include file="form/dealer-create.html"}
     {/capture}
 
     {include file="includes/generic-create-dialog.html"

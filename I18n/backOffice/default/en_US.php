@@ -1,7 +1,7 @@
 <?php
 return array(
      /* List */
-    "DealerTab" => "Dealer",
+    "Dealer" => "Dealer",
     "Dealer" => "Dealer",
     "Company" => "Name",
     "Address1" => "Address 1",
@@ -13,7 +13,7 @@ return array(
     "Schedule" => "Schedule",
     "Phone number" => "Phone number",
     "Web site" => "Web site",
-    "Create an entry of DealerTab" => "Create an entry of Dealer",
+    "Create an entry of Dealer" => "Create an entry of Dealer",
     /* Edition */
     "Dealer edit" => "Dealer edit",
     "company" => "Name",
@@ -30,6 +30,6 @@ return array(
     "latitude" => "Latitude",
     "longitude" => "Longitude",
     /* Delete */
-    "Delete an entry of DealerTab" => "Delete an entry of Dealer",
+    "Delete an entry of Dealer" => "Delete an entry of Dealer",
     "Do you really want to delete this Dealer entry ?" => "Do you really want to delete this Dealer entry ?"
 );

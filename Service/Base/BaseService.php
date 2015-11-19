@@ -15,14 +15,13 @@ namespace Dealer\Service\Base;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class BaseService
  * @package Dealer\Service\Base
  */
-abstract class BaseService extends BaseAdminController
+abstract class BaseService
 {
     const EVENT_CREATE = null;
     const EVENT_CREATE_BEFORE = null;
@@ -69,7 +68,7 @@ abstract class BaseService extends BaseAdminController
      * @param string $eventName a TheliaEvent name, as defined in TheliaEvents class
      * @param ActionEvent $event the action event, or null (a DefaultActionEvent will be dispatched)
      */
-    protected function dispatch($eventName, ActionEvent $event = null)
+    protected function dispatch($eventName, Event $event = null)
     {
         if ($event == null) {
             $event = new DefaultActionEvent();
@@ -92,5 +91,7 @@ abstract class BaseService extends BaseAdminController
     {
         $this->dispatcher = $dispatcher;
     }
+
+
 
 }

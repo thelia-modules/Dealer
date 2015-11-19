@@ -97,7 +97,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             [
                 'TITLE',
                 'DESCRIPTION'
-            ]
+            ],
+            null,
+            'ID',
+            $this->getForceReturn()
         );
 
         if ($id = $this->getId()) {
