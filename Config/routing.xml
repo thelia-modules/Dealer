@@ -30,4 +30,7 @@
   <route id="dealer.create" path="/admin/module/Dealer/dealer" methods="post">
     <default key="_controller">Dealer\Controller\DealerController::createAction</default>
   </route>
+  <route id="dealer.dealer_tab.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
+    <default key="_controller">Dealer:Dealer:delete</default>
+  </route>
 </routes>

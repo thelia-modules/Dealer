@@ -30,10 +30,17 @@ abstract class BaseService
     const EVENT_UPDATE_BEFORE = null;
     const EVENT_UPDATE_AFTER = null;
     const EVENT_DELETE = null;
+    const EVENT_DELETE_BEFORE = null;
+    const EVENT_DELETE_AFTER = null;
 
     protected $dispatcher;
 
+    //CREATION
 
+    /**
+     * Allow to proccess Creation Even Sender
+     * @param Event $event
+     */
     protected function create(Event $event)
     {
         $this->dispatch(static::EVENT_CREATE_BEFORE, $event);
@@ -45,22 +52,62 @@ abstract class BaseService
         }
     }
 
+    /**
+     * Allow to create an object from an Event
+     * @param Event $event
+     */
     protected function createProcess(Event $event)
     {
         $this->dispatch(static::EVENT_CREATE, $event);
     }
 
+    // UPDATE
+
+    /**
+     * Allow to send Update Events
+     * @param Event $event
+     */
     protected function update(Event $event)
     {
         $this->dispatch(static::EVENT_CREATE_BEFORE, $event);
-        $this->updateProcess($event);
-        $this->dispatch(static::EVENT_CREATE_AFTER, $event);
+        if (!$event->isPropagationStopped()) {
+            $this->updateProcess($event);
+            if (!$event->isPropagationStopped()) {
+                $this->dispatch(static::EVENT_CREATE_AFTER, $event);
+            }
+        }
     }
 
+
+    /**
+     * Allow to update an object from an event
+     * @param Event $event
+     */
     protected function updateProcess(Event $event)
     {
         $this->dispatch(static::EVENT_UPDATE, $event);
     }
+
+    // DELETE
+
+    protected function delete(Event $event)
+    {
+        $this->dispatch(static::EVENT_DELETE_BEFORE, $event);
+        if (!$event->isPropagationStopped()) {
+            $this->createProcess($event);
+            if (!$event->isPropagationStopped()) {
+                $this->dispatch(static::EVENT_DELETE_AFTER, $event);
+            }
+        }
+    }
+
+    protected function deleteProcess(Event $event)
+    {
+        $this->dispatch(static::EVENT_DELETE, $event);
+    }
+
+
+    // DEPENDENCIES
 
     /**
      * Dispatch a Thelia event
@@ -91,7 +138,6 @@ abstract class BaseService
     {
         $this->dispatcher = $dispatcher;
     }
-
 
 
 }

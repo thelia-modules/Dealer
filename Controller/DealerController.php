@@ -15,6 +15,8 @@ namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
 use Dealer\Model\Dealer;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Thelia\Tools\URL;
 
 /**
  * Class DealerController
@@ -58,5 +60,10 @@ class DealerController extends BaseController
     {
         /** @var Dealer $object */
         return $object->getId();
+    }
+
+    protected function redirectToListTemplate()
+    {
+        return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer"));
     }
 }

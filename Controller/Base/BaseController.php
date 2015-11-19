@@ -82,6 +82,10 @@ abstract class BaseController extends BaseAdminController
         return $this->getListRenderTemplate();
     }
 
+    /**
+     * Create an object
+     * @return mixed|\Symfony\Component\HttpFoundation\Response
+     */
     public function createAction()
     {
         // Check current user authorization
@@ -130,6 +134,37 @@ abstract class BaseController extends BaseAdminController
 
     }
 
+    /**
+     * Delete an object
+     *
+     * @return \Thelia\Core\HttpFoundation\Response the response
+     */
+    public function deleteAction()
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+                AccessManager::VIEW)
+        ) {
+            return $response;
+        }
+
+        try {
+            // Check token
+            $this->getTokenProvider()->checkToken(
+                $this->getRequest()->query->get("_token")
+            );
+
+            $this->getService()->deleteFromId($this->getRequest()->request->get("dealer_id"));
+
+            if ($response == null) {
+                return $this->redirectToListTemplate();
+            } else {
+                return $response;
+            }
+        } catch (\Exception $e) {
+            return $this->renderAfterDeleteError($e);
+        }
+    }
 
     // HELPERS
     /**
@@ -166,6 +201,25 @@ abstract class BaseController extends BaseAdminController
         }
 
         return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update", $data);
+    }
+
+    /**
+     * @param \Exception $e
+     * @return \Thelia\Core\HttpFoundation\Response
+     */
+    protected function renderAfterDeleteError(\Exception $e)
+    {
+        $errorMessage = sprintf(
+            "Unable to delete '%s'. Error message: %s",
+            static::CONTROLLER_ENTITY_NAME,
+            $e->getMessage()
+        );
+
+        $this->getParserContext()
+            ->setGeneralError($errorMessage)
+        ;
+
+        return $this->defaultAction();
     }
 
 

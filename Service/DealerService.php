@@ -40,9 +40,14 @@ class DealerService extends BaseService
         $event->getDealer()->save();
     }
 
+    protected function deleteProcess(Event $event)
+    {
+        $event->getDealer()->delete();
+    }
+
     public function createFromArray($data, $locale = null)
     {
-        $dealer = $this->hydrateObjectArray($data,$locale);
+        $dealer = $this->hydrateObjectArray($data, $locale);
 
         $event = new DealerEvent();
         $event->setDealer($dealer);
@@ -50,6 +55,16 @@ class DealerService extends BaseService
         $this->create($event);
 
         return $event->getDealer();
+    }
+
+    public function deleteFromId($id)
+    {
+        $dealer = $this->hydrateObjectArray(['id' => $id]);
+
+        $event = new DealerEvent();
+        $event->setDealer($dealer);
+
+        $this->delete($event);
     }
 
     protected function hydrateObjectArray($data, $locale = null)
@@ -68,12 +83,21 @@ class DealerService extends BaseService
         }
 
         // Require Field
-        $model->setTitle($data['title']);
-        $model->setAddress1($data['address1']);
-        $model->setZipcode($data['zipcode']);
-        $model->setCity($data['city']);
-        $model->setCountryId($data['country_id']);
-
+        if (isset($data['title'])) {
+            $model->setTitle($data['title']);
+        }
+        if (isset($data['address1'])) {
+            $model->setAddress1($data['address1']);
+        }
+        if (isset($data['zipcode'])) {
+            $model->setZipcode($data['zipcode']);
+        }
+        if (isset($data['city'])) {
+            $model->setCity($data['city']);
+        }
+        if (isset($data['country_id'])) {
+            $model->setCountryId($data['country_id']);
+        }
 
         //  Optionnal Field
         if (isset($data['description'])) {
