@@ -46,6 +46,12 @@ abstract class BaseController extends BaseAdminController
     abstract protected function getListRenderTemplate();
 
     /**
+     * Must return a RedirectResponse instance
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    abstract protected function redirectToListTemplate();
+
+    /**
      * Use to get Edit render
      * @return mixed
      */
@@ -61,6 +67,18 @@ abstract class BaseController extends BaseAdminController
      * @return mixed
      */
     abstract protected function getObjectId($object);
+
+    /**
+     * Load an existing object from the database
+     */
+    abstract protected function getExistingObject();
+
+    /**
+     * Hydrate the update form for this object, before passing it to the update template
+     *
+     * @param mixed $object
+     */
+    abstract protected function hydrateObjectForm($object);
 
 
     // PUBLIC METHODS
@@ -132,6 +150,33 @@ abstract class BaseController extends BaseAdminController
             return $this->getListRenderTemplate();
         }
 
+    }
+
+    /**
+     * Load a object for modification, and display the edit template.
+     *
+     * @return \Thelia\Core\HttpFoundation\Response the response
+     */
+    public function updateAction()
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+                AccessManager::VIEW)
+        ) {
+            return $response;
+        }
+
+        // Load object if exist
+        if (null !== $object = $this->getExistingObject()) {
+            // Hydrate the form abd pass it to the parser
+            $changeForm = $this->hydrateObjectForm($object);
+
+            // Pass it to the parser
+            $this->getParserContext()->addForm($changeForm);
+        }
+
+        // Render the edition template.
+        return $this->getEditRenderTemplate();
     }
 
     /**
@@ -216,8 +261,7 @@ abstract class BaseController extends BaseAdminController
         );
 
         $this->getParserContext()
-            ->setGeneralError($errorMessage)
-        ;
+            ->setGeneralError($errorMessage);
 
         return $this->defaultAction();
     }

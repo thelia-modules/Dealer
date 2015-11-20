@@ -25,12 +25,18 @@
     -->
 
   <route id="dealer.list" path="/admin/module/Dealer/dealer" methods="get">
-    <default key="_controller">Dealer\Controller\DealerController::defaultAction</default>
+    <default key="_controller">Dealer:Dealer:default</default>
   </route>
   <route id="dealer.create" path="/admin/module/Dealer/dealer" methods="post">
-    <default key="_controller">Dealer\Controller\DealerController::createAction</default>
+    <default key="_controller">Dealer:Dealer:create</default>
   </route>
-  <route id="dealer.dealer_tab.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
+  <route id="dealer.dealer_tab.view" path="/admin/module/Dealer/dealer/edit" methods="get">
+    <default key="_controller">Dealer:Dealer:update</default>
+  </route>
+  <route id="dealer.dealer_tab.edit" path="/admin/module/Dealer/dealer/edit" methods="post">
+    <default key="_controller">Dealer:Dealer:processUpdate</default>
+  </route>
+  <route id="dealer.dealer.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
     <default key="_controller">Dealer:Dealer:delete</default>
   </route>
 </routes>

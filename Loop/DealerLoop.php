@@ -50,7 +50,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 ->set("CITY", $dealer->getCity())
                 ->set("COUNTRY_ID", $dealer->getCountryId())
                 ->set("LAT", $dealer->getLatitude())
-                ->set("LON", $dealer->getLongitude());
+                ->set("LON", $dealer->getLongitude())
+                ->set("CREATE_DATE", $dealer->getCreatedAt())
+                ->set("UPDATE_DATE", $dealer->getUpdatedAt())
+            ;
 
             if ($dealer->hasVirtualColumn('i18n_TITLE')) {
                 $loopResultRow->set("TITLE", $dealer->getVirtualColumn('i18n_TITLE'));

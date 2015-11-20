@@ -1,29 +1,29 @@
 {form name="dealer.create"}
 {form_hidden_fields form=$form}
 {loop type="lang" name="default-lang" default_only="1"}
-    <input type="hidden" name="edit_language_id" value="{$ID}" />
-
+    <input type="hidden" name="edit_language_id" value="{$ID}"/>
 {form_field field='locale'}
-    <input type="hidden" name="{$name}" value="{$LOCALE}" />
+    <input type="hidden" name="{$name}" value="{$LOCALE}"/>
 {/form_field}
 {/loop}
 
 
 {render_form_field form=$form field="success_url" value={url path='/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}}
+{if {$title|default:true} != false}
+    {form_field form=$form field="title"}
+        <div class="form-group">
+            <label class="control-label" for="{$label_attr.for}">
+                {intl l="{$label}" d="dealer.bo.default"}
+                {if $required}<span class="required">*</span>{/if}
+            </label>
 
-{form_field form=$form field="title"}
-    <div class="form-group">
-        <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
-            {if $required}<span class="required">*</span>{/if}
-        </label>
+            {form_error form=$form field="title"}{$message}{/form_error}
 
-        {form_error form=$form field="title"}{$message}{/form_error}
-
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$COMPANY}"
-               placeholder="{intl l='The Dealer title'}"/>
-    </div>
-{/form_field}
+            <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$TITLE}"
+                   placeholder="{intl l='The Dealer title'}"/>
+        </div>
+    {/form_field}
+{/if}
 {form_field form=$form field="address1"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
@@ -100,7 +100,7 @@
 
         <select class="form-control" name="{$name}" id="{$label_attr.for}">
             {foreach $choices as $choice}
-                <option value="{$choice->value}">{$choice->label}</option>
+                <option value="{$choice->value}" {if $COUNTRY_ID == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}
         </select>
     </div>

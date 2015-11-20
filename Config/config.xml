@@ -24,6 +24,7 @@
 
     <forms>
         <form name="dealer.create" class="Dealer\Form\DealerForm"/>
+        <form name="dealer.update" class="Dealer\Form\DealerUpdateForm"/>
     </forms>
 
 
