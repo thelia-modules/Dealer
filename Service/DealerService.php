@@ -29,6 +29,9 @@ class DealerService extends BaseService
     const EVENT_CREATE = DealerEvents::DEALER_CREATE;
     const EVENT_CREATE_BEFORE = DealerEvents::DEALER_CREATE_AFTER;
     const EVENT_CREATE_AFTER = DealerEvents::DEALER_CREATE_BEFORE;
+    const EVENT_DELETE = DealerEvents::DEALER_DELETE;
+    const EVENT_DELETE_BEFORE = DealerEvents::DEALER_DELETE_AFTER;
+    const EVENT_DELETE_AFTER = DealerEvents::DEALER_DELETE_BEFORE;
 
     protected function createProcess(Event $event)
     {

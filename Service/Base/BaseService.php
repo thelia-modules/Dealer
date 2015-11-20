@@ -94,7 +94,7 @@ abstract class BaseService
     {
         $this->dispatch(static::EVENT_DELETE_BEFORE, $event);
         if (!$event->isPropagationStopped()) {
-            $this->createProcess($event);
+            $this->deleteProcess($event);
             if (!$event->isPropagationStopped()) {
                 $this->dispatch(static::EVENT_DELETE_AFTER, $event);
             }
