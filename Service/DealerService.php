@@ -32,6 +32,9 @@ class DealerService extends BaseService
     const EVENT_DELETE = DealerEvents::DEALER_DELETE;
     const EVENT_DELETE_BEFORE = DealerEvents::DEALER_DELETE_AFTER;
     const EVENT_DELETE_AFTER = DealerEvents::DEALER_DELETE_BEFORE;
+    const EVENT_UPDATE = DealerEvents::DEALER_UPDATE;
+    const EVENT_UPDATE_BEFORE = DealerEvents::DEALER_UPDATE_AFTER;
+    const EVENT_UPDATE_AFTER = DealerEvents::DEALER_UPDATE_BEFORE;
 
     protected function createProcess(Event $event)
     {
@@ -56,6 +59,18 @@ class DealerService extends BaseService
         $event->setDealer($dealer);
 
         $this->create($event);
+
+        return $event->getDealer();
+    }
+
+    public function updateFromArray($data, $locale = null)
+    {
+        $dealer = $this->hydrateObjectArray($data, $locale);
+
+        $event = new DealerEvent();
+        $event->setDealer($dealer);
+
+        $this->update($event);
 
         return $event->getDealer();
     }

@@ -180,6 +180,71 @@ abstract class BaseController extends BaseAdminController
     }
 
     /**
+     * Save changes on a modified object, and either go back to the object list, or stay on the edition page.
+     *
+     * @return \Thelia\Core\HttpFoundation\Response the response
+     */
+    public function processUpdateAction()
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+                AccessManager::VIEW)
+        ) {
+            return $response;
+        }
+
+        // Error (Default: false)
+        $error_msg = false;
+
+        // Create the Form from the request
+        $changeForm = $this->getUpdateForm($this->getRequest());
+
+        try {
+            // Check the form against constraints violations
+            $form = $this->validateForm($changeForm, "POST");
+
+            // Get the form field values
+            $data = $form->getData();
+
+            $updatedObject = $this->getService()->updateFromArray($data, $this->getCurrentEditionLocale());
+
+            // Check if object exist
+            if (!$updatedObject) {
+                throw new \LogicException(
+                    $this->getTranslator()->trans("No %obj was updated.", ['%obj' => static::CONTROLLER_ENTITY_NAME])
+                );
+            }
+            // If we have to stay on the same page, do not redirect to the successUrl,
+            // just redirect to the edit page again.
+            if ($this->getRequest()->get('save_mode') == 'stay') {
+                return $this->redirectToEditionTemplate($this->getRequest());
+            }
+
+            // Redirect to the success URL
+            return $this->generateSuccessRedirect($changeForm);
+
+        } catch (FormValidationException $ex) {
+            // Form cannot be validated
+            $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+            /*} catch (\Exception $ex) {
+                // Any other error
+                $error_msg = $ex->getMessage();*/
+        }
+
+        if (false !== $error_msg) {
+            // At this point, the form has errors, and should be redisplayed.
+            $this->setupFormErrorContext(
+                $this->getTranslator()->trans("%obj modification", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
+                $error_msg,
+                $changeForm,
+                $ex
+            );
+
+            return $this->getEditRenderTemplate();
+        }
+    }
+
+    /**
      * Delete an object
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
@@ -245,7 +310,7 @@ abstract class BaseController extends BaseAdminController
             $data = [];
         }
 
-        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update","form", $data);
+        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update", "form", $data);
     }
 
     /**

@@ -99,4 +99,12 @@ class DealerController extends BaseController
     {
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer"));
     }
+
+    protected function redirectToEditionTemplate()
+    {
+        $id = $this->getRequest()->query->get("dealer_id");
+
+        return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
+            ["dealer_id" => $id,]));
+    }
 }
