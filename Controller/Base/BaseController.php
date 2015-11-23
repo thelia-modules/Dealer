@@ -245,7 +245,7 @@ abstract class BaseController extends BaseAdminController
             $data = [];
         }
 
-        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update", $data);
+        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update","form", $data);
     }
 
     /**
