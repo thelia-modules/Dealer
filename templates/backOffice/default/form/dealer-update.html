@@ -1,0 +1,75 @@
+{form name="dealer.update"}
+<div class="form-container">
+    {if $form_error}
+        <div class="alert alert-danger">{$form_error_message}</div>
+    {/if}
+    <form method="POST" action="{$current_url}" {form_enctype form=$form} class="clearfix">
+
+        {include "includes/inner-form-toolbar.html"
+        close_url = {url path="/admin/module/Dealer/dealer"}
+        }
+
+        {form_field form=$form field="id"}
+        {assign "dealer_id" $value}
+            <input type="hidden" name="{$name}" value="{$value}"/>
+        {/form_field}
+        {form_field form=$form field="success_url"}
+            <input type="hidden" name="{$name}" value="{url path='/admin/module/Dealer'}/dealer"/>
+        {/form_field}
+        {form_hidden_fields form=$form}
+
+        {loop name="dealer_update" type="dealer" backend_context="yes" id=$dealer_id lang=$edit_language_id}
+            <div class="row">
+                <div class="col-md-12">
+
+                    {include file="form/dealer-create.html" form_name="dealer.update"}
+
+                    {form_field form=$form field="latitude"}
+                        <div class="form-group">
+                            <label class="control-label" for="{$label_attr.for}">
+                                {intl l=$label d="dealer.bo.default"}
+                                {if $required}<span class="required">*</span>{/if}
+                            </label>
+
+                            {form_error form=$form field="latitude"}{$message}{/form_error}
+
+                            <input type="number" step="any" class="form-control" name="{$name}"
+                                   id="{$label_attr.for}" value="{$LATITUDE}"
+                                   placeholder="{intl l='The Dealer latitude'}"/>
+                        </div>
+                    {/form_field}
+                    {form_field form=$form field="longitude"}
+                        <div class="form-group">
+                            <label class="control-label" for="{$label_attr.for}">
+                                {intl l=$label d="dealer.bo.default"}
+                                {if $required}<span class="required">*</span>{/if}
+                            </label>
+
+                            {form_error form=$form field="longitude"}{$message}{/form_error}
+
+                            <input type="number" step="any" class="form-control" name="{$name}"
+                                   id="{$label_attr.for}" value="{$LONGITUDE}"
+                                   placeholder="{intl l='The Dealer longitude'}"/>
+                        </div>
+                    {/form_field}
+
+                    {include "includes/inner-form-toolbar.html"
+                    hide_flags = true
+                    close_url = {url path="/admin/module/Dealer/dealer"}
+                    }
+
+                    <small>
+                        {intl
+                        l="Dealer created on %created_at. Last modification: %updated_at"
+                        created_at={format_date date=$CREATE_DATE}
+                        updated_at={format_date date=$UPDATE_DATE}
+                        d="dealer.bo.default"
+                        }
+                    </small>
+                </div>
+            </div>
+        {/loop}
+
+    </form>
+</div>
+{/form}
