@@ -71,7 +71,12 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
 
     public function deleteFromId($id)
     {
-        // TODO: Implement deleteFromId() method.
+        $dealer = $this->hydrateObjectArray(['id' => $id]);
+
+        $event = new DealerContactEvent();
+        $event->setDealerContact($dealer);
+
+        $this->delete($event);
     }
 
     protected function hydrateObjectArray($data, $locale = null)

@@ -107,4 +107,5 @@ class DealerController extends BaseController
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
             ["dealer_id" => $id,]));
     }
+
 }

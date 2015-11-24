@@ -42,7 +42,7 @@ class ContactController extends BaseController
      */
     protected function redirectToListTemplate()
     {
-        $id = $this->getRequest()->query->get("dealer_id");
+        $id = $this->getRequest()->request->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
             ["dealer_id" => $id,]));

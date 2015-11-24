@@ -1,5 +1,26 @@
-<div class="row">
-    <div class="col-sm-12">
+<div class="row inner-toolbar">
+    <div class="col-md-3 inner-actions">
+        {if $hide_flags != true}
+            <ul class="nav nav-pills">
+                {loop name="lang_list" type="lang"}
+                    <li {if $ID == $edit_language_id}class="active"{/if}>
+                        {if $current_tab}
+                            {$lang_url = {url path={$page_url|default:$current_url nofilter} edit_language_id=$ID current_tab=$current_tab}}
+                        {else}
+                            {$lang_url = {url path={$page_url|default:$current_url nofilter} edit_language_id=$ID}}
+                        {/if}
+                        <a class="language-change-button" data-language-id="{$ID}" href="{$lang_url nofilter}"
+                           title="{intl l='Edit information in %lng' lng={$TITLE}}">
+                            <img src="{image file="assets/img/flags/$CODE.png"}" alt=$TITLE/>
+                        </a>
+                    </li>
+                {/loop}
+            </ul>
+        {/if}
+    </div>
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-6 inner-actions text-right">
         {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
             <div class="pull-right">
                 <a class="btn btn-default btn-primary" title="{intl l='Create a new Contact' d='dealer.bo.default'}"
@@ -17,6 +38,13 @@
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="heading-{$ID}">
                     <h4 class="panel-title">
+                        <div class="pull-right">
+                            {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                                <a class="btn btn-default btn-xs dealer-contact-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-delete" data-toggle="modal" data-id="{$ID}">
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                </a>
+                            {/loop}
+                        </div>
                         <a role="button" data-toggle="collapse" data-parent="#contacts" href="#collapse-{$ID}"
                            aria-expanded="true" aria-controls="collapse-{$ID}">
                             {$LABEL}
@@ -67,4 +95,24 @@ form_action        = {url path="admin/module/Dealer/contact"}
 form_enctype       = {form_enctype form=$form}
 }
 {/form}
+
+{* DELETE modal *}
+
+{capture "contact_delete"}
+    {intl l="Do you really want to delete this Contact ?" d="dealer.bo.default"}
+    <input type="hidden" name="dealer-contact_id" id="dealer_contact_delete_id" value="" />
+    <input type="hidden" name="dealer_id" value="{$smarty.get.dealer_id}" />
+{/capture}
+
+{include file="includes/generic-confirm-dialog.html"
+
+dialog_id       = "dealer-contact-delete"
+dialog_title    = {intl l="Delete an entry of Contact" d="dealer.bo.default"}
+dialog_message  = {$smarty.capture.contact_delete nofilter}
+
+dialog_ok_label     = {intl l="Delete"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action         = {token_url path='/admin/module/Dealer/contact/delete'}
+}
 

@@ -40,9 +40,13 @@
   <route id="dealer.dealer.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
     <default key="_controller">Dealer:Dealer:delete</default>
   </route>
-  <!-- Contact -->
 
-  <route id="dealer.create" path="/admin/module/Dealer/contact" methods="post">
+  <!-- Contact -->
+  <route id="dealer.dealer.contact.create" path="/admin/module/Dealer/contact" methods="post">
     <default key="_controller">Dealer:Contact:create</default>
+  </route>
+
+  <route id="dealer.dealer.contact.delete" path="/admin/module/Dealer/contact/delete" methods="post">
+    <default key="_controller">Dealer:Contact:delete</default>
   </route>
 </routes>

@@ -264,7 +264,7 @@ abstract class BaseController extends BaseAdminController
                 $this->getRequest()->query->get("_token")
             );
 
-            $this->getService()->deleteFromId($this->getRequest()->request->get("dealer_id"));
+            $this->getService()->deleteFromId($this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME."_id"));
 
             if ($response == null) {
                 return $this->redirectToListTemplate();

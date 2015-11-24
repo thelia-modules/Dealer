@@ -35,7 +35,9 @@
                 <div class="tab-pane fade" id="location">
                 </div>
                 <div class="tab-pane fade" id="contacts">
-                    {include file="includes/contact-dealer.html"}
+                    <div class="form-container">
+                        {include file="includes/contact-dealer.html"}
+                    </div>
                 </div>
                 <div class="tab-pane fade" id="modules">
                 </div>
@@ -46,4 +48,11 @@
 {/block}
 
 {block name="javascript-initialization"}
+    <script>
+        $(function() {
+            $('a.dealer-contact-delete').click(function(ev) {
+                $('#dealer_contact_delete_id').val($(this).data('id'));
+            });
+        });
+    </script>
 {/block}
