@@ -53,6 +53,10 @@
             $('a.dealer-contact-delete').click(function(ev) {
                 $('#dealer_contact_delete_id').val($(this).data('id'));
             });
+            $('a.dealer-contact-update').click(function(ev) {
+                $('#attr-dealer-contact-id').val($(this).data('id'));
+                $('#attr-dealer-contact-label').val($(this).data('label'));
+            });
         });
     </script>
 {/block}

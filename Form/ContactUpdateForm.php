@@ -15,13 +15,12 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Thelia\Form\BaseForm;
 
 /**
- * Class ContactForm
+ * Class ContactUpdateForm
  * @package Dealer\Form
  */
-class ContactForm extends BaseForm
+class ContactUpdateForm extends ContactForm
 {
 
     /**
@@ -46,32 +45,21 @@ class ContactForm extends BaseForm
      */
     protected function buildForm()
     {
+        parent::buildForm();
+
         $this->formBuilder
-            ->add("label", "text", array(
-                "label" => $this->translator->trans("Label", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "attr-dealer-contact-label"],
+            ->add('id', 'integer', array(
+                "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-contact-id"],
                 "required" => true,
                 "constraints" => array(new NotBlank(),),
                 "attr" => array()
-            ))
-            ->add('dealer_id', 'integer', array(
-                "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "attr-dealer-contact-dealer_id"],
-                "required" => true,
-                "constraints" => array(new NotBlank(),),
-                "attr" => array()
-            ))
-            ->add("locale", "text", array(
-                "constraints" => array(
-                    new NotBlank(),
-                ),
-                "label_attr" => array("for" => "locale_create"),
             ))
         ;
     }
 
     public function getName()
     {
-        return "contact_create";
+        return "contact_update";
     }
 }

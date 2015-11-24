@@ -66,7 +66,14 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
 
     public function updateFromArray($data, $locale = null)
     {
-        // TODO: Implement updateFromArray() method.
+        $dealer_contact = $this->hydrateObjectArray($data, $locale);
+
+        $event = new DealerContactEvent();
+        $event->setDealerContact($dealer_contact);
+
+        $this->update($event);
+
+        return $event->getDealerContact();
     }
 
     public function deleteFromId($id)

@@ -31,6 +31,7 @@
         <form name="dealer.create" class="Dealer\Form\DealerForm"/>
         <form name="dealer.update" class="Dealer\Form\DealerUpdateForm"/>
         <form name="dealer-contact.create" class="Dealer\Form\ContactForm"/>
+        <form name="dealer-contact.update" class="Dealer\Form\ContactUpdateForm"/>
     </forms>
 
 

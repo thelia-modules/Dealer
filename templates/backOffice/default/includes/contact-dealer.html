@@ -39,6 +39,11 @@
                 <div class="panel-heading" role="tab" id="heading-{$ID}">
                     <h4 class="panel-title">
                         <div class="pull-right">
+                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
+                                <a class="btn btn-default btn-xs dealer-contact-update" title="{intl l='Modify this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-update" data-toggle="modal" data-id="{$ID}" data-label="{$LABEL}">
+                                    <i class="glyphicon glyphicon-edit"></i>
+                                </a>
+                            {/loop}
                             {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-contact-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-delete" data-toggle="modal" data-id="{$ID}">
                                     <i class="glyphicon glyphicon-trash"></i>
@@ -92,6 +97,28 @@ dialog_ok_label     = {intl l="Create"}
 dialog_cancel_label = {intl l="Cancel"}
 
 form_action        = {url path="admin/module/Dealer/contact"}
+form_enctype       = {form_enctype form=$form}
+}
+{/form}
+
+{* Update Modal *}
+
+{form name="dealer-contact.update"}
+{capture "contact_update"}
+    {form_field form=$form field="id"}
+        <input type="hidden" id="{$label_attr.for}" name="{$name}" value=""/>
+    {/form_field}
+    {include file="form/dealer-contact-create.html" form_name="dealer-contact.update" dealer_id=$smarty.get.dealer_id}
+{/capture}
+
+    {include file="includes/generic-create-dialog.html"
+    dialog_id       = "dealer-contact-update"
+    dialog_title    = {intl l="Modify a Contact" d="dealer.bo.default"}
+    dialog_body     = {$smarty.capture.contact_update nofilter}
+dialog_ok_label     = {intl l="Save"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action        = {url path="admin/module/Dealer/contact/update"}
 form_enctype       = {form_enctype form=$form}
 }
 {/form}
