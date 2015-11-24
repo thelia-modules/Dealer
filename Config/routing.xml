@@ -24,6 +24,7 @@
     </route>
     -->
 
+  <!-- DEALER -->
   <route id="dealer.list" path="/admin/module/Dealer/dealer" methods="get">
     <default key="_controller">Dealer:Dealer:default</default>
   </route>
@@ -38,5 +39,10 @@
   </route>
   <route id="dealer.dealer.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
     <default key="_controller">Dealer:Dealer:delete</default>
+  </route>
+  <!-- Contact -->
+
+  <route id="dealer.create" path="/admin/module/Dealer/contact" methods="post">
+    <default key="_controller">Dealer:Contact:create</default>
   </route>
 </routes>

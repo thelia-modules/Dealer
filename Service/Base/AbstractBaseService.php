@@ -21,7 +21,7 @@ use Thelia\Core\Event\ActionEvent;
  * Class BaseService
  * @package Dealer\Service\Base
  */
-abstract class BaseService
+abstract class AbstractBaseService
 {
     const EVENT_CREATE = null;
     const EVENT_CREATE_BEFORE = null;

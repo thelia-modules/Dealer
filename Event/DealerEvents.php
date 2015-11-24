@@ -16,6 +16,8 @@ namespace Dealer\Event;
  */
 class DealerEvents
 {
+
+    // DEALER
     const DEALER_CREATE = "dealer.dealer.create";
     const DEALER_CREATE_BEFORE = "dealer.dealer.create.before";
     const DEALER_CREATE_AFTER = "dealer.dealer.create.after";
@@ -25,4 +27,15 @@ class DealerEvents
     const DEALER_DELETE = "dealer.dealer.delete";
     const DEALER_DELETE_BEFORE = "dealer.dealer.delete.before";
     const DEALER_DELETE_AFTER = "dealer.dealer.delete.after";
+
+    //DEALER CONTACT
+    const DEALER_CONTACT_CREATE = "dealer.dealer-contact.create";
+    const DEALER_CONTACT_CREATE_BEFORE = "dealer.dealer-contact.create.before";
+    const DEALER_CONTACT_CREATE_AFTER = "dealer.dealer-contact.create.after";
+    const DEALER_CONTACT_UPDATE = "dealer.dealer-contact.update";
+    const DEALER_CONTACT_UPDATE_BEFORE = "dealer.dealer-contact.update.before";
+    const DEALER_CONTACT_UPDATE_AFTER = "dealer.dealer-contact.update.after";
+    const DEALER_CONTACT_DELETE = "dealer.dealer-contact.delete";
+    const DEALER_CONTACT_DELETE_BEFORE = "dealer.dealer-contact.delete.before";
+    const DEALER_CONTACT_DELETE_AFTER = "dealer.dealer-contact.delete.after";
 }

@@ -1,0 +1,28 @@
+{form name=$form_name}
+{form_hidden_fields form=$form}
+{loop type="lang" name="default-lang" default_only="1"}
+    <input type="hidden" name="edit_language_id" value="{$ID}"/>
+{form_field field='locale'}
+    <input type="hidden" name="{$name}" value="{$LOCALE}"/>
+{/form_field}
+{/loop}
+{render_form_field form=$form field="success_url" value={url path="/admin/module/Dealer/dealer/edit?dealer_id={$dealer_id|default:$DEALER_ID}"}}
+{form_field form=$form field="label"}
+    <div class="form-group">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l=$label d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+
+        {form_error form=$form field="label"}{$message}{/form_error}
+
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$LABEL}"
+               placeholder="{intl l='The Contact Label'}"/>
+    </div>
+{/form_field}
+{form_field form=$form field="dealer_id"}
+    <div class="form-group hidden">
+        <input type="number" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$dealer_id|default:$DEALER_ID}"/>
+    </div>
+{/form_field}
+{/form}

@@ -1,0 +1,70 @@
+<div class="row">
+    <div class="col-sm-12">
+        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+            <div class="pull-right">
+                <a class="btn btn-default btn-primary" title="{intl l='Create a new Contact' d='dealer.bo.default'}"
+                   data-target="#dealer-contact-create" data-toggle="modal">
+                    <i class="glyphicon glyphicon-plus-sign"></i>
+                </a>
+            </div>
+        {/loop}
+    </div>
+</div>
+
+{ifloop rel="dealer-contact"}
+    <div class="panel-group" id="contacts" role="tablist" aria-multiselectable="true">
+        {loop type="dealer_contact" name="dealer-contact" dealer_id=$smarty.get.dealer_id}
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="heading-{$ID}">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#contacts" href="#collapse-{$ID}"
+                           aria-expanded="true" aria-controls="collapse-{$ID}">
+                            {$LABEL}
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapse-{$ID}" class="panel-collapse collapse {if $LOOP_COUNT == 1}in{/if}" role="tabpanel"
+                     aria-labelledby="heading-{$ID}">
+                    <div class="panel-body">
+                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
+                        3
+                        wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt
+                        laborum
+                        eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee
+                        nulla
+                        assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
+                        nesciunt
+                        sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer
+                        farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus
+                        labore sustainable VHS.
+                    </div>
+                </div>
+            </div>
+        {/loop}
+    </div>
+{/ifloop}
+{elseloop rel="dealer-contact"}
+    <div class="alert alert-info">
+        {intl l="There is no Contact" d="dealer.bo.default"}
+    </div>
+{/elseloop}
+
+{* CREATE Modal *}
+
+{form name="dealer-contact.create"}
+{capture "contact_create"}
+    {include file="form/dealer-contact-create.html" form_name="dealer-contact.create" dealer_id=$smarty.get.dealer_id}
+{/capture}
+
+    {include file="includes/generic-create-dialog.html"
+    dialog_id       = "dealer-contact-create"
+    dialog_title    = {intl l="Create a Contact" d="dealer.bo.default"}
+    dialog_body     = {$smarty.capture.contact_create nofilter}
+dialog_ok_label     = {intl l="Create"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action        = {url path="admin/module/Dealer/contact"}
+form_enctype       = {form_enctype form=$form}
+}
+{/form}
+

@@ -17,14 +17,15 @@ use Dealer\Event\DealerEvent;
 use Dealer\Event\DealerEvents;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
-use Dealer\Service\Base\BaseService;
+use Dealer\Service\Base\AbstractBaseService;
+use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Class DealerService
  * @package Dealer\Service
  */
-class DealerService extends BaseService
+class DealerService extends AbstractBaseService implements BaseServiceInterface
 {
     const EVENT_CREATE = DealerEvents::DEALER_CREATE;
     const EVENT_CREATE_BEFORE = DealerEvents::DEALER_CREATE_AFTER;

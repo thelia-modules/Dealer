@@ -13,6 +13,11 @@
                 <argument type="service" id="event_dispatcher"/>
             </call>
         </service>
+        <service id="dealer_contact_service" class="Dealer\Service\ContactService">
+            <call method="setDispatcher">
+                <argument type="service" id="event_dispatcher"/>
+            </call>
+        </service>
     </services>
 
     <hooks>
@@ -25,11 +30,13 @@
     <forms>
         <form name="dealer.create" class="Dealer\Form\DealerForm"/>
         <form name="dealer.update" class="Dealer\Form\DealerUpdateForm"/>
+        <form name="dealer-contact.create" class="Dealer\Form\ContactForm"/>
     </forms>
 
 
     <loops>
         <loop name="dealer" class="Dealer\Loop\DealerLoop"/>
+        <loop name="dealer_contact" class="Dealer\Loop\ContactLoop"/>
     </loops>
     <!--
       <exports>
