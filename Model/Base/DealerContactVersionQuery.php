@@ -23,21 +23,27 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildDealerContactVersionQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildDealerContactVersionQuery orderByDealerId($order = Criteria::ASC) Order by the dealer_id column
+ * @method     ChildDealerContactVersionQuery orderByIsDefault($order = Criteria::ASC) Order by the is_default column
  * @method     ChildDealerContactVersionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildDealerContactVersionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method     ChildDealerContactVersionQuery orderByVersion($order = Criteria::ASC) Order by the version column
  * @method     ChildDealerContactVersionQuery orderByVersionCreatedAt($order = Criteria::ASC) Order by the version_created_at column
  * @method     ChildDealerContactVersionQuery orderByVersionCreatedBy($order = Criteria::ASC) Order by the version_created_by column
  * @method     ChildDealerContactVersionQuery orderByDealerIdVersion($order = Criteria::ASC) Order by the dealer_id_version column
+ * @method     ChildDealerContactVersionQuery orderByDealerContactInfoIds($order = Criteria::ASC) Order by the dealer_contact_info_ids column
+ * @method     ChildDealerContactVersionQuery orderByDealerContactInfoVersions($order = Criteria::ASC) Order by the dealer_contact_info_versions column
  *
  * @method     ChildDealerContactVersionQuery groupById() Group by the id column
  * @method     ChildDealerContactVersionQuery groupByDealerId() Group by the dealer_id column
+ * @method     ChildDealerContactVersionQuery groupByIsDefault() Group by the is_default column
  * @method     ChildDealerContactVersionQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildDealerContactVersionQuery groupByUpdatedAt() Group by the updated_at column
  * @method     ChildDealerContactVersionQuery groupByVersion() Group by the version column
  * @method     ChildDealerContactVersionQuery groupByVersionCreatedAt() Group by the version_created_at column
  * @method     ChildDealerContactVersionQuery groupByVersionCreatedBy() Group by the version_created_by column
  * @method     ChildDealerContactVersionQuery groupByDealerIdVersion() Group by the dealer_id_version column
+ * @method     ChildDealerContactVersionQuery groupByDealerContactInfoIds() Group by the dealer_contact_info_ids column
+ * @method     ChildDealerContactVersionQuery groupByDealerContactInfoVersions() Group by the dealer_contact_info_versions column
  *
  * @method     ChildDealerContactVersionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildDealerContactVersionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -52,21 +58,27 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildDealerContactVersion findOneById(int $id) Return the first ChildDealerContactVersion filtered by the id column
  * @method     ChildDealerContactVersion findOneByDealerId(int $dealer_id) Return the first ChildDealerContactVersion filtered by the dealer_id column
+ * @method     ChildDealerContactVersion findOneByIsDefault(boolean $is_default) Return the first ChildDealerContactVersion filtered by the is_default column
  * @method     ChildDealerContactVersion findOneByCreatedAt(string $created_at) Return the first ChildDealerContactVersion filtered by the created_at column
  * @method     ChildDealerContactVersion findOneByUpdatedAt(string $updated_at) Return the first ChildDealerContactVersion filtered by the updated_at column
  * @method     ChildDealerContactVersion findOneByVersion(int $version) Return the first ChildDealerContactVersion filtered by the version column
  * @method     ChildDealerContactVersion findOneByVersionCreatedAt(string $version_created_at) Return the first ChildDealerContactVersion filtered by the version_created_at column
  * @method     ChildDealerContactVersion findOneByVersionCreatedBy(string $version_created_by) Return the first ChildDealerContactVersion filtered by the version_created_by column
  * @method     ChildDealerContactVersion findOneByDealerIdVersion(int $dealer_id_version) Return the first ChildDealerContactVersion filtered by the dealer_id_version column
+ * @method     ChildDealerContactVersion findOneByDealerContactInfoIds(array $dealer_contact_info_ids) Return the first ChildDealerContactVersion filtered by the dealer_contact_info_ids column
+ * @method     ChildDealerContactVersion findOneByDealerContactInfoVersions(array $dealer_contact_info_versions) Return the first ChildDealerContactVersion filtered by the dealer_contact_info_versions column
  *
  * @method     array findById(int $id) Return ChildDealerContactVersion objects filtered by the id column
  * @method     array findByDealerId(int $dealer_id) Return ChildDealerContactVersion objects filtered by the dealer_id column
+ * @method     array findByIsDefault(boolean $is_default) Return ChildDealerContactVersion objects filtered by the is_default column
  * @method     array findByCreatedAt(string $created_at) Return ChildDealerContactVersion objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return ChildDealerContactVersion objects filtered by the updated_at column
  * @method     array findByVersion(int $version) Return ChildDealerContactVersion objects filtered by the version column
  * @method     array findByVersionCreatedAt(string $version_created_at) Return ChildDealerContactVersion objects filtered by the version_created_at column
  * @method     array findByVersionCreatedBy(string $version_created_by) Return ChildDealerContactVersion objects filtered by the version_created_by column
  * @method     array findByDealerIdVersion(int $dealer_id_version) Return ChildDealerContactVersion objects filtered by the dealer_id_version column
+ * @method     array findByDealerContactInfoIds(array $dealer_contact_info_ids) Return ChildDealerContactVersion objects filtered by the dealer_contact_info_ids column
+ * @method     array findByDealerContactInfoVersions(array $dealer_contact_info_versions) Return ChildDealerContactVersion objects filtered by the dealer_contact_info_versions column
  *
  */
 abstract class DealerContactVersionQuery extends ModelCriteria
@@ -155,7 +167,7 @@ abstract class DealerContactVersionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, DEALER_ID, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY, DEALER_ID_VERSION FROM dealer_contact_version WHERE ID = :p0 AND VERSION = :p1';
+        $sql = 'SELECT ID, DEALER_ID, IS_DEFAULT, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY, DEALER_ID_VERSION, DEALER_CONTACT_INFO_IDS, DEALER_CONTACT_INFO_VERSIONS FROM dealer_contact_version WHERE ID = :p0 AND VERSION = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -338,6 +350,33 @@ abstract class DealerContactVersionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerContactVersionTableMap::DEALER_ID, $dealerId, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_default column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIsDefault(true); // WHERE is_default = true
+     * $query->filterByIsDefault('yes'); // WHERE is_default = true
+     * </code>
+     *
+     * @param     boolean|string $isDefault The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerContactVersionQuery The current query, for fluid interface
+     */
+    public function filterByIsDefault($isDefault = null, $comparison = null)
+    {
+        if (is_string($isDefault)) {
+            $is_default = in_array(strtolower($isDefault), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(DealerContactVersionTableMap::IS_DEFAULT, $isDefault, $comparison);
     }
 
     /**
@@ -578,6 +617,168 @@ abstract class DealerContactVersionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerContactVersionTableMap::DEALER_ID_VERSION, $dealerIdVersion, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_contact_info_ids column
+     *
+     * @param     array $dealerContactInfoIds The values to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerContactVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerContactInfoIds($dealerContactInfoIds = null, $comparison = null)
+    {
+        $key = $this->getAliasedColName(DealerContactVersionTableMap::DEALER_CONTACT_INFO_IDS);
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            foreach ($dealerContactInfoIds as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_SOME) {
+            foreach ($dealerContactInfoIds as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addOr($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            foreach ($dealerContactInfoIds as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::NOT_LIKE);
+                }
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerContactVersionTableMap::DEALER_CONTACT_INFO_IDS, $dealerContactInfoIds, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_contact_info_ids column
+     * @param     mixed $dealerContactInfoIds The value to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     *
+     * @return ChildDealerContactVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerContactInfoId($dealerContactInfoIds = null, $comparison = null)
+    {
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            if (is_scalar($dealerContactInfoIds)) {
+                $dealerContactInfoIds = '%| ' . $dealerContactInfoIds . ' |%';
+                $comparison = Criteria::LIKE;
+            }
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            $dealerContactInfoIds = '%| ' . $dealerContactInfoIds . ' |%';
+            $comparison = Criteria::NOT_LIKE;
+            $key = $this->getAliasedColName(DealerContactVersionTableMap::DEALER_CONTACT_INFO_IDS);
+            if ($this->containsKey($key)) {
+                $this->addAnd($key, $dealerContactInfoIds, $comparison);
+            } else {
+                $this->addAnd($key, $dealerContactInfoIds, $comparison);
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerContactVersionTableMap::DEALER_CONTACT_INFO_IDS, $dealerContactInfoIds, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_contact_info_versions column
+     *
+     * @param     array $dealerContactInfoVersions The values to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerContactVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerContactInfoVersions($dealerContactInfoVersions = null, $comparison = null)
+    {
+        $key = $this->getAliasedColName(DealerContactVersionTableMap::DEALER_CONTACT_INFO_VERSIONS);
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            foreach ($dealerContactInfoVersions as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_SOME) {
+            foreach ($dealerContactInfoVersions as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addOr($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            foreach ($dealerContactInfoVersions as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::NOT_LIKE);
+                }
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerContactVersionTableMap::DEALER_CONTACT_INFO_VERSIONS, $dealerContactInfoVersions, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_contact_info_versions column
+     * @param     mixed $dealerContactInfoVersions The value to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     *
+     * @return ChildDealerContactVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerContactInfoVersion($dealerContactInfoVersions = null, $comparison = null)
+    {
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            if (is_scalar($dealerContactInfoVersions)) {
+                $dealerContactInfoVersions = '%| ' . $dealerContactInfoVersions . ' |%';
+                $comparison = Criteria::LIKE;
+            }
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            $dealerContactInfoVersions = '%| ' . $dealerContactInfoVersions . ' |%';
+            $comparison = Criteria::NOT_LIKE;
+            $key = $this->getAliasedColName(DealerContactVersionTableMap::DEALER_CONTACT_INFO_VERSIONS);
+            if ($this->containsKey($key)) {
+                $this->addAnd($key, $dealerContactInfoVersions, $comparison);
+            } else {
+                $this->addAnd($key, $dealerContactInfoVersions, $comparison);
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerContactVersionTableMap::DEALER_CONTACT_INFO_VERSIONS, $dealerContactInfoVersions, $comparison);
     }
 
     /**

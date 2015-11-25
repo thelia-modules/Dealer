@@ -195,32 +195,6 @@ abstract class DealerVersion implements ActiveRecordInterface
     protected $dealer_contact_versions_unserialized;
 
     /**
-     * The value for the dealer_contact_info_ids field.
-     * @var        array
-     */
-    protected $dealer_contact_info_ids;
-
-    /**
-     * The unserialized $dealer_contact_info_ids value - i.e. the persisted object.
-     * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var object
-     */
-    protected $dealer_contact_info_ids_unserialized;
-
-    /**
-     * The value for the dealer_contact_info_versions field.
-     * @var        array
-     */
-    protected $dealer_contact_info_versions;
-
-    /**
-     * The unserialized $dealer_contact_info_versions value - i.e. the persisted object.
-     * This is necessary to avoid repeated calls to unserialize() at runtime.
-     * @var object
-     */
-    protected $dealer_contact_info_versions_unserialized;
-
-    /**
      * @var        Dealer
      */
     protected $aDealer;
@@ -804,64 +778,6 @@ abstract class DealerVersion implements ActiveRecordInterface
     } // hasDealerContactVersion()
 
     /**
-     * Get the [dealer_contact_info_ids] column value.
-     *
-     * @return   array
-     */
-    public function getDealerContactInfoIds()
-    {
-        if (null === $this->dealer_contact_info_ids_unserialized) {
-            $this->dealer_contact_info_ids_unserialized = array();
-        }
-        if (!$this->dealer_contact_info_ids_unserialized && null !== $this->dealer_contact_info_ids) {
-            $dealer_contact_info_ids_unserialized = substr($this->dealer_contact_info_ids, 2, -2);
-            $this->dealer_contact_info_ids_unserialized = $dealer_contact_info_ids_unserialized ? explode(' | ', $dealer_contact_info_ids_unserialized) : array();
-        }
-
-        return $this->dealer_contact_info_ids_unserialized;
-    }
-
-    /**
-     * Test the presence of a value in the [dealer_contact_info_ids] array column value.
-     * @param      mixed $value
-     *
-     * @return boolean
-     */
-    public function hasDealerContactInfoId($value)
-    {
-        return in_array($value, $this->getDealerContactInfoIds());
-    } // hasDealerContactInfoId()
-
-    /**
-     * Get the [dealer_contact_info_versions] column value.
-     *
-     * @return   array
-     */
-    public function getDealerContactInfoVersions()
-    {
-        if (null === $this->dealer_contact_info_versions_unserialized) {
-            $this->dealer_contact_info_versions_unserialized = array();
-        }
-        if (!$this->dealer_contact_info_versions_unserialized && null !== $this->dealer_contact_info_versions) {
-            $dealer_contact_info_versions_unserialized = substr($this->dealer_contact_info_versions, 2, -2);
-            $this->dealer_contact_info_versions_unserialized = $dealer_contact_info_versions_unserialized ? explode(' | ', $dealer_contact_info_versions_unserialized) : array();
-        }
-
-        return $this->dealer_contact_info_versions_unserialized;
-    }
-
-    /**
-     * Test the presence of a value in the [dealer_contact_info_versions] array column value.
-     * @param      mixed $value
-     *
-     * @return boolean
-     */
-    public function hasDealerContactInfoVersion($value)
-    {
-        return in_array($value, $this->getDealerContactInfoVersions());
-    } // hasDealerContactInfoVersion()
-
-    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -1368,110 +1284,6 @@ abstract class DealerVersion implements ActiveRecordInterface
     } // removeDealerContactVersion()
 
     /**
-     * Set the value of [dealer_contact_info_ids] column.
-     *
-     * @param      array $v new value
-     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
-     */
-    public function setDealerContactInfoIds($v)
-    {
-        if ($this->dealer_contact_info_ids_unserialized !== $v) {
-            $this->dealer_contact_info_ids_unserialized = $v;
-            $this->dealer_contact_info_ids = '| ' . implode(' | ', $v) . ' |';
-            $this->modifiedColumns[DealerVersionTableMap::DEALER_CONTACT_INFO_IDS] = true;
-        }
-
-
-        return $this;
-    } // setDealerContactInfoIds()
-
-    /**
-     * Adds a value to the [dealer_contact_info_ids] array column value.
-     * @param      mixed $value
-     *
-     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
-     */
-    public function addDealerContactInfoId($value)
-    {
-        $currentArray = $this->getDealerContactInfoIds();
-        $currentArray []= $value;
-        $this->setDealerContactInfoIds($currentArray);
-
-        return $this;
-    } // addDealerContactInfoId()
-
-    /**
-     * Removes a value from the [dealer_contact_info_ids] array column value.
-     * @param      mixed $value
-     *
-     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
-     */
-    public function removeDealerContactInfoId($value)
-    {
-        $targetArray = array();
-        foreach ($this->getDealerContactInfoIds() as $element) {
-            if ($element != $value) {
-                $targetArray []= $element;
-            }
-        }
-        $this->setDealerContactInfoIds($targetArray);
-
-        return $this;
-    } // removeDealerContactInfoId()
-
-    /**
-     * Set the value of [dealer_contact_info_versions] column.
-     *
-     * @param      array $v new value
-     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
-     */
-    public function setDealerContactInfoVersions($v)
-    {
-        if ($this->dealer_contact_info_versions_unserialized !== $v) {
-            $this->dealer_contact_info_versions_unserialized = $v;
-            $this->dealer_contact_info_versions = '| ' . implode(' | ', $v) . ' |';
-            $this->modifiedColumns[DealerVersionTableMap::DEALER_CONTACT_INFO_VERSIONS] = true;
-        }
-
-
-        return $this;
-    } // setDealerContactInfoVersions()
-
-    /**
-     * Adds a value to the [dealer_contact_info_versions] array column value.
-     * @param      mixed $value
-     *
-     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
-     */
-    public function addDealerContactInfoVersion($value)
-    {
-        $currentArray = $this->getDealerContactInfoVersions();
-        $currentArray []= $value;
-        $this->setDealerContactInfoVersions($currentArray);
-
-        return $this;
-    } // addDealerContactInfoVersion()
-
-    /**
-     * Removes a value from the [dealer_contact_info_versions] array column value.
-     * @param      mixed $value
-     *
-     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
-     */
-    public function removeDealerContactInfoVersion($value)
-    {
-        $targetArray = array();
-        foreach ($this->getDealerContactInfoVersions() as $element) {
-            if ($element != $value) {
-                $targetArray []= $element;
-            }
-        }
-        $this->setDealerContactInfoVersions($targetArray);
-
-        return $this;
-    } // removeDealerContactInfoVersion()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1586,14 +1398,6 @@ abstract class DealerVersion implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 17 + $startcol : DealerVersionTableMap::translateFieldName('DealerContactVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_contact_versions = $col;
             $this->dealer_contact_versions_unserialized = null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 18 + $startcol : DealerVersionTableMap::translateFieldName('DealerContactInfoIds', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->dealer_contact_info_ids = $col;
-            $this->dealer_contact_info_ids_unserialized = null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 19 + $startcol : DealerVersionTableMap::translateFieldName('DealerContactInfoVersions', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->dealer_contact_info_versions = $col;
-            $this->dealer_contact_info_versions_unserialized = null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -1602,7 +1406,7 @@ abstract class DealerVersion implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 20; // 20 = DealerVersionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 18; // 18 = DealerVersionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerVersion object", 0, $e);
@@ -1877,12 +1681,6 @@ abstract class DealerVersion implements ActiveRecordInterface
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_CONTACT_VERSIONS)) {
             $modifiedColumns[':p' . $index++]  = 'DEALER_CONTACT_VERSIONS';
         }
-        if ($this->isColumnModified(DealerVersionTableMap::DEALER_CONTACT_INFO_IDS)) {
-            $modifiedColumns[':p' . $index++]  = 'DEALER_CONTACT_INFO_IDS';
-        }
-        if ($this->isColumnModified(DealerVersionTableMap::DEALER_CONTACT_INFO_VERSIONS)) {
-            $modifiedColumns[':p' . $index++]  = 'DEALER_CONTACT_INFO_VERSIONS';
-        }
 
         $sql = sprintf(
             'INSERT INTO dealer_version (%s) VALUES (%s)',
@@ -1947,12 +1745,6 @@ abstract class DealerVersion implements ActiveRecordInterface
                         break;
                     case 'DEALER_CONTACT_VERSIONS':
                         $stmt->bindValue($identifier, $this->dealer_contact_versions, PDO::PARAM_STR);
-                        break;
-                    case 'DEALER_CONTACT_INFO_IDS':
-                        $stmt->bindValue($identifier, $this->dealer_contact_info_ids, PDO::PARAM_STR);
-                        break;
-                    case 'DEALER_CONTACT_INFO_VERSIONS':
-                        $stmt->bindValue($identifier, $this->dealer_contact_info_versions, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -2063,12 +1855,6 @@ abstract class DealerVersion implements ActiveRecordInterface
             case 17:
                 return $this->getDealerContactVersions();
                 break;
-            case 18:
-                return $this->getDealerContactInfoIds();
-                break;
-            case 19:
-                return $this->getDealerContactInfoVersions();
-                break;
             default:
                 return null;
                 break;
@@ -2116,8 +1902,6 @@ abstract class DealerVersion implements ActiveRecordInterface
             $keys[15] => $this->getDealerShedulesVersions(),
             $keys[16] => $this->getDealerContactIds(),
             $keys[17] => $this->getDealerContactVersions(),
-            $keys[18] => $this->getDealerContactInfoIds(),
-            $keys[19] => $this->getDealerContactInfoVersions(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -2232,20 +2016,6 @@ abstract class DealerVersion implements ActiveRecordInterface
                 }
                 $this->setDealerContactVersions($value);
                 break;
-            case 18:
-                if (!is_array($value)) {
-                    $v = trim(substr($value, 2, -2));
-                    $value = $v ? explode(' | ', $v) : array();
-                }
-                $this->setDealerContactInfoIds($value);
-                break;
-            case 19:
-                if (!is_array($value)) {
-                    $v = trim(substr($value, 2, -2));
-                    $value = $v ? explode(' | ', $v) : array();
-                }
-                $this->setDealerContactInfoVersions($value);
-                break;
         } // switch()
     }
 
@@ -2288,8 +2058,6 @@ abstract class DealerVersion implements ActiveRecordInterface
         if (array_key_exists($keys[15], $arr)) $this->setDealerShedulesVersions($arr[$keys[15]]);
         if (array_key_exists($keys[16], $arr)) $this->setDealerContactIds($arr[$keys[16]]);
         if (array_key_exists($keys[17], $arr)) $this->setDealerContactVersions($arr[$keys[17]]);
-        if (array_key_exists($keys[18], $arr)) $this->setDealerContactInfoIds($arr[$keys[18]]);
-        if (array_key_exists($keys[19], $arr)) $this->setDealerContactInfoVersions($arr[$keys[19]]);
     }
 
     /**
@@ -2319,8 +2087,6 @@ abstract class DealerVersion implements ActiveRecordInterface
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_SHEDULES_VERSIONS)) $criteria->add(DealerVersionTableMap::DEALER_SHEDULES_VERSIONS, $this->dealer_shedules_versions);
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_CONTACT_IDS)) $criteria->add(DealerVersionTableMap::DEALER_CONTACT_IDS, $this->dealer_contact_ids);
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_CONTACT_VERSIONS)) $criteria->add(DealerVersionTableMap::DEALER_CONTACT_VERSIONS, $this->dealer_contact_versions);
-        if ($this->isColumnModified(DealerVersionTableMap::DEALER_CONTACT_INFO_IDS)) $criteria->add(DealerVersionTableMap::DEALER_CONTACT_INFO_IDS, $this->dealer_contact_info_ids);
-        if ($this->isColumnModified(DealerVersionTableMap::DEALER_CONTACT_INFO_VERSIONS)) $criteria->add(DealerVersionTableMap::DEALER_CONTACT_INFO_VERSIONS, $this->dealer_contact_info_versions);
 
         return $criteria;
     }
@@ -2409,8 +2175,6 @@ abstract class DealerVersion implements ActiveRecordInterface
         $copyObj->setDealerShedulesVersions($this->getDealerShedulesVersions());
         $copyObj->setDealerContactIds($this->getDealerContactIds());
         $copyObj->setDealerContactVersions($this->getDealerContactVersions());
-        $copyObj->setDealerContactInfoIds($this->getDealerContactInfoIds());
-        $copyObj->setDealerContactInfoVersions($this->getDealerContactInfoVersions());
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -2516,10 +2280,6 @@ abstract class DealerVersion implements ActiveRecordInterface
         $this->dealer_contact_ids_unserialized = null;
         $this->dealer_contact_versions = null;
         $this->dealer_contact_versions_unserialized = null;
-        $this->dealer_contact_info_ids = null;
-        $this->dealer_contact_info_ids_unserialized = null;
-        $this->dealer_contact_info_versions = null;
-        $this->dealer_contact_info_versions_unserialized = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

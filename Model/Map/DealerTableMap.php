@@ -224,7 +224,6 @@ class DealerTableMap extends TableMap
         $this->addRelation('Country', '\\Thelia\\Model\\Country', RelationMap::MANY_TO_ONE, array('country_id' => 'id', ), 'CASCADE', null);
         $this->addRelation('DealerShedules', '\\Dealer\\Model\\DealerShedules', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', null, 'DealerSheduless');
         $this->addRelation('DealerContact', '\\Dealer\\Model\\DealerContact', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', null, 'DealerContacts');
-        $this->addRelation('DealerContactInfo', '\\Dealer\\Model\\DealerContactInfo', RelationMap::ONE_TO_MANY, array('id' => 'contact_id', ), 'CASCADE', null, 'DealerContactInfos');
         $this->addRelation('DealerI18n', '\\Dealer\\Model\\DealerI18n', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerI18ns');
         $this->addRelation('DealerVersion', '\\Dealer\\Model\\DealerVersion', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerVersions');
     } // buildRelations()
@@ -252,7 +251,6 @@ class DealerTableMap extends TableMap
         // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
                 DealerShedulesTableMap::clearInstancePool();
                 DealerContactTableMap::clearInstancePool();
-                DealerContactInfoTableMap::clearInstancePool();
                 DealerI18nTableMap::clearInstancePool();
                 DealerVersionTableMap::clearInstancePool();
             }

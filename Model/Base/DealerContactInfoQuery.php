@@ -44,9 +44,9 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerContactInfoQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     ChildDealerContactInfoQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
- * @method     ChildDealerContactInfoQuery leftJoinDealer($relationAlias = null) Adds a LEFT JOIN clause to the query using the Dealer relation
- * @method     ChildDealerContactInfoQuery rightJoinDealer($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Dealer relation
- * @method     ChildDealerContactInfoQuery innerJoinDealer($relationAlias = null) Adds a INNER JOIN clause to the query using the Dealer relation
+ * @method     ChildDealerContactInfoQuery leftJoinDealerContact($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerContact relation
+ * @method     ChildDealerContactInfoQuery rightJoinDealerContact($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerContact relation
+ * @method     ChildDealerContactInfoQuery innerJoinDealerContact($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerContact relation
  *
  * @method     ChildDealerContactInfoQuery leftJoinDealerContactInfoI18n($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerContactInfoI18n relation
  * @method     ChildDealerContactInfoQuery rightJoinDealerContactInfoI18n($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerContactInfoI18n relation
@@ -311,7 +311,7 @@ abstract class DealerContactInfoQuery extends ModelCriteria
      * $query->filterByContactId(array('min' => 12)); // WHERE contact_id > 12
      * </code>
      *
-     * @see       filterByDealer()
+     * @see       filterByDealerContact()
      *
      * @param     mixed $contactId The value to use as filter.
      *              Use scalar values for equality.
@@ -577,42 +577,42 @@ abstract class DealerContactInfoQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Dealer\Model\Dealer object
+     * Filter the query by a related \Dealer\Model\DealerContact object
      *
-     * @param \Dealer\Model\Dealer|ObjectCollection $dealer The related object(s) to use as filter
+     * @param \Dealer\Model\DealerContact|ObjectCollection $dealerContact The related object(s) to use as filter
      * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildDealerContactInfoQuery The current query, for fluid interface
      */
-    public function filterByDealer($dealer, $comparison = null)
+    public function filterByDealerContact($dealerContact, $comparison = null)
     {
-        if ($dealer instanceof \Dealer\Model\Dealer) {
+        if ($dealerContact instanceof \Dealer\Model\DealerContact) {
             return $this
-                ->addUsingAlias(DealerContactInfoTableMap::CONTACT_ID, $dealer->getId(), $comparison);
-        } elseif ($dealer instanceof ObjectCollection) {
+                ->addUsingAlias(DealerContactInfoTableMap::CONTACT_ID, $dealerContact->getId(), $comparison);
+        } elseif ($dealerContact instanceof ObjectCollection) {
             if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
 
             return $this
-                ->addUsingAlias(DealerContactInfoTableMap::CONTACT_ID, $dealer->toKeyValue('PrimaryKey', 'Id'), $comparison);
+                ->addUsingAlias(DealerContactInfoTableMap::CONTACT_ID, $dealerContact->toKeyValue('PrimaryKey', 'Id'), $comparison);
         } else {
-            throw new PropelException('filterByDealer() only accepts arguments of type \Dealer\Model\Dealer or Collection');
+            throw new PropelException('filterByDealerContact() only accepts arguments of type \Dealer\Model\DealerContact or Collection');
         }
     }
 
     /**
-     * Adds a JOIN clause to the query using the Dealer relation
+     * Adds a JOIN clause to the query using the DealerContact relation
      *
      * @param     string $relationAlias optional alias for the relation
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
      * @return ChildDealerContactInfoQuery The current query, for fluid interface
      */
-    public function joinDealer($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinDealerContact($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('Dealer');
+        $relationMap = $tableMap->getRelation('DealerContact');
 
         // create a ModelJoin object for this join
         $join = new ModelJoin();
@@ -627,14 +627,14 @@ abstract class DealerContactInfoQuery extends ModelCriteria
             $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
             $this->addJoinObject($join, $relationAlias);
         } else {
-            $this->addJoinObject($join, 'Dealer');
+            $this->addJoinObject($join, 'DealerContact');
         }
 
         return $this;
     }
 
     /**
-     * Use the Dealer relation Dealer object
+     * Use the DealerContact relation DealerContact object
      *
      * @see useQuery()
      *
@@ -642,13 +642,13 @@ abstract class DealerContactInfoQuery extends ModelCriteria
      *                                   to be used as main alias in the secondary query
      * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
      *
-     * @return   \Dealer\Model\DealerQuery A secondary query class using the current class as primary query
+     * @return   \Dealer\Model\DealerContactQuery A secondary query class using the current class as primary query
      */
-    public function useDealerQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useDealerContactQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
-            ->joinDealer($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'Dealer', '\Dealer\Model\DealerQuery');
+            ->joinDealerContact($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DealerContact', '\Dealer\Model\DealerContactQuery');
     }
 
     /**

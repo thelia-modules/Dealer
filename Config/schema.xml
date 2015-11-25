@@ -59,6 +59,7 @@
     <table name="dealer_contact" namespace="Dealer\Model">
         <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER"/>
         <column name="dealer_id" required="true" type="INTEGER"/>
+        <column name="is_default" required="true" type="BOOLEAN"/>
 
         <column name="label" required="true" size="255" type="VARCHAR"/>
         <foreign-key foreignTable="dealer" name="fk_dealer_contact_dealer_id" onDelete="CASCADE">
@@ -82,7 +83,7 @@
         <column name="value" required="true" size="255" type="VARCHAR"/>
         <column name="contact_type" required="true" type="ENUM" valueSet="EMAIL, TEL, FAX, URL"/>
 
-        <foreign-key foreignTable="dealer" name="fk_dealer_contact_info_dealer_contact_id" onDelete="CASCADE">
+        <foreign-key foreignTable="dealer_contact" name="fk_dealer_contact_info_dealer_contact_id" onDelete="CASCADE">
             <reference foreign="id" local="contact_id"/>
         </foreign-key>
 

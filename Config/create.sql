@@ -1,3 +1,6 @@
+
+# This is a fix for InnoDB in MySQL >= 4.1.x
+# It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ---------------------------------------------------------------------
@@ -62,6 +65,7 @@ CREATE TABLE `dealer_contact`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `dealer_id` INTEGER NOT NULL,
+    `default` TINYINT(1) NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     `version` INTEGER DEFAULT 0,
@@ -93,7 +97,7 @@ CREATE TABLE `dealer_contact_info`
     INDEX `FI_dealer_contact_info_dealer_contact_id` (`contact_id`),
     CONSTRAINT `fk_dealer_contact_info_dealer_contact_id`
         FOREIGN KEY (`contact_id`)
-        REFERENCES `dealer` (`id`)
+        REFERENCES `dealer_contact` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -170,8 +174,6 @@ CREATE TABLE `dealer_version`
     `dealer_shedules_versions` TEXT,
     `dealer_contact_ids` TEXT,
     `dealer_contact_versions` TEXT,
-    `dealer_contact_info_ids` TEXT,
-    `dealer_contact_info_versions` TEXT,
     PRIMARY KEY (`id`,`version`),
     CONSTRAINT `dealer_version_FK_1`
         FOREIGN KEY (`id`)
@@ -213,12 +215,15 @@ CREATE TABLE `dealer_contact_version`
 (
     `id` INTEGER NOT NULL,
     `dealer_id` INTEGER NOT NULL,
+    `is_default` TINYINT(1) NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     `version` INTEGER DEFAULT 0 NOT NULL,
     `version_created_at` DATETIME,
     `version_created_by` VARCHAR(100),
     `dealer_id_version` INTEGER DEFAULT 0,
+    `dealer_contact_info_ids` TEXT,
+    `dealer_contact_info_versions` TEXT,
     PRIMARY KEY (`id`,`version`),
     CONSTRAINT `dealer_contact_version_FK_1`
         FOREIGN KEY (`id`)
@@ -248,4 +253,5 @@ CREATE TABLE `dealer_contact_info_version`
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+# This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

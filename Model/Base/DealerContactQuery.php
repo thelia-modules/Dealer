@@ -24,6 +24,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildDealerContactQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     ChildDealerContactQuery orderByDealerId($order = Criteria::ASC) Order by the dealer_id column
+ * @method     ChildDealerContactQuery orderByIsDefault($order = Criteria::ASC) Order by the is_default column
  * @method     ChildDealerContactQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildDealerContactQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method     ChildDealerContactQuery orderByVersion($order = Criteria::ASC) Order by the version column
@@ -32,6 +33,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildDealerContactQuery groupById() Group by the id column
  * @method     ChildDealerContactQuery groupByDealerId() Group by the dealer_id column
+ * @method     ChildDealerContactQuery groupByIsDefault() Group by the is_default column
  * @method     ChildDealerContactQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildDealerContactQuery groupByUpdatedAt() Group by the updated_at column
  * @method     ChildDealerContactQuery groupByVersion() Group by the version column
@@ -46,6 +48,10 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerContactQuery rightJoinDealer($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Dealer relation
  * @method     ChildDealerContactQuery innerJoinDealer($relationAlias = null) Adds a INNER JOIN clause to the query using the Dealer relation
  *
+ * @method     ChildDealerContactQuery leftJoinDealerContactInfo($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerContactInfo relation
+ * @method     ChildDealerContactQuery rightJoinDealerContactInfo($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerContactInfo relation
+ * @method     ChildDealerContactQuery innerJoinDealerContactInfo($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerContactInfo relation
+ *
  * @method     ChildDealerContactQuery leftJoinDealerContactI18n($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerContactI18n relation
  * @method     ChildDealerContactQuery rightJoinDealerContactI18n($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerContactI18n relation
  * @method     ChildDealerContactQuery innerJoinDealerContactI18n($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerContactI18n relation
@@ -59,6 +65,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildDealerContact findOneById(int $id) Return the first ChildDealerContact filtered by the id column
  * @method     ChildDealerContact findOneByDealerId(int $dealer_id) Return the first ChildDealerContact filtered by the dealer_id column
+ * @method     ChildDealerContact findOneByIsDefault(boolean $is_default) Return the first ChildDealerContact filtered by the is_default column
  * @method     ChildDealerContact findOneByCreatedAt(string $created_at) Return the first ChildDealerContact filtered by the created_at column
  * @method     ChildDealerContact findOneByUpdatedAt(string $updated_at) Return the first ChildDealerContact filtered by the updated_at column
  * @method     ChildDealerContact findOneByVersion(int $version) Return the first ChildDealerContact filtered by the version column
@@ -67,6 +74,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     array findById(int $id) Return ChildDealerContact objects filtered by the id column
  * @method     array findByDealerId(int $dealer_id) Return ChildDealerContact objects filtered by the dealer_id column
+ * @method     array findByIsDefault(boolean $is_default) Return ChildDealerContact objects filtered by the is_default column
  * @method     array findByCreatedAt(string $created_at) Return ChildDealerContact objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return ChildDealerContact objects filtered by the updated_at column
  * @method     array findByVersion(int $version) Return ChildDealerContact objects filtered by the version column
@@ -167,7 +175,7 @@ abstract class DealerContactQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, DEALER_ID, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer_contact WHERE ID = :p0';
+        $sql = 'SELECT ID, DEALER_ID, IS_DEFAULT, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer_contact WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -338,6 +346,33 @@ abstract class DealerContactQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerContactTableMap::DEALER_ID, $dealerId, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_default column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIsDefault(true); // WHERE is_default = true
+     * $query->filterByIsDefault('yes'); // WHERE is_default = true
+     * </code>
+     *
+     * @param     boolean|string $isDefault The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerContactQuery The current query, for fluid interface
+     */
+    public function filterByIsDefault($isDefault = null, $comparison = null)
+    {
+        if (is_string($isDefault)) {
+            $is_default = in_array(strtolower($isDefault), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(DealerContactTableMap::IS_DEFAULT, $isDefault, $comparison);
     }
 
     /**
@@ -612,6 +647,79 @@ abstract class DealerContactQuery extends ModelCriteria
         return $this
             ->joinDealer($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Dealer', '\Dealer\Model\DealerQuery');
+    }
+
+    /**
+     * Filter the query by a related \Dealer\Model\DealerContactInfo object
+     *
+     * @param \Dealer\Model\DealerContactInfo|ObjectCollection $dealerContactInfo  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerContactQuery The current query, for fluid interface
+     */
+    public function filterByDealerContactInfo($dealerContactInfo, $comparison = null)
+    {
+        if ($dealerContactInfo instanceof \Dealer\Model\DealerContactInfo) {
+            return $this
+                ->addUsingAlias(DealerContactTableMap::ID, $dealerContactInfo->getContactId(), $comparison);
+        } elseif ($dealerContactInfo instanceof ObjectCollection) {
+            return $this
+                ->useDealerContactInfoQuery()
+                ->filterByPrimaryKeys($dealerContactInfo->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDealerContactInfo() only accepts arguments of type \Dealer\Model\DealerContactInfo or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DealerContactInfo relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildDealerContactQuery The current query, for fluid interface
+     */
+    public function joinDealerContactInfo($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DealerContactInfo');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DealerContactInfo');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DealerContactInfo relation DealerContactInfo object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Dealer\Model\DealerContactInfoQuery A secondary query class using the current class as primary query
+     */
+    public function useDealerContactInfoQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDealerContactInfo($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DealerContactInfo', '\Dealer\Model\DealerContactInfoQuery');
     }
 
     /**

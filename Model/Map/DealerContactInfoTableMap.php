@@ -208,7 +208,7 @@ class DealerContactInfoTableMap extends TableMap
         $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-        $this->addForeignKey('CONTACT_ID', 'ContactId', 'INTEGER', 'dealer', 'ID', true, null, null);
+        $this->addForeignKey('CONTACT_ID', 'ContactId', 'INTEGER', 'dealer_contact', 'ID', true, null, null);
         $this->addColumn('CONTACT_TYPE', 'ContactType', 'ENUM', true, null, null);
         $this->getColumn('CONTACT_TYPE', false)->setValueSet(array (
   0 => 'EMAIL',
@@ -228,7 +228,7 @@ class DealerContactInfoTableMap extends TableMap
      */
     public function buildRelations()
     {
-        $this->addRelation('Dealer', '\\Dealer\\Model\\Dealer', RelationMap::MANY_TO_ONE, array('contact_id' => 'id', ), 'CASCADE', null);
+        $this->addRelation('DealerContact', '\\Dealer\\Model\\DealerContact', RelationMap::MANY_TO_ONE, array('contact_id' => 'id', ), 'CASCADE', null);
         $this->addRelation('DealerContactInfoI18n', '\\Dealer\\Model\\DealerContactInfoI18n', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerContactInfoI18ns');
         $this->addRelation('DealerContactInfoVersion', '\\Dealer\\Model\\DealerContactInfoVersion', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerContactInfoVersions');
     } // buildRelations()

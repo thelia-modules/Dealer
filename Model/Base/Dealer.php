@@ -7,9 +7,6 @@ use \Exception;
 use \PDO;
 use Dealer\Model\Dealer as ChildDealer;
 use Dealer\Model\DealerContact as ChildDealerContact;
-use Dealer\Model\DealerContactInfo as ChildDealerContactInfo;
-use Dealer\Model\DealerContactInfoQuery as ChildDealerContactInfoQuery;
-use Dealer\Model\DealerContactInfoVersionQuery as ChildDealerContactInfoVersionQuery;
 use Dealer\Model\DealerContactQuery as ChildDealerContactQuery;
 use Dealer\Model\DealerContactVersionQuery as ChildDealerContactVersionQuery;
 use Dealer\Model\DealerI18n as ChildDealerI18n;
@@ -20,7 +17,6 @@ use Dealer\Model\DealerShedulesQuery as ChildDealerShedulesQuery;
 use Dealer\Model\DealerShedulesVersionQuery as ChildDealerShedulesVersionQuery;
 use Dealer\Model\DealerVersion as ChildDealerVersion;
 use Dealer\Model\DealerVersionQuery as ChildDealerVersionQuery;
-use Dealer\Model\Map\DealerContactInfoVersionTableMap;
 use Dealer\Model\Map\DealerContactVersionTableMap;
 use Dealer\Model\Map\DealerShedulesVersionTableMap;
 use Dealer\Model\Map\DealerTableMap;
@@ -179,12 +175,6 @@ abstract class Dealer implements ActiveRecordInterface
     protected $collDealerContactsPartial;
 
     /**
-     * @var        ObjectCollection|ChildDealerContactInfo[] Collection to store aggregation of ChildDealerContactInfo objects.
-     */
-    protected $collDealerContactInfos;
-    protected $collDealerContactInfosPartial;
-
-    /**
      * @var        ObjectCollection|ChildDealerI18n[] Collection to store aggregation of ChildDealerI18n objects.
      */
     protected $collDealerI18ns;
@@ -237,12 +227,6 @@ abstract class Dealer implements ActiveRecordInterface
      * @var ObjectCollection
      */
     protected $dealerContactsScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection
-     */
-    protected $dealerContactInfosScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -1184,8 +1168,6 @@ abstract class Dealer implements ActiveRecordInterface
 
             $this->collDealerContacts = null;
 
-            $this->collDealerContactInfos = null;
-
             $this->collDealerI18ns = null;
 
             $this->collDealerVersions = null;
@@ -1375,23 +1357,6 @@ abstract class Dealer implements ActiveRecordInterface
 
                 if ($this->collDealerContacts !== null) {
             foreach ($this->collDealerContacts as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->dealerContactInfosScheduledForDeletion !== null) {
-                if (!$this->dealerContactInfosScheduledForDeletion->isEmpty()) {
-                    \Dealer\Model\DealerContactInfoQuery::create()
-                        ->filterByPrimaryKeys($this->dealerContactInfosScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->dealerContactInfosScheduledForDeletion = null;
-                }
-            }
-
-                if ($this->collDealerContactInfos !== null) {
-            foreach ($this->collDealerContactInfos as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1716,9 +1681,6 @@ abstract class Dealer implements ActiveRecordInterface
             if (null !== $this->collDealerContacts) {
                 $result['DealerContacts'] = $this->collDealerContacts->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
-            if (null !== $this->collDealerContactInfos) {
-                $result['DealerContactInfos'] = $this->collDealerContactInfos->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collDealerI18ns) {
                 $result['DealerI18ns'] = $this->collDealerI18ns->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1958,12 +1920,6 @@ abstract class Dealer implements ActiveRecordInterface
                 }
             }
 
-            foreach ($this->getDealerContactInfos() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDealerContactInfo($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getDealerI18ns() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDealerI18n($relObj->copy($deepCopy));
@@ -2073,9 +2029,6 @@ abstract class Dealer implements ActiveRecordInterface
         }
         if ('DealerContact' == $relationName) {
             return $this->initDealerContacts();
-        }
-        if ('DealerContactInfo' == $relationName) {
-            return $this->initDealerContactInfos();
         }
         if ('DealerI18n' == $relationName) {
             return $this->initDealerI18ns();
@@ -2516,224 +2469,6 @@ abstract class Dealer implements ActiveRecordInterface
             }
             $this->dealerContactsScheduledForDeletion[]= clone $dealerContact;
             $dealerContact->setDealer(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Clears out the collDealerContactInfos collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addDealerContactInfos()
-     */
-    public function clearDealerContactInfos()
-    {
-        $this->collDealerContactInfos = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collDealerContactInfos collection loaded partially.
-     */
-    public function resetPartialDealerContactInfos($v = true)
-    {
-        $this->collDealerContactInfosPartial = $v;
-    }
-
-    /**
-     * Initializes the collDealerContactInfos collection.
-     *
-     * By default this just sets the collDealerContactInfos collection to an empty array (like clearcollDealerContactInfos());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDealerContactInfos($overrideExisting = true)
-    {
-        if (null !== $this->collDealerContactInfos && !$overrideExisting) {
-            return;
-        }
-        $this->collDealerContactInfos = new ObjectCollection();
-        $this->collDealerContactInfos->setModel('\Dealer\Model\DealerContactInfo');
-    }
-
-    /**
-     * Gets an array of ChildDealerContactInfo objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildDealer is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildDealerContactInfo[] List of ChildDealerContactInfo objects
-     * @throws PropelException
-     */
-    public function getDealerContactInfos($criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerContactInfosPartial && !$this->isNew();
-        if (null === $this->collDealerContactInfos || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDealerContactInfos) {
-                // return empty collection
-                $this->initDealerContactInfos();
-            } else {
-                $collDealerContactInfos = ChildDealerContactInfoQuery::create(null, $criteria)
-                    ->filterByDealer($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collDealerContactInfosPartial && count($collDealerContactInfos)) {
-                        $this->initDealerContactInfos(false);
-
-                        foreach ($collDealerContactInfos as $obj) {
-                            if (false == $this->collDealerContactInfos->contains($obj)) {
-                                $this->collDealerContactInfos->append($obj);
-                            }
-                        }
-
-                        $this->collDealerContactInfosPartial = true;
-                    }
-
-                    reset($collDealerContactInfos);
-
-                    return $collDealerContactInfos;
-                }
-
-                if ($partial && $this->collDealerContactInfos) {
-                    foreach ($this->collDealerContactInfos as $obj) {
-                        if ($obj->isNew()) {
-                            $collDealerContactInfos[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDealerContactInfos = $collDealerContactInfos;
-                $this->collDealerContactInfosPartial = false;
-            }
-        }
-
-        return $this->collDealerContactInfos;
-    }
-
-    /**
-     * Sets a collection of DealerContactInfo objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $dealerContactInfos A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildDealer The current object (for fluent API support)
-     */
-    public function setDealerContactInfos(Collection $dealerContactInfos, ConnectionInterface $con = null)
-    {
-        $dealerContactInfosToDelete = $this->getDealerContactInfos(new Criteria(), $con)->diff($dealerContactInfos);
-
-
-        $this->dealerContactInfosScheduledForDeletion = $dealerContactInfosToDelete;
-
-        foreach ($dealerContactInfosToDelete as $dealerContactInfoRemoved) {
-            $dealerContactInfoRemoved->setDealer(null);
-        }
-
-        $this->collDealerContactInfos = null;
-        foreach ($dealerContactInfos as $dealerContactInfo) {
-            $this->addDealerContactInfo($dealerContactInfo);
-        }
-
-        $this->collDealerContactInfos = $dealerContactInfos;
-        $this->collDealerContactInfosPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related DealerContactInfo objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related DealerContactInfo objects.
-     * @throws PropelException
-     */
-    public function countDealerContactInfos(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerContactInfosPartial && !$this->isNew();
-        if (null === $this->collDealerContactInfos || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDealerContactInfos) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getDealerContactInfos());
-            }
-
-            $query = ChildDealerContactInfoQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByDealer($this)
-                ->count($con);
-        }
-
-        return count($this->collDealerContactInfos);
-    }
-
-    /**
-     * Method called to associate a ChildDealerContactInfo object to this object
-     * through the ChildDealerContactInfo foreign key attribute.
-     *
-     * @param    ChildDealerContactInfo $l ChildDealerContactInfo
-     * @return   \Dealer\Model\Dealer The current object (for fluent API support)
-     */
-    public function addDealerContactInfo(ChildDealerContactInfo $l)
-    {
-        if ($this->collDealerContactInfos === null) {
-            $this->initDealerContactInfos();
-            $this->collDealerContactInfosPartial = true;
-        }
-
-        if (!in_array($l, $this->collDealerContactInfos->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDealerContactInfo($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param DealerContactInfo $dealerContactInfo The dealerContactInfo object to add.
-     */
-    protected function doAddDealerContactInfo($dealerContactInfo)
-    {
-        $this->collDealerContactInfos[]= $dealerContactInfo;
-        $dealerContactInfo->setDealer($this);
-    }
-
-    /**
-     * @param  DealerContactInfo $dealerContactInfo The dealerContactInfo object to remove.
-     * @return ChildDealer The current object (for fluent API support)
-     */
-    public function removeDealerContactInfo($dealerContactInfo)
-    {
-        if ($this->getDealerContactInfos()->contains($dealerContactInfo)) {
-            $this->collDealerContactInfos->remove($this->collDealerContactInfos->search($dealerContactInfo));
-            if (null === $this->dealerContactInfosScheduledForDeletion) {
-                $this->dealerContactInfosScheduledForDeletion = clone $this->collDealerContactInfos;
-                $this->dealerContactInfosScheduledForDeletion->clear();
-            }
-            $this->dealerContactInfosScheduledForDeletion[]= clone $dealerContactInfo;
-            $dealerContactInfo->setDealer(null);
         }
 
         return $this;
@@ -3234,11 +2969,6 @@ abstract class Dealer implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collDealerContactInfos) {
-                foreach ($this->collDealerContactInfos as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collDealerI18ns) {
                 foreach ($this->collDealerI18ns as $o) {
                     $o->clearAllReferences($deep);
@@ -3257,7 +2987,6 @@ abstract class Dealer implements ActiveRecordInterface
 
         $this->collDealerSheduless = null;
         $this->collDealerContacts = null;
-        $this->collDealerContactInfos = null;
         $this->collDealerI18ns = null;
         $this->collDealerVersions = null;
         $this->aCountry = null;
@@ -3488,17 +3217,6 @@ abstract class Dealer implements ActiveRecordInterface
         }
         $this->alreadyInSave = false;
 
-        // to avoid infinite loops, emulate in save
-        $this->alreadyInSave = true;
-        foreach ($this->getDealerContactInfos(null, $con) as $relatedObject) {
-            if ($relatedObject->isVersioningNecessary($con)) {
-                $this->alreadyInSave = false;
-
-                return true;
-            }
-        }
-        $this->alreadyInSave = false;
-
 
         return false;
     }
@@ -3537,10 +3255,6 @@ abstract class Dealer implements ActiveRecordInterface
         if ($relateds = $this->getDealerContacts($con)->toKeyValue('Id', 'Version')) {
             $version->setDealerContactIds(array_keys($relateds));
             $version->setDealerContactVersions(array_values($relateds));
-        }
-        if ($relateds = $this->getDealerContactInfos($con)->toKeyValue('Id', 'Version')) {
-            $version->setDealerContactInfoIds(array_keys($relateds));
-            $version->setDealerContactInfoVersions(array_values($relateds));
         }
         $version->save($con);
 
@@ -3634,28 +3348,6 @@ abstract class Dealer implements ActiveRecordInterface
                 }
                 $this->addDealerContact($related);
                 $this->collDealerContactPartial = false;
-            }
-        }
-        if ($fkValues = $version->getDealerContactInfoIds()) {
-            $this->clearDealerContactInfo();
-            $fkVersions = $version->getDealerContactInfoVersions();
-            $query = ChildDealerContactInfoVersionQuery::create();
-            foreach ($fkValues as $key => $value) {
-                $c1 = $query->getNewCriterion(DealerContactInfoVersionTableMap::ID, $value);
-                $c2 = $query->getNewCriterion(DealerContactInfoVersionTableMap::VERSION, $fkVersions[$key]);
-                $c1->addAnd($c2);
-                $query->addOr($c1);
-            }
-            foreach ($query->find($con) as $relatedVersion) {
-                if (isset($loadedObjects['ChildDealerContactInfo']) && isset($loadedObjects['ChildDealerContactInfo'][$relatedVersion->getId()]) && isset($loadedObjects['ChildDealerContactInfo'][$relatedVersion->getId()][$relatedVersion->getVersion()])) {
-                    $related = $loadedObjects['ChildDealerContactInfo'][$relatedVersion->getId()][$relatedVersion->getVersion()];
-                } else {
-                    $related = new ChildDealerContactInfo();
-                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
-                    $related->setNew(false);
-                }
-                $this->addDealerContactInfo($related);
-                $this->collDealerContactInfoPartial = false;
             }
         }
 

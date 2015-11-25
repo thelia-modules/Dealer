@@ -9,11 +9,15 @@ use Dealer\Model\Dealer as ChildDealer;
 use Dealer\Model\DealerContact as ChildDealerContact;
 use Dealer\Model\DealerContactI18n as ChildDealerContactI18n;
 use Dealer\Model\DealerContactI18nQuery as ChildDealerContactI18nQuery;
+use Dealer\Model\DealerContactInfo as ChildDealerContactInfo;
+use Dealer\Model\DealerContactInfoQuery as ChildDealerContactInfoQuery;
+use Dealer\Model\DealerContactInfoVersionQuery as ChildDealerContactInfoVersionQuery;
 use Dealer\Model\DealerContactQuery as ChildDealerContactQuery;
 use Dealer\Model\DealerContactVersion as ChildDealerContactVersion;
 use Dealer\Model\DealerContactVersionQuery as ChildDealerContactVersionQuery;
 use Dealer\Model\DealerQuery as ChildDealerQuery;
 use Dealer\Model\DealerVersionQuery as ChildDealerVersionQuery;
+use Dealer\Model\Map\DealerContactInfoVersionTableMap;
 use Dealer\Model\Map\DealerContactTableMap;
 use Dealer\Model\Map\DealerContactVersionTableMap;
 use Propel\Runtime\Propel;
@@ -76,6 +80,12 @@ abstract class DealerContact implements ActiveRecordInterface
     protected $dealer_id;
 
     /**
+     * The value for the is_default field.
+     * @var        boolean
+     */
+    protected $is_default;
+
+    /**
      * The value for the created_at field.
      * @var        string
      */
@@ -110,6 +120,12 @@ abstract class DealerContact implements ActiveRecordInterface
      * @var        Dealer
      */
     protected $aDealer;
+
+    /**
+     * @var        ObjectCollection|ChildDealerContactInfo[] Collection to store aggregation of ChildDealerContactInfo objects.
+     */
+    protected $collDealerContactInfos;
+    protected $collDealerContactInfosPartial;
 
     /**
      * @var        ObjectCollection|ChildDealerContactI18n[] Collection to store aggregation of ChildDealerContactI18n objects.
@@ -152,6 +168,12 @@ abstract class DealerContact implements ActiveRecordInterface
      * @var bool
      */
     protected $enforceVersion = false;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection
+     */
+    protected $dealerContactInfosScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -459,6 +481,17 @@ abstract class DealerContact implements ActiveRecordInterface
     }
 
     /**
+     * Get the [is_default] column value.
+     *
+     * @return   boolean
+     */
+    public function getIsDefault()
+    {
+
+        return $this->is_default;
+    }
+
+    /**
      * Get the [optionally formatted] temporal [created_at] column value.
      *
      *
@@ -585,6 +618,35 @@ abstract class DealerContact implements ActiveRecordInterface
 
         return $this;
     } // setDealerId()
+
+    /**
+     * Sets the value of the [is_default] column.
+     * Non-boolean arguments are converted using the following rules:
+     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     *
+     * @param      boolean|integer|string $v The new value
+     * @return   \Dealer\Model\DealerContact The current object (for fluent API support)
+     */
+    public function setIsDefault($v)
+    {
+        if ($v !== null) {
+            if (is_string($v)) {
+                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+            } else {
+                $v = (boolean) $v;
+            }
+        }
+
+        if ($this->is_default !== $v) {
+            $this->is_default = $v;
+            $this->modifiedColumns[DealerContactTableMap::IS_DEFAULT] = true;
+        }
+
+
+        return $this;
+    } // setIsDefault()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
@@ -738,28 +800,31 @@ abstract class DealerContact implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DealerContactTableMap::translateFieldName('DealerId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerContactTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerContactTableMap::translateFieldName('IsDefault', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->is_default = (null !== $col) ? (boolean) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerContactTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerContactTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerContactTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerContactTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerContactTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerContactTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerContactTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerContactTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerContactTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -769,7 +834,7 @@ abstract class DealerContact implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 7; // 7 = DealerContactTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 8; // 8 = DealerContactTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerContact object", 0, $e);
@@ -834,6 +899,8 @@ abstract class DealerContact implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aDealer = null;
+            $this->collDealerContactInfos = null;
+
             $this->collDealerContactI18ns = null;
 
             $this->collDealerContactVersions = null;
@@ -995,6 +1062,23 @@ abstract class DealerContact implements ActiveRecordInterface
                 $this->resetModified();
             }
 
+            if ($this->dealerContactInfosScheduledForDeletion !== null) {
+                if (!$this->dealerContactInfosScheduledForDeletion->isEmpty()) {
+                    \Dealer\Model\DealerContactInfoQuery::create()
+                        ->filterByPrimaryKeys($this->dealerContactInfosScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->dealerContactInfosScheduledForDeletion = null;
+                }
+            }
+
+                if ($this->collDealerContactInfos !== null) {
+            foreach ($this->collDealerContactInfos as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
             if ($this->dealerContactI18nsScheduledForDeletion !== null) {
                 if (!$this->dealerContactI18nsScheduledForDeletion->isEmpty()) {
                     \Dealer\Model\DealerContactI18nQuery::create()
@@ -1061,6 +1145,9 @@ abstract class DealerContact implements ActiveRecordInterface
         if ($this->isColumnModified(DealerContactTableMap::DEALER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'DEALER_ID';
         }
+        if ($this->isColumnModified(DealerContactTableMap::IS_DEFAULT)) {
+            $modifiedColumns[':p' . $index++]  = 'IS_DEFAULT';
+        }
         if ($this->isColumnModified(DealerContactTableMap::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'CREATED_AT';
         }
@@ -1092,6 +1179,9 @@ abstract class DealerContact implements ActiveRecordInterface
                         break;
                     case 'DEALER_ID':
                         $stmt->bindValue($identifier, $this->dealer_id, PDO::PARAM_INT);
+                        break;
+                    case 'IS_DEFAULT':
+                        $stmt->bindValue($identifier, (int) $this->is_default, PDO::PARAM_INT);
                         break;
                     case 'CREATED_AT':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1177,18 +1267,21 @@ abstract class DealerContact implements ActiveRecordInterface
                 return $this->getDealerId();
                 break;
             case 2:
-                return $this->getCreatedAt();
+                return $this->getIsDefault();
                 break;
             case 3:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 4:
-                return $this->getVersion();
+                return $this->getUpdatedAt();
                 break;
             case 5:
-                return $this->getVersionCreatedAt();
+                return $this->getVersion();
                 break;
             case 6:
+                return $this->getVersionCreatedAt();
+                break;
+            case 7:
                 return $this->getVersionCreatedBy();
                 break;
             default:
@@ -1222,11 +1315,12 @@ abstract class DealerContact implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getDealerId(),
-            $keys[2] => $this->getCreatedAt(),
-            $keys[3] => $this->getUpdatedAt(),
-            $keys[4] => $this->getVersion(),
-            $keys[5] => $this->getVersionCreatedAt(),
-            $keys[6] => $this->getVersionCreatedBy(),
+            $keys[2] => $this->getIsDefault(),
+            $keys[3] => $this->getCreatedAt(),
+            $keys[4] => $this->getUpdatedAt(),
+            $keys[5] => $this->getVersion(),
+            $keys[6] => $this->getVersionCreatedAt(),
+            $keys[7] => $this->getVersionCreatedBy(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1236,6 +1330,9 @@ abstract class DealerContact implements ActiveRecordInterface
         if ($includeForeignObjects) {
             if (null !== $this->aDealer) {
                 $result['Dealer'] = $this->aDealer->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            }
+            if (null !== $this->collDealerContactInfos) {
+                $result['DealerContactInfos'] = $this->collDealerContactInfos->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
             if (null !== $this->collDealerContactI18ns) {
                 $result['DealerContactI18ns'] = $this->collDealerContactI18ns->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
@@ -1284,18 +1381,21 @@ abstract class DealerContact implements ActiveRecordInterface
                 $this->setDealerId($value);
                 break;
             case 2:
-                $this->setCreatedAt($value);
+                $this->setIsDefault($value);
                 break;
             case 3:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 4:
-                $this->setVersion($value);
+                $this->setUpdatedAt($value);
                 break;
             case 5:
-                $this->setVersionCreatedAt($value);
+                $this->setVersion($value);
                 break;
             case 6:
+                $this->setVersionCreatedAt($value);
+                break;
+            case 7:
                 $this->setVersionCreatedBy($value);
                 break;
         } // switch()
@@ -1324,11 +1424,12 @@ abstract class DealerContact implements ActiveRecordInterface
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setDealerId($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setCreatedAt($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setUpdatedAt($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setVersion($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setVersionCreatedAt($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setVersionCreatedBy($arr[$keys[6]]);
+        if (array_key_exists($keys[2], $arr)) $this->setIsDefault($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setCreatedAt($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setUpdatedAt($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setVersion($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setVersionCreatedAt($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setVersionCreatedBy($arr[$keys[7]]);
     }
 
     /**
@@ -1342,6 +1443,7 @@ abstract class DealerContact implements ActiveRecordInterface
 
         if ($this->isColumnModified(DealerContactTableMap::ID)) $criteria->add(DealerContactTableMap::ID, $this->id);
         if ($this->isColumnModified(DealerContactTableMap::DEALER_ID)) $criteria->add(DealerContactTableMap::DEALER_ID, $this->dealer_id);
+        if ($this->isColumnModified(DealerContactTableMap::IS_DEFAULT)) $criteria->add(DealerContactTableMap::IS_DEFAULT, $this->is_default);
         if ($this->isColumnModified(DealerContactTableMap::CREATED_AT)) $criteria->add(DealerContactTableMap::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(DealerContactTableMap::UPDATED_AT)) $criteria->add(DealerContactTableMap::UPDATED_AT, $this->updated_at);
         if ($this->isColumnModified(DealerContactTableMap::VERSION)) $criteria->add(DealerContactTableMap::VERSION, $this->version);
@@ -1411,6 +1513,7 @@ abstract class DealerContact implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setDealerId($this->getDealerId());
+        $copyObj->setIsDefault($this->getIsDefault());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setVersion($this->getVersion());
@@ -1421,6 +1524,12 @@ abstract class DealerContact implements ActiveRecordInterface
             // important: temporarily setNew(false) because this affects the behavior of
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
+
+            foreach ($this->getDealerContactInfos() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDealerContactInfo($relObj->copy($deepCopy));
+                }
+            }
 
             foreach ($this->getDealerContactI18ns() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
@@ -1526,12 +1635,233 @@ abstract class DealerContact implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
+        if ('DealerContactInfo' == $relationName) {
+            return $this->initDealerContactInfos();
+        }
         if ('DealerContactI18n' == $relationName) {
             return $this->initDealerContactI18ns();
         }
         if ('DealerContactVersion' == $relationName) {
             return $this->initDealerContactVersions();
         }
+    }
+
+    /**
+     * Clears out the collDealerContactInfos collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addDealerContactInfos()
+     */
+    public function clearDealerContactInfos()
+    {
+        $this->collDealerContactInfos = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collDealerContactInfos collection loaded partially.
+     */
+    public function resetPartialDealerContactInfos($v = true)
+    {
+        $this->collDealerContactInfosPartial = $v;
+    }
+
+    /**
+     * Initializes the collDealerContactInfos collection.
+     *
+     * By default this just sets the collDealerContactInfos collection to an empty array (like clearcollDealerContactInfos());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDealerContactInfos($overrideExisting = true)
+    {
+        if (null !== $this->collDealerContactInfos && !$overrideExisting) {
+            return;
+        }
+        $this->collDealerContactInfos = new ObjectCollection();
+        $this->collDealerContactInfos->setModel('\Dealer\Model\DealerContactInfo');
+    }
+
+    /**
+     * Gets an array of ChildDealerContactInfo objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildDealerContact is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|ChildDealerContactInfo[] List of ChildDealerContactInfo objects
+     * @throws PropelException
+     */
+    public function getDealerContactInfos($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerContactInfosPartial && !$this->isNew();
+        if (null === $this->collDealerContactInfos || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDealerContactInfos) {
+                // return empty collection
+                $this->initDealerContactInfos();
+            } else {
+                $collDealerContactInfos = ChildDealerContactInfoQuery::create(null, $criteria)
+                    ->filterByDealerContact($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collDealerContactInfosPartial && count($collDealerContactInfos)) {
+                        $this->initDealerContactInfos(false);
+
+                        foreach ($collDealerContactInfos as $obj) {
+                            if (false == $this->collDealerContactInfos->contains($obj)) {
+                                $this->collDealerContactInfos->append($obj);
+                            }
+                        }
+
+                        $this->collDealerContactInfosPartial = true;
+                    }
+
+                    reset($collDealerContactInfos);
+
+                    return $collDealerContactInfos;
+                }
+
+                if ($partial && $this->collDealerContactInfos) {
+                    foreach ($this->collDealerContactInfos as $obj) {
+                        if ($obj->isNew()) {
+                            $collDealerContactInfos[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDealerContactInfos = $collDealerContactInfos;
+                $this->collDealerContactInfosPartial = false;
+            }
+        }
+
+        return $this->collDealerContactInfos;
+    }
+
+    /**
+     * Sets a collection of DealerContactInfo objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $dealerContactInfos A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return   ChildDealerContact The current object (for fluent API support)
+     */
+    public function setDealerContactInfos(Collection $dealerContactInfos, ConnectionInterface $con = null)
+    {
+        $dealerContactInfosToDelete = $this->getDealerContactInfos(new Criteria(), $con)->diff($dealerContactInfos);
+
+
+        $this->dealerContactInfosScheduledForDeletion = $dealerContactInfosToDelete;
+
+        foreach ($dealerContactInfosToDelete as $dealerContactInfoRemoved) {
+            $dealerContactInfoRemoved->setDealerContact(null);
+        }
+
+        $this->collDealerContactInfos = null;
+        foreach ($dealerContactInfos as $dealerContactInfo) {
+            $this->addDealerContactInfo($dealerContactInfo);
+        }
+
+        $this->collDealerContactInfos = $dealerContactInfos;
+        $this->collDealerContactInfosPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DealerContactInfo objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related DealerContactInfo objects.
+     * @throws PropelException
+     */
+    public function countDealerContactInfos(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerContactInfosPartial && !$this->isNew();
+        if (null === $this->collDealerContactInfos || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDealerContactInfos) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDealerContactInfos());
+            }
+
+            $query = ChildDealerContactInfoQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByDealerContact($this)
+                ->count($con);
+        }
+
+        return count($this->collDealerContactInfos);
+    }
+
+    /**
+     * Method called to associate a ChildDealerContactInfo object to this object
+     * through the ChildDealerContactInfo foreign key attribute.
+     *
+     * @param    ChildDealerContactInfo $l ChildDealerContactInfo
+     * @return   \Dealer\Model\DealerContact The current object (for fluent API support)
+     */
+    public function addDealerContactInfo(ChildDealerContactInfo $l)
+    {
+        if ($this->collDealerContactInfos === null) {
+            $this->initDealerContactInfos();
+            $this->collDealerContactInfosPartial = true;
+        }
+
+        if (!in_array($l, $this->collDealerContactInfos->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDealerContactInfo($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DealerContactInfo $dealerContactInfo The dealerContactInfo object to add.
+     */
+    protected function doAddDealerContactInfo($dealerContactInfo)
+    {
+        $this->collDealerContactInfos[]= $dealerContactInfo;
+        $dealerContactInfo->setDealerContact($this);
+    }
+
+    /**
+     * @param  DealerContactInfo $dealerContactInfo The dealerContactInfo object to remove.
+     * @return ChildDealerContact The current object (for fluent API support)
+     */
+    public function removeDealerContactInfo($dealerContactInfo)
+    {
+        if ($this->getDealerContactInfos()->contains($dealerContactInfo)) {
+            $this->collDealerContactInfos->remove($this->collDealerContactInfos->search($dealerContactInfo));
+            if (null === $this->dealerContactInfosScheduledForDeletion) {
+                $this->dealerContactInfosScheduledForDeletion = clone $this->collDealerContactInfos;
+                $this->dealerContactInfosScheduledForDeletion->clear();
+            }
+            $this->dealerContactInfosScheduledForDeletion[]= clone $dealerContactInfo;
+            $dealerContactInfo->setDealerContact(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -1987,6 +2317,7 @@ abstract class DealerContact implements ActiveRecordInterface
     {
         $this->id = null;
         $this->dealer_id = null;
+        $this->is_default = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->version = null;
@@ -2012,6 +2343,11 @@ abstract class DealerContact implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
+            if ($this->collDealerContactInfos) {
+                foreach ($this->collDealerContactInfos as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collDealerContactI18ns) {
                 foreach ($this->collDealerContactI18ns as $o) {
                     $o->clearAllReferences($deep);
@@ -2028,6 +2364,7 @@ abstract class DealerContact implements ActiveRecordInterface
         $this->currentLocale = 'en_US';
         $this->currentTranslations = null;
 
+        $this->collDealerContactInfos = null;
         $this->collDealerContactI18ns = null;
         $this->collDealerContactVersions = null;
         $this->aDealer = null;
@@ -2216,6 +2553,17 @@ abstract class DealerContact implements ActiveRecordInterface
             return true;
         }
 
+        // to avoid infinite loops, emulate in save
+        $this->alreadyInSave = true;
+        foreach ($this->getDealerContactInfos(null, $con) as $relatedObject) {
+            if ($relatedObject->isVersioningNecessary($con)) {
+                $this->alreadyInSave = false;
+
+                return true;
+            }
+        }
+        $this->alreadyInSave = false;
+
 
         return false;
     }
@@ -2234,6 +2582,7 @@ abstract class DealerContact implements ActiveRecordInterface
         $version = new ChildDealerContactVersion();
         $version->setId($this->getId());
         $version->setDealerId($this->getDealerId());
+        $version->setIsDefault($this->getIsDefault());
         $version->setCreatedAt($this->getCreatedAt());
         $version->setUpdatedAt($this->getUpdatedAt());
         $version->setVersion($this->getVersion());
@@ -2242,6 +2591,10 @@ abstract class DealerContact implements ActiveRecordInterface
         $version->setDealerContact($this);
         if (($related = $this->getDealer($con)) && $related->getVersion()) {
             $version->setDealerIdVersion($related->getVersion());
+        }
+        if ($relateds = $this->getDealerContactInfos($con)->toKeyValue('Id', 'Version')) {
+            $version->setDealerContactInfoIds(array_keys($relateds));
+            $version->setDealerContactInfoVersions(array_values($relateds));
         }
         $version->save($con);
 
@@ -2281,6 +2634,7 @@ abstract class DealerContact implements ActiveRecordInterface
         $loadedObjects['ChildDealerContact'][$version->getId()][$version->getVersion()] = $this;
         $this->setId($version->getId());
         $this->setDealerId($version->getDealerId());
+        $this->setIsDefault($version->getIsDefault());
         $this->setCreatedAt($version->getCreatedAt());
         $this->setUpdatedAt($version->getUpdatedAt());
         $this->setVersion($version->getVersion());
@@ -2299,6 +2653,28 @@ abstract class DealerContact implements ActiveRecordInterface
                 $related->setNew(false);
             }
             $this->setDealer($related);
+        }
+        if ($fkValues = $version->getDealerContactInfoIds()) {
+            $this->clearDealerContactInfos();
+            $fkVersions = $version->getDealerContactInfoVersions();
+            $query = ChildDealerContactInfoVersionQuery::create();
+            foreach ($fkValues as $key => $value) {
+                $c1 = $query->getNewCriterion(DealerContactInfoVersionTableMap::ID, $value);
+                $c2 = $query->getNewCriterion(DealerContactInfoVersionTableMap::VERSION, $fkVersions[$key]);
+                $c1->addAnd($c2);
+                $query->addOr($c1);
+            }
+            foreach ($query->find($con) as $relatedVersion) {
+                if (isset($loadedObjects['ChildDealerContactInfo']) && isset($loadedObjects['ChildDealerContactInfo'][$relatedVersion->getId()]) && isset($loadedObjects['ChildDealerContactInfo'][$relatedVersion->getId()][$relatedVersion->getVersion()])) {
+                    $related = $loadedObjects['ChildDealerContactInfo'][$relatedVersion->getId()][$relatedVersion->getVersion()];
+                } else {
+                    $related = new ChildDealerContactInfo();
+                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                    $related->setNew(false);
+                }
+                $this->addDealerContactInfo($related);
+                $this->collDealerContactInfosPartial = false;
+            }
         }
 
         return $this;
