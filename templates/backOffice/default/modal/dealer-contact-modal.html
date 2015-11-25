@@ -1,0 +1,60 @@
+{* CREATE Modal *}
+
+{form name="dealer-contact.create"}
+{capture "contact_create"}
+  {include file="form/dealer-contact-create.html" form_name="dealer-contact.create" dealer_id=$smarty.get.dealer_id}
+{/capture}
+
+  {include file="includes/generic-create-dialog.html"
+  dialog_id       = "dealer-contact-create"
+  dialog_title    = {intl l="Create a Contact" d="dealer.bo.default"}
+  dialog_body     = {$smarty.capture.contact_create nofilter}
+dialog_ok_label     = {intl l="Create"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action        = {url path="admin/module/Dealer/contact"}
+form_enctype       = {form_enctype form=$form}
+}
+{/form}
+
+{* Update Modal *}
+
+{form name="dealer-contact.update"}
+{capture "contact_update"}
+  {form_field form=$form field="id"}
+    <input type="hidden" id="{$label_attr.for}" name="{$name}" value=""/>
+  {/form_field}
+  {include file="form/dealer-contact-create.html" form_name="dealer-contact.update" dealer_id=$smarty.get.dealer_id}
+{/capture}
+
+  {include file="includes/generic-create-dialog.html"
+  dialog_id       = "dealer-contact-update"
+  dialog_title    = {intl l="Modify a Contact" d="dealer.bo.default"}
+  dialog_body     = {$smarty.capture.contact_update nofilter}
+dialog_ok_label     = {intl l="Save"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action        = {url path="admin/module/Dealer/contact/update"}
+form_enctype       = {form_enctype form=$form}
+}
+{/form}
+
+{* DELETE modal *}
+
+{capture "contact_delete"}
+  {intl l="Do you really want to delete this Contact ?" d="dealer.bo.default"}
+  <input type="hidden" name="dealer-contact_id" id="dealer_contact_delete_id" value="" />
+  <input type="hidden" name="dealer_id" value="{$smarty.get.dealer_id}" />
+{/capture}
+
+{include file="includes/generic-confirm-dialog.html"
+
+dialog_id       = "dealer-contact-delete"
+dialog_title    = {intl l="Delete an entry of Contact" d="dealer.bo.default"}
+dialog_message  = {$smarty.capture.contact_delete nofilter}
+
+dialog_ok_label     = {intl l="Delete"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action         = {token_url path='/admin/module/Dealer/contact/delete'}
+}

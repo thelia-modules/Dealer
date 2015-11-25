@@ -48,7 +48,18 @@
   <route id="dealer.dealer.contact.delete" path="/admin/module/Dealer/contact/delete" methods="post">
     <default key="_controller">Dealer:Contact:delete</default>
   </route>
-  <route id="dealer.dealer.contact.delete" path="/admin/module/Dealer/contact/update" methods="post">
+  <route id="dealer.dealer.contact.update" path="/admin/module/Dealer/contact/update" methods="post">
     <default key="_controller">Dealer:Contact:processUpdate</default>
+  </route>
+
+  <!-- Contact Info -->
+  <route id="dealer.dealer.contact-info.create" path="/admin/module/Dealer/contact-info" methods="post">
+    <default key="_controller">Dealer:ContactInfo:create</default>
+  </route>
+  <route id="dealer.dealer.contact-info.delete" path="/admin/module/Dealer/contact-info/delete" methods="post">
+    <default key="_controller">Dealer:ContactInfo:delete</default>
+  </route>
+  <route id="dealer.dealer.contact-info.update" path="/admin/module/Dealer/contact-info/update" methods="post">
+    <default key="_controller">Dealer:ContactInfo:processUpdate</default>
   </route>
 </routes>

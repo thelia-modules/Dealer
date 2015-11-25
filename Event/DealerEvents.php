@@ -38,4 +38,15 @@ class DealerEvents
     const DEALER_CONTACT_DELETE = "dealer.dealer-contact.delete";
     const DEALER_CONTACT_DELETE_BEFORE = "dealer.dealer-contact.delete.before";
     const DEALER_CONTACT_DELETE_AFTER = "dealer.dealer-contact.delete.after";
+
+    //DEALER CONTACT INFO
+    const DEALER_CONTACT_INFO_CREATE = "dealer.dealer-contact-info.create";
+    const DEALER_CONTACT_INFO_CREATE_BEFORE = "dealer.dealer-contact-info.create.before";
+    const DEALER_CONTACT_INFO_CREATE_AFTER = "dealer.dealer-contact-info.create.after";
+    const DEALER_CONTACT_INFO_UPDATE = "dealer.dealer-contact-info.update";
+    const DEALER_CONTACT_INFO_UPDATE_BEFORE = "dealer.dealer-contact-info.update.before";
+    const DEALER_CONTACT_INFO_UPDATE_AFTER = "dealer.dealer-contact-info.update.after";
+    const DEALER_CONTACT_INFO_DELETE = "dealer.dealer-contact-info.delete";
+    const DEALER_CONTACT_INFO_DELETE_BEFORE = "dealer.dealer-contact-info.delete.before";
+    const DEALER_CONTACT_INFO_DELETE_AFTER = "dealer.dealer-contact-info.delete.after";
 }
