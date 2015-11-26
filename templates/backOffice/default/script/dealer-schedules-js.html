@@ -1,0 +1,13 @@
+<script>
+    $(function () {
+        $('a.dealer-schedules-delete').click(function (ev) {
+            $('#dealer_schedules_delete_id').val($(this).data('id'));
+        });
+        $('a.dealer-schedules-default').click(function (ev) {
+            $(".period").addClass("hidden");
+        });
+        $('a.dealer-schedules-extra').click(function (ev) {
+            $(".period").removeClass("hidden");
+        });
+    });
+</script>

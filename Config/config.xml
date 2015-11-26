@@ -23,6 +23,11 @@
                 <argument type="service" id="event_dispatcher"/>
             </call>
         </service>
+        <service id="dealer_schedules_service" class="Dealer\Service\SchedulesService">
+            <call method="setDispatcher">
+                <argument type="service" id="event_dispatcher"/>
+            </call>
+        </service>
     </services>
 
     <hooks>
@@ -39,6 +44,7 @@
         <form name="dealer-contact.update" class="Dealer\Form\ContactUpdateForm"/>
         <form name="dealer-contact-info.create" class="Dealer\Form\ContactInfoForm"/>
         <form name="dealer-contact-info.update" class="Dealer\Form\ContactInfoUpdateForm"/>
+        <form name="dealer-schedules.create" class="Dealer\Form\SchedulesForm"/>
     </forms>
 
 
@@ -46,6 +52,7 @@
         <loop name="dealer" class="Dealer\Loop\DealerLoop"/>
         <loop name="dealer_contact" class="Dealer\Loop\ContactLoop"/>
         <loop name="dealer_contact_info" class="Dealer\Loop\ContactInfoLoop"/>
+        <loop name="dealer_schedules" class="Dealer\Loop\SchedulesLoop"/>
     </loops>
     <!--
       <exports>

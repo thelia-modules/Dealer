@@ -1,65 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<routes xmlns="http://symfony.com/schema/routing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
-  <!--
+<routes xmlns="http://symfony.com/schema/routing" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    if a /admin/module/dealer/ route is provided, a "Configuration" button will be displayed
-    for the module in the module list. Clicking this button will invoke this route.
-
-    <route id="my_route_id" path="/admin/module/dealer">
-        <default key="_controller">Dealer\Full\Class\Name\Of\YourConfigurationController::methodName</default>
+    <!-- DEALER -->
+    <route id="dealer.list" path="/admin/module/Dealer/dealer" methods="get">
+        <default key="_controller">Dealer:Dealer:default</default>
+    </route>
+    <route id="dealer.create" path="/admin/module/Dealer/dealer" methods="post">
+        <default key="_controller">Dealer:Dealer:create</default>
+    </route>
+    <route id="dealer.dealer_tab.view" path="/admin/module/Dealer/dealer/edit" methods="get">
+        <default key="_controller">Dealer:Dealer:update</default>
+    </route>
+    <route id="dealer.dealer_tab.edit" path="/admin/module/Dealer/dealer/edit" methods="post">
+        <default key="_controller">Dealer:Dealer:processUpdate</default>
+    </route>
+    <route id="dealer.dealer.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
+        <default key="_controller">Dealer:Dealer:delete</default>
     </route>
 
-    <route id="my_route_id" path="/admin/module/dealer/route-name">
-        <default key="_controller">Dealer\Full\Class\Name\Of\YourAdminController::methodName</default>
+    <!-- Contact -->
+    <route id="dealer.dealer.contact.create" path="/admin/module/Dealer/contact" methods="post">
+        <default key="_controller">Dealer:Contact:create</default>
+    </route>
+    <route id="dealer.dealer.contact.delete" path="/admin/module/Dealer/contact/delete" methods="post">
+        <default key="_controller">Dealer:Contact:delete</default>
+    </route>
+    <route id="dealer.dealer.contact.update" path="/admin/module/Dealer/contact/update" methods="post">
+        <default key="_controller">Dealer:Contact:processUpdate</default>
     </route>
 
-    <route id="my_route_id" path="/my/route/name">
-        <default key="_controller">Dealer\Full\Class\Name\Of\YourOtherController::methodName</default>
+    <!-- Contact Info -->
+    <route id="dealer.dealer.contact-info.create" path="/admin/module/Dealer/contact-info" methods="post">
+        <default key="_controller">Dealer:ContactInfo:create</default>
+    </route>
+    <route id="dealer.dealer.contact-info.delete" path="/admin/module/Dealer/contact-info/delete" methods="post">
+        <default key="_controller">Dealer:ContactInfo:delete</default>
+    </route>
+    <route id="dealer.dealer.contact-info.update" path="/admin/module/Dealer/contact-info/update" methods="post">
+        <default key="_controller">Dealer:ContactInfo:processUpdate</default>
     </route>
 
-    ...add as many routes as required.
-
-    <route>
-    .../admin/module/Dealer/dealer
+    <!-- Schedules -->
+    <route id="dealer.dealer.schedules.create" path="/admin/module/Dealer/schedules" methods="post">
+        <default key="_controller">Dealer:Schedules:create</default>
     </route>
-    -->
-
-  <!-- DEALER -->
-  <route id="dealer.list" path="/admin/module/Dealer/dealer" methods="get">
-    <default key="_controller">Dealer:Dealer:default</default>
-  </route>
-  <route id="dealer.create" path="/admin/module/Dealer/dealer" methods="post">
-    <default key="_controller">Dealer:Dealer:create</default>
-  </route>
-  <route id="dealer.dealer_tab.view" path="/admin/module/Dealer/dealer/edit" methods="get">
-    <default key="_controller">Dealer:Dealer:update</default>
-  </route>
-  <route id="dealer.dealer_tab.edit" path="/admin/module/Dealer/dealer/edit" methods="post">
-    <default key="_controller">Dealer:Dealer:processUpdate</default>
-  </route>
-  <route id="dealer.dealer.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
-    <default key="_controller">Dealer:Dealer:delete</default>
-  </route>
-
-  <!-- Contact -->
-  <route id="dealer.dealer.contact.create" path="/admin/module/Dealer/contact" methods="post">
-    <default key="_controller">Dealer:Contact:create</default>
-  </route>
-  <route id="dealer.dealer.contact.delete" path="/admin/module/Dealer/contact/delete" methods="post">
-    <default key="_controller">Dealer:Contact:delete</default>
-  </route>
-  <route id="dealer.dealer.contact.update" path="/admin/module/Dealer/contact/update" methods="post">
-    <default key="_controller">Dealer:Contact:processUpdate</default>
-  </route>
-
-  <!-- Contact Info -->
-  <route id="dealer.dealer.contact-info.create" path="/admin/module/Dealer/contact-info" methods="post">
-    <default key="_controller">Dealer:ContactInfo:create</default>
-  </route>
-  <route id="dealer.dealer.contact-info.delete" path="/admin/module/Dealer/contact-info/delete" methods="post">
-    <default key="_controller">Dealer:ContactInfo:delete</default>
-  </route>
-  <route id="dealer.dealer.contact-info.update" path="/admin/module/Dealer/contact-info/update" methods="post">
-    <default key="_controller">Dealer:ContactInfo:processUpdate</default>
-  </route>
+    <route id="dealer.dealer.schedules.delete" path="/admin/module/Dealer/schedules/delete" methods="post">
+        <default key="_controller">Dealer:Schedules:delete</default>
+    </route>
+    <route id="dealer.dealer.schedules.update" path="/admin/module/Dealer/schedules/update" methods="post">
+        <default key="_controller">Dealer:Schedules:processUpdate</default>
+    </route>
 </routes>

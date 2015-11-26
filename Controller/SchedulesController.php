@@ -14,16 +14,19 @@
 namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
+use Dealer\Model\DealerShedules;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Tools\URL;
 
+
 /**
- * Class ContactInfoController
+ * Class SchedulesController
  * @package Dealer\Controller
  */
-class ContactInfoController extends BaseController
+class SchedulesController extends BaseController
 {
-    const CONTROLLER_ENTITY_NAME = "dealer-contact-info";
+    const CONTROLLER_ENTITY_NAME = "dealer-schedules";
+
     /**
      * Use to get render of list
      * @return mixed
@@ -71,6 +74,7 @@ class ContactInfoController extends BaseController
      */
     protected function getObjectId($object)
     {
+        /** @var DealerShedules $object */
         return $object->getId();
     }
 
@@ -99,7 +103,7 @@ class ContactInfoController extends BaseController
     protected function getService()
     {
         if (!$this->service) {
-            $this->service = $this->getContainer()->get("dealer_contact_info_service");
+            $this->service = $this->getContainer()->get("dealer_schedules_service");
         }
 
         return $this->service;

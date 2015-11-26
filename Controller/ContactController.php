@@ -71,7 +71,7 @@ class ContactController extends BaseController
      */
     protected function getObjectId($object)
     {
-        $object->getId();
+        return $object->getId();
     }
 
     /**

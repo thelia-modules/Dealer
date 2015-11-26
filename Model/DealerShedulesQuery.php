@@ -3,6 +3,8 @@
 namespace Dealer\Model;
 
 use Dealer\Model\Base\DealerShedulesQuery as BaseDealerShedulesQuery;
+use Dealer\Model\Map\DealerShedulesTableMap;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 
 /**
@@ -17,5 +19,14 @@ use Dealer\Model\Base\DealerShedulesQuery as BaseDealerShedulesQuery;
  */
 class DealerShedulesQuery extends BaseDealerShedulesQuery
 {
+    public function filterByPeriodNotNull()
+    {
+        return $this->where(DealerShedulesTableMap::PERIOD_BEGIN . " " . Criteria::ISNOTNULL . " " . Criteria::LOGICAL_AND . " " . DealerShedulesTableMap::PERIOD_END . " " . Criteria::ISNOTNULL);
 
+    }
+    public function filterByPeriodNull()
+    {
+        return $this->where(DealerShedulesTableMap::PERIOD_BEGIN . " " . Criteria::ISNULL . " " . Criteria::LOGICAL_AND . " " . DealerShedulesTableMap::PERIOD_END . " " . Criteria::ISNULL);
+
+    }
 } // DealerShedulesQuery

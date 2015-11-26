@@ -40,7 +40,8 @@
                         {include file="includes/contact-dealer.html"}
                     </div>
                 </div>
-                <div class="tab-pane fade" id="shedules">
+                <div class="tab-pane fade" id="schedules">
+                    {include file="includes/schedules-dealer.html"}
                 </div>
                 <div class="tab-pane fade" id="modules">
                 </div>
@@ -52,10 +53,12 @@
 
     {include file="modal/dealer-contact-modal.html"}
     {include file="modal/dealer-contact-info-modal.html"}
+    {include file="modal/dealer-schedules-modal.html"}
 
 {/block}
 
 {block name="javascript-initialization"}
     {include file="script/dealer-contact-js.html"}
     {include file="script/dealer-contact-info-js.html"}
+    {include file="script/dealer-schedules-js.html"}
 {/block}

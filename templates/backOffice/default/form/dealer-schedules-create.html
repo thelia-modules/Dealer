@@ -1,0 +1,76 @@
+{form name=$form_name}
+{form_hidden_fields form=$form}
+
+{render_form_field form=$form field="success_url" value={$success_url|default:{url path='/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}}}
+
+
+{form_field form=$form field="day"}
+    <div class="form-group">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l=$label d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+        {form_error form=$form field="day"}{$message}{/form_error}
+
+        <select class="form-control" name="{$name}" id="{$label_attr.for}">
+            {foreach $choices as $choice}
+                <option value="{$choice->value}" {if $DAY == $choice->value}selected{/if} >{$choice->label}</option>
+            {/foreach}
+        </select>
+    </div>
+{/form_field}
+{form_field form=$form field="begin"}
+    <div class="form-group">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l=$label d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+
+        {form_error form=$form field="begin"}{$message}{/form_error}
+
+        <input type="time" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+    </div>
+{/form_field}
+{form_field form=$form field="end"}
+    <div class="form-group">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l=$label d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+
+        {form_error form=$form field="end"}{$message}{/form_error}
+
+        <input type="time" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+    </div>
+{/form_field}
+{form_field form=$form field="period_begin"}
+    <div class="form-group period">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l=$label d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+
+        {form_error form=$form field="period_begin"}{$message}{/form_error}
+
+        <input type="date" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+    </div>
+{/form_field}
+{form_field form=$form field="period_end"}
+    <div class="form-group period">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l=$label d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+
+        {form_error form=$form field="period_end"}{$message}{/form_error}
+
+        <input type="date" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+    </div>
+{/form_field}
+{form_field form=$form field="dealer_id"}
+    <div class="form-group hidden">
+        <input type="hidden" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$dealer_id|default:$DEALER_ID}"/>
+    </div>
+{/form_field}
+
+{/form}

@@ -13,33 +13,35 @@
 
 namespace Dealer\Event;
 
-use Dealer\Model\DealerContactInfo;
+use Dealer\Model\DealerShedules;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class DealerContactInfoEvent
+ * Class DealerSchedulesEvent
  * @package Dealer\Event
  */
-class DealerContactInfoEvent extends Event
+class DealerSchedulesEvent extends Event
 {
     /**
-     * @var DealerContactInfo
+     * @var DealerShedules
      */
-    protected $dealer_contact_info;
+    protected $dealer_schedules;
 
     /**
-     * @return DealerContactInfo
+     * @return DealerShedules
      */
-    public function getDealerContactInfo()
+    public function getDealerSchedules()
     {
-        return $this->dealer_contact_info;
+        return $this->dealer_schedules;
     }
 
     /**
-     * @param DealerContactInfo $dealer_contact_info
+     * @param DealerShedules $dealer_schedules
      */
-    public function setDealerContactInfo($dealer_contact_info)
+    public function setDealerSchedules($dealer_schedules)
     {
-        $this->dealer_contact_info = $dealer_contact_info;
+        $this->dealer_schedules = $dealer_schedules;
     }
+
+
 }

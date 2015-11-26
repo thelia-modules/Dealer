@@ -49,4 +49,15 @@ class DealerEvents
     const DEALER_CONTACT_INFO_DELETE = "dealer.dealer-contact-info.delete";
     const DEALER_CONTACT_INFO_DELETE_BEFORE = "dealer.dealer-contact-info.delete.before";
     const DEALER_CONTACT_INFO_DELETE_AFTER = "dealer.dealer-contact-info.delete.after";
+
+    //DEALER Schedules
+    const DEALER_SCHEDULES_CREATE = "dealer.dealer-schedules.create";
+    const DEALER_SCHEDULES_CREATE_BEFORE = "dealer.dealer-schedules.create.before";
+    const DEALER_SCHEDULES_CREATE_AFTER = "dealer.dealer-schedules.create.after";
+    const DEALER_SCHEDULES_UPDATE = "dealer.dealer-schedules.update";
+    const DEALER_SCHEDULES_UPDATE_BEFORE = "dealer.dealer-schedules.update.before";
+    const DEALER_SCHEDULES_UPDATE_AFTER = "dealer.dealer-schedules.update.after";
+    const DEALER_SCHEDULES_DELETE = "dealer.dealer-schedules.delete";
+    const DEALER_SCHEDULES_DELETE_BEFORE = "dealer.dealer-schedules.delete.before";
+    const DEALER_SCHEDULES_DELETE_AFTER = "dealer.dealer-schedules.delete.after";
 }
