@@ -108,4 +108,9 @@ class SchedulesForm extends BaseForm
             $this->translator->trans("Sunday", [], Dealer::MESSAGE_DOMAIN)
         ];
     }
+
+    public function getName()
+    {
+        return "schedules_create";
+    }
 }

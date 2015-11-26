@@ -9,5 +9,13 @@
         $('a.dealer-schedules-extra').click(function (ev) {
             $(".period").removeClass("hidden");
         });
+        $('a.dealer-schedules-update-default').click(function (ev) {
+            $(".period").addClass("hidden");
+            $("#attr-dealer-schedules-id","#dealer-schedules-update").val($(this).data('id'));
+        });
+        $('a.dealer-schedules-update-extra').click(function (ev) {
+            $(".period").removeClass("hidden");
+            $("#attr-dealer-schedules-id","#dealer-schedules-update").val($(this).data('id'));
+        });
     });
 </script>

@@ -2,13 +2,13 @@
 
 {form name="dealer-schedules.create"}
 {capture "schedules_create"}
-  {include file="form/dealer-schedules-create.html" form_name="dealer-schedules.create" dealer_id=$smarty.get.dealer_id}
+    {include file="form/dealer-schedules-create.html" form_name="dealer-schedules.create" dealer_id=$smarty.get.dealer_id}
 {/capture}
 
-  {include file="includes/generic-create-dialog.html"
-  dialog_id       = "dealer-schedules-create"
-  dialog_title    = {intl l="Create a schedules" d="dealer.bo.default"}
-  dialog_body     = {$smarty.capture.schedules_create nofilter}
+    {include file="includes/generic-create-dialog.html"
+    dialog_id       = "dealer-schedules-create"
+    dialog_title    = {intl l="Create a schedules" d="dealer.bo.default"}
+    dialog_body     = {$smarty.capture.schedules_create nofilter}
 dialog_ok_label     = {intl l="Create"}
 dialog_cancel_label = {intl l="Cancel"}
 
@@ -17,27 +17,27 @@ form_enctype       = {form_enctype form=$form}
 }
 {/form}
 
-{* Update Modal
+{*Update Modal*}
 
 {form name="dealer-schedules.update"}
 {capture "schedules_update"}
-  {form_field form=$form field="id"}
-    <input type="hidden" id="{$label_attr.for}" name="{$name}" value=""/>
-  {/form_field}
+    {form_field form=$form field="id"}
+    <input type="hidden" id="{$label_attr.for}" name="{$name}" value="" />
+    {/form_field}
   {include file="form/dealer-schedules-create.html" form_name="dealer-schedules.update" dealer_id=$smarty.get.dealer_id}
 {/capture}
 
   {include file="includes/generic-create-dialog.html"
-  dialog_id       = "dealer-schedules-update"
-  dialog_title    = {intl l="Modify a schedules" d="dealer.bo.default"}
-  dialog_body     = {$smarty.capture.schedules_update nofilter}
+dialog_id       = "dealer-schedules-update"
+dialog_title    = {intl l="Modify a schedules" d="dealer.bo.default"}
+dialog_body     = {$smarty.capture.schedules_update nofilter}
 dialog_ok_label     = {intl l="Save"}
 dialog_cancel_label = {intl l="Cancel"}
 
 form_action        = {url path="admin/module/Dealer/schedules/update"}
 form_enctype       = {form_enctype form=$form}
 }
-{/form}*}
+{/form}
 
 {* DELETE modal *}
 

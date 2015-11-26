@@ -45,6 +45,7 @@
         <form name="dealer-contact-info.create" class="Dealer\Form\ContactInfoForm"/>
         <form name="dealer-contact-info.update" class="Dealer\Form\ContactInfoUpdateForm"/>
         <form name="dealer-schedules.create" class="Dealer\Form\SchedulesForm"/>
+        <form name="dealer-schedules.update" class="Dealer\Form\SchedulesUpdateForm"/>
     </forms>
 
 
