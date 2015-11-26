@@ -8,12 +8,12 @@
 {/loop}
 
 
-{render_form_field form=$form field="success_url" value={url path='/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}}
+{render_form_field form=$form field="success_url" value={$success_url|default:{url path='/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}}}
 {if {$title|default:true} != false}
     {form_field form=$form field="title"}
         <div class="form-group">
             <label class="control-label" for="{$label_attr.for}">
-                {intl l="{$label}" d="dealer.bo.default"}
+                {intl l=$label d="dealer.bo.default"}
                 {if $required}<span class="required">*</span>{/if}
             </label>
 
@@ -27,7 +27,7 @@
 {form_field form=$form field="address1"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
+            {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
@@ -40,7 +40,7 @@
 {form_field form=$form field="address2"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
+            {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
@@ -53,7 +53,7 @@
 {form_field form=$form field="address3"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
+            {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
@@ -66,7 +66,7 @@
 {form_field form=$form field="zipcode"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
+            {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
@@ -79,7 +79,7 @@
 {form_field form=$form field="city"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
+            {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
@@ -92,7 +92,7 @@
 {form_field form=$form field="country_id"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
+            {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
@@ -100,7 +100,7 @@
 
         <select class="form-control" name="{$name}" id="{$label_attr.for}">
             {foreach $choices as $choice}
-                <option value="{$choice->value}" {if $COUNTRY_ID == $choice->value}selected{/if} >{$choice->label}</option>
+                <option value="{$choice->value}" {if {$COUNTRY_ID|default:$country_id} == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}
         </select>
     </div>
@@ -108,7 +108,7 @@
 {form_field form=$form field="description"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
-            {intl l="{$label}" d="dealer.bo.default"}
+            {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
