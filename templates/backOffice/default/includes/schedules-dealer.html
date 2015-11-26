@@ -29,10 +29,10 @@
     </thead>
 
     <tbody>
-    {loop name="dealer-schedules-defaults" type="dealer_schedules" contact_id=$smarty.get.dealer_id default_period=true}
+    {loop name="dealer-schedules-defaults" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=true order="day"}
         <tr>
             <td>
-                {$DAY}
+                {$DAY_LABEL}
             </td>
             <td>
                 {format_date date=$BEGIN format="H:i"}
@@ -49,7 +49,7 @@
                         </a>
                     {/loop}
                     {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-                        <a class="btn btn-default btn-xs dealer-contact-info-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-info-delete" data-toggle="modal" data-id="{$ID}">
+                        <a class="btn btn-default btn-xs dealer-schedules-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
                             <i class="glyphicon glyphicon-trash"></i>
                         </a>
                     {/loop}
@@ -109,10 +109,10 @@
     </thead>
 
     <tbody>
-    {loop name="dealer-schedules" type="dealer_schedules" contact_id=$smarty.get.dealer_id default_period=false}
+    {loop name="dealer-schedules" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=false order="day"}
         <tr>
             <td>
-                {$DAY}
+                {$DAY_LABEL}
             </td>
             <td>
                 {format_date date=$BEGIN format="H:i"}
@@ -135,7 +135,7 @@
                         </a>
                     {/loop}
                     {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-                        <a class="btn btn-default btn-xs dealer-contact-info-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-info-delete" data-toggle="modal" data-id="{$ID}">
+                        <a class="btn btn-default btn-xs dealer-schedules-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
                             <i class="glyphicon glyphicon-trash"></i>
                         </a>
                     {/loop}

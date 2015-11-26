@@ -75,7 +75,7 @@ class SchedulesController extends BaseController
     protected function getObjectId($object)
     {
         /** @var DealerShedules $object */
-        return $object->getId();
+        $object->getId();
     }
 
     /**

@@ -13,6 +13,7 @@
 
 namespace Dealer\Loop;
 
+use Dealer\Dealer;
 use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
@@ -45,6 +46,7 @@ class SchedulesLoop extends BaseLoop implements PropelSearchLoopInterface
                 ->set('ID', $schedules->getId())
                 ->set('DEALER_ID', $schedules->getDealerId())
                 ->set('DAY', $schedules->getDay())
+                ->set('DAY_LABEL', $this->getDayLabel($schedules->getDay()))
                 ->set('BEGIN', $schedules->getBegin())
                 ->set('END', $schedules->getEnd())
                 ->set('PERIOD_BEGIN', $schedules->getPeriodBegin())
@@ -146,5 +148,18 @@ class SchedulesLoop extends BaseLoop implements PropelSearchLoopInterface
         }
 
         return $query;
+    }
+
+    protected function getDayLabel($int = 0)
+    {
+        return [
+            $this->translator->trans("Monday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Tuesday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Wednesday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Thursday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Friday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Saturday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Sunday", [], Dealer::MESSAGE_DOMAIN)
+        ][$int];
     }
 }
