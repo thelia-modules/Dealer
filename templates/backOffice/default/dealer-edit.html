@@ -61,4 +61,18 @@
     {include file="script/dealer-contact-js.html"}
     {include file="script/dealer-contact-info-js.html"}
     {include file="script/dealer-schedules-js.html"}
+
+    <script>
+        (function($){
+            $(document).ready(function(){
+                var hash = location.hash.slice(1);
+                if(!hash){
+                    hash = "general";
+                }
+
+                $('#tabbed-menu a[href="#'+hash+'"]').tab('show');
+
+            });
+        })(jQuery);
+    </script>
 {/block}
