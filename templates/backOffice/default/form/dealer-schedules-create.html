@@ -1,7 +1,7 @@
 {form name=$form_name}
 {form_hidden_fields form=$form}
 
-{render_form_field form=$form field="success_url" value={$success_url|default:{url path='/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}}}
+{render_form_field form=$form field="success_url" value={url path="/admin/module/Dealer/dealer/edit?dealer_id={$dealer_id|default:$DEALER_ID}#schedules"}}
 
 
 {form_field form=$form field="day"}
