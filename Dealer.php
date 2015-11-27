@@ -10,6 +10,7 @@ use Dealer\Model\DealerContactInfoQuery;
 use Dealer\Model\DealerContactQuery;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\DealerShedulesQuery;
+use Thelia\Core\Template\TemplateDefinition;
 use Thelia\Module\BaseModule;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
@@ -34,5 +35,31 @@ class Dealer extends BaseModule
             $database = new Database($con);
             $database->insertSql(null, [__DIR__ . "/Config/create.sql", __DIR__ . "/Config/insert.sql"]);
         }
+    }
+
+    public function getHooks(){
+        return [
+            array(
+                "type" => TemplateDefinition::BACK_OFFICE,
+                "code" => "dealer.extra.content.edit",
+                "title" => "Dealer Extra Content",
+                "description" => [
+                    "en_US" =>"Allow you to insert element in modules tab on Dealer edit page",
+                    "fr_FR" =>"Permet l'ajout de contenu sur la partie module de l'edition",
+                ],
+                "active" => true,
+            ),
+            array(
+                "type" => TemplateDefinition::BACK_OFFICE,
+                "code" => "dealer.additional",
+                "title" => "Dealer Extra Tab",
+                "description" => [
+                    "en_US" =>"Allow you to insert a tab on Dealer edit page",
+                    "fr_FR" =>"Permet l'ajout d'une page sur l'edition d'un point de vente",
+                ],
+                "active" => true,
+                "block" => true,
+            ),
+        ];
     }
 }
