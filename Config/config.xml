@@ -8,6 +8,9 @@
     </commands>
 
     <services>
+        <service id="dealer_listener" class="Dealer\EventListener\DealerListener">
+            <tag name="kernel.event_subscriber"/>
+        </service>
         <service id="dealer_service" class="Dealer\Service\DealerService">
             <call method="setDispatcher">
                 <argument type="service" id="event_dispatcher"/>
