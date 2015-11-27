@@ -102,20 +102,6 @@ class DealerForm extends BaseForm
                 "required" => true,
                 "attr" => array()
             ))
-            ->add("latitude", "number", array(
-                "label" => $this->translator->trans("Latitude", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "dealer.lat"],
-                "required" => false,
-                "constraints" => array(),
-                "attr" => array("step" => "0.01",)
-            ))
-            ->add("longitude", "number", array(
-                "label" => $this->translator->trans("Longitude", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "dealer.lon"],
-                "required" => false,
-                "constraints" => array(),
-                "attr" => array("step" => "0.01",)
-            ))
             ->add("locale", "text", array(
                 "constraints" => array(
                     new NotBlank(),

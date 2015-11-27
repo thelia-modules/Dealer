@@ -1,0 +1,47 @@
+{form name="dealer-geo"}
+    <div class="form-container">
+        {if $form_error}
+            <div class="alert alert-danger">{$form_error_message}</div>
+        {/if}
+        {loop name="dealer_update" type="dealer" backend_context="yes" id=$smarty.get.dealer_id limit=1}
+        <form method="POST" action="{url path="/admin/module/Dealer/location/update"}" {form_enctype form=$form} class="clearfix">
+            {render_form_field form=$form field="success_url" value={$success_url|default:{url path="/admin/module/Dealer/dealer/edit?dealer_id={$smarty.get.dealer_id}#location"}}}
+            {form_hidden_fields form=$form}
+            {form_field form=$form field="id"}
+                <input type="hidden" name="{$name}" value="{$ID}"/>
+            {/form_field}
+            {form_field form=$form field="latitude"}
+                <div class="form-group">
+                    <label class="control-label" for="{$label_attr.for}">
+                        {intl l=$label d="dealer.bo.default"}
+                        {if $required}<span class="required">*</span>{/if}
+                    </label>
+
+                    {form_error form=$form field="latitude"}{$message}{/form_error}
+
+                    <input type="number" step="any" class="form-control" name="{$name}"
+                           id="{$label_attr.for}" value="{$LAT}"
+                           placeholder="{intl l='The Dealer latitude'}"/>
+                </div>
+            {/form_field}
+            {form_field form=$form field="longitude"}
+                <div class="form-group">
+                    <label class="control-label" for="{$label_attr.for}">
+                        {intl l=$label d="dealer.bo.default"}
+                        {if $required}<span class="required">*</span>{/if}
+                    </label>
+
+                    {form_error form=$form field="longitude"}{$message}{/form_error}
+
+                    <input type="number" step="any" class="form-control" name="{$name}"
+                           id="{$label_attr.for}" value="{$LON}"
+                           placeholder="{intl l='The Dealer longitude'}"/>
+                </div>
+            {/form_field}
+            <div class="btn-grp">
+                <button type="submit" class="btn btn-primary">{intl l="Save"}</button>
+            </div>
+        </form>
+        {/loop}
+    </div>
+{/form}

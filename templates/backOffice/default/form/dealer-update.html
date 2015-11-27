@@ -24,35 +24,6 @@
 
                     {include file="form/dealer-create.html" form_name="dealer.update"}
 
-                    {form_field form=$form field="latitude"}
-                        <div class="form-group">
-                            <label class="control-label" for="{$label_attr.for}">
-                                {intl l=$label d="dealer.bo.default"}
-                                {if $required}<span class="required">*</span>{/if}
-                            </label>
-
-                            {form_error form=$form field="latitude"}{$message}{/form_error}
-
-                            <input type="number" step="any" class="form-control" name="{$name}"
-                                   id="{$label_attr.for}" value="{$LAT}"
-                                   placeholder="{intl l='The Dealer latitude'}"/>
-                        </div>
-                    {/form_field}
-                    {form_field form=$form field="longitude"}
-                        <div class="form-group">
-                            <label class="control-label" for="{$label_attr.for}">
-                                {intl l=$label d="dealer.bo.default"}
-                                {if $required}<span class="required">*</span>{/if}
-                            </label>
-
-                            {form_error form=$form field="longitude"}{$message}{/form_error}
-
-                            <input type="number" step="any" class="form-control" name="{$name}"
-                                   id="{$label_attr.for}" value="{$LON}"
-                                   placeholder="{intl l='The Dealer longitude'}"/>
-                        </div>
-                    {/form_field}
-
                     {include "includes/inner-form-toolbar.html"
                     hide_flags = true
                     close_url = {url path="/admin/module/Dealer/dealer"}

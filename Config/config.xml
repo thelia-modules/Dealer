@@ -31,6 +31,8 @@
                 <argument type="service" id="event_dispatcher"/>
             </call>
         </service>
+        <service id="dealer_geo_service" class="Dealer\Service\GeoDealerService">
+        </service>
     </services>
 
     <hooks>
@@ -49,6 +51,7 @@
         <form name="dealer-contact-info.update" class="Dealer\Form\ContactInfoUpdateForm"/>
         <form name="dealer-schedules.create" class="Dealer\Form\SchedulesForm"/>
         <form name="dealer-schedules.update" class="Dealer\Form\SchedulesUpdateForm"/>
+        <form name="dealer-geo" class="Dealer\Form\GeoDealerForm"/>
     </forms>
 
 

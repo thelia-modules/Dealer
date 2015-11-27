@@ -1,0 +1,34 @@
+<script type="text/javascript" src="http://maps.google.com/maps/api/js"></script>
+<script>
+    (function($){
+        $('a[href="#location"]').on("shown.bs.tab",function(){
+            var opt = {
+                center: new google.maps.LatLng($("#attr-dealer-geo-lat").val(), $("#attr-dealer-geo-lon").val()),
+                zoom:16
+            };
+            var map = new google.maps.Map(document.getElementById("location-map"),opt);
+            var markerOpts = {
+                title: "center",
+                position: opt.center,
+                draggable:true,
+                map:map
+            };
+
+            var marker = new google.maps.Marker(markerOpts);
+
+            marker.addListener("dragend",function(e){
+                var pos = this.getPosition();
+                $("#attr-dealer-geo-lat").val(pos.lat());
+                $("#attr-dealer-geo-lon").val(pos.lng());
+            });
+
+            map.addListener('click', function(e) {
+                marker.setPosition(e.latLng);
+                $("#attr-dealer-geo-lat").val(e.latLng.lat());
+                $("#attr-dealer-geo-lon").val(e.latLng.lng());
+            });
+
+
+        });
+    })(jQuery);
+</script>
