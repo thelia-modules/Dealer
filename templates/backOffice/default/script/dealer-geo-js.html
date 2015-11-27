@@ -8,7 +8,7 @@
             };
             var map = new google.maps.Map(document.getElementById("location-map"),opt);
             var markerOpts = {
-                title: "center",
+                title: $(document.getElementById("dealer.title")).val(),
                 position: opt.center,
                 draggable:true,
                 map:map
@@ -17,6 +17,11 @@
             var marker = new google.maps.Marker(markerOpts);
 
             marker.addListener("dragend",function(e){
+                var pos = this.getPosition();
+                $("#attr-dealer-geo-lat").val(pos.lat());
+                $("#attr-dealer-geo-lon").val(pos.lng());
+            });
+            marker.addListener("drag",function(e){
                 var pos = this.getPosition();
                 $("#attr-dealer-geo-lat").val(pos.lat());
                 $("#attr-dealer-geo-lon").val(pos.lng());
