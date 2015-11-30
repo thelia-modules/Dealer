@@ -1,5 +1,7 @@
 # Dealer 2.0 Work in Progress
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/thelia-modules/Dealer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/thelia-modules/Dealer/?branch=master)
+
 author : Penalver Antony <apenalver@openstudio.fr>
 
 This module Thelia generate CRUD interface for dealer.
