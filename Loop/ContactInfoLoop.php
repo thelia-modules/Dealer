@@ -44,6 +44,7 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 ->set('ID', $contact->getId())
                 ->set('CONTACT_ID', $contact->getContactId())
                 ->set('CONTACT_TYPE', $contact->getContactType())
+                ->set('CONTACT_TYPE_ID', $contact->getContactTypeId())
             ;
 
             if ($contact->hasVirtualColumn('i18n_VALUE')) {

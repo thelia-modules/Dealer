@@ -5,9 +5,9 @@
     });
     $('a.dealer-contact-info-update').click(function(ev) {
       $('#attr-dealer-contact-info-contact_id','#dealer-contact-info-update').val($(this).data('contact'));
-      $('#attr-dealer-contact-info-value').val($(this).data('value'));
-      $('#attr-dealer-contact-info-type').val($(this).data('contacttype'));
-      $('#attr-dealer-contact-info-id').val($(this).data('id'));
+      $('#attr-dealer-contact-info-value','#dealer-contact-info-update').val($(this).data('value'));
+      $('#attr-dealer-contact-info-type option[value="'+$(this).data('contacttype')+'"]','#dealer-contact-info-update').prop('selected',true);
+      $('#attr-dealer-contact-info-id','#dealer-contact-info-update').val($(this).data('id'));
     });
     $('a.dealer-contact-info-create').click(function(ev) {
       $('#attr-dealer-contact-info-contact_id').val($(this).data('contact'));

@@ -5,7 +5,7 @@
     });
     $('a.dealer-contact-update').click(function(ev) {
       $('#attr-dealer-contact-id').val($(this).data('id'));
-      $('#attr-dealer-contact-value').val($(this).data('label'));
+      $('#attr-dealer-contact-label','#dealer-contact-update').attr("value",$(this).data('label'));
     });
   });
 </script>
