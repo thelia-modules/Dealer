@@ -12,11 +12,17 @@
         $('a.dealer-schedules-update-default').click(function (ev) {
             $(".period").addClass("hidden");
             $("#attr-dealer-schedules-id", "#dealer-schedules-update").val($(this).data('id'));
+            $("#attr-dealer-schedules-begin input", "#dealer-schedules-update").val($(this).data('begin'));
+            $("#attr-dealer-schedules-end input", "#dealer-schedules-update").val($(this).data('end'));
             $('#attr-dealer-schedules-day option[value="' + $(this).data('day') + '"]', '#dealer-schedules-update').prop('selected', true);
         });
         $('a.dealer-schedules-update-extra').click(function (ev) {
             $(".period").removeClass("hidden");
             $("#attr-dealer-schedules-id", "#dealer-schedules-update").val($(this).data('id'));
+            $("#attr-dealer-schedules-begin input", "#dealer-schedules-update").val($(this).data('begin'));
+            $("#attr-dealer-schedules-end input", "#dealer-schedules-update").val($(this).data('end'));
+            $("#attr-dealer-schedules-period-begin input", "#dealer-schedules-update").val($(this).data('periodbegin'));
+            $("#attr-dealer-schedules-period-end input", "#dealer-schedules-update").val($(this).data('periodend'));
             $('#attr-dealer-schedules-day option[value="' + $(this).data('day') + '"]', '#dealer-schedules-update').prop('selected', true);
         });
         {$langcode = {lang attr="code"}|substr:0:2}
