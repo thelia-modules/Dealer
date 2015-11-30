@@ -29,7 +29,7 @@ form_enctype       = {form_enctype form=$form}
 
   {include file="includes/generic-create-dialog.html"
   dialog_id       = "dealer-contact-info-update"
-  dialog_title    = {intl l="Modify a Contact" d="dealer.bo.default"}
+  dialog_title    = {intl l="Modify a Contact Info" d="dealer.bo.default"}
   dialog_body     = {$smarty.capture.contact_info_update nofilter}
 dialog_ok_label     = {intl l="Save"}
 dialog_cancel_label = {intl l="Cancel"}
@@ -42,7 +42,7 @@ form_enctype       = {form_enctype form=$form}
 {* DELETE modal *}
 
 {capture "contact_info_delete"}
-  {intl l="Do you really want to delete this Contact ?" d="dealer.bo.default"}
+  {intl l="Do you really want to delete this Contact Info ?" d="dealer.bo.default"}
   <input type="hidden" name="dealer-contact-info_id" id="dealer_contact_info_delete_id" value="" />
   <input type="hidden" name="dealer_id" value="{$smarty.get.dealer_id}" />
 {/capture}
@@ -50,7 +50,7 @@ form_enctype       = {form_enctype form=$form}
 {include file="includes/generic-confirm-dialog.html"
 
 dialog_id       = "dealer-contact-info-delete"
-dialog_title    = {intl l="Delete an entry of Contact" d="dealer.bo.default"}
+dialog_title    = {intl l="Delete an entry of Contact Info" d="dealer.bo.default"}
 dialog_message  = {$smarty.capture.contact_info_delete nofilter}
 
 dialog_ok_label     = {intl l="Delete"}

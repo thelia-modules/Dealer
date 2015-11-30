@@ -29,9 +29,9 @@
             {hookblock name="dealer.additional" dealer=$smarty.get.dealer_id}
                 <ul class="nav nav-tabs" id="tabbed-menu">
                     <li class="active"><a href="#general" data-toggle="tab">{intl l="General"}</a></li>
-                    <li><a href="#location" data-toggle="tab">{intl l="Location"}</a></li>
+                    <li><a href="#location" data-toggle="tab">{intl l="Location" d="dealer.bo.default"}</a></li>
                     <li><a href="#contacts" data-toggle="tab">{intl l="Contacts"}</a></li>
-                    <li><a href="#schedules" data-toggle="tab">{intl l="Schedules"}</a></li>
+                    <li><a href="#schedules" data-toggle="tab">{intl l="Schedules" d="dealer.bo.default"}</a></li>
                     {forhook rel="dealer.additional"}
                         <li><a href="#{$id}" data-toggle="tab">{$title}</a></li>
                     {/forhook}

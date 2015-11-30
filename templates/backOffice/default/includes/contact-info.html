@@ -2,7 +2,7 @@
   <caption class="clearfix">
     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
       <div class="pull-right">
-        <a class="btn btn-default btn-primary dealer-contact-info-create" title="{intl l='Create a new Contact' d='dealer.bo.default'}" data-target="#dealer-contact-info-create" data-toggle="modal" data-contact="{$contact_id}">
+        <a class="btn btn-default btn-primary dealer-contact-info-create" title="{intl l='Create a new Contact Info' d='dealer.bo.default'}" data-target="#dealer-contact-info-create" data-toggle="modal" data-contact="{$contact_id}">
           <i class="glyphicon glyphicon-plus-sign"></i>
         </a>
       </div>
@@ -12,13 +12,13 @@
   <thead>
   <tr>
     <th>
-      {intl l="Type"}
+      {intl l="Type" d="dealer.bo.default"}
     </th>
     <th>
-      {intl l="Value"}
+      {intl l="Value" d="dealer.bo.default"}
     </th>
     <th>
-      {intl l="Actions"}
+      {intl l="Actions" d="dealer.bo.default"}
     </th>
   </tr>
   </thead>
@@ -36,12 +36,12 @@
       <td>
         <div class="btn-group">
           {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
-            <a class="btn btn-default btn-xs dealer-contact-info-update" title="{intl l='Modify this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-info-update" data-toggle="modal" data-id="{$ID}" data-contacttype="{$CONTACT_TYPE_ID}" data-value="{$VALUE}" data-contact="{$CONTACT_ID}">
+            <a class="btn btn-default btn-xs dealer-contact-info-update" title="{intl l='Modify this Contact info' d='dealer.bo.default'}" data-target="#dealer-contact-info-update" data-toggle="modal" data-id="{$ID}" data-contacttype="{$CONTACT_TYPE_ID}" data-value="{$VALUE}" data-contact="{$CONTACT_ID}">
               <i class="glyphicon glyphicon-edit"></i>
             </a>
           {/loop}
           {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-            <a class="btn btn-default btn-xs dealer-contact-info-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-info-delete" data-toggle="modal" data-id="{$ID}">
+            <a class="btn btn-default btn-xs dealer-contact-info-delete" title="{intl l='Delete this Contact info' d='dealer.bo.default'}" data-target="#dealer-contact-info-delete" data-toggle="modal" data-id="{$ID}">
               <i class="glyphicon glyphicon-trash"></i>
             </a>
           {/loop}

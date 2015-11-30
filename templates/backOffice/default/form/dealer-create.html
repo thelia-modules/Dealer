@@ -20,7 +20,7 @@
             {form_error form=$form field="title"}{$message}{/form_error}
 
             <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$TITLE}"
-                   placeholder="{intl l='The Dealer title'}"/>
+                   placeholder="{intl l='The Dealer title' d="dealer.bo.default"}"/>
         </div>
     {/form_field}
 {/if}
@@ -34,7 +34,7 @@
         {form_error form=$form field="address1"}{$message}{/form_error}
 
         <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS1}"
-               placeholder="{intl l='The Dealer address1'}"/>
+               placeholder="{intl l='The Dealer address1' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
 {form_field form=$form field="address2"}
@@ -47,7 +47,7 @@
         {form_error form=$form field="address2"}{$message}{/form_error}
 
         <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2}"
-               placeholder="{intl l='The Dealer address2'}"/>
+               placeholder="{intl l='The Dealer address2' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
 {form_field form=$form field="address3"}
@@ -60,7 +60,7 @@
         {form_error form=$form field="address2"}{$message}{/form_error}
 
         <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2}"
-               placeholder="{intl l='The Dealer address3'}"/>
+               placeholder="{intl l='The Dealer address3' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
 {form_field form=$form field="zipcode"}
@@ -73,7 +73,7 @@
         {form_error form=$form field="zipcode"}{$message}{/form_error}
 
         <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ZIPCODE}"
-               placeholder="{intl l='The Dealer zipcode'}"/>
+               placeholder="{intl l='The Dealer zipcode' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
 {form_field form=$form field="city"}
@@ -86,7 +86,7 @@
         {form_error form=$form field="city"}{$message}{/form_error}
 
         <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CITY}"
-               placeholder="{intl l='The Dealer city'}"/>
+               placeholder="{intl l='The Dealer city' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
 {form_field form=$form field="country_id"}
@@ -115,7 +115,7 @@
         {form_error form=$form field="description"}{$message}{/form_error}
 
         <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
-                  placeholder="{intl l='The Dealer description'}">{$DESCRIPTION}</textarea>
+                  placeholder="{intl l='The Dealer description' d="dealer.bo.default"}">{$DESCRIPTION}</textarea>
     </div>
 {/form_field}
 {/form}

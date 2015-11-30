@@ -8,22 +8,22 @@
                 </a>
             </div>
         {/loop}
-        <h4>{intl l="Default Schedules"}</h4>
+        <h4>{intl l="Default Schedules" d="dealer.bo.default"}</h4>
     </caption>
 
     <thead>
     <tr>
         <th>
-            {intl l="Day"}
+            {intl l="Day" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="Begin"}
+            {intl l="Begin" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="End"}
+            {intl l="End" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="Actions"}
+            {intl l="Actions" d="dealer.bo.default"}
         </th>
     </tr>
     </thead>
@@ -49,7 +49,7 @@
                         </a>
                     {/loop}
                     {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-                        <a class="btn btn-default btn-xs dealer-schedules-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
+                        <a class="btn btn-default btn-xs dealer-schedules-delete" title="{intl l='Delete this Schedule' d='dealer.bo.default'}" data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
                             <i class="glyphicon glyphicon-trash"></i>
                         </a>
                     {/loop}
@@ -77,33 +77,33 @@
     <caption class="clearfix">
         {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
             <div class="pull-right">
-                <a class="btn btn-default btn-primary dealer-schedules-extra" title="{intl l='Create a new Extra Scedules' d='dealer.bo.default'}" data-target="#dealer-schedules-create" data-toggle="modal">
+                <a class="btn btn-default btn-primary dealer-schedules-extra" title="{intl l='Create a new Extra Schedules' d='dealer.bo.default'}" data-target="#dealer-schedules-create" data-toggle="modal">
                     <i class="glyphicon glyphicon-plus-sign"></i>
                 </a>
             </div>
         {/loop}
-        <h4>{intl l="Extra Schedules"}</h4>
+        <h4>{intl l="Extra Schedules" d="dealer.bo.default"}</h4>
     </caption>
 
     <thead>
     <tr>
         <th>
-            {intl l="Day"}
+            {intl l="Day" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="Begin"}
+            {intl l="Begin" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="End"}
+            {intl l="End" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="Period Begin"}
+            {intl l="Period Begin" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="Period End"}
+            {intl l="Period End" d="dealer.bo.default"}
         </th>
         <th>
-            {intl l="Actions"}
+            {intl l="Actions" d="dealer.bo.default"}
         </th>
     </tr>
     </thead>
@@ -135,7 +135,7 @@
                         </a>
                     {/loop}
                     {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-                        <a class="btn btn-default btn-xs dealer-schedules-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
+                        <a class="btn btn-default btn-xs dealer-schedules-delete" title="{intl l='Delete this Schedule' d='dealer.bo.default'}" data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
                             <i class="glyphicon glyphicon-trash"></i>
                         </a>
                     {/loop}
