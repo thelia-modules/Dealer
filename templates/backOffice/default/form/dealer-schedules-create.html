@@ -27,8 +27,12 @@
         </label>
 
         {form_error form=$form field="begin"}{$message}{/form_error}
-
-        <input type="time" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+        <div class='input-group time' id="{$label_attr.for}">
+            <input type='text' class="form-control" name="{$name}" value="{$BEGIN}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+        </div>
     </div>
 {/form_field}
 {form_field form=$form field="end"}
@@ -39,8 +43,12 @@
         </label>
 
         {form_error form=$form field="end"}{$message}{/form_error}
-
-        <input type="time" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+        <div class='input-group time' id="{$label_attr.for}">
+            <input type='text' class="form-control" name="{$name}" value="{$END}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-time"></span>
+                    </span>
+        </div>
     </div>
 {/form_field}
 {form_field form=$form field="period_begin"}
@@ -51,8 +59,12 @@
         </label>
 
         {form_error form=$form field="period_begin"}{$message}{/form_error}
-
-        <input type="date" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+        <div class='input-group date' id="{$label_attr.for}">
+            <input type='text' class="form-control" name="{$name}" value="{$PERIOD_BEGIN}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+        </div>
     </div>
 {/form_field}
 {form_field form=$form field="period_end"}
@@ -63,13 +75,18 @@
         </label>
 
         {form_error form=$form field="period_end"}{$message}{/form_error}
-
-        <input type="date" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$BEGIN}"/>
+        <div class='input-group date' id="{$label_attr.for}">
+            <input type='text' class="form-control" name="{$name}" value="{$PERIOD_END}"/>
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+        </div>
     </div>
 {/form_field}
 {form_field form=$form field="dealer_id"}
     <div class="form-group hidden">
-        <input type="hidden" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$dealer_id|default:$DEALER_ID}"/>
+        <input type="hidden" class="form-control" name="{$name}" id="{$label_attr.for}"
+               value="{$dealer_id|default:$DEALER_ID}"/>
     </div>
 {/form_field}
 

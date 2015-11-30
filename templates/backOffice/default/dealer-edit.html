@@ -11,6 +11,10 @@
 {block name="check-access"}update{/block}
 {block name="check-module"}Dealer{/block}
 
+{block name="after-bootstrap-css"}
+    <link rel="stylesheet" href="{stylesheet file='assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css'}">
+{/block}
+
 {block name="main-content"}
     <div id="wrapper" class="container">
 
@@ -75,6 +79,12 @@
 {/block}
 
 {block name="javascript-initialization"}
+    {javascripts file='assets/js/moment-with-locales.min.js'}
+        <script src="{$asset_url}"></script>
+    {/javascripts}
+    {javascripts file='assets/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js'}
+        <script src="{$asset_url}"></script>
+    {/javascripts}
     {include file="script/dealer-contact-js.html"}
     {include file="script/dealer-contact-info-js.html"}
     {include file="script/dealer-schedules-js.html"}

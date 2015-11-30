@@ -11,11 +11,28 @@
         });
         $('a.dealer-schedules-update-default').click(function (ev) {
             $(".period").addClass("hidden");
-            $("#attr-dealer-schedules-id","#dealer-schedules-update").val($(this).data('id'));
+            $("#attr-dealer-schedules-id", "#dealer-schedules-update").val($(this).data('id'));
+            $('#attr-dealer-schedules-day option[value="' + $(this).data('day') + '"]', '#dealer-schedules-update').prop('selected', true);
         });
         $('a.dealer-schedules-update-extra').click(function (ev) {
             $(".period").removeClass("hidden");
-            $("#attr-dealer-schedules-id","#dealer-schedules-update").val($(this).data('id'));
+            $("#attr-dealer-schedules-id", "#dealer-schedules-update").val($(this).data('id'));
+            $('#attr-dealer-schedules-day option[value="' + $(this).data('day') + '"]', '#dealer-schedules-update').prop('selected', true);
         });
+        {$langcode = {lang attr="code"}|substr:0:2}
+        $(document).ready(function () {
+            $('.input-group.time').datetimepicker({
+                locale: "{$langcode}",
+                format: 'LT'
+            });
+        });
+        $(document).ready(function () {
+            $('.input-group.date').datetimepicker({
+                locale: "{$langcode}",
+                format: 'YYYY-MM-DD'
+            });
+        });
+
+
     });
 </script>
