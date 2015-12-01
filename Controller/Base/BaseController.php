@@ -14,9 +14,12 @@
 namespace Dealer\Controller\Base;
 
 use Dealer\Dealer;
+use Propel\Generator\Model\Database;
+use Propel\Runtime\Propel;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Thelia;
 use Thelia\Form\Exception\FormValidationException;
 
 /**
@@ -116,6 +119,9 @@ abstract class BaseController extends BaseAdminController
         // Create the Creation Form
         $creationForm = $this->getCreationForm($this->getRequest());
 
+        $con = Propel::getConnection();
+        $con->beginTransaction();
+
         try {
             // Check the form against constraints violations
             $form = $this->validateForm($creationForm, "POST");
@@ -128,13 +134,17 @@ abstract class BaseController extends BaseAdminController
             // Substitute _ID_ in the URL with the ID of the created object
             $successUrl = str_replace('_ID_', $this->getObjectId($createdObject), $creationForm->getSuccessUrl());
 
+            $con->commit();
+
             // Redirect to the success URL
             return $this->generateRedirect($successUrl);
 
         } catch (FormValidationException $ex) {
+            $con->rollBack();
             // Form cannot be validated
             $error_msg = $this->createStandardFormValidationErrorMessage($ex);
         } catch (\Exception $ex) {
+            $con->rollBack();
             // Any other error
             $error_msg = $ex->getMessage();
         }
@@ -199,6 +209,10 @@ abstract class BaseController extends BaseAdminController
         // Create the Form from the request
         $changeForm = $this->getUpdateForm($this->getRequest());
 
+
+        $con = Propel::getConnection();
+        $con->beginTransaction();
+
         try {
             // Check the form against constraints violations
             $form = $this->validateForm($changeForm, "POST");
@@ -214,6 +228,8 @@ abstract class BaseController extends BaseAdminController
                     $this->getTranslator()->trans("No %obj was updated.", ['%obj' => static::CONTROLLER_ENTITY_NAME])
                 );
             }
+
+            $con->commit();
             // If we have to stay on the same page, do not redirect to the successUrl,
             // just redirect to the edit page again.
             if ($this->getRequest()->get('save_mode') == 'stay') {
@@ -224,11 +240,13 @@ abstract class BaseController extends BaseAdminController
             return $this->generateSuccessRedirect($changeForm);
 
         } catch (FormValidationException $ex) {
+            $con->rollBack();
             // Form cannot be validated
             $error_msg = $this->createStandardFormValidationErrorMessage($ex);
-            /*} catch (\Exception $ex) {
-                // Any other error
-                $error_msg = $ex->getMessage();*/
+        } catch (\Exception $ex) {
+            $con->rollBack();
+            // Any other error
+            $error_msg = $ex->getMessage();
         }
 
         if (false !== $error_msg) {
@@ -258,20 +276,24 @@ abstract class BaseController extends BaseAdminController
             return $response;
         }
 
+        $con = Propel::getConnection();
+        $con->beginTransaction();
         try {
             // Check token
             $this->getTokenProvider()->checkToken(
                 $this->getRequest()->query->get("_token")
             );
 
-            $this->getService()->deleteFromId($this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME."_id"));
-
+            $this->getService()->deleteFromId($this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME . "_id"));
+            $con->commit();
             if ($response == null) {
                 return $this->redirectToListTemplate();
             } else {
                 return $response;
             }
         } catch (\Exception $e) {
+            $con->rollBack();
+
             return $this->renderAfterDeleteError($e);
         }
     }
