@@ -29,6 +29,9 @@
     <route id="dealer.dealer.contact.update" path="/admin/module/Dealer/contact/update" methods="post">
         <default key="_controller">Dealer:Contact:processUpdate</default>
     </route>
+    <route id="dealer.dealer.contact.toogle.default" path="/admin/module/Dealer/contact/toggledefault" methods="post">
+        <default key="_controller">Dealer:Contact:toggleDefault</default>
+    </route>
 
     <!-- Contact Info -->
     <route id="dealer.dealer.contact-info.create" path="/admin/module/Dealer/contact-info" methods="post">

@@ -40,12 +40,17 @@
                     <h4 class="panel-title">
                         <div class="pull-right">
                             {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
-                                <a class="btn btn-default btn-xs dealer-contact-update" title="{intl l='Modify this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-update" data-toggle="modal" data-id="{$ID}" data-label="{$LABEL}">
+                                <a class="btn btn-default btn-xs dealer-contact-update"
+                                   title="{intl l='Modify this Contact' d='dealer.bo.default'}"
+                                   data-target="#dealer-contact-update" data-toggle="modal" data-id="{$ID}"
+                                   data-label="{$LABEL}">
                                     <i class="glyphicon glyphicon-edit"></i>
                                 </a>
                             {/loop}
                             {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-                                <a class="btn btn-default btn-xs dealer-contact-delete" title="{intl l='Delete this Contact' d='dealer.bo.default'}" data-target="#dealer-contact-delete" data-toggle="modal" data-id="{$ID}">
+                                <a class="btn btn-default btn-xs dealer-contact-delete"
+                                   title="{intl l='Delete this Contact' d='dealer.bo.default'}"
+                                   data-target="#dealer-contact-delete" data-toggle="modal" data-id="{$ID}">
                                     <i class="glyphicon glyphicon-trash"></i>
                                 </a>
                             {/loop}

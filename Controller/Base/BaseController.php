@@ -108,7 +108,7 @@ abstract class BaseController extends BaseAdminController
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
-                AccessManager::VIEW)
+                AccessManager::CREATE)
         ) {
             return $response;
         }
@@ -161,7 +161,7 @@ abstract class BaseController extends BaseAdminController
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
-                AccessManager::VIEW)
+                AccessManager::UPDATE)
         ) {
             return $response;
         }
@@ -188,7 +188,7 @@ abstract class BaseController extends BaseAdminController
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
-                AccessManager::VIEW)
+                AccessManager::UPDATE)
         ) {
             return $response;
         }
@@ -253,7 +253,7 @@ abstract class BaseController extends BaseAdminController
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
-                AccessManager::VIEW)
+                AccessManager::DELETE)
         ) {
             return $response;
         }

@@ -14,7 +14,10 @@
 namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
+use Dealer\Dealer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Tools\URL;
 
 /**
@@ -24,6 +27,7 @@ use Thelia\Tools\URL;
 class ContactController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer-contact";
+
     /**
      * Use to get render of list
      * @return mixed
@@ -103,6 +107,34 @@ class ContactController extends BaseController
         }
 
         return $this->service;
+    }
+
+    public function toggleDefaultAction()
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+                AccessManager::UPDATE)
+        ) {
+            return $response;
+        }
+        try {
+            $request = $this->getRequest()->request;
+
+            $data = [
+                'id' => $request->get("dealer_contact_id"),
+                'is_default' => $request->get("is_default")
+            ];
+
+
+            $this->getService()->setDefault($data);
+            if ($response == null) {
+                return $this->redirectToListTemplate();
+            } else {
+                return $response;
+            }
+        } catch (\Exception $e) {
+            return $this->renderAfterDeleteError($e);
+        }
     }
 
 

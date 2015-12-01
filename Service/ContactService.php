@@ -86,6 +86,20 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
         $this->delete($event);
     }
 
+    public function setDefault($data)
+    {
+        if (isset($data['is_default']) && $data['is_default']) {
+            $this->resetDefault($data);
+        }
+
+        $dealer_contact = $this->hydrateObjectArray($data);
+
+        $event = new DealerContactEvent();
+        $event->setDealerContact($dealer_contact);
+
+        $this->update($event);
+    }
+
     protected function hydrateObjectArray($data, $locale = null)
     {
         $model = new DealerContact();
@@ -108,7 +122,26 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
         if (isset($data['dealer_id'])) {
             $model->setDealerId($data['dealer_id']);
         }
+        if (isset($data['is_default'])) {
+            $model->setIsDefault($data['is_default']);
+        }
 
         return $model;
+    }
+
+    protected function resetDefault($data)
+    {
+
+        if (isset($data['id'])) {
+            $dealer = DealerContactQuery::create()->findOneById($data['id']);
+            $defaultsContacts = DealerContactQuery::create()->filterByDealerId($dealer->getDealerId())->filterByIsDefault(true)->find();
+
+            foreach ($defaultsContacts as $defaultsContact) {
+                $defaultsContact
+                    ->setIsDefault(false)
+                    ->save();
+            }
+        }
+
     }
 }

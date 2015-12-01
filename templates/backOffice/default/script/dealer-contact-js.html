@@ -1,11 +1,33 @@
 <script>
-  $(function() {
-    $('a.dealer-contact-delete').click(function(ev) {
-      $('#dealer_contact_delete_id').val($(this).data('id'));
+    $(function () {
+        $('a.dealer-contact-delete').click(function (ev) {
+            $('#dealer_contact_delete_id').val($(this).data('id'));
+        });
+        $('a.dealer-contact-update').click(function (ev) {
+            $('#attr-dealer-contact-id').val($(this).data('id'));
+            $('#attr-dealer-contact-label', '#dealer-contact-update').attr("value", $(this).data('label'));
+        });
+
+        $('.default-contact-checkbox').on("change", function () {
+            var $this = $(this);
+            var data = {
+                'dealer_contact_id': $this.data('id'),
+                'is_default': $this.is(":checked")
+            };
+
+            $.ajax({
+                method: "POST",
+                url: "{url path="/admin/module/Dealer/contact/toggledefault"}",
+                data: data
+            }).done(function(){
+                $('.default-contact-checkbox').each(function(){
+                   if($(this).data('id') != data.dealer_contact_id){
+                       $(this).removeAttr('checked');
+                   }
+                });
+            }).fail(function(){
+                console.log("FAIL");
+            })
+        });
     });
-    $('a.dealer-contact-update').click(function(ev) {
-      $('#attr-dealer-contact-id').val($(this).data('id'));
-      $('#attr-dealer-contact-label','#dealer-contact-update').attr("value",$(this).data('label'));
-    });
-  });
 </script>

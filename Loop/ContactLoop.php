@@ -44,6 +44,7 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $loopResultRow
                 ->set('ID', $contact->getId())
                 ->set('DEALER_ID', $contact->getDealerId())
+                ->set('IS_DEFAULT', $contact->getIsDefault())
             ;
 
             if ($contact->hasVirtualColumn('i18n_LABEL')) {
