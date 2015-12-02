@@ -78,12 +78,13 @@ class DealerService extends AbstractBaseService implements BaseServiceInterface
 
     public function deleteFromId($id)
     {
-        $dealer = $this->hydrateObjectArray(['id' => $id]);
+        $dealer = DealerQuery::create()->findOneById($id);
+        if ($dealer) {
+            $event = new DealerEvent();
+            $event->setDealer($dealer);
 
-        $event = new DealerEvent();
-        $event->setDealer($dealer);
-
-        $this->delete($event);
+            $this->delete($event);
+        }
     }
 
     protected function hydrateObjectArray($data, $locale = null)

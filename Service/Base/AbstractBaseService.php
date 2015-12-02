@@ -69,11 +69,11 @@ abstract class AbstractBaseService
      */
     protected function update(Event $event)
     {
-        $this->dispatch(static::EVENT_CREATE_BEFORE, $event);
+        $this->dispatch(static::EVENT_UPDATE_BEFORE, $event);
         if (!$event->isPropagationStopped()) {
             $this->updateProcess($event);
             if (!$event->isPropagationStopped()) {
-                $this->dispatch(static::EVENT_CREATE_AFTER, $event);
+                $this->dispatch(static::EVENT_UPDATE_AFTER, $event);
             }
         }
     }
