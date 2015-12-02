@@ -59,6 +59,14 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
         $this->dealerService->createFromArray($this->dataMissingRequire(), "fr_FR");
     }
 
+
+    /** @expectedException \Exception */
+    public function testCreateFromArrayWithNull()
+    {
+        $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(DealerService::EVENT_CREATE_BEFORE));
+        $this->dealerService->createFromArray(null, "fr_FR");
+    }
+
     public function testCreateFromArrayWithBaseInfo()
     {
         $this->mockEventDispatcher->expects($this->exactly(2))->method('dispatch')
@@ -119,6 +127,16 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($dealer, DealerQuery::create()->findOneById($dealer->getId()));
     }
 
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testUpdateFromEmptyIdNull()
+    {
+        $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(DealerService::EVENT_UPDATE_BEFORE));
+        $this->dealerService->updateFromArray(null);
+    }
+
     /**
      * @expectedException \Exception
      */
@@ -151,6 +169,12 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
         $this->dealerService->deleteFromId([]);
+    }
+
+    public function testDeleteDealerWithIdNull()
+    {
+        $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
+        $this->dealerService->deleteFromId(null);
     }
 
     public function tearDown()
