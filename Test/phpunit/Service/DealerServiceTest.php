@@ -28,9 +28,6 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
     /** @var  EventDispatcherInterface $mockEventDispatcher */
     protected $mockEventDispatcher;
 
-    /** @var  Array $dealers */
-    protected $dealers = [];
-
     public function setUp()
     {
         $this->dealerService = new DealerService();
@@ -160,7 +157,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
                 [$this->equalTo(DealerService::EVENT_DELETE_AFTER)]
             );
         $id = $dealer->getId();
-        $this->dealerService->deleteFromId($id);
+        $this->dealerService->deleteFromId(['id' => $id]);
 
         $this->assertEmpty(DealerQuery::create()->findOneById($id));
     }
@@ -175,11 +172,6 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
         $this->dealerService->deleteFromId(null);
-    }
-
-    public function tearDown()
-    {
-        // Propel::getConnection()->rollBack();
     }
 
     public static function tearDownAfterClass()

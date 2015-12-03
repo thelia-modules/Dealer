@@ -78,12 +78,14 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
 
     public function deleteFromId($id)
     {
-        $dealer = $this->hydrateObjectArray(['id' => $id]);
+        $dealer = DealerContactQuery::create()->findOneById($id);
 
-        $event = new DealerContactEvent();
-        $event->setDealerContact($dealer);
+        if ($dealer) {
+            $event = new DealerContactEvent();
+            $event->setDealerContact($dealer);
 
-        $this->delete($event);
+            $this->delete($event);
+        }
     }
 
     public function setDefault($data)
