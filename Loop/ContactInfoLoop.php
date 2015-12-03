@@ -15,6 +15,7 @@ namespace Dealer\Loop;
 
 use Dealer\Model\Base\DealerContactInfoQuery;
 use Dealer\Model\DealerContactInfo;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
