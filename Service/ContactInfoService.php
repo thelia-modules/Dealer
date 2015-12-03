@@ -80,12 +80,14 @@ class ContactInfoService extends AbstractBaseService implements BaseServiceInter
 
     public function deleteFromId($id)
     {
-        $dealer = $this->hydrateObjectArray(['id' => $id]);
+        $dealer = DealerContactInfoQuery::create()->findOneById($id);
 
-        $event = new DealerContactInfoEvent();
-        $event->setDealerContactInfo($dealer);
+        if ($dealer) {
+            $event = new DealerContactInfoEvent();
+            $event->setDealerContactInfo($dealer);
 
-        $this->delete($event);
+            $this->delete($event);
+        }
     }
 
     protected function hydrateObjectArray($data, $locale = null)
