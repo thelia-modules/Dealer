@@ -199,7 +199,7 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param DealerShedules $dealer
-     * @depends testCreateFromArrayWithBaseInfo
+     * @depends testCreateFromArrayWithDefaultBaseInfo
      */
     public function testDeleteDealerAfterCreateFromArrayWithBaseInfo(DealerShedules $dealer)
     {
