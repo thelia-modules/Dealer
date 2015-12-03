@@ -78,12 +78,14 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
 
     public function deleteFromId($id)
     {
-        $dealer = $this->hydrateObjectArray(['id' => $id]);
+        $dealer = DealerShedulesQuery::create()->findOneById($id);
 
-        $event = new DealerSchedulesEvent();
-        $event->setDealerSchedules($dealer);
+        if ($dealer) {
+            $event = new DealerSchedulesEvent();
+            $event->setDealerSchedules($dealer);
 
-        $this->delete($event);
+            $this->delete($event);
+        }
     }
 
     protected function hydrateObjectArray($data, $locale = null)
