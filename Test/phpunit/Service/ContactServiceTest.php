@@ -54,14 +54,20 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
         Propel::getConnection()->beginTransaction();
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\ContactService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithEmptyArray()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(ContactService::EVENT_CREATE_BEFORE));
         $this->contactService->createFromArray([]);
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\ContactService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithErrorInfo()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(ContactService::EVENT_CREATE_BEFORE));
@@ -69,13 +75,19 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\ContactService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithNull()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(ContactService::EVENT_CREATE_BEFORE));
         $this->contactService->createFromArray(null, "fr_FR");
     }
 
+    /**
+     * @covers \Dealer\Service\ContactService::createFromArray()
+     */
     public function testCreateFromArrayWithBaseInfo()
     {
         $data = $this->dataRequire();
@@ -94,6 +106,7 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\ContactService::updateFromArray()
      * @param DealerContact $dealer
      * @depends testCreateFromArrayWithBaseInfo
      */
@@ -113,6 +126,7 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\ContactService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdWithoutAllRequireField()
@@ -125,6 +139,9 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($dealer, DealerContactQuery::create()->findOneById($dealer->getId()));
     }
 
+    /**
+     * @covers \Dealer\Service\ContactService::updateFromArray()
+     */
     public function testUpdateFromEmptyIdWithAllRequireField()
     {
         $data = $this->dataRequire();
@@ -141,6 +158,7 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @covers \Dealer\Service\ContactService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdNull()
@@ -150,6 +168,7 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\ContactService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyArray()
@@ -162,6 +181,7 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @covers \Dealer\Service\ContactService::deleteFromId()
      * @param DealerContact $dealer
      * @depends testCreateFromArrayWithBaseInfo
      */
@@ -178,12 +198,18 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty(DealerContactQuery::create()->findOneById($id));
     }
 
+    /**
+     * @covers \Dealer\Service\ContactService::deleteFromId()
+     */
     public function testDeleteDealerWithoutPassId()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
         $this->contactService->deleteFromId([]);
     }
 
+    /**
+     * @covers \Dealer\Service\ContactService::deleteFromId()
+     */
     public function testDeleteDealerWithIdNull()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');

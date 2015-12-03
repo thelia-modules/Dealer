@@ -54,14 +54,20 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
         Propel::getConnection()->beginTransaction();
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\SchedulesService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithEmptyArray()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(SchedulesService::EVENT_CREATE_BEFORE));
         $this->schedulesService->createFromArray([]);
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\SchedulesService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithErrorInfo()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(SchedulesService::EVENT_CREATE_BEFORE));
@@ -69,13 +75,20 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\SchedulesService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithNull()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(SchedulesService::EVENT_CREATE_BEFORE));
         $this->schedulesService->createFromArray(null, "fr_FR");
     }
 
+    /**
+     * @covers \Dealer\Service\SchedulesService::createFromArray()
+     * @return DealerShedules
+     */
     public function testCreateFromArrayWithDefaultBaseInfo()
     {
         $data = $this->dataRequire();
@@ -93,6 +106,10 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
         return $dealer;
     }
 
+    /**
+     * @covers \Dealer\Service\SchedulesService::createFromArray()
+     * @return DealerShedules
+     */
     public function testCreateFromArrayWithExtraBaseInfo()
     {
         $data = $this->dataExtraRequire();
@@ -111,6 +128,7 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers  \Dealer\Service\SchedulesService::updateFromArray()
      * @param DealerShedules $dealer
      * @depends testCreateFromArrayWithDefaultBaseInfo
      */
@@ -130,6 +148,7 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers  \Dealer\Service\SchedulesService::updateFromArray()
      * @param DealerShedules $dealer
      * @depends testCreateFromArrayWithExtraBaseInfo
      */
@@ -149,6 +168,7 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\SchedulesService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdWithoutAllRequireField()
@@ -161,6 +181,9 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($dealer, DealerShedulesQuery::create()->findOneById($dealer->getId()));
     }
 
+    /**
+     * @covers \Dealer\Service\SchedulesService::updateFromArray()
+     */
     public function testUpdateFromEmptyIdWithAllRequireField()
     {
         $data = $this->dataRequire();
@@ -177,6 +200,7 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @covers \Dealer\Service\SchedulesService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdNull()
@@ -186,6 +210,7 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\SchedulesService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyArray()
@@ -198,6 +223,7 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @covers  \Dealer\Service\SchedulesService::deleteFromId()
      * @param DealerShedules $dealer
      * @depends testCreateFromArrayWithDefaultBaseInfo
      */
@@ -214,18 +240,23 @@ class SchedulesServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty(DealerShedulesQuery::create()->findOneById($id));
     }
 
+    /**
+     * @covers \Dealer\Service\SchedulesService::deleteFromId()
+     */
     public function testDeleteDealerWithoutPassId()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
         $this->schedulesService->deleteFromId([]);
     }
 
+    /**
+     * @covers \Dealer\Service\SchedulesService::deleteFromId()
+     */
     public function testDeleteDealerWithIdNull()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
         $this->schedulesService->deleteFromId(null);
     }
-
 
 
     public static function tearDownAfterClass()

@@ -42,14 +42,20 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
         Propel::getConnection()->beginTransaction();
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\DealerService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithEmptyArray()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(DealerService::EVENT_CREATE_BEFORE));
         $this->dealerService->createFromArray([]);
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\DealerService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithErrorInfo()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(DealerService::EVENT_CREATE_BEFORE));
@@ -57,13 +63,19 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\DealerService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithNull()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(DealerService::EVENT_CREATE_BEFORE));
         $this->dealerService->createFromArray(null, "fr_FR");
     }
 
+    /**
+     * @covers \Dealer\Service\DealerService::createFromArray()
+     */
     public function testCreateFromArrayWithBaseInfo()
     {
         $this->mockEventDispatcher->expects($this->exactly(2))->method('dispatch')
@@ -80,6 +92,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Dealer $dealer
+     * @covers \Dealer\Service\DealerService::updateFromArray()
      * @depends testCreateFromArrayWithBaseInfo
      */
     public function testUpdateFromArrayAfterCreateFromArrayWithBaseInfo(Dealer $dealer)
@@ -98,6 +111,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\DealerService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdWithoutAllRequireField()
@@ -110,6 +124,9 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($dealer, DealerQuery::create()->findOneById($dealer->getId()));
     }
 
+    /**
+     * @covers \Dealer\Service\DealerService::updateFromArray()
+     */
     public function testUpdateFromEmptyIdWithAllRequireField()
     {
         $data = $this->dataRequire();
@@ -126,6 +143,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @covers \Dealer\Service\DealerService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdNull()
@@ -135,6 +153,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\DealerService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyArray()
@@ -147,6 +166,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Dealer $dealer
+     * @covers \Dealer\Service\DealerService::deleteFromId()
      * @depends testCreateFromArrayWithBaseInfo
      */
     public function testDeleteDealerAfterCreateFromArrayWithBaseInfo(Dealer $dealer)
@@ -162,12 +182,18 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty(DealerQuery::create()->findOneById($id));
     }
 
+    /**
+     * @covers \Dealer\Service\DealerService::deleteFromId()
+     */
     public function testDeleteDealerWithoutPassId()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
         $this->dealerService->deleteFromId([]);
     }
 
+    /**
+     * @covers \Dealer\Service\DealerService::deleteFromId()
+     */
     public function testDeleteDealerWithIdNull()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');

@@ -64,14 +64,20 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
         Propel::getConnection()->beginTransaction();
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\ContactInfoService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithEmptyArray()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(ContactInfoService::EVENT_CREATE_BEFORE));
         $this->contactInfoService->createFromArray([]);
     }
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\ContactInfoService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithErrorInfo()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(ContactInfoService::EVENT_CREATE_BEFORE));
@@ -79,13 +85,19 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    /** @expectedException \Exception */
+    /**
+     * @covers \Dealer\Service\ContactInfoService::createFromArray()
+     * @expectedException \Exception
+     */
     public function testCreateFromArrayWithNull()
     {
         $this->mockEventDispatcher->expects($this->once())->method('dispatch')->with($this->equalTo(ContactInfoService::EVENT_CREATE_BEFORE));
         $this->contactInfoService->createFromArray(null, "fr_FR");
     }
 
+    /**
+     * @covers \Dealer\Service\ContactInfoService::createFromArray()
+     */
     public function testCreateFromArrayWithBaseInfo()
     {
         $data = $this->dataRequire();
@@ -105,6 +117,7 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param DealerContact $dealer
+     * @covers  \Dealer\Service\ContactInfoService::updateFromArray()
      * @depends testCreateFromArrayWithBaseInfo
      */
     public function testUpdateFromArrayAfterCreateFromArrayWithBaseInfo(DealerContactInfo $dealer)
@@ -123,6 +136,7 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\ContactInfoService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdWithoutAllRequireField()
@@ -135,6 +149,9 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($dealer, DealerContactInfoQuery::create()->findOneById($dealer->getId()));
     }
 
+    /**
+     * @covers \Dealer\Service\ContactInfoService::updateFromArray()
+     */
     public function testUpdateFromEmptyIdWithAllRequireField()
     {
         $data = $this->dataRequire();
@@ -151,6 +168,7 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
 
 
     /**
+     * @covers \Dealer\Service\ContactInfoService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyIdNull()
@@ -160,6 +178,7 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @covers \Dealer\Service\ContactInfoService::updateFromArray()
      * @expectedException \Exception
      */
     public function testUpdateFromEmptyArray()
@@ -173,6 +192,7 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param DealerContact $dealer
+     * @covers  \Dealer\Service\ContactInfoService::deleteFromId()
      * @depends testCreateFromArrayWithBaseInfo
      */
     public function testDeleteDealerAfterCreateFromArrayWithBaseInfo(DealerContactInfo $dealer)
@@ -188,12 +208,18 @@ class ContactInfoServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty(DealerContactInfoQuery::create()->findOneById($id));
     }
 
+    /**
+     * @covers \Dealer\Service\ContactInfoService::deleteFromId()
+     */
     public function testDeleteDealerWithoutPassId()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');
         $this->contactInfoService->deleteFromId([]);
     }
 
+    /**
+     * @covers \Dealer\Service\ContactInfoService::deleteFromId()
+     */
     public function testDeleteDealerWithIdNull()
     {
         $this->mockEventDispatcher->expects($this->exactly(0))->method('dispatch');

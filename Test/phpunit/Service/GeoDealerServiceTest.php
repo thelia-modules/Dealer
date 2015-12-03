@@ -49,16 +49,25 @@ class GeoDealerServiceTest extends \PHPUnit_Framework_TestCase
         Propel::getConnection()->beginTransaction();
     }
 
+    /**
+     * @covers \Dealer\Service\GeoDealerService::updateFromArray()
+     */
     public function testUpdateFromArrayWithoutId(){
         $dealer = $this->geoService->updateFromArray($this->dataMissingID());
         $this->assertNull($dealer);
     }
 
+    /**
+     * @covers \Dealer\Service\GeoDealerService::updateFromArray()
+     */
     public function testUpdateFromArrayMissingElt(){
         $dealer = $this->geoService->updateFromArray($this->dataMissingElt());
         $this->assertEquals($dealer, DealerQuery::create()->findOneById($dealer->getId()));
     }
 
+    /**
+     * @covers \Dealer\Service\GeoDealerService::updateFromArray()
+     */
     public function testUpdateFromArrayWithRequire(){
         $dealer = $this->geoService->updateFromArray($this->dataRequire());
         $this->assertEquals($dealer, DealerQuery::create()->findOneById($dealer->getId()));
