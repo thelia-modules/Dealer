@@ -9,27 +9,31 @@
 /*      For the full copyright and license information, please view the LICENSE.txt  */
 /*      file that was distributed with this source code.                             */
 /*************************************************************************************/
-
 /*************************************************************************************/
 
 namespace Dealer\Test\Loop;
 
-use Dealer\Loop\DealerLoop;
+
+use Dealer\Loop\ContactLoop;
 use Dealer\Model\Dealer;
+use Dealer\Model\DealerContact;
+use Dealer\Service\ContactService;
 use Dealer\Service\DealerService;
 use Dealer\Test\PhpUnit\Base\AbstractPropelTest;
 use Propel\Runtime\Util\PropelModelPager;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class DealerLoopTest extends AbstractPropelTest
+class ContactLoopTest extends AbstractPropelTest
 {
-
-    /** @var  DealerLoop $loop */
+    /** @var  ContactLoop $loop */
     protected $loop;
 
     /** @var  Dealer $dealer */
     protected $dealer;
+
+    /** @var  DealerContact $dealer */
+    protected $contact;
 
     /**
      * Expected possible values for the order loop argument.
@@ -38,33 +42,39 @@ class DealerLoopTest extends AbstractPropelTest
     protected static $VALID_ORDER = [
         'id',
         'id-reverse',
-        'date',
-        'date-reverse'
+        'label',
+        'label-reverse',
     ];
-
-    public function setUp()
-    {
-        $this->loop = new DealerLoop($this->container);
-
-        $this->mockEventDispatcher = $this->getMockBuilder(EventDispatcher::class)
-            ->setMethods(['dispatch'])
-            ->getMock();
-
-        $dealerService = new DealerService();
-        $dealerService->setDispatcher($this->mockEventDispatcher);
-
-        $this->dealer = $dealerService->createFromArray($this->dataDealerRequire(), "fr_FR");
-    }
 
     /**
      * @inheritDoc
      */
     protected function buildContainer(ContainerBuilder $container)
     {
+
+    }
+
+    public function setUp()
+    {
+        $this->loop = new ContactLoop($this->container);
+
+        $this->mockEventDispatcher = $this->getMockBuilder(EventDispatcher::class)
+            ->setMethods(['dispatch'])
+            ->getMock();
+
+        /* Create Test Dealer */
+        $dealerService = new DealerService();
+        $dealerService->setDispatcher($this->mockEventDispatcher);
+        $this->dealer = $dealerService->createFromArray($this->dataDealerRequire(),"fr_FR");
+
+        /* Create Test Contact */
+        $contactService = new ContactService();
+        $contactService->setDispatcher($this->mockEventDispatcher);
+        $this->contact = $contactService->createFromArray($this->dataContactRequire(),"fr_FR");
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\ContactLoop::initializeArgs()
      */
     public function testHasNoMandatoryArguments()
     {
@@ -72,7 +82,7 @@ class DealerLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\ContactLoop::initializeArgs()
      */
     public function testAcceptsAllOrderArguments()
     {
@@ -82,7 +92,7 @@ class DealerLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\ContactLoop::initializeArgs()
      */
     public function testAcceptsAllArguments()
     {
@@ -90,9 +100,9 @@ class DealerLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::buildModelCriteria()
-     * @covers \Dealer\Loop\Dealer::exec()
-     * @covers \Dealer\Loop\Dealer::parseResults()
+     * @covers \Dealer\Loop\ContactLoop::buildModelCriteria()
+     * @covers \Dealer\Loop\ContactLoop::exec()
+     * @covers \Dealer\Loop\ContactLoop::parseResults()
      */
     public function testHasExpectedOutput()
     {
@@ -101,22 +111,27 @@ class DealerLoopTest extends AbstractPropelTest
             new PropelModelPager($this->loop->buildModelCriteria())
         );
 
-        $this->assertEquals(1, $loopResult->getCount());
+        $this->assertEquals(1,$loopResult->getCount());
         $loopResult->rewind();
         $loopResultRow = $loopResult->current();
-        $this->assertEquals($this->dealer->getId(), $loopResultRow->get("ID"));
-        $this->assertEquals($this->dealer->getCountryId(), $loopResultRow->get("COUNTRY_ID"));
-        $this->assertEquals($this->dealer->getCity(), $loopResultRow->get("CITY"));
-        $this->assertEquals($this->dealer->getAddress1(), $loopResultRow->get("ADDRESS1"));
-        $this->assertEquals($this->dealer->getTitle(), $loopResultRow->get("TITLE"));
+        $this->assertEquals($this->contact->getId(), $loopResultRow->get("ID"));
+        $this->assertEquals($this->contact->getDealerId(), $loopResultRow->get("DEALER_ID"));
+        $this->assertEquals($this->contact->getIsDefault(), $loopResultRow->get("IS_DEFAULT"));
     }
 
     protected function getTestArg()
     {
         return [
-            "id" => $this->dealer->getId(),
-            "country_id" => $this->dealer->getCountryId(),
-            "city" => $this->dealer->getCity()
+            "id" => $this->contact->getId(),
+            "dealer_id" => $this->contact->getDealerId(),
+        ];
+    }
+
+    protected function dataContactRequire()
+    {
+        return [
+            "label" => "Openstudio",
+            "dealer_id" => $this->dealer->getId()
         ];
     }
 
