@@ -70,20 +70,21 @@ class ContactInfoLoopTest extends AbstractPropelTest
         /* Create Test Dealer */
         $dealerService = new DealerService();
         $dealerService->setDispatcher($this->mockEventDispatcher);
-        $this->dealer = $dealerService->createFromArray($this->dataDealerRequire(),"fr_FR");
+        $this->dealer = $dealerService->createFromArray($this->dataDealerRequire(), "fr_FR");
 
         /* Create Test Contact */
         $contactService = new ContactService();
         $contactService->setDispatcher($this->mockEventDispatcher);
-        $this->contact = $contactService->createFromArray($this->dataContactRequire(),"fr_FR");
+        $this->contact = $contactService->createFromArray($this->dataContactRequire(), "fr_FR");
 
         /* Create Test Contact Info */
         $contactInfoService = new ContactInfoService();
         $contactInfoService->setDispatcher($this->mockEventDispatcher);
-        $this->contactInfo = $contactInfoService->createFromArray($this->dataContactInfoRequire(),"fr_FR");
+        $this->contactInfo = $contactInfoService->createFromArray($this->dataContactInfoRequire(), "fr_FR");
     }
+
     /**
-     * @covers \Dealer\Loop\ContactLoop::initializeArgs()
+     * @covers \Dealer\Loop\ContactInfoLoop::initializeArgs()
      */
     public function testHasNoMandatoryArguments()
     {
@@ -91,7 +92,7 @@ class ContactInfoLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\ContactLoop::initializeArgs()
+     * @covers \Dealer\Loop\ContactInfoLoop::initializeArgs()
      */
     public function testAcceptsAllOrderArguments()
     {
@@ -101,7 +102,7 @@ class ContactInfoLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\ContactLoop::initializeArgs()
+     * @covers \Dealer\Loop\ContactInfoLoop::initializeArgs()
      */
     public function testAcceptsAllArguments()
     {
@@ -109,9 +110,9 @@ class ContactInfoLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\ContactLoop::buildModelCriteria()
-     * @covers \Dealer\Loop\ContactLoop::exec()
-     * @covers \Dealer\Loop\ContactLoop::parseResults()
+     * @covers \Dealer\Loop\ContactInfoLoop::buildModelCriteria()
+     * @covers \Dealer\Loop\ContactInfoLoop::exec()
+     * @covers \Dealer\Loop\ContactInfoLoop::parseResults()
      */
     public function testHasExpectedOutput()
     {
@@ -120,7 +121,7 @@ class ContactInfoLoopTest extends AbstractPropelTest
             new PropelModelPager($this->loop->buildModelCriteria())
         );
 
-        $this->assertEquals(1,$loopResult->getCount());
+        $this->assertEquals(1, $loopResult->getCount());
         $loopResult->rewind();
         $loopResultRow = $loopResult->current();
         $this->assertEquals($this->contactInfo->getId(), $loopResultRow->get("ID"));

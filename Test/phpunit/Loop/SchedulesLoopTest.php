@@ -79,7 +79,7 @@ class SchedulesLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\SchedulesLoop::initializeArgs()
      */
     public function testHasNoMandatoryArguments()
     {
@@ -87,7 +87,7 @@ class SchedulesLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\SchedulesLoop::initializeArgs()
      */
     public function testAcceptsAllOrderArguments()
     {
@@ -97,14 +97,15 @@ class SchedulesLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\SchedulesLoop::initializeArgs()
      */
     public function testAcceptsAllDefaultArguments()
     {
         $this->loop->initializeArgs($this->getTestDefaultArg());
     }
+
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\SchedulesLoop::initializeArgs()
      */
     public function testAcceptsAllExtraArguments()
     {
@@ -112,9 +113,9 @@ class SchedulesLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::buildModelCriteria()
-     * @covers \Dealer\Loop\Dealer::exec()
-     * @covers \Dealer\Loop\Dealer::parseResults()
+     * @covers \Dealer\Loop\SchedulesLoop::buildModelCriteria()
+     * @covers \Dealer\Loop\SchedulesLoop::exec()
+     * @covers \Dealer\Loop\SchedulesLoop::parseResults()
      */
     public function testHasExpectedDefaultOutput()
     {
@@ -133,9 +134,9 @@ class SchedulesLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::buildModelCriteria()
-     * @covers \Dealer\Loop\Dealer::exec()
-     * @covers \Dealer\Loop\Dealer::parseResults()
+     * @covers \Dealer\Loop\SchedulesLoop::buildModelCriteria()
+     * @covers \Dealer\Loop\SchedulesLoop::exec()
+     * @covers \Dealer\Loop\SchedulesLoop::parseResults()
      */
     public function testHasExpectedExtraOutput()
     {
@@ -176,7 +177,8 @@ class SchedulesLoopTest extends AbstractPropelTest
         ];
     }
 
-    protected function dataDefaultRequire(){
+    protected function dataDefaultRequire()
+    {
         return [
             "day" => 0,
             "begin" => "8:00",
@@ -185,7 +187,8 @@ class SchedulesLoopTest extends AbstractPropelTest
         ];
     }
 
-    protected function dataExtraRequire(){
+    protected function dataExtraRequire()
+    {
         return [
             "day" => 0,
             "begin" => "8:00",

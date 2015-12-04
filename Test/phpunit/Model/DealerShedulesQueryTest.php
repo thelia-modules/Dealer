@@ -40,7 +40,7 @@ class DealerShedulesQueryTest extends AbstractPropelTest
      */
     protected function buildContainer(ContainerBuilder $container)
     {
-        // TODO: Implement buildContainer() method.
+
     }
 
     public function setUp()
@@ -65,12 +65,13 @@ class DealerShedulesQueryTest extends AbstractPropelTest
     /**
      * @covers Dealer\Model\DealerShedulesQuery::filterByPeriodNotNull()
      */
-    public function testFilterByPeriodNotNull(){
-       $schedules = DealerShedulesQuery::create()->filterByPeriodNotNull()->find();
+    public function testFilterByPeriodNotNull()
+    {
+        $schedules = DealerShedulesQuery::create()->filterByPeriodNotNull()->find();
 
-        $this->assertGreaterThanOrEqual(1,count($schedules));
+        $this->assertGreaterThanOrEqual(1, count($schedules));
         /** @var DealerShedules $schedule */
-        foreach($schedules as $schedule){
+        foreach ($schedules as $schedule) {
             $this->assertNotNull($schedule->getPeriodBegin());
             $this->assertNotNull($schedule->getPeriodEnd());
         }
@@ -79,12 +80,13 @@ class DealerShedulesQueryTest extends AbstractPropelTest
     /**
      * @covers Dealer\Model\DealerShedulesQuery::filterByPeriodNull()
      */
-    public function testFilterByPeriodNull(){
-       $schedules = DealerShedulesQuery::create()->filterByPeriodNull()->find();
+    public function testFilterByPeriodNull()
+    {
+        $schedules = DealerShedulesQuery::create()->filterByPeriodNull()->find();
 
-        $this->assertGreaterThanOrEqual(1,count($schedules));
+        $this->assertGreaterThanOrEqual(1, count($schedules));
         /** @var DealerShedules $schedule */
-        foreach($schedules as $schedule){
+        foreach ($schedules as $schedule) {
             $this->assertNull($schedule->getPeriodBegin());
             $this->assertNull($schedule->getPeriodEnd());
         }

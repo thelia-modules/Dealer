@@ -92,7 +92,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Dealer $dealer
-     * @covers \Dealer\Service\DealerService::updateFromArray()
+     * @covers  \Dealer\Service\DealerService::updateFromArray()
      * @depends testCreateFromArrayWithBaseInfo
      */
     public function testUpdateFromArrayAfterCreateFromArrayWithBaseInfo(Dealer $dealer)
@@ -166,7 +166,7 @@ class DealerServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Dealer $dealer
-     * @covers \Dealer\Service\DealerService::deleteFromId()
+     * @covers  \Dealer\Service\DealerService::deleteFromId()
      * @depends testCreateFromArrayWithBaseInfo
      */
     public function testDeleteDealerAfterCreateFromArrayWithBaseInfo(Dealer $dealer)

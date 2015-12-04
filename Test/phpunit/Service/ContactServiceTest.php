@@ -106,7 +106,7 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @covers \Dealer\Service\ContactService::updateFromArray()
+     * @covers  \Dealer\Service\ContactService::updateFromArray()
      * @param DealerContact $dealer
      * @depends testCreateFromArrayWithBaseInfo
      */
@@ -181,7 +181,7 @@ class ContactServiceTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @covers \Dealer\Service\ContactService::deleteFromId()
+     * @covers  \Dealer\Service\ContactService::deleteFromId()
      * @param DealerContact $dealer
      * @depends testCreateFromArrayWithBaseInfo
      */

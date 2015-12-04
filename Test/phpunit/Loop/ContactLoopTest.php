@@ -65,7 +65,7 @@ class ContactLoopTest extends AbstractPropelTest
         /* Create Test Dealer */
         $dealerService = new DealerService();
         $dealerService->setDispatcher($this->mockEventDispatcher);
-        $this->dealer = $dealerService->createFromArray($this->dataDealerRequire(),"fr_FR");
+        $this->dealer = $dealerService->createFromArray($this->dataDealerRequire(), "fr_FR");
 
         /* Create Test Contact */
         $contactService = new ContactService();

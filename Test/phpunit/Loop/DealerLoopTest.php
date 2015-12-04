@@ -64,7 +64,7 @@ class DealerLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\DealerLoop::initializeArgs()
      */
     public function testHasNoMandatoryArguments()
     {
@@ -72,7 +72,7 @@ class DealerLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\DealerLoop::initializeArgs()
      */
     public function testAcceptsAllOrderArguments()
     {
@@ -82,7 +82,7 @@ class DealerLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::initializeArgs()
+     * @covers \Dealer\Loop\DealerLoop::initializeArgs()
      */
     public function testAcceptsAllArguments()
     {
@@ -90,9 +90,9 @@ class DealerLoopTest extends AbstractPropelTest
     }
 
     /**
-     * @covers \Dealer\Loop\Dealer::buildModelCriteria()
-     * @covers \Dealer\Loop\Dealer::exec()
-     * @covers \Dealer\Loop\Dealer::parseResults()
+     * @covers \Dealer\Loop\DealerLoop::buildModelCriteria()
+     * @covers \Dealer\Loop\DealerLoop::exec()
+     * @covers \Dealer\Loop\DealerLoop::parseResults()
      */
     public function testHasExpectedOutput()
     {
