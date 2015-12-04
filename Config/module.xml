@@ -22,6 +22,6 @@
         <email>apenalver@openstudio.fr</email>
     </author>
     <type>classic</type>
-    <thelia>2.1.2</thelia>
+    <thelia>2.1.3</thelia>
     <stability>other</stability>
 </module>
