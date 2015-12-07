@@ -33,7 +33,7 @@ class Dealer extends BaseModule
             DealerShedulesQuery::create()->findOne();
         } catch (\Exception $e) {
             $database = new Database($con);
-            $database->insertSql(null, [__DIR__ . "/Config/create.sql", __DIR__ . "/Config/insert.sql"]);
+            $database->insertSql(null, [__DIR__ . "/Config/create.sql"]);
         }
     }
 
