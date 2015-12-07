@@ -28,14 +28,14 @@ use Symfony\Component\EventDispatcher\Event;
 class SchedulesService extends AbstractBaseService implements BaseServiceInterface
 {
     const EVENT_CREATE = DealerEvents::DEALER_SCHEDULES_CREATE;
-    const EVENT_CREATE_BEFORE = DealerEvents::DEALER_SCHEDULES_CREATE_AFTER;
-    const EVENT_CREATE_AFTER = DealerEvents::DEALER_SCHEDULES_CREATE_BEFORE;
+    const EVENT_CREATE_BEFORE = DealerEvents::DEALER_SCHEDULES_CREATE_BEFORE;
+    const EVENT_CREATE_AFTER = DealerEvents::DEALER_SCHEDULES_CREATE_AFTER;
     const EVENT_DELETE = DealerEvents::DEALER_SCHEDULES_DELETE;
-    const EVENT_DELETE_BEFORE = DealerEvents::DEALER_SCHEDULES_DELETE_AFTER;
-    const EVENT_DELETE_AFTER = DealerEvents::DEALER_SCHEDULES_DELETE_BEFORE;
+    const EVENT_DELETE_BEFORE = DealerEvents::DEALER_SCHEDULES_DELETE_BEFORE;
+    const EVENT_DELETE_AFTER = DealerEvents::DEALER_SCHEDULES_DELETE_AFTER;
     const EVENT_UPDATE = DealerEvents::DEALER_SCHEDULES_UPDATE;
-    const EVENT_UPDATE_BEFORE = DealerEvents::DEALER_SCHEDULES_UPDATE_AFTER;
-    const EVENT_UPDATE_AFTER = DealerEvents::DEALER_SCHEDULES_UPDATE_BEFORE;
+    const EVENT_UPDATE_BEFORE = DealerEvents::DEALER_SCHEDULES_UPDATE_BEFORE;
+    const EVENT_UPDATE_AFTER = DealerEvents::DEALER_SCHEDULES_UPDATE_AFTER;
 
     protected function createProcess(Event $event)
     {

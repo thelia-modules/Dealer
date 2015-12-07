@@ -65,7 +65,7 @@ CREATE TABLE `dealer_contact`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `dealer_id` INTEGER NOT NULL,
-    `default` TINYINT(1) NOT NULL,
+    `is_default` TINYINT(1) NOT NULL,
     `created_at` DATETIME,
     `updated_at` DATETIME,
     `version` INTEGER DEFAULT 0,
