@@ -51,6 +51,16 @@ class Dealer extends BaseModule
             ),
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
+                "code" => "dealer.edit.js",
+                "title" => "Dealer Extra Js",
+                "description" => [
+                    "en_US" =>"Allow you to insert js on Dealer edit page",
+                    "fr_FR" =>"Permet l'ajout de js sur l'edition",
+                ],
+                "active" => true,
+            ),
+            array(
+                "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.additional",
                 "title" => "Dealer Extra Tab",
                 "description" => [
