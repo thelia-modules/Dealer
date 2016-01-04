@@ -44,8 +44,7 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $loopResultRow
                 ->set('ID', $contact->getId())
                 ->set('DEALER_ID', $contact->getDealerId())
-                ->set('IS_DEFAULT', $contact->getIsDefault())
-            ;
+                ->set('IS_DEFAULT', $contact->getIsDefault());
 
             if ($contact->hasVirtualColumn('i18n_LABEL')) {
                 $loopResultRow->set("LABEL", $contact->getVirtualColumn('i18n_LABEL'));
@@ -87,11 +86,13 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('dealer_id'),
+            Argument::createBooleanTypeArgument("default", null),
             Argument::createEnumListTypeArgument('order', [
                 'id',
                 'id-reverse',
                 'label',
                 'label-reverse',
+                'default-first'
             ], 'id')
 
         );
@@ -117,16 +118,20 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $this->getForceReturn()
         );
 
-        if($id = $this->getId()){
+        if (null != $default = $this->getDefault()) {
+            $query->filterByIsDefault($default);
+        }
+
+        if ($id = $this->getId()) {
             $query->filterById($id);
         }
 
-        if($dealer_id = $this->getDealerId()){
+        if ($dealer_id = $this->getDealerId()) {
             $query->filterByDealerId($dealer_id);
         }
 
-        foreach($this->getOrder() as $order){
-            switch($order){
+        foreach ($this->getOrder() as $order) {
+            switch ($order) {
                 case 'id':
                     $query->orderById();
                     break;
@@ -139,7 +144,11 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 case 'label-reverse':
                     $query->orderByLabel(Criteria::DESC);
                     break;
-                default:break;
+                case 'default-first' :
+                    $query->orderByIsDefault(Criteria::DESC);
+                    break;
+                default:
+                    break;
             }
         }
 

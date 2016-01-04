@@ -34,7 +34,7 @@
 
 {ifloop rel="dealer-contact"}
     <div class="panel-group" id="contacts" role="tablist" aria-multiselectable="true">
-        {loop type="dealer_contact" name="dealer-contact" dealer_id=$smarty.get.dealer_id}
+        {loop type="dealer_contact" name="dealer-contact" dealer_id=$smarty.get.dealer_id order="default-first"}
             <div class="panel panel-default">
                 <div class="panel-heading" role="tab" id="heading-{$ID}">
                     <h4 class="panel-title">
