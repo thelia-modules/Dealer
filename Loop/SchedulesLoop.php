@@ -90,6 +90,7 @@ class SchedulesLoop extends BaseLoop implements PropelSearchLoopInterface
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('dealer_id'),
             Argument::createBooleanTypeArgument('default_period'),
+            Argument::createBooleanTypeArgument('hide_past',false),
             Argument::createIntListTypeArgument('day'),
             Argument::createEnumListTypeArgument('order', [
                 'id',
@@ -126,6 +127,8 @@ class SchedulesLoop extends BaseLoop implements PropelSearchLoopInterface
             $query->filterByPeriodNull();
         } else {
             $query->filterByPeriodNotNull();
+            if($this->getHidePast())
+            $query->filterByPeriodEnd(new \DateTime(),Criteria::GREATER_THAN);
         }
 
         foreach ($this->getOrder() as $order) {
