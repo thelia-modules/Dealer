@@ -144,7 +144,7 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 case 'label-reverse':
                     $query->orderByLabel(Criteria::DESC);
                     break;
-                case 'default-first' :
+                case 'default-first':
                     $query->orderByIsDefault(Criteria::DESC);
                     break;
                 default:
