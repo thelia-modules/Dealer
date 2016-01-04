@@ -15,6 +15,7 @@ namespace Dealer\Loop;
 
 use Dealer\Model\Base\DealerContactInfoQuery;
 use Dealer\Model\DealerContactInfo;
+use Dealer\Model\Map\DealerContactInfoTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
@@ -45,8 +46,7 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 ->set('ID', $contact->getId())
                 ->set('CONTACT_ID', $contact->getContactId())
                 ->set('CONTACT_TYPE', $contact->getContactType())
-                ->set('CONTACT_TYPE_ID', $contact->getContactTypeId())
-            ;
+                ->set('CONTACT_TYPE_ID', $contact->getContactTypeId());
 
             if ($contact->hasVirtualColumn('i18n_VALUE')) {
                 $loopResultRow->set("VALUE", $contact->getVirtualColumn('i18n_VALUE'));
@@ -84,9 +84,12 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      */
     protected function getArgDefinitions()
     {
+
+
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('contact_id'),
+            Argument::createEnumListTypeArgument('contact_type', DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE),null),
             Argument::createEnumListTypeArgument('order', [
                 'id',
                 'id-reverse',
@@ -116,16 +119,20 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $this->getForceReturn()
         );
 
-        if($id = $this->getId()){
+        if ($id = $this->getId()) {
             $query->filterById($id);
         }
 
-        if($contact_id = $this->getContactId()){
+        if(null != $type = $this->getContactType()){
+            $query->filterByContactType($type);
+        }
+
+        if ($contact_id = $this->getContactId()) {
             $query->filterByContactId($contact_id);
         }
 
-        foreach($this->getOrder() as $order){
-            switch($order){
+        foreach ($this->getOrder() as $order) {
+            switch ($order) {
                 case 'id':
                     $query->orderById();
                     break;
@@ -138,9 +145,11 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 case 'value-reverse':
                     $query->orderByValue(Criteria::DESC);
                     break;
-                default:break;
+                default:
+                    break;
             }
         }
+
         return $query;
     }
 }
