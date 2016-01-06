@@ -79,7 +79,6 @@ class Dealer extends BaseModule
                     "fr_FR" =>"Permet l'ajout d'un lien sur la page d'édition entre les liens suivant et précedent",
                 ],
                 "active" => true,
-                "block" => true,
             ),
         ];
     }
