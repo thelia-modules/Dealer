@@ -32,7 +32,7 @@
                            class="btn btn-default" title="{intl l='Edit previous dealer' d="dealer.bo.default"}"><span
                                     class="glyphicon glyphicon-arrow-left"></span></a>
                     {/if}
-                    {hook name="dealer.edit.nav.bar"}
+                    {hook name="dealer.edit.nav.bar" dealer_id=$ID}
                     {if $HAS_NEXT}
                         <a href="{url path="/admin/module/Dealer/dealer/edit" dealer_id=$NEXT}" class="btn btn-default"
                            title="{intl l='Edit next dealer' d="dealer.bo.default"}"><span class="glyphicon glyphicon-arrow-right"></span></a>
