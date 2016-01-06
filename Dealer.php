@@ -70,6 +70,17 @@ class Dealer extends BaseModule
                 "active" => true,
                 "block" => true,
             ),
+            array(
+                "type" => TemplateDefinition::BACK_OFFICE,
+                "code" => "dealer.edit.nav.bar",
+                "title" => "Dealer Edition NavBar Link",
+                "description" => [
+                    "en_US" =>"Allow you to insert link between arrow previous and next on edtion view",
+                    "fr_FR" =>"Permet l'ajout d'un lien sur la page d'édition entre les liens suivant et précedent",
+                ],
+                "active" => true,
+                "block" => true,
+            ),
         ];
     }
 }
