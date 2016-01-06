@@ -31,6 +31,8 @@ return array(
     "phone_number" => "Numéro de téléphone",
     "web_site" => "Site web",
     "latitude" => "Latitude",
+    "Edit previous dealer" => "Editer le magasin précedent",
+    "Edit next dealer" => "Editer le magasin suivant",
     "longitude" => "Longitude",
     "Location" => "Géolocalisation",
     "There is no additionnal content for this Dealer" => "Il n'y pas de contenu additionnel pour ce magasin",
