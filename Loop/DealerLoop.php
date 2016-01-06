@@ -15,6 +15,7 @@ namespace Dealer\Loop;
 
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
+use Dealer\Model\Map\DealerTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
@@ -52,8 +53,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 ->set("LAT", $dealer->getLatitude())
                 ->set("LON", $dealer->getLongitude())
                 ->set("CREATE_DATE", $dealer->getCreatedAt())
-                ->set("UPDATE_DATE", $dealer->getUpdatedAt())
-            ;
+                ->set("UPDATE_DATE", $dealer->getUpdatedAt());
 
             if ($dealer->hasVirtualColumn('i18n_TITLE')) {
                 $loopResultRow->set("TITLE", $dealer->getVirtualColumn('i18n_TITLE'));
@@ -61,6 +61,17 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
             if ($dealer->hasVirtualColumn('i18n_DESCRIPTION')) {
                 $loopResultRow->set("DESCRIPTION", $dealer->getVirtualColumn('i18n_DESCRIPTION'));
+            }
+
+            if ($this->getWithPrevNextInfo()) {
+
+                $previous = $this->getPrevious($dealer);
+                $next = $this->getNext($dealer);
+                $loopResultRow
+                    ->set("HAS_PREVIOUS", $previous != null ? 1 : 0)
+                    ->set("HAS_NEXT", $next != null ? 1 : 0)
+                    ->set("PREVIOUS", $previous != null ? $previous->getId() : -1)
+                    ->set("NEXT", $next != null ? $next->getId() : -1);
             }
 
             $loopResult->addRow($loopResultRow);
@@ -78,12 +89,13 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('country_id'),
             Argument::createAnyListTypeArgument('city'),
+            Argument::createBooleanTypeArgument('with_prev_next_info', false),
             Argument::createEnumListTypeArgument('order', [
                 'id',
                 'id-reverse',
                 'date',
                 'date-reverse'
-            ],'id')
+            ], 'id')
         );
     }
 
@@ -138,5 +150,61 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
         }
 
         return $query;
+    }
+
+    /**
+     * @param Dealer $dealer
+     * @return Dealer
+     */
+    protected function getPrevious($dealer)
+    {
+        $query = DealerQuery::create();
+
+        foreach ($this->getOrder() as $order) {
+            switch ($order) {
+                case 'id' :
+                    $query->orderById(Criteria::DESC);
+                    $query->filterById($dealer->getId(),Criteria::LESS_THAN);
+                    break;
+                case 'id-reverse' :
+                    $query->orderById();
+                    $query->filterById($dealer->getId(),Criteria::GREATER_THAN);
+                    break;
+                default:
+                    $query->orderById(Criteria::DESC);
+                    $query->filterById($dealer->getId(),Criteria::LESS_THAN);
+                    break;
+            }
+        }
+
+        return $query->findOne();
+    }
+
+    /**
+     * @param Dealer $dealer
+     * @return Dealer
+     */
+    protected function getNext($dealer)
+    {
+        $query = DealerQuery::create();
+
+        foreach ($this->getOrder() as $order) {
+            switch ($order) {
+                case 'id' :
+                    $query->orderById();
+                    $query->filterById($dealer->getId(),Criteria::GREATER_THAN);
+                    break;
+                case 'id-reverse' :
+                    $query->orderById(Criteria::DESC);
+                    $query->filterById($dealer->getId(),Criteria::LESS_THAN);
+                    break;
+                default:
+                    $query->orderById();
+                    $query->filterById($dealer->getId(),Criteria::GREATER_THAN);
+                    break;
+            }
+        }
+
+        return $query->findOne();
     }
 }
