@@ -50,6 +50,11 @@
             <tag name="hook.event_listener" event="main.top-menu-modules" type="back" method="onTopMenuTools"/>
             <argument type="service" id="router.dealer"/>
         </hook>
+        <hook id="dealer.thelia.admin.hook" class="Dealer\Hook\TheliaAdminHook" scope="request">
+            <tag name="hook.event_listener" event="content.tab-content" type="back" method="onContentModuleTab"/>
+            <tag name="hook.event_listener" event="content.edit-js" type="back" method="onContentEditJs"/>
+            <argument type="service" id="router.dealer"/>
+        </hook>
     </hooks>
 
     <forms>

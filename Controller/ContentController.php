@@ -141,10 +141,11 @@ class ContentController extends BaseController
             ];
             $this->getService()->deleteFromArray($data);
             $con->commit();
-            if ($response == null) {
+
+            if ($this->getRequest()->request->get("success_url") == null) {
                 return $this->redirectToListTemplate();
             } else {
-                return $response;
+                return new RedirectResponse(URL::getInstance()->absoluteUrl($this->getRequest()->request->get("success_url")));
             }
         } catch (\Exception $e) {
             $con->rollBack();

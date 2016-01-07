@@ -14,9 +14,12 @@
 namespace Dealer\Loop;
 
 use Dealer\Model\Dealer;
+use Dealer\Model\DealerContent;
 use Dealer\Model\DealerQuery;
+use Dealer\Model\Map\DealerContentTableMap;
 use Dealer\Model\Map\DealerTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\Join;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
@@ -88,6 +91,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('country_id'),
+            Argument::createIntListTypeArgument('content_id'),
             Argument::createAnyListTypeArgument('city'),
             Argument::createBooleanTypeArgument('with_prev_next_info', false),
             Argument::createEnumListTypeArgument('order', [
@@ -128,6 +132,18 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
         if ($city = $this->getCity()) {
             $query->filterByCity($city);
+        }
+
+        if($content = $this->getContentId()){
+            if(is_array($content)){
+                $content = implode(",", $content);
+            }
+            $contentJoin = new Join(DealerTableMap::ID,DealerContentTableMap::DEALER_ID,Criteria::LEFT_JOIN);
+            $query
+                ->addJoinObject($contentJoin)
+                ->where(DealerContentTableMap::CONTENT_ID." ".Criteria::IN." (".$content.")");
+            ;
+
         }
 
         foreach ($this->getOrder() as $order) {
