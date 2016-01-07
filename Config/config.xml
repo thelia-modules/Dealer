@@ -53,6 +53,8 @@
         <hook id="dealer.thelia.admin.hook" class="Dealer\Hook\TheliaAdminHook" scope="request">
             <tag name="hook.event_listener" event="content.tab-content" type="back" method="onContentModuleTab"/>
             <tag name="hook.event_listener" event="content.edit-js" type="back" method="onContentEditJs"/>
+            <tag name="hook.event_listener" event="folder.tab-content" type="back" method="onFolderModuleTab"/>
+            <tag name="hook.event_listener" event="folder.edit-js" type="back" method="onFolderEditJs"/>
             <argument type="service" id="router.dealer"/>
         </hook>
     </hooks>

@@ -17,6 +17,7 @@ use Dealer\Model\Dealer;
 use Dealer\Model\DealerContent;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\Map\DealerContentTableMap;
+use Dealer\Model\Map\DealerFolderTableMap;
 use Dealer\Model\Map\DealerTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
@@ -92,6 +93,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('country_id'),
             Argument::createIntListTypeArgument('content_id'),
+            Argument::createIntListTypeArgument('folder_id'),
             Argument::createAnyListTypeArgument('city'),
             Argument::createBooleanTypeArgument('with_prev_next_info', false),
             Argument::createEnumListTypeArgument('order', [
@@ -142,6 +144,18 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $query
                 ->addJoinObject($contentJoin)
                 ->where(DealerContentTableMap::CONTENT_ID." ".Criteria::IN." (".$content.")");
+            ;
+
+        }
+
+        if($folder = $this->getFolderId()){
+            if(is_array($folder)){
+                $folder = implode(",", $folder);
+            }
+            $contentJoin = new Join(DealerTableMap::ID,DealerFolderTableMap::DEALER_ID,Criteria::LEFT_JOIN);
+            $query
+                ->addJoinObject($contentJoin)
+                ->where(DealerFolderTableMap::FOLDER_ID." ".Criteria::IN." (".$folder.")");
             ;
 
         }

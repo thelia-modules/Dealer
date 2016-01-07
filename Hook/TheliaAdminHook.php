@@ -30,4 +30,13 @@ class TheliaAdminHook extends BaseHook
     public function onContentEditJs(HookRenderEvent $event){
         $event->add($this->render("script/dealer-content-js.html",$event->getArguments()));
     }
+
+    public function onFolderModuleTab(HookRenderEvent $event)
+    {
+        $event->add($this->render("hook/folder.html",$event->getArguments()));
+    }
+
+    public function onFolderEditJs(HookRenderEvent $event){
+        $event->add($this->render("script/dealer-folder-js.html",$event->getArguments()));
+    }
 }
