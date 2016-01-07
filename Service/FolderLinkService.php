@@ -97,6 +97,22 @@ class FolderLinkService extends AbstractBaseService implements BaseServiceInterf
         }
     }
 
+    public function deleteFromArray($data)
+    {
+        $link = null;
+
+        if(isset($data["folder_id"]) && isset($data["dealer_id"])){
+            $link = DealerFolderQuery::create()->filterByDealerId($data["dealer_id"])->filterByFolderId($data["folder_id"])->findOne();
+        }
+
+        if ($link) {
+            $event = new DealerFolderLinkEvent();
+            $event->setDealerFolderLink($link);
+
+            $this->delete($event);
+        }
+    }
+
     protected function hydrateObjectArray($data, $locale = null)
     {
         $model = new DealerFolder();
@@ -114,7 +130,7 @@ class FolderLinkService extends AbstractBaseService implements BaseServiceInterf
                 throw new \Exception("A link already exist",403);
             }
 
-            $model->setContentId($data["folder_id"]);
+            $model->setFolderId($data["folder_id"]);
             $model->setDealerId($data["dealer_id"]);
         }
 

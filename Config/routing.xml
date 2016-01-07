@@ -67,4 +67,12 @@
     <route id="dealer.content.unlink" path="/admin/module/Dealer/content/delete" methods="post">
         <default key="_controller">Dealer:Content:delete</default>
     </route>
+
+    <!-- Folder Link -->
+    <route id="dealer.folder.link" path="/admin/module/Dealer/folder" methods="post">
+        <default key="_controller">Dealer:FolderLink:create</default>
+    </route>
+    <route id="dealer.folder.unlink" path="/admin/module/Dealer/folder/delete" methods="post">
+        <default key="_controller">Dealer:FolderLink:delete</default>
+    </route>
 </routes>

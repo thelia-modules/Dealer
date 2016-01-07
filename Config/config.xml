@@ -68,6 +68,7 @@
         <form name="dealer-schedules.update" class="Dealer\Form\SchedulesUpdateForm"/>
         <form name="dealer-geo" class="Dealer\Form\GeoDealerForm"/>
         <form name="dealer_content_link_create" class="Dealer\Form\ContentLinkForm"/>
+        <form name="dealer_folder_link_create" class="Dealer\Form\FolderLinkForm"/>
     </forms>
 
 
