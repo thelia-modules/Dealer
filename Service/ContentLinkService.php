@@ -96,6 +96,22 @@ class ContentLinkService extends AbstractBaseService implements BaseServiceInter
         }
     }
 
+    public function deleteFromArray($data)
+    {
+        $link = null;
+
+        if(isset($data["content_id"]) && isset($data["dealer_id"])){
+            $link = DealerContentQuery::create()->filterByDealerId($data["dealer_id"])->filterByContentId($data["content_id"])->findOne();
+        }
+
+        if ($link) {
+            $event = new DealerContentLinkEvent();
+            $event->setDealerContentLink($link);
+
+            $this->delete($event);
+        }
+    }
+
     protected function hydrateObjectArray($data, $locale = null)
     {
         $model = new DealerContent();

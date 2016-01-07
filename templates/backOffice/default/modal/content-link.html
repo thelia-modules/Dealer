@@ -1,0 +1,38 @@
+{* CREATE Modal *}
+
+{form name="dealer_content_link_create"}
+{capture "content_link_create"}
+  {include file="form/dealer-content-link.html" form_name="dealer_content_link_create" dealer_id=$dealer_id}
+{/capture}
+
+  {include file="includes/generic-create-dialog.html"
+  dialog_id       = "dealer-content-link"
+  dialog_title    = {intl l="Link a Content" d="dealer.bo.default"}
+  dialog_body     = {$smarty.capture.content_link_create nofilter}
+dialog_ok_label     = {intl l="Create"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action        = {url path="admin/module/Dealer/content"}
+form_enctype       = {form_enctype form=$form}
+}
+{/form}
+
+{* DELETE modal *}
+
+{capture "content_link_delete"}
+  {intl l="Do you really want to delete this Contact Info ?" d="dealer.bo.default"}
+  <input type="hidden" name="dealer_content_link_id" id="dealer_content_link_delete_id" value="" />
+  <input type="hidden" name="dealer_id" value="{$dealer_id}" />
+{/capture}
+
+{include file="includes/generic-confirm-dialog.html"
+
+dialog_id       = "dealer-content-unlink"
+dialog_title    = {intl l="Unlink a content" d="dealer.bo.default"}
+dialog_message  = {$smarty.capture.content_link_delete nofilter}
+
+dialog_ok_label     = {intl l="Delete"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action         = {token_url path='/admin/module/Dealer/content/delete'}
+}

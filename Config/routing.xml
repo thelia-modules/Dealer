@@ -59,4 +59,12 @@
     <route id="dealer.geo.update" path="/admin/module/Dealer/location/update" methods="post">
         <default key="_controller">Dealer:GeoDealer:processUpdate</default>
     </route>
+
+    <!-- Content Link -->
+    <route id="dealer.content.link" path="/admin/module/Dealer/content" methods="post">
+        <default key="_controller">Dealer:Content:create</default>
+    </route>
+    <route id="dealer.content.unlink" path="/admin/module/Dealer/content/delete" methods="post">
+        <default key="_controller">Dealer:Content:delete</default>
+    </route>
 </routes>

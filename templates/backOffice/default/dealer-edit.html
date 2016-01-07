@@ -18,7 +18,7 @@
 
 {block name="main-content"}
     <div id="wrapper" class="container">
-
+        {assign "dealer_id" $smarty.get.dealer_id}
         {if $form_error}
             <div class="alert alert-danger">{$form_error_message}</div>
         {/if}
@@ -47,6 +47,7 @@
                     <li><a href="#location" data-toggle="tab">{intl l="Location" d="dealer.bo.default"}</a></li>
                     <li><a href="#contacts" data-toggle="tab">{intl l="Contacts"}</a></li>
                     <li><a href="#schedules" data-toggle="tab">{intl l="Schedules" d="dealer.bo.default"}</a></li>
+                    <li><a href="#associated" data-toggle="tab">{intl l="Associated" d="dealer.bo.default"}</a></li>
                     {forhook rel="dealer.additional"}
                         <li><a href="#{$id}" data-toggle="tab">{$title}</a></li>
                     {/forhook}
@@ -66,6 +67,9 @@
                     </div>
                     <div class="tab-pane fade" id="schedules">
                         {include file="includes/schedules-dealer.html"}
+                    </div>
+                    <div class="tab-pane fade" id="associated">
+                        {include file="includes/associated.html"}
                     </div>
                     {forhook rel="dealer.additional"}
                         <div class="tab-pane fade" id="{$id}">
@@ -90,6 +94,7 @@
     {include file="modal/dealer-contact-modal.html"}
     {include file="modal/dealer-contact-info-modal.html"}
     {include file="modal/dealer-schedules-modal.html"}
+    {include file="modal/content-link.html"}
 
 {/block}
 
@@ -104,6 +109,7 @@
     {include file="script/dealer-contact-info-js.html"}
     {include file="script/dealer-schedules-js.html"}
     {include file="script/dealer-geo-js.html"}
+    {include file="script/dealer-content-js.html"}
     <script>
         (function ($) {
             $(document).ready(function () {
