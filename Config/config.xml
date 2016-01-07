@@ -31,6 +31,11 @@
                 <argument type="service" id="event_dispatcher"/>
             </call>
         </service>
+        <service id="dealer_content_link_service" class="Dealer\Service\ContentLinkService">
+            <call method="setDispatcher">
+                <argument type="service" id="event_dispatcher"/>
+            </call>
+        </service>
         <service id="dealer_geo_service" class="Dealer\Service\GeoDealerService">
         </service>
     </services>

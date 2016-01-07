@@ -60,4 +60,15 @@ class DealerEvents
     const DEALER_SCHEDULES_DELETE = "dealer.dealer-schedules.delete";
     const DEALER_SCHEDULES_DELETE_BEFORE = "dealer.dealer-schedules.delete.before";
     const DEALER_SCHEDULES_DELETE_AFTER = "dealer.dealer-schedules.delete.after";
+
+    //DEALER Schedules
+    const DEALER_CONTENT_LINK_CREATE = "dealer.content.link.create";
+    const DEALER_CONTENT_LINK_CREATE_BEFORE = "dealer.content.link.create.before";
+    const DEALER_CONTENT_LINK_CREATE_AFTER = "dealer.content.link.create.after";
+    const DEALER_CONTENT_LINK_UPDATE = "dealer.content.link.update";
+    const DEALER_CONTENT_LINK_UPDATE_BEFORE = "dealer.content.link.update.before";
+    const DEALER_CONTENT_LINK_UPDATE_AFTER = "dealer.content.link.update.after";
+    const DEALER_CONTENT_LINK_DELETE = "dealer.content.link.delete";
+    const DEALER_CONTENT_LINK_DELETE_BEFORE = "dealer.content.link.delete.before";
+    const DEALER_CONTENT_LINK_DELETE_AFTER = "dealer.content.link.delete.after";
 }
