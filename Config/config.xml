@@ -60,6 +60,8 @@
         <loop name="dealer_contact" class="Dealer\Loop\ContactLoop"/>
         <loop name="dealer_contact_info" class="Dealer\Loop\ContactInfoLoop"/>
         <loop name="dealer_schedules" class="Dealer\Loop\SchedulesLoop"/>
+        <loop name="dealer_content" class="Dealer\Loop\ContentLoop"/>
+        <loop name="dealer_folder" class="Dealer\Loop\FolderLoop"/>
     </loops>
     <!--
       <exports>

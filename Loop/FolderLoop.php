@@ -13,19 +13,19 @@
 
 namespace Dealer\Loop;
 
-use Dealer\Model\Map\DealerContentTableMap;
+use Dealer\Model\Map\DealerFolderTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-use Thelia\Core\Template\Loop\Content;
-use Thelia\Model\Map\ContentTableMap;
+use Thelia\Core\Template\Loop\Folder;
+use Thelia\Model\Map\FolderTableMap;
 
 /**
- * Class ContentLoop
+ * Class FolderLoop
  * @package Dealer\Loop
  */
-class ContentLoop extends Content
+class FolderLoop extends Folder
 {
     /**
      * @inheritDoc
@@ -51,15 +51,13 @@ class ContentLoop extends Content
                 $id = implode(",", $id);
             }
 
-            $dealerJoin = new Join(ContentTableMap::ID, DealerContentTableMap::CONTENT_ID, Criteria::LEFT_JOIN);
+            $dealerJoin = new Join(FolderTableMap::ID, DealerFolderTableMap::FOLDER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
-                ->where(DealerContentTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
+                ->where(DealerFolderTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
 
         }
 
         return $query;
     }
-
-
 }
