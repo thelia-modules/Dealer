@@ -86,6 +86,12 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
+            ->add("closed", "integer", [
+                "label" => $this->translator->trans("Closed", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-closed"],
+                "required" => true,
+                "attr" => array()
+            ])
             ->add('dealer_id', 'integer', array(
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-dealer_id"],

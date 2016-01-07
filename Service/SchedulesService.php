@@ -118,6 +118,9 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         if (isset($data['dealer_id'])) {
             $model->setDealerId($data['dealer_id']);
         }
+        if (isset($data['closed'])) {
+            $model->setClosed($data['closed']);
+        }
 
 
         return $model;

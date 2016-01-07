@@ -2,8 +2,9 @@
 {form_hidden_fields form=$form}
 
 {render_form_field form=$form field="success_url" value={url path="/admin/module/Dealer/dealer/edit?dealer_id={$dealer_id|default:$DEALER_ID}#schedules"}}
-
-
+{form_field form=$form field="closed"}
+    <input type="hidden" id="{$label_attr.for}" name="{$name}" value="{$closed|default:0}" />
+{/form_field}
 {form_field form=$form field="day"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">
