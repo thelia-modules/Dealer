@@ -71,4 +71,15 @@ class DealerEvents
     const DEALER_CONTENT_LINK_DELETE = "dealer.content.link.delete";
     const DEALER_CONTENT_LINK_DELETE_BEFORE = "dealer.content.link.delete.before";
     const DEALER_CONTENT_LINK_DELETE_AFTER = "dealer.content.link.delete.after";
+
+    //DEALER Schedules
+    const DEALER_FOLDER_LINK_CREATE = "dealer.folder.link.create";
+    const DEALER_FOLDER_LINK_CREATE_BEFORE = "dealer.folder.link.create.before";
+    const DEALER_FOLDER_LINK_CREATE_AFTER = "dealer.folder.link.create.after";
+    const DEALER_FOLDER_LINK_UPDATE = "dealer.folder.link.update";
+    const DEALER_FOLDER_LINK_UPDATE_BEFORE = "dealer.folder.link.update.before";
+    const DEALER_FOLDER_LINK_UPDATE_AFTER = "dealer.folder.link.update.after";
+    const DEALER_FOLDER_LINK_DELETE = "dealer.folder.link.delete";
+    const DEALER_FOLDER_LINK_DELETE_BEFORE = "dealer.folder.link.delete.before";
+    const DEALER_FOLDER_LINK_DELETE_AFTER = "dealer.folder.link.delete.after";
 }
