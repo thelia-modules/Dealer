@@ -61,7 +61,7 @@ return array(
     "Schedules" => "Horaires",
     "Default Schedules" => "Horaires par defaut",
     "Extra Schedules" => "Horaires exceptionels",
-    "Closed Schedules" => "Fermeturestranslate  exceptionnelles",
+    "Closed Schedules" => "Fermetures  exceptionnelles",
     "Create a new Default Schedules" => "Créer un nouvel horaire par defaut",
     "Create a new Extra Schedules" => "Créer un nouvel horaire exceptionnel",
     "Create a schedules" => "Créer un horaire",
