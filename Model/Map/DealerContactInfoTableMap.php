@@ -120,6 +120,12 @@ class DealerContactInfoTableMap extends TableMap
     const CONTACT_TYPE_TEL = 'TEL';
     const CONTACT_TYPE_FAX = 'FAX';
     const CONTACT_TYPE_URL = 'URL';
+    const CONTACT_TYPE_FACEBOOK = 'FACEBOOK';
+    const CONTACT_TYPE_TWITTER = 'TWITTER';
+    const CONTACT_TYPE_PINTEREST = 'PINTEREST';
+    const CONTACT_TYPE_GOOGLE = 'GOOGLE';
+    const CONTACT_TYPE_YOUTUB = 'YOUTUB';
+    const CONTACT_TYPE_INSTAGRAM = 'INSTAGRAM';
 
     // i18n behavior
 
@@ -167,6 +173,12 @@ class DealerContactInfoTableMap extends TableMap
             self::CONTACT_TYPE_TEL,
             self::CONTACT_TYPE_FAX,
             self::CONTACT_TYPE_URL,
+            self::CONTACT_TYPE_FACEBOOK,
+            self::CONTACT_TYPE_TWITTER,
+            self::CONTACT_TYPE_PINTEREST,
+            self::CONTACT_TYPE_GOOGLE,
+            self::CONTACT_TYPE_YOUTUB,
+            self::CONTACT_TYPE_INSTAGRAM,
         ),
     );
 
@@ -215,6 +227,12 @@ class DealerContactInfoTableMap extends TableMap
   1 => 'TEL',
   2 => 'FAX',
   3 => 'URL',
+  4 => 'FACEBOOK',
+  5 => 'TWITTER',
+  6 => 'PINTEREST',
+  7 => 'GOOGLE',
+  8 => 'YOUTUB',
+  9 => 'INSTAGRAM',
 ));
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);

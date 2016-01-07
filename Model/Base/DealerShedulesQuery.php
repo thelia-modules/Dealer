@@ -26,6 +26,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerShedulesQuery orderByDay($order = Criteria::ASC) Order by the day column
  * @method     ChildDealerShedulesQuery orderByBegin($order = Criteria::ASC) Order by the begin column
  * @method     ChildDealerShedulesQuery orderByEnd($order = Criteria::ASC) Order by the end column
+ * @method     ChildDealerShedulesQuery orderByClosed($order = Criteria::ASC) Order by the closed column
  * @method     ChildDealerShedulesQuery orderByPeriodBegin($order = Criteria::ASC) Order by the period_begin column
  * @method     ChildDealerShedulesQuery orderByPeriodEnd($order = Criteria::ASC) Order by the period_end column
  * @method     ChildDealerShedulesQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
@@ -39,6 +40,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerShedulesQuery groupByDay() Group by the day column
  * @method     ChildDealerShedulesQuery groupByBegin() Group by the begin column
  * @method     ChildDealerShedulesQuery groupByEnd() Group by the end column
+ * @method     ChildDealerShedulesQuery groupByClosed() Group by the closed column
  * @method     ChildDealerShedulesQuery groupByPeriodBegin() Group by the period_begin column
  * @method     ChildDealerShedulesQuery groupByPeriodEnd() Group by the period_end column
  * @method     ChildDealerShedulesQuery groupByCreatedAt() Group by the created_at column
@@ -67,6 +69,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerShedules findOneByDay(int $day) Return the first ChildDealerShedules filtered by the day column
  * @method     ChildDealerShedules findOneByBegin(string $begin) Return the first ChildDealerShedules filtered by the begin column
  * @method     ChildDealerShedules findOneByEnd(string $end) Return the first ChildDealerShedules filtered by the end column
+ * @method     ChildDealerShedules findOneByClosed(boolean $closed) Return the first ChildDealerShedules filtered by the closed column
  * @method     ChildDealerShedules findOneByPeriodBegin(string $period_begin) Return the first ChildDealerShedules filtered by the period_begin column
  * @method     ChildDealerShedules findOneByPeriodEnd(string $period_end) Return the first ChildDealerShedules filtered by the period_end column
  * @method     ChildDealerShedules findOneByCreatedAt(string $created_at) Return the first ChildDealerShedules filtered by the created_at column
@@ -80,6 +83,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     array findByDay(int $day) Return ChildDealerShedules objects filtered by the day column
  * @method     array findByBegin(string $begin) Return ChildDealerShedules objects filtered by the begin column
  * @method     array findByEnd(string $end) Return ChildDealerShedules objects filtered by the end column
+ * @method     array findByClosed(boolean $closed) Return ChildDealerShedules objects filtered by the closed column
  * @method     array findByPeriodBegin(string $period_begin) Return ChildDealerShedules objects filtered by the period_begin column
  * @method     array findByPeriodEnd(string $period_end) Return ChildDealerShedules objects filtered by the period_end column
  * @method     array findByCreatedAt(string $created_at) Return ChildDealerShedules objects filtered by the created_at column
@@ -182,7 +186,7 @@ abstract class DealerShedulesQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, DEALER_ID, DAY, BEGIN, END, PERIOD_BEGIN, PERIOD_END, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer_shedules WHERE ID = :p0';
+        $sql = 'SELECT ID, DEALER_ID, DAY, BEGIN, END, CLOSED, PERIOD_BEGIN, PERIOD_END, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer_shedules WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -480,6 +484,33 @@ abstract class DealerShedulesQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerShedulesTableMap::END, $end, $comparison);
+    }
+
+    /**
+     * Filter the query on the closed column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByClosed(true); // WHERE closed = true
+     * $query->filterByClosed('yes'); // WHERE closed = true
+     * </code>
+     *
+     * @param     boolean|string $closed The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerShedulesQuery The current query, for fluid interface
+     */
+    public function filterByClosed($closed = null, $comparison = null)
+    {
+        if (is_string($closed)) {
+            $closed = in_array(strtolower($closed), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+
+        return $this->addUsingAlias(DealerShedulesTableMap::CLOSED, $closed, $comparison);
     }
 
     /**

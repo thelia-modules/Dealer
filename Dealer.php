@@ -8,6 +8,8 @@ namespace Dealer;
 
 use Dealer\Model\DealerContactInfoQuery;
 use Dealer\Model\DealerContactQuery;
+use Dealer\Model\DealerContentQuery;
+use Dealer\Model\DealerFolderQuery;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\DealerShedulesQuery;
 use Thelia\Core\Template\TemplateDefinition;
@@ -31,9 +33,11 @@ class Dealer extends BaseModule
             DealerContactInfoQuery::create()->findOne();
             DealerContactQuery::create()->findOne();
             DealerShedulesQuery::create()->findOne();
+            DealerContentQuery::create()->findOne();
+            DealerFolderQuery::create()->findOne();
         } catch (\Exception $e) {
             $database = new Database($con);
-            $database->insertSql(null, [__DIR__ . "/Config/create.sql"]);
+            $database->insertSql(null, [__DIR__ . "/Config/thelia.sql"]);
         }
     }
 

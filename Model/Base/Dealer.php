@@ -9,6 +9,12 @@ use Dealer\Model\Dealer as ChildDealer;
 use Dealer\Model\DealerContact as ChildDealerContact;
 use Dealer\Model\DealerContactQuery as ChildDealerContactQuery;
 use Dealer\Model\DealerContactVersionQuery as ChildDealerContactVersionQuery;
+use Dealer\Model\DealerContent as ChildDealerContent;
+use Dealer\Model\DealerContentQuery as ChildDealerContentQuery;
+use Dealer\Model\DealerContentVersionQuery as ChildDealerContentVersionQuery;
+use Dealer\Model\DealerFolder as ChildDealerFolder;
+use Dealer\Model\DealerFolderQuery as ChildDealerFolderQuery;
+use Dealer\Model\DealerFolderVersionQuery as ChildDealerFolderVersionQuery;
 use Dealer\Model\DealerI18n as ChildDealerI18n;
 use Dealer\Model\DealerI18nQuery as ChildDealerI18nQuery;
 use Dealer\Model\DealerQuery as ChildDealerQuery;
@@ -18,6 +24,8 @@ use Dealer\Model\DealerShedulesVersionQuery as ChildDealerShedulesVersionQuery;
 use Dealer\Model\DealerVersion as ChildDealerVersion;
 use Dealer\Model\DealerVersionQuery as ChildDealerVersionQuery;
 use Dealer\Model\Map\DealerContactVersionTableMap;
+use Dealer\Model\Map\DealerContentVersionTableMap;
+use Dealer\Model\Map\DealerFolderVersionTableMap;
 use Dealer\Model\Map\DealerShedulesVersionTableMap;
 use Dealer\Model\Map\DealerTableMap;
 use Dealer\Model\Map\DealerVersionTableMap;
@@ -175,6 +183,18 @@ abstract class Dealer implements ActiveRecordInterface
     protected $collDealerContactsPartial;
 
     /**
+     * @var        ObjectCollection|ChildDealerContent[] Collection to store aggregation of ChildDealerContent objects.
+     */
+    protected $collDealerContents;
+    protected $collDealerContentsPartial;
+
+    /**
+     * @var        ObjectCollection|ChildDealerFolder[] Collection to store aggregation of ChildDealerFolder objects.
+     */
+    protected $collDealerFolders;
+    protected $collDealerFoldersPartial;
+
+    /**
      * @var        ObjectCollection|ChildDealerI18n[] Collection to store aggregation of ChildDealerI18n objects.
      */
     protected $collDealerI18ns;
@@ -227,6 +247,18 @@ abstract class Dealer implements ActiveRecordInterface
      * @var ObjectCollection
      */
     protected $dealerContactsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection
+     */
+    protected $dealerContentsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection
+     */
+    protected $dealerFoldersScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -1168,6 +1200,10 @@ abstract class Dealer implements ActiveRecordInterface
 
             $this->collDealerContacts = null;
 
+            $this->collDealerContents = null;
+
+            $this->collDealerFolders = null;
+
             $this->collDealerI18ns = null;
 
             $this->collDealerVersions = null;
@@ -1357,6 +1393,40 @@ abstract class Dealer implements ActiveRecordInterface
 
                 if ($this->collDealerContacts !== null) {
             foreach ($this->collDealerContacts as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->dealerContentsScheduledForDeletion !== null) {
+                if (!$this->dealerContentsScheduledForDeletion->isEmpty()) {
+                    \Dealer\Model\DealerContentQuery::create()
+                        ->filterByPrimaryKeys($this->dealerContentsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->dealerContentsScheduledForDeletion = null;
+                }
+            }
+
+                if ($this->collDealerContents !== null) {
+            foreach ($this->collDealerContents as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->dealerFoldersScheduledForDeletion !== null) {
+                if (!$this->dealerFoldersScheduledForDeletion->isEmpty()) {
+                    \Dealer\Model\DealerFolderQuery::create()
+                        ->filterByPrimaryKeys($this->dealerFoldersScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->dealerFoldersScheduledForDeletion = null;
+                }
+            }
+
+                if ($this->collDealerFolders !== null) {
+            foreach ($this->collDealerFolders as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1681,6 +1751,12 @@ abstract class Dealer implements ActiveRecordInterface
             if (null !== $this->collDealerContacts) {
                 $result['DealerContacts'] = $this->collDealerContacts->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
+            if (null !== $this->collDealerContents) {
+                $result['DealerContents'] = $this->collDealerContents->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
+            if (null !== $this->collDealerFolders) {
+                $result['DealerFolders'] = $this->collDealerFolders->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collDealerI18ns) {
                 $result['DealerI18ns'] = $this->collDealerI18ns->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1920,6 +1996,18 @@ abstract class Dealer implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getDealerContents() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDealerContent($relObj->copy($deepCopy));
+                }
+            }
+
+            foreach ($this->getDealerFolders() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDealerFolder($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getDealerI18ns() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDealerI18n($relObj->copy($deepCopy));
@@ -2029,6 +2117,12 @@ abstract class Dealer implements ActiveRecordInterface
         }
         if ('DealerContact' == $relationName) {
             return $this->initDealerContacts();
+        }
+        if ('DealerContent' == $relationName) {
+            return $this->initDealerContents();
+        }
+        if ('DealerFolder' == $relationName) {
+            return $this->initDealerFolders();
         }
         if ('DealerI18n' == $relationName) {
             return $this->initDealerI18ns();
@@ -2472,6 +2566,492 @@ abstract class Dealer implements ActiveRecordInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Clears out the collDealerContents collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addDealerContents()
+     */
+    public function clearDealerContents()
+    {
+        $this->collDealerContents = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collDealerContents collection loaded partially.
+     */
+    public function resetPartialDealerContents($v = true)
+    {
+        $this->collDealerContentsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDealerContents collection.
+     *
+     * By default this just sets the collDealerContents collection to an empty array (like clearcollDealerContents());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDealerContents($overrideExisting = true)
+    {
+        if (null !== $this->collDealerContents && !$overrideExisting) {
+            return;
+        }
+        $this->collDealerContents = new ObjectCollection();
+        $this->collDealerContents->setModel('\Dealer\Model\DealerContent');
+    }
+
+    /**
+     * Gets an array of ChildDealerContent objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildDealer is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|ChildDealerContent[] List of ChildDealerContent objects
+     * @throws PropelException
+     */
+    public function getDealerContents($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerContentsPartial && !$this->isNew();
+        if (null === $this->collDealerContents || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDealerContents) {
+                // return empty collection
+                $this->initDealerContents();
+            } else {
+                $collDealerContents = ChildDealerContentQuery::create(null, $criteria)
+                    ->filterByDealer($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collDealerContentsPartial && count($collDealerContents)) {
+                        $this->initDealerContents(false);
+
+                        foreach ($collDealerContents as $obj) {
+                            if (false == $this->collDealerContents->contains($obj)) {
+                                $this->collDealerContents->append($obj);
+                            }
+                        }
+
+                        $this->collDealerContentsPartial = true;
+                    }
+
+                    reset($collDealerContents);
+
+                    return $collDealerContents;
+                }
+
+                if ($partial && $this->collDealerContents) {
+                    foreach ($this->collDealerContents as $obj) {
+                        if ($obj->isNew()) {
+                            $collDealerContents[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDealerContents = $collDealerContents;
+                $this->collDealerContentsPartial = false;
+            }
+        }
+
+        return $this->collDealerContents;
+    }
+
+    /**
+     * Sets a collection of DealerContent objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $dealerContents A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return   ChildDealer The current object (for fluent API support)
+     */
+    public function setDealerContents(Collection $dealerContents, ConnectionInterface $con = null)
+    {
+        $dealerContentsToDelete = $this->getDealerContents(new Criteria(), $con)->diff($dealerContents);
+
+
+        $this->dealerContentsScheduledForDeletion = $dealerContentsToDelete;
+
+        foreach ($dealerContentsToDelete as $dealerContentRemoved) {
+            $dealerContentRemoved->setDealer(null);
+        }
+
+        $this->collDealerContents = null;
+        foreach ($dealerContents as $dealerContent) {
+            $this->addDealerContent($dealerContent);
+        }
+
+        $this->collDealerContents = $dealerContents;
+        $this->collDealerContentsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DealerContent objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related DealerContent objects.
+     * @throws PropelException
+     */
+    public function countDealerContents(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerContentsPartial && !$this->isNew();
+        if (null === $this->collDealerContents || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDealerContents) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDealerContents());
+            }
+
+            $query = ChildDealerContentQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByDealer($this)
+                ->count($con);
+        }
+
+        return count($this->collDealerContents);
+    }
+
+    /**
+     * Method called to associate a ChildDealerContent object to this object
+     * through the ChildDealerContent foreign key attribute.
+     *
+     * @param    ChildDealerContent $l ChildDealerContent
+     * @return   \Dealer\Model\Dealer The current object (for fluent API support)
+     */
+    public function addDealerContent(ChildDealerContent $l)
+    {
+        if ($this->collDealerContents === null) {
+            $this->initDealerContents();
+            $this->collDealerContentsPartial = true;
+        }
+
+        if (!in_array($l, $this->collDealerContents->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDealerContent($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DealerContent $dealerContent The dealerContent object to add.
+     */
+    protected function doAddDealerContent($dealerContent)
+    {
+        $this->collDealerContents[]= $dealerContent;
+        $dealerContent->setDealer($this);
+    }
+
+    /**
+     * @param  DealerContent $dealerContent The dealerContent object to remove.
+     * @return ChildDealer The current object (for fluent API support)
+     */
+    public function removeDealerContent($dealerContent)
+    {
+        if ($this->getDealerContents()->contains($dealerContent)) {
+            $this->collDealerContents->remove($this->collDealerContents->search($dealerContent));
+            if (null === $this->dealerContentsScheduledForDeletion) {
+                $this->dealerContentsScheduledForDeletion = clone $this->collDealerContents;
+                $this->dealerContentsScheduledForDeletion->clear();
+            }
+            $this->dealerContentsScheduledForDeletion[]= clone $dealerContent;
+            $dealerContent->setDealer(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Dealer is new, it will return
+     * an empty collection; or if this Dealer has previously
+     * been saved, it will retrieve related DealerContents from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Dealer.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return Collection|ChildDealerContent[] List of ChildDealerContent objects
+     */
+    public function getDealerContentsJoinContent($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildDealerContentQuery::create(null, $criteria);
+        $query->joinWith('Content', $joinBehavior);
+
+        return $this->getDealerContents($query, $con);
+    }
+
+    /**
+     * Clears out the collDealerFolders collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addDealerFolders()
+     */
+    public function clearDealerFolders()
+    {
+        $this->collDealerFolders = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collDealerFolders collection loaded partially.
+     */
+    public function resetPartialDealerFolders($v = true)
+    {
+        $this->collDealerFoldersPartial = $v;
+    }
+
+    /**
+     * Initializes the collDealerFolders collection.
+     *
+     * By default this just sets the collDealerFolders collection to an empty array (like clearcollDealerFolders());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDealerFolders($overrideExisting = true)
+    {
+        if (null !== $this->collDealerFolders && !$overrideExisting) {
+            return;
+        }
+        $this->collDealerFolders = new ObjectCollection();
+        $this->collDealerFolders->setModel('\Dealer\Model\DealerFolder');
+    }
+
+    /**
+     * Gets an array of ChildDealerFolder objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildDealer is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|ChildDealerFolder[] List of ChildDealerFolder objects
+     * @throws PropelException
+     */
+    public function getDealerFolders($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerFoldersPartial && !$this->isNew();
+        if (null === $this->collDealerFolders || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDealerFolders) {
+                // return empty collection
+                $this->initDealerFolders();
+            } else {
+                $collDealerFolders = ChildDealerFolderQuery::create(null, $criteria)
+                    ->filterByDealer($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collDealerFoldersPartial && count($collDealerFolders)) {
+                        $this->initDealerFolders(false);
+
+                        foreach ($collDealerFolders as $obj) {
+                            if (false == $this->collDealerFolders->contains($obj)) {
+                                $this->collDealerFolders->append($obj);
+                            }
+                        }
+
+                        $this->collDealerFoldersPartial = true;
+                    }
+
+                    reset($collDealerFolders);
+
+                    return $collDealerFolders;
+                }
+
+                if ($partial && $this->collDealerFolders) {
+                    foreach ($this->collDealerFolders as $obj) {
+                        if ($obj->isNew()) {
+                            $collDealerFolders[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDealerFolders = $collDealerFolders;
+                $this->collDealerFoldersPartial = false;
+            }
+        }
+
+        return $this->collDealerFolders;
+    }
+
+    /**
+     * Sets a collection of DealerFolder objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $dealerFolders A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return   ChildDealer The current object (for fluent API support)
+     */
+    public function setDealerFolders(Collection $dealerFolders, ConnectionInterface $con = null)
+    {
+        $dealerFoldersToDelete = $this->getDealerFolders(new Criteria(), $con)->diff($dealerFolders);
+
+
+        $this->dealerFoldersScheduledForDeletion = $dealerFoldersToDelete;
+
+        foreach ($dealerFoldersToDelete as $dealerFolderRemoved) {
+            $dealerFolderRemoved->setDealer(null);
+        }
+
+        $this->collDealerFolders = null;
+        foreach ($dealerFolders as $dealerFolder) {
+            $this->addDealerFolder($dealerFolder);
+        }
+
+        $this->collDealerFolders = $dealerFolders;
+        $this->collDealerFoldersPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DealerFolder objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related DealerFolder objects.
+     * @throws PropelException
+     */
+    public function countDealerFolders(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerFoldersPartial && !$this->isNew();
+        if (null === $this->collDealerFolders || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDealerFolders) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDealerFolders());
+            }
+
+            $query = ChildDealerFolderQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByDealer($this)
+                ->count($con);
+        }
+
+        return count($this->collDealerFolders);
+    }
+
+    /**
+     * Method called to associate a ChildDealerFolder object to this object
+     * through the ChildDealerFolder foreign key attribute.
+     *
+     * @param    ChildDealerFolder $l ChildDealerFolder
+     * @return   \Dealer\Model\Dealer The current object (for fluent API support)
+     */
+    public function addDealerFolder(ChildDealerFolder $l)
+    {
+        if ($this->collDealerFolders === null) {
+            $this->initDealerFolders();
+            $this->collDealerFoldersPartial = true;
+        }
+
+        if (!in_array($l, $this->collDealerFolders->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDealerFolder($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DealerFolder $dealerFolder The dealerFolder object to add.
+     */
+    protected function doAddDealerFolder($dealerFolder)
+    {
+        $this->collDealerFolders[]= $dealerFolder;
+        $dealerFolder->setDealer($this);
+    }
+
+    /**
+     * @param  DealerFolder $dealerFolder The dealerFolder object to remove.
+     * @return ChildDealer The current object (for fluent API support)
+     */
+    public function removeDealerFolder($dealerFolder)
+    {
+        if ($this->getDealerFolders()->contains($dealerFolder)) {
+            $this->collDealerFolders->remove($this->collDealerFolders->search($dealerFolder));
+            if (null === $this->dealerFoldersScheduledForDeletion) {
+                $this->dealerFoldersScheduledForDeletion = clone $this->collDealerFolders;
+                $this->dealerFoldersScheduledForDeletion->clear();
+            }
+            $this->dealerFoldersScheduledForDeletion[]= clone $dealerFolder;
+            $dealerFolder->setDealer(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Dealer is new, it will return
+     * an empty collection; or if this Dealer has previously
+     * been saved, it will retrieve related DealerFolders from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Dealer.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return Collection|ChildDealerFolder[] List of ChildDealerFolder objects
+     */
+    public function getDealerFoldersJoinFolder($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildDealerFolderQuery::create(null, $criteria);
+        $query->joinWith('Folder', $joinBehavior);
+
+        return $this->getDealerFolders($query, $con);
     }
 
     /**
@@ -2969,6 +3549,16 @@ abstract class Dealer implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collDealerContents) {
+                foreach ($this->collDealerContents as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
+            if ($this->collDealerFolders) {
+                foreach ($this->collDealerFolders as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collDealerI18ns) {
                 foreach ($this->collDealerI18ns as $o) {
                     $o->clearAllReferences($deep);
@@ -2987,6 +3577,8 @@ abstract class Dealer implements ActiveRecordInterface
 
         $this->collDealerSheduless = null;
         $this->collDealerContacts = null;
+        $this->collDealerContents = null;
+        $this->collDealerFolders = null;
         $this->collDealerI18ns = null;
         $this->collDealerVersions = null;
         $this->aCountry = null;
@@ -3217,6 +3809,28 @@ abstract class Dealer implements ActiveRecordInterface
         }
         $this->alreadyInSave = false;
 
+        // to avoid infinite loops, emulate in save
+        $this->alreadyInSave = true;
+        foreach ($this->getDealerContents(null, $con) as $relatedObject) {
+            if ($relatedObject->isVersioningNecessary($con)) {
+                $this->alreadyInSave = false;
+
+                return true;
+            }
+        }
+        $this->alreadyInSave = false;
+
+        // to avoid infinite loops, emulate in save
+        $this->alreadyInSave = true;
+        foreach ($this->getDealerFolders(null, $con) as $relatedObject) {
+            if ($relatedObject->isVersioningNecessary($con)) {
+                $this->alreadyInSave = false;
+
+                return true;
+            }
+        }
+        $this->alreadyInSave = false;
+
 
         return false;
     }
@@ -3255,6 +3869,14 @@ abstract class Dealer implements ActiveRecordInterface
         if ($relateds = $this->getDealerContacts($con)->toKeyValue('Id', 'Version')) {
             $version->setDealerContactIds(array_keys($relateds));
             $version->setDealerContactVersions(array_values($relateds));
+        }
+        if ($relateds = $this->getDealerContents($con)->toKeyValue('Id', 'Version')) {
+            $version->setDealerContentIds(array_keys($relateds));
+            $version->setDealerContentVersions(array_values($relateds));
+        }
+        if ($relateds = $this->getDealerFolders($con)->toKeyValue('Id', 'Version')) {
+            $version->setDealerFolderIds(array_keys($relateds));
+            $version->setDealerFolderVersions(array_values($relateds));
         }
         $version->save($con);
 
@@ -3348,6 +3970,50 @@ abstract class Dealer implements ActiveRecordInterface
                 }
                 $this->addDealerContact($related);
                 $this->collDealerContactPartial = false;
+            }
+        }
+        if ($fkValues = $version->getDealerContentIds()) {
+            $this->clearDealerContent();
+            $fkVersions = $version->getDealerContentVersions();
+            $query = ChildDealerContentVersionQuery::create();
+            foreach ($fkValues as $key => $value) {
+                $c1 = $query->getNewCriterion(DealerContentVersionTableMap::ID, $value);
+                $c2 = $query->getNewCriterion(DealerContentVersionTableMap::VERSION, $fkVersions[$key]);
+                $c1->addAnd($c2);
+                $query->addOr($c1);
+            }
+            foreach ($query->find($con) as $relatedVersion) {
+                if (isset($loadedObjects['ChildDealerContent']) && isset($loadedObjects['ChildDealerContent'][$relatedVersion->getId()]) && isset($loadedObjects['ChildDealerContent'][$relatedVersion->getId()][$relatedVersion->getVersion()])) {
+                    $related = $loadedObjects['ChildDealerContent'][$relatedVersion->getId()][$relatedVersion->getVersion()];
+                } else {
+                    $related = new ChildDealerContent();
+                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                    $related->setNew(false);
+                }
+                $this->addDealerContent($related);
+                $this->collDealerContentPartial = false;
+            }
+        }
+        if ($fkValues = $version->getDealerFolderIds()) {
+            $this->clearDealerFolder();
+            $fkVersions = $version->getDealerFolderVersions();
+            $query = ChildDealerFolderVersionQuery::create();
+            foreach ($fkValues as $key => $value) {
+                $c1 = $query->getNewCriterion(DealerFolderVersionTableMap::ID, $value);
+                $c2 = $query->getNewCriterion(DealerFolderVersionTableMap::VERSION, $fkVersions[$key]);
+                $c1->addAnd($c2);
+                $query->addOr($c1);
+            }
+            foreach ($query->find($con) as $relatedVersion) {
+                if (isset($loadedObjects['ChildDealerFolder']) && isset($loadedObjects['ChildDealerFolder'][$relatedVersion->getId()]) && isset($loadedObjects['ChildDealerFolder'][$relatedVersion->getId()][$relatedVersion->getVersion()])) {
+                    $related = $loadedObjects['ChildDealerFolder'][$relatedVersion->getId()][$relatedVersion->getVersion()];
+                } else {
+                    $related = new ChildDealerFolder();
+                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                    $related->setNew(false);
+                }
+                $this->addDealerFolder($related);
+                $this->collDealerFolderPartial = false;
             }
         }
 

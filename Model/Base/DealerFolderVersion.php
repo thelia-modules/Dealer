@@ -5,10 +5,10 @@ namespace Dealer\Model\Base;
 use \DateTime;
 use \Exception;
 use \PDO;
-use Dealer\Model\DealerShedules as ChildDealerShedules;
-use Dealer\Model\DealerShedulesQuery as ChildDealerShedulesQuery;
-use Dealer\Model\DealerShedulesVersionQuery as ChildDealerShedulesVersionQuery;
-use Dealer\Model\Map\DealerShedulesVersionTableMap;
+use Dealer\Model\DealerFolder as ChildDealerFolder;
+use Dealer\Model\DealerFolderQuery as ChildDealerFolderQuery;
+use Dealer\Model\DealerFolderVersionQuery as ChildDealerFolderVersionQuery;
+use Dealer\Model\Map\DealerFolderVersionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -21,12 +21,12 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 use Propel\Runtime\Util\PropelDateTime;
 
-abstract class DealerShedulesVersion implements ActiveRecordInterface
+abstract class DealerFolderVersion implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      */
-    const TABLE_MAP = '\\Dealer\\Model\\Map\\DealerShedulesVersionTableMap';
+    const TABLE_MAP = '\\Dealer\\Model\\Map\\DealerFolderVersionTableMap';
 
 
     /**
@@ -68,41 +68,10 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     protected $dealer_id;
 
     /**
-     * The value for the day field.
+     * The value for the folder_id field.
      * @var        int
      */
-    protected $day;
-
-    /**
-     * The value for the begin field.
-     * @var        string
-     */
-    protected $begin;
-
-    /**
-     * The value for the end field.
-     * @var        string
-     */
-    protected $end;
-
-    /**
-     * The value for the closed field.
-     * Note: this column has a database default value of: false
-     * @var        boolean
-     */
-    protected $closed;
-
-    /**
-     * The value for the period_begin field.
-     * @var        string
-     */
-    protected $period_begin;
-
-    /**
-     * The value for the period_end field.
-     * @var        string
-     */
-    protected $period_end;
+    protected $folder_id;
 
     /**
      * The value for the created_at field.
@@ -143,9 +112,16 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     protected $dealer_id_version;
 
     /**
-     * @var        DealerShedules
+     * The value for the folder_id_version field.
+     * Note: this column has a database default value of: 0
+     * @var        int
      */
-    protected $aDealerShedules;
+    protected $folder_id_version;
+
+    /**
+     * @var        DealerFolder
+     */
+    protected $aDealerFolder;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -163,13 +139,13 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
-        $this->closed = false;
         $this->version = 0;
         $this->dealer_id_version = 0;
+        $this->folder_id_version = 0;
     }
 
     /**
-     * Initializes internal state of Dealer\Model\Base\DealerShedulesVersion object.
+     * Initializes internal state of Dealer\Model\Base\DealerFolderVersion object.
      * @see applyDefaults()
      */
     public function __construct()
@@ -266,9 +242,9 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>DealerShedulesVersion</code> instance.  If
-     * <code>obj</code> is an instance of <code>DealerShedulesVersion</code>, delegates to
-     * <code>equals(DealerShedulesVersion)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>DealerFolderVersion</code> instance.  If
+     * <code>obj</code> is an instance of <code>DealerFolderVersion</code>, delegates to
+     * <code>equals(DealerFolderVersion)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param  mixed   $obj The object to compare to.
      * @return boolean Whether equal to the object specified.
@@ -351,7 +327,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * @param string $name  The virtual column name
      * @param mixed  $value The value to give to the virtual column
      *
-     * @return DealerShedulesVersion The current object, for fluid interface
+     * @return DealerFolderVersion The current object, for fluid interface
      */
     public function setVirtualColumn($name, $value)
     {
@@ -383,7 +359,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      *                       or a format name ('XML', 'YAML', 'JSON', 'CSV')
      * @param string $data The source data to import from
      *
-     * @return DealerShedulesVersion The current object, for fluid interface
+     * @return DealerFolderVersion The current object, for fluid interface
      */
     public function importFrom($parser, $data)
     {
@@ -451,105 +427,14 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     }
 
     /**
-     * Get the [day] column value.
+     * Get the [folder_id] column value.
      *
      * @return   int
      */
-    public function getDay()
+    public function getFolderId()
     {
 
-        return $this->day;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [begin] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getBegin($format = NULL)
-    {
-        if ($format === null) {
-            return $this->begin;
-        } else {
-            return $this->begin instanceof \DateTime ? $this->begin->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [end] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getEnd($format = NULL)
-    {
-        if ($format === null) {
-            return $this->end;
-        } else {
-            return $this->end instanceof \DateTime ? $this->end->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [closed] column value.
-     *
-     * @return   boolean
-     */
-    public function getClosed()
-    {
-
-        return $this->closed;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [period_begin] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getPeriodBegin($format = NULL)
-    {
-        if ($format === null) {
-            return $this->period_begin;
-        } else {
-            return $this->period_begin instanceof \DateTime ? $this->period_begin->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [period_end] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getPeriodEnd($format = NULL)
-    {
-        if ($format === null) {
-            return $this->period_end;
-        } else {
-            return $this->period_end instanceof \DateTime ? $this->period_end->format($format) : null;
-        }
+        return $this->folder_id;
     }
 
     /**
@@ -646,10 +531,21 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     }
 
     /**
+     * Get the [folder_id_version] column value.
+     *
+     * @return   int
+     */
+    public function getFolderIdVersion()
+    {
+
+        return $this->folder_id_version;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setId($v)
     {
@@ -659,11 +555,11 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[DealerShedulesVersionTableMap::ID] = true;
+            $this->modifiedColumns[DealerFolderVersionTableMap::ID] = true;
         }
 
-        if ($this->aDealerShedules !== null && $this->aDealerShedules->getId() !== $v) {
-            $this->aDealerShedules = null;
+        if ($this->aDealerFolder !== null && $this->aDealerFolder->getId() !== $v) {
+            $this->aDealerFolder = null;
         }
 
 
@@ -674,7 +570,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * Set the value of [dealer_id] column.
      *
      * @param      int $v new value
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setDealerId($v)
     {
@@ -684,7 +580,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
         if ($this->dealer_id !== $v) {
             $this->dealer_id = $v;
-            $this->modifiedColumns[DealerShedulesVersionTableMap::DEALER_ID] = true;
+            $this->modifiedColumns[DealerFolderVersionTableMap::DEALER_ID] = true;
         }
 
 
@@ -692,145 +588,32 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     } // setDealerId()
 
     /**
-     * Set the value of [day] column.
+     * Set the value of [folder_id] column.
      *
      * @param      int $v new value
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
-    public function setDay($v)
+    public function setFolderId($v)
     {
         if ($v !== null) {
             $v = (int) $v;
         }
 
-        if ($this->day !== $v) {
-            $this->day = $v;
-            $this->modifiedColumns[DealerShedulesVersionTableMap::DAY] = true;
+        if ($this->folder_id !== $v) {
+            $this->folder_id = $v;
+            $this->modifiedColumns[DealerFolderVersionTableMap::FOLDER_ID] = true;
         }
 
 
         return $this;
-    } // setDay()
-
-    /**
-     * Sets the value of [begin] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
-     */
-    public function setBegin($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->begin !== null || $dt !== null) {
-            if ($dt !== $this->begin) {
-                $this->begin = $dt;
-                $this->modifiedColumns[DealerShedulesVersionTableMap::BEGIN] = true;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setBegin()
-
-    /**
-     * Sets the value of [end] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
-     */
-    public function setEnd($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->end !== null || $dt !== null) {
-            if ($dt !== $this->end) {
-                $this->end = $dt;
-                $this->modifiedColumns[DealerShedulesVersionTableMap::END] = true;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setEnd()
-
-    /**
-     * Sets the value of the [closed] column.
-     * Non-boolean arguments are converted using the following rules:
-     *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     *
-     * @param      boolean|integer|string $v The new value
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
-     */
-    public function setClosed($v)
-    {
-        if ($v !== null) {
-            if (is_string($v)) {
-                $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-            } else {
-                $v = (boolean) $v;
-            }
-        }
-
-        if ($this->closed !== $v) {
-            $this->closed = $v;
-            $this->modifiedColumns[DealerShedulesVersionTableMap::CLOSED] = true;
-        }
-
-
-        return $this;
-    } // setClosed()
-
-    /**
-     * Sets the value of [period_begin] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
-     */
-    public function setPeriodBegin($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->period_begin !== null || $dt !== null) {
-            if ($dt !== $this->period_begin) {
-                $this->period_begin = $dt;
-                $this->modifiedColumns[DealerShedulesVersionTableMap::PERIOD_BEGIN] = true;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setPeriodBegin()
-
-    /**
-     * Sets the value of [period_end] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
-     */
-    public function setPeriodEnd($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->period_end !== null || $dt !== null) {
-            if ($dt !== $this->period_end) {
-                $this->period_end = $dt;
-                $this->modifiedColumns[DealerShedulesVersionTableMap::PERIOD_END] = true;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setPeriodEnd()
+    } // setFolderId()
 
     /**
      * Sets the value of [created_at] column to a normalized version of the date/time value specified.
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setCreatedAt($v)
     {
@@ -838,7 +621,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         if ($this->created_at !== null || $dt !== null) {
             if ($dt !== $this->created_at) {
                 $this->created_at = $dt;
-                $this->modifiedColumns[DealerShedulesVersionTableMap::CREATED_AT] = true;
+                $this->modifiedColumns[DealerFolderVersionTableMap::CREATED_AT] = true;
             }
         } // if either are not null
 
@@ -851,7 +634,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setUpdatedAt($v)
     {
@@ -859,7 +642,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         if ($this->updated_at !== null || $dt !== null) {
             if ($dt !== $this->updated_at) {
                 $this->updated_at = $dt;
-                $this->modifiedColumns[DealerShedulesVersionTableMap::UPDATED_AT] = true;
+                $this->modifiedColumns[DealerFolderVersionTableMap::UPDATED_AT] = true;
             }
         } // if either are not null
 
@@ -871,7 +654,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * Set the value of [version] column.
      *
      * @param      int $v new value
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setVersion($v)
     {
@@ -881,7 +664,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
         if ($this->version !== $v) {
             $this->version = $v;
-            $this->modifiedColumns[DealerShedulesVersionTableMap::VERSION] = true;
+            $this->modifiedColumns[DealerFolderVersionTableMap::VERSION] = true;
         }
 
 
@@ -893,7 +676,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      *
      * @param      mixed $v string, integer (timestamp), or \DateTime value.
      *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setVersionCreatedAt($v)
     {
@@ -901,7 +684,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         if ($this->version_created_at !== null || $dt !== null) {
             if ($dt !== $this->version_created_at) {
                 $this->version_created_at = $dt;
-                $this->modifiedColumns[DealerShedulesVersionTableMap::VERSION_CREATED_AT] = true;
+                $this->modifiedColumns[DealerFolderVersionTableMap::VERSION_CREATED_AT] = true;
             }
         } // if either are not null
 
@@ -913,7 +696,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * Set the value of [version_created_by] column.
      *
      * @param      string $v new value
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setVersionCreatedBy($v)
     {
@@ -923,7 +706,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
         if ($this->version_created_by !== $v) {
             $this->version_created_by = $v;
-            $this->modifiedColumns[DealerShedulesVersionTableMap::VERSION_CREATED_BY] = true;
+            $this->modifiedColumns[DealerFolderVersionTableMap::VERSION_CREATED_BY] = true;
         }
 
 
@@ -934,7 +717,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * Set the value of [dealer_id_version] column.
      *
      * @param      int $v new value
-     * @return   \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      */
     public function setDealerIdVersion($v)
     {
@@ -944,12 +727,33 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
         if ($this->dealer_id_version !== $v) {
             $this->dealer_id_version = $v;
-            $this->modifiedColumns[DealerShedulesVersionTableMap::DEALER_ID_VERSION] = true;
+            $this->modifiedColumns[DealerFolderVersionTableMap::DEALER_ID_VERSION] = true;
         }
 
 
         return $this;
     } // setDealerIdVersion()
+
+    /**
+     * Set the value of [folder_id_version] column.
+     *
+     * @param      int $v new value
+     * @return   \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
+     */
+    public function setFolderIdVersion($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->folder_id_version !== $v) {
+            $this->folder_id_version = $v;
+            $this->modifiedColumns[DealerFolderVersionTableMap::FOLDER_ID_VERSION] = true;
+        }
+
+
+        return $this;
+    } // setFolderIdVersion()
 
     /**
      * Indicates whether the columns in this object are only set to default values.
@@ -961,15 +765,15 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->closed !== false) {
-                return false;
-            }
-
             if ($this->version !== 0) {
                 return false;
             }
 
             if ($this->dealer_id_version !== 0) {
+                return false;
+            }
+
+            if ($this->folder_id_version !== 0) {
                 return false;
             }
 
@@ -1000,62 +804,44 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         try {
 
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : DealerShedulesVersionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : DealerFolderVersionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DealerShedulesVersionTableMap::translateFieldName('DealerId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DealerFolderVersionTableMap::translateFieldName('DealerId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerShedulesVersionTableMap::translateFieldName('Day', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->day = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerFolderVersionTableMap::translateFieldName('FolderId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->folder_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerShedulesVersionTableMap::translateFieldName('Begin', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->begin = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerShedulesVersionTableMap::translateFieldName('End', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->end = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerShedulesVersionTableMap::translateFieldName('Closed', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->closed = (null !== $col) ? (boolean) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerShedulesVersionTableMap::translateFieldName('PeriodBegin', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00') {
-                $col = null;
-            }
-            $this->period_begin = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerShedulesVersionTableMap::translateFieldName('PeriodEnd', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00') {
-                $col = null;
-            }
-            $this->period_end = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerShedulesVersionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerFolderVersionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerShedulesVersionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerFolderVersionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerShedulesVersionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerFolderVersionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerShedulesVersionTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerFolderVersionTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerShedulesVersionTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerFolderVersionTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version_created_by = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : DealerShedulesVersionTableMap::translateFieldName('DealerIdVersion', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerFolderVersionTableMap::translateFieldName('DealerIdVersion', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_id_version = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerFolderVersionTableMap::translateFieldName('FolderIdVersion', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->folder_id_version = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -1064,10 +850,10 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 14; // 14 = DealerShedulesVersionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = DealerFolderVersionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException("Error populating \Dealer\Model\DealerShedulesVersion object", 0, $e);
+            throw new PropelException("Error populating \Dealer\Model\DealerFolderVersion object", 0, $e);
         }
     }
 
@@ -1086,8 +872,8 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function ensureConsistency()
     {
-        if ($this->aDealerShedules !== null && $this->id !== $this->aDealerShedules->getId()) {
-            $this->aDealerShedules = null;
+        if ($this->aDealerFolder !== null && $this->id !== $this->aDealerFolder->getId()) {
+            $this->aDealerFolder = null;
         }
     } // ensureConsistency
 
@@ -1112,13 +898,13 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(DealerShedulesVersionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(DealerFolderVersionTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildDealerShedulesVersionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildDealerFolderVersionQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -1128,7 +914,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aDealerShedules = null;
+            $this->aDealerFolder = null;
         } // if (deep)
     }
 
@@ -1138,8 +924,8 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * @param      ConnectionInterface $con
      * @return void
      * @throws PropelException
-     * @see DealerShedulesVersion::setDeleted()
-     * @see DealerShedulesVersion::isDeleted()
+     * @see DealerFolderVersion::setDeleted()
+     * @see DealerFolderVersion::isDeleted()
      */
     public function delete(ConnectionInterface $con = null)
     {
@@ -1148,12 +934,12 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DealerShedulesVersionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(DealerFolderVersionTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
         try {
-            $deleteQuery = ChildDealerShedulesVersionQuery::create()
+            $deleteQuery = ChildDealerFolderVersionQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -1190,7 +976,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(DealerShedulesVersionTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(DealerFolderVersionTableMap::DATABASE_NAME);
         }
 
         $con->beginTransaction();
@@ -1210,7 +996,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                DealerShedulesVersionTableMap::addInstanceToPool($this);
+                DealerFolderVersionTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -1245,11 +1031,11 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
             // method.  This object relates to these object(s) by a
             // foreign key reference.
 
-            if ($this->aDealerShedules !== null) {
-                if ($this->aDealerShedules->isModified() || $this->aDealerShedules->isNew()) {
-                    $affectedRows += $this->aDealerShedules->save($con);
+            if ($this->aDealerFolder !== null) {
+                if ($this->aDealerFolder->isModified() || $this->aDealerFolder->isNew()) {
+                    $affectedRows += $this->aDealerFolder->save($con);
                 }
-                $this->setDealerShedules($this->aDealerShedules);
+                $this->setDealerFolder($this->aDealerFolder);
             }
 
             if ($this->isNew() || $this->isModified()) {
@@ -1285,51 +1071,39 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::ID)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::DEALER_ID)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::DEALER_ID)) {
             $modifiedColumns[':p' . $index++]  = 'DEALER_ID';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::DAY)) {
-            $modifiedColumns[':p' . $index++]  = 'DAY';
+        if ($this->isColumnModified(DealerFolderVersionTableMap::FOLDER_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'FOLDER_ID';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::BEGIN)) {
-            $modifiedColumns[':p' . $index++]  = 'BEGIN';
-        }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::END)) {
-            $modifiedColumns[':p' . $index++]  = 'END';
-        }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::CLOSED)) {
-            $modifiedColumns[':p' . $index++]  = 'CLOSED';
-        }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::PERIOD_BEGIN)) {
-            $modifiedColumns[':p' . $index++]  = 'PERIOD_BEGIN';
-        }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::PERIOD_END)) {
-            $modifiedColumns[':p' . $index++]  = 'PERIOD_END';
-        }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::CREATED_AT)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'CREATED_AT';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::UPDATED_AT)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'UPDATED_AT';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::VERSION)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::VERSION)) {
             $modifiedColumns[':p' . $index++]  = 'VERSION';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::VERSION_CREATED_AT)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::VERSION_CREATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_AT';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::VERSION_CREATED_BY)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::VERSION_CREATED_BY)) {
             $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_BY';
         }
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::DEALER_ID_VERSION)) {
+        if ($this->isColumnModified(DealerFolderVersionTableMap::DEALER_ID_VERSION)) {
             $modifiedColumns[':p' . $index++]  = 'DEALER_ID_VERSION';
+        }
+        if ($this->isColumnModified(DealerFolderVersionTableMap::FOLDER_ID_VERSION)) {
+            $modifiedColumns[':p' . $index++]  = 'FOLDER_ID_VERSION';
         }
 
         $sql = sprintf(
-            'INSERT INTO dealer_shedules_version (%s) VALUES (%s)',
+            'INSERT INTO dealer_folder_version (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -1344,23 +1118,8 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
                     case 'DEALER_ID':
                         $stmt->bindValue($identifier, $this->dealer_id, PDO::PARAM_INT);
                         break;
-                    case 'DAY':
-                        $stmt->bindValue($identifier, $this->day, PDO::PARAM_INT);
-                        break;
-                    case 'BEGIN':
-                        $stmt->bindValue($identifier, $this->begin ? $this->begin->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'END':
-                        $stmt->bindValue($identifier, $this->end ? $this->end->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'CLOSED':
-                        $stmt->bindValue($identifier, (int) $this->closed, PDO::PARAM_INT);
-                        break;
-                    case 'PERIOD_BEGIN':
-                        $stmt->bindValue($identifier, $this->period_begin ? $this->period_begin->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'PERIOD_END':
-                        $stmt->bindValue($identifier, $this->period_end ? $this->period_end->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
+                    case 'FOLDER_ID':
+                        $stmt->bindValue($identifier, $this->folder_id, PDO::PARAM_INT);
                         break;
                     case 'CREATED_AT':
                         $stmt->bindValue($identifier, $this->created_at ? $this->created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
@@ -1379,6 +1138,9 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
                         break;
                     case 'DEALER_ID_VERSION':
                         $stmt->bindValue($identifier, $this->dealer_id_version, PDO::PARAM_INT);
+                        break;
+                    case 'FOLDER_ID_VERSION':
+                        $stmt->bindValue($identifier, $this->folder_id_version, PDO::PARAM_INT);
                         break;
                 }
             }
@@ -1419,7 +1181,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function getByName($name, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = DealerShedulesVersionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = DealerFolderVersionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -1442,40 +1204,28 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
                 return $this->getDealerId();
                 break;
             case 2:
-                return $this->getDay();
+                return $this->getFolderId();
                 break;
             case 3:
-                return $this->getBegin();
-                break;
-            case 4:
-                return $this->getEnd();
-                break;
-            case 5:
-                return $this->getClosed();
-                break;
-            case 6:
-                return $this->getPeriodBegin();
-                break;
-            case 7:
-                return $this->getPeriodEnd();
-                break;
-            case 8:
                 return $this->getCreatedAt();
                 break;
-            case 9:
+            case 4:
                 return $this->getUpdatedAt();
                 break;
-            case 10:
+            case 5:
                 return $this->getVersion();
                 break;
-            case 11:
+            case 6:
                 return $this->getVersionCreatedAt();
                 break;
-            case 12:
+            case 7:
                 return $this->getVersionCreatedBy();
                 break;
-            case 13:
+            case 8:
                 return $this->getDealerIdVersion();
+                break;
+            case 9:
+                return $this->getFolderIdVersion();
                 break;
             default:
                 return null;
@@ -1500,26 +1250,22 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function toArray($keyType = TableMap::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
     {
-        if (isset($alreadyDumpedObjects['DealerShedulesVersion'][serialize($this->getPrimaryKey())])) {
+        if (isset($alreadyDumpedObjects['DealerFolderVersion'][serialize($this->getPrimaryKey())])) {
             return '*RECURSION*';
         }
-        $alreadyDumpedObjects['DealerShedulesVersion'][serialize($this->getPrimaryKey())] = true;
-        $keys = DealerShedulesVersionTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['DealerFolderVersion'][serialize($this->getPrimaryKey())] = true;
+        $keys = DealerFolderVersionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
             $keys[1] => $this->getDealerId(),
-            $keys[2] => $this->getDay(),
-            $keys[3] => $this->getBegin(),
-            $keys[4] => $this->getEnd(),
-            $keys[5] => $this->getClosed(),
-            $keys[6] => $this->getPeriodBegin(),
-            $keys[7] => $this->getPeriodEnd(),
-            $keys[8] => $this->getCreatedAt(),
-            $keys[9] => $this->getUpdatedAt(),
-            $keys[10] => $this->getVersion(),
-            $keys[11] => $this->getVersionCreatedAt(),
-            $keys[12] => $this->getVersionCreatedBy(),
-            $keys[13] => $this->getDealerIdVersion(),
+            $keys[2] => $this->getFolderId(),
+            $keys[3] => $this->getCreatedAt(),
+            $keys[4] => $this->getUpdatedAt(),
+            $keys[5] => $this->getVersion(),
+            $keys[6] => $this->getVersionCreatedAt(),
+            $keys[7] => $this->getVersionCreatedBy(),
+            $keys[8] => $this->getDealerIdVersion(),
+            $keys[9] => $this->getFolderIdVersion(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1527,8 +1273,8 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aDealerShedules) {
-                $result['DealerShedules'] = $this->aDealerShedules->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+            if (null !== $this->aDealerFolder) {
+                $result['DealerFolder'] = $this->aDealerFolder->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
             }
         }
 
@@ -1548,7 +1294,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function setByName($name, $value, $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = DealerShedulesVersionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = DealerFolderVersionTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         return $this->setByPosition($pos, $value);
     }
@@ -1571,40 +1317,28 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
                 $this->setDealerId($value);
                 break;
             case 2:
-                $this->setDay($value);
+                $this->setFolderId($value);
                 break;
             case 3:
-                $this->setBegin($value);
-                break;
-            case 4:
-                $this->setEnd($value);
-                break;
-            case 5:
-                $this->setClosed($value);
-                break;
-            case 6:
-                $this->setPeriodBegin($value);
-                break;
-            case 7:
-                $this->setPeriodEnd($value);
-                break;
-            case 8:
                 $this->setCreatedAt($value);
                 break;
-            case 9:
+            case 4:
                 $this->setUpdatedAt($value);
                 break;
-            case 10:
+            case 5:
                 $this->setVersion($value);
                 break;
-            case 11:
+            case 6:
                 $this->setVersionCreatedAt($value);
                 break;
-            case 12:
+            case 7:
                 $this->setVersionCreatedBy($value);
                 break;
-            case 13:
+            case 8:
                 $this->setDealerIdVersion($value);
+                break;
+            case 9:
+                $this->setFolderIdVersion($value);
                 break;
         } // switch()
     }
@@ -1628,22 +1362,18 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function fromArray($arr, $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = DealerShedulesVersionTableMap::getFieldNames($keyType);
+        $keys = DealerFolderVersionTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setDealerId($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setDay($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setBegin($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setEnd($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setClosed($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setPeriodBegin($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setPeriodEnd($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setCreatedAt($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setUpdatedAt($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setVersion($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setVersionCreatedAt($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setVersionCreatedBy($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setDealerIdVersion($arr[$keys[13]]);
+        if (array_key_exists($keys[2], $arr)) $this->setFolderId($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setCreatedAt($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setUpdatedAt($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setVersion($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setVersionCreatedAt($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setVersionCreatedBy($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setDealerIdVersion($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setFolderIdVersion($arr[$keys[9]]);
     }
 
     /**
@@ -1653,22 +1383,18 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(DealerShedulesVersionTableMap::DATABASE_NAME);
+        $criteria = new Criteria(DealerFolderVersionTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::ID)) $criteria->add(DealerShedulesVersionTableMap::ID, $this->id);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::DEALER_ID)) $criteria->add(DealerShedulesVersionTableMap::DEALER_ID, $this->dealer_id);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::DAY)) $criteria->add(DealerShedulesVersionTableMap::DAY, $this->day);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::BEGIN)) $criteria->add(DealerShedulesVersionTableMap::BEGIN, $this->begin);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::END)) $criteria->add(DealerShedulesVersionTableMap::END, $this->end);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::CLOSED)) $criteria->add(DealerShedulesVersionTableMap::CLOSED, $this->closed);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::PERIOD_BEGIN)) $criteria->add(DealerShedulesVersionTableMap::PERIOD_BEGIN, $this->period_begin);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::PERIOD_END)) $criteria->add(DealerShedulesVersionTableMap::PERIOD_END, $this->period_end);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::CREATED_AT)) $criteria->add(DealerShedulesVersionTableMap::CREATED_AT, $this->created_at);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::UPDATED_AT)) $criteria->add(DealerShedulesVersionTableMap::UPDATED_AT, $this->updated_at);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::VERSION)) $criteria->add(DealerShedulesVersionTableMap::VERSION, $this->version);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::VERSION_CREATED_AT)) $criteria->add(DealerShedulesVersionTableMap::VERSION_CREATED_AT, $this->version_created_at);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::VERSION_CREATED_BY)) $criteria->add(DealerShedulesVersionTableMap::VERSION_CREATED_BY, $this->version_created_by);
-        if ($this->isColumnModified(DealerShedulesVersionTableMap::DEALER_ID_VERSION)) $criteria->add(DealerShedulesVersionTableMap::DEALER_ID_VERSION, $this->dealer_id_version);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::ID)) $criteria->add(DealerFolderVersionTableMap::ID, $this->id);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::DEALER_ID)) $criteria->add(DealerFolderVersionTableMap::DEALER_ID, $this->dealer_id);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::FOLDER_ID)) $criteria->add(DealerFolderVersionTableMap::FOLDER_ID, $this->folder_id);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::CREATED_AT)) $criteria->add(DealerFolderVersionTableMap::CREATED_AT, $this->created_at);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::UPDATED_AT)) $criteria->add(DealerFolderVersionTableMap::UPDATED_AT, $this->updated_at);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::VERSION)) $criteria->add(DealerFolderVersionTableMap::VERSION, $this->version);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::VERSION_CREATED_AT)) $criteria->add(DealerFolderVersionTableMap::VERSION_CREATED_AT, $this->version_created_at);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::VERSION_CREATED_BY)) $criteria->add(DealerFolderVersionTableMap::VERSION_CREATED_BY, $this->version_created_by);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::DEALER_ID_VERSION)) $criteria->add(DealerFolderVersionTableMap::DEALER_ID_VERSION, $this->dealer_id_version);
+        if ($this->isColumnModified(DealerFolderVersionTableMap::FOLDER_ID_VERSION)) $criteria->add(DealerFolderVersionTableMap::FOLDER_ID_VERSION, $this->folder_id_version);
 
         return $criteria;
     }
@@ -1683,9 +1409,9 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(DealerShedulesVersionTableMap::DATABASE_NAME);
-        $criteria->add(DealerShedulesVersionTableMap::ID, $this->id);
-        $criteria->add(DealerShedulesVersionTableMap::VERSION, $this->version);
+        $criteria = new Criteria(DealerFolderVersionTableMap::DATABASE_NAME);
+        $criteria->add(DealerFolderVersionTableMap::ID, $this->id);
+        $criteria->add(DealerFolderVersionTableMap::VERSION, $this->version);
 
         return $criteria;
     }
@@ -1732,7 +1458,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param      object $copyObj An object of \Dealer\Model\DealerShedulesVersion (or compatible) type.
+     * @param      object $copyObj An object of \Dealer\Model\DealerFolderVersion (or compatible) type.
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws PropelException
@@ -1741,18 +1467,14 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     {
         $copyObj->setId($this->getId());
         $copyObj->setDealerId($this->getDealerId());
-        $copyObj->setDay($this->getDay());
-        $copyObj->setBegin($this->getBegin());
-        $copyObj->setEnd($this->getEnd());
-        $copyObj->setClosed($this->getClosed());
-        $copyObj->setPeriodBegin($this->getPeriodBegin());
-        $copyObj->setPeriodEnd($this->getPeriodEnd());
+        $copyObj->setFolderId($this->getFolderId());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
         $copyObj->setVersion($this->getVersion());
         $copyObj->setVersionCreatedAt($this->getVersionCreatedAt());
         $copyObj->setVersionCreatedBy($this->getVersionCreatedBy());
         $copyObj->setDealerIdVersion($this->getDealerIdVersion());
+        $copyObj->setFolderIdVersion($this->getFolderIdVersion());
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -1767,7 +1489,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      * objects.
      *
      * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return                 \Dealer\Model\DealerShedulesVersion Clone of current object.
+     * @return                 \Dealer\Model\DealerFolderVersion Clone of current object.
      * @throws PropelException
      */
     public function copy($deepCopy = false)
@@ -1781,13 +1503,13 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     }
 
     /**
-     * Declares an association between this object and a ChildDealerShedules object.
+     * Declares an association between this object and a ChildDealerFolder object.
      *
-     * @param                  ChildDealerShedules $v
-     * @return                 \Dealer\Model\DealerShedulesVersion The current object (for fluent API support)
+     * @param                  ChildDealerFolder $v
+     * @return                 \Dealer\Model\DealerFolderVersion The current object (for fluent API support)
      * @throws PropelException
      */
-    public function setDealerShedules(ChildDealerShedules $v = null)
+    public function setDealerFolder(ChildDealerFolder $v = null)
     {
         if ($v === null) {
             $this->setId(NULL);
@@ -1795,12 +1517,12 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
             $this->setId($v->getId());
         }
 
-        $this->aDealerShedules = $v;
+        $this->aDealerFolder = $v;
 
         // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildDealerShedules object, it will not be re-added.
+        // If this object has already been added to the ChildDealerFolder object, it will not be re-added.
         if ($v !== null) {
-            $v->addDealerShedulesVersion($this);
+            $v->addDealerFolderVersion($this);
         }
 
 
@@ -1809,26 +1531,26 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
 
 
     /**
-     * Get the associated ChildDealerShedules object
+     * Get the associated ChildDealerFolder object
      *
      * @param      ConnectionInterface $con Optional Connection object.
-     * @return                 ChildDealerShedules The associated ChildDealerShedules object.
+     * @return                 ChildDealerFolder The associated ChildDealerFolder object.
      * @throws PropelException
      */
-    public function getDealerShedules(ConnectionInterface $con = null)
+    public function getDealerFolder(ConnectionInterface $con = null)
     {
-        if ($this->aDealerShedules === null && ($this->id !== null)) {
-            $this->aDealerShedules = ChildDealerShedulesQuery::create()->findPk($this->id, $con);
+        if ($this->aDealerFolder === null && ($this->id !== null)) {
+            $this->aDealerFolder = ChildDealerFolderQuery::create()->findPk($this->id, $con);
             /* The following can be used additionally to
                 guarantee the related object contains a reference
                 to this object.  This level of coupling may, however, be
                 undesirable since it could result in an only partially populated collection
                 in the referenced object.
-                $this->aDealerShedules->addDealerShedulesVersions($this);
+                $this->aDealerFolder->addDealerFolderVersions($this);
              */
         }
 
-        return $this->aDealerShedules;
+        return $this->aDealerFolder;
     }
 
     /**
@@ -1838,18 +1560,14 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
     {
         $this->id = null;
         $this->dealer_id = null;
-        $this->day = null;
-        $this->begin = null;
-        $this->end = null;
-        $this->closed = null;
-        $this->period_begin = null;
-        $this->period_end = null;
+        $this->folder_id = null;
         $this->created_at = null;
         $this->updated_at = null;
         $this->version = null;
         $this->version_created_at = null;
         $this->version_created_by = null;
         $this->dealer_id_version = null;
+        $this->folder_id_version = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -1872,7 +1590,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
         if ($deep) {
         } // if ($deep)
 
-        $this->aDealerShedules = null;
+        $this->aDealerFolder = null;
     }
 
     /**
@@ -1882,7 +1600,7 @@ abstract class DealerShedulesVersion implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(DealerShedulesVersionTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(DealerFolderVersionTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

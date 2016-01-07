@@ -58,7 +58,7 @@ class DealerShedulesTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 12;
+    const NUM_COLUMNS = 13;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class DealerShedulesTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 12;
+    const NUM_HYDRATE_COLUMNS = 13;
 
     /**
      * the column name for the ID field
@@ -94,6 +94,11 @@ class DealerShedulesTableMap extends TableMap
      * the column name for the END field
      */
     const END = 'dealer_shedules.END';
+
+    /**
+     * the column name for the CLOSED field
+     */
+    const CLOSED = 'dealer_shedules.CLOSED';
 
     /**
      * the column name for the PERIOD_BEGIN field
@@ -142,12 +147,12 @@ class DealerShedulesTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'DealerId', 'Day', 'Begin', 'End', 'PeriodBegin', 'PeriodEnd', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'dealerId', 'day', 'begin', 'end', 'periodBegin', 'periodEnd', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
-        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID, DealerShedulesTableMap::DEALER_ID, DealerShedulesTableMap::DAY, DealerShedulesTableMap::BEGIN, DealerShedulesTableMap::END, DealerShedulesTableMap::PERIOD_BEGIN, DealerShedulesTableMap::PERIOD_END, DealerShedulesTableMap::CREATED_AT, DealerShedulesTableMap::UPDATED_AT, DealerShedulesTableMap::VERSION, DealerShedulesTableMap::VERSION_CREATED_AT, DealerShedulesTableMap::VERSION_CREATED_BY, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'DEALER_ID', 'DAY', 'BEGIN', 'END', 'PERIOD_BEGIN', 'PERIOD_END', 'CREATED_AT', 'UPDATED_AT', 'VERSION', 'VERSION_CREATED_AT', 'VERSION_CREATED_BY', ),
-        self::TYPE_FIELDNAME     => array('id', 'dealer_id', 'day', 'begin', 'end', 'period_begin', 'period_end', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        self::TYPE_PHPNAME       => array('Id', 'DealerId', 'Day', 'Begin', 'End', 'Closed', 'PeriodBegin', 'PeriodEnd', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'dealerId', 'day', 'begin', 'end', 'closed', 'periodBegin', 'periodEnd', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
+        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID, DealerShedulesTableMap::DEALER_ID, DealerShedulesTableMap::DAY, DealerShedulesTableMap::BEGIN, DealerShedulesTableMap::END, DealerShedulesTableMap::CLOSED, DealerShedulesTableMap::PERIOD_BEGIN, DealerShedulesTableMap::PERIOD_END, DealerShedulesTableMap::CREATED_AT, DealerShedulesTableMap::UPDATED_AT, DealerShedulesTableMap::VERSION, DealerShedulesTableMap::VERSION_CREATED_AT, DealerShedulesTableMap::VERSION_CREATED_BY, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'DEALER_ID', 'DAY', 'BEGIN', 'END', 'CLOSED', 'PERIOD_BEGIN', 'PERIOD_END', 'CREATED_AT', 'UPDATED_AT', 'VERSION', 'VERSION_CREATED_AT', 'VERSION_CREATED_BY', ),
+        self::TYPE_FIELDNAME     => array('id', 'dealer_id', 'day', 'begin', 'end', 'closed', 'period_begin', 'period_end', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -157,12 +162,12 @@ class DealerShedulesTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'DealerId' => 1, 'Day' => 2, 'Begin' => 3, 'End' => 4, 'PeriodBegin' => 5, 'PeriodEnd' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, 'Version' => 9, 'VersionCreatedAt' => 10, 'VersionCreatedBy' => 11, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'dealerId' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'periodBegin' => 5, 'periodEnd' => 6, 'createdAt' => 7, 'updatedAt' => 8, 'version' => 9, 'versionCreatedAt' => 10, 'versionCreatedBy' => 11, ),
-        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID => 0, DealerShedulesTableMap::DEALER_ID => 1, DealerShedulesTableMap::DAY => 2, DealerShedulesTableMap::BEGIN => 3, DealerShedulesTableMap::END => 4, DealerShedulesTableMap::PERIOD_BEGIN => 5, DealerShedulesTableMap::PERIOD_END => 6, DealerShedulesTableMap::CREATED_AT => 7, DealerShedulesTableMap::UPDATED_AT => 8, DealerShedulesTableMap::VERSION => 9, DealerShedulesTableMap::VERSION_CREATED_AT => 10, DealerShedulesTableMap::VERSION_CREATED_BY => 11, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'DEALER_ID' => 1, 'DAY' => 2, 'BEGIN' => 3, 'END' => 4, 'PERIOD_BEGIN' => 5, 'PERIOD_END' => 6, 'CREATED_AT' => 7, 'UPDATED_AT' => 8, 'VERSION' => 9, 'VERSION_CREATED_AT' => 10, 'VERSION_CREATED_BY' => 11, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'dealer_id' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'period_begin' => 5, 'period_end' => 6, 'created_at' => 7, 'updated_at' => 8, 'version' => 9, 'version_created_at' => 10, 'version_created_by' => 11, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'DealerId' => 1, 'Day' => 2, 'Begin' => 3, 'End' => 4, 'Closed' => 5, 'PeriodBegin' => 6, 'PeriodEnd' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, 'Version' => 10, 'VersionCreatedAt' => 11, 'VersionCreatedBy' => 12, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'dealerId' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'closed' => 5, 'periodBegin' => 6, 'periodEnd' => 7, 'createdAt' => 8, 'updatedAt' => 9, 'version' => 10, 'versionCreatedAt' => 11, 'versionCreatedBy' => 12, ),
+        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID => 0, DealerShedulesTableMap::DEALER_ID => 1, DealerShedulesTableMap::DAY => 2, DealerShedulesTableMap::BEGIN => 3, DealerShedulesTableMap::END => 4, DealerShedulesTableMap::CLOSED => 5, DealerShedulesTableMap::PERIOD_BEGIN => 6, DealerShedulesTableMap::PERIOD_END => 7, DealerShedulesTableMap::CREATED_AT => 8, DealerShedulesTableMap::UPDATED_AT => 9, DealerShedulesTableMap::VERSION => 10, DealerShedulesTableMap::VERSION_CREATED_AT => 11, DealerShedulesTableMap::VERSION_CREATED_BY => 12, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'DEALER_ID' => 1, 'DAY' => 2, 'BEGIN' => 3, 'END' => 4, 'CLOSED' => 5, 'PERIOD_BEGIN' => 6, 'PERIOD_END' => 7, 'CREATED_AT' => 8, 'UPDATED_AT' => 9, 'VERSION' => 10, 'VERSION_CREATED_AT' => 11, 'VERSION_CREATED_BY' => 12, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'dealer_id' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'closed' => 5, 'period_begin' => 6, 'period_end' => 7, 'created_at' => 8, 'updated_at' => 9, 'version' => 10, 'version_created_at' => 11, 'version_created_by' => 12, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
     );
 
     /**
@@ -186,6 +191,7 @@ class DealerShedulesTableMap extends TableMap
         $this->addColumn('DAY', 'Day', 'INTEGER', true, null, null);
         $this->addColumn('BEGIN', 'Begin', 'TIME', true, null, null);
         $this->addColumn('END', 'End', 'TIME', true, null, null);
+        $this->addColumn('CLOSED', 'Closed', 'BOOLEAN', false, 1, false);
         $this->addColumn('PERIOD_BEGIN', 'PeriodBegin', 'DATE', false, null, null);
         $this->addColumn('PERIOD_END', 'PeriodEnd', 'DATE', false, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -370,6 +376,7 @@ class DealerShedulesTableMap extends TableMap
             $criteria->addSelectColumn(DealerShedulesTableMap::DAY);
             $criteria->addSelectColumn(DealerShedulesTableMap::BEGIN);
             $criteria->addSelectColumn(DealerShedulesTableMap::END);
+            $criteria->addSelectColumn(DealerShedulesTableMap::CLOSED);
             $criteria->addSelectColumn(DealerShedulesTableMap::PERIOD_BEGIN);
             $criteria->addSelectColumn(DealerShedulesTableMap::PERIOD_END);
             $criteria->addSelectColumn(DealerShedulesTableMap::CREATED_AT);
@@ -383,6 +390,7 @@ class DealerShedulesTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.DAY');
             $criteria->addSelectColumn($alias . '.BEGIN');
             $criteria->addSelectColumn($alias . '.END');
+            $criteria->addSelectColumn($alias . '.CLOSED');
             $criteria->addSelectColumn($alias . '.PERIOD_BEGIN');
             $criteria->addSelectColumn($alias . '.PERIOD_END');
             $criteria->addSelectColumn($alias . '.CREATED_AT');

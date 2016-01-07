@@ -69,6 +69,14 @@ use Thelia\Model\Country;
  * @method     ChildDealerQuery rightJoinDealerContact($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerContact relation
  * @method     ChildDealerQuery innerJoinDealerContact($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerContact relation
  *
+ * @method     ChildDealerQuery leftJoinDealerContent($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerContent relation
+ * @method     ChildDealerQuery rightJoinDealerContent($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerContent relation
+ * @method     ChildDealerQuery innerJoinDealerContent($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerContent relation
+ *
+ * @method     ChildDealerQuery leftJoinDealerFolder($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerFolder relation
+ * @method     ChildDealerQuery rightJoinDealerFolder($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerFolder relation
+ * @method     ChildDealerQuery innerJoinDealerFolder($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerFolder relation
+ *
  * @method     ChildDealerQuery leftJoinDealerI18n($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerI18n relation
  * @method     ChildDealerQuery rightJoinDealerI18n($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerI18n relation
  * @method     ChildDealerQuery innerJoinDealerI18n($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerI18n relation
@@ -1022,6 +1030,152 @@ abstract class DealerQuery extends ModelCriteria
         return $this
             ->joinDealerContact($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'DealerContact', '\Dealer\Model\DealerContactQuery');
+    }
+
+    /**
+     * Filter the query by a related \Dealer\Model\DealerContent object
+     *
+     * @param \Dealer\Model\DealerContent|ObjectCollection $dealerContent  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function filterByDealerContent($dealerContent, $comparison = null)
+    {
+        if ($dealerContent instanceof \Dealer\Model\DealerContent) {
+            return $this
+                ->addUsingAlias(DealerTableMap::ID, $dealerContent->getDealerId(), $comparison);
+        } elseif ($dealerContent instanceof ObjectCollection) {
+            return $this
+                ->useDealerContentQuery()
+                ->filterByPrimaryKeys($dealerContent->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDealerContent() only accepts arguments of type \Dealer\Model\DealerContent or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DealerContent relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function joinDealerContent($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DealerContent');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DealerContent');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DealerContent relation DealerContent object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Dealer\Model\DealerContentQuery A secondary query class using the current class as primary query
+     */
+    public function useDealerContentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDealerContent($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DealerContent', '\Dealer\Model\DealerContentQuery');
+    }
+
+    /**
+     * Filter the query by a related \Dealer\Model\DealerFolder object
+     *
+     * @param \Dealer\Model\DealerFolder|ObjectCollection $dealerFolder  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function filterByDealerFolder($dealerFolder, $comparison = null)
+    {
+        if ($dealerFolder instanceof \Dealer\Model\DealerFolder) {
+            return $this
+                ->addUsingAlias(DealerTableMap::ID, $dealerFolder->getDealerId(), $comparison);
+        } elseif ($dealerFolder instanceof ObjectCollection) {
+            return $this
+                ->useDealerFolderQuery()
+                ->filterByPrimaryKeys($dealerFolder->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDealerFolder() only accepts arguments of type \Dealer\Model\DealerFolder or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DealerFolder relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function joinDealerFolder($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DealerFolder');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DealerFolder');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DealerFolder relation DealerFolder object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Dealer\Model\DealerFolderQuery A secondary query class using the current class as primary query
+     */
+    public function useDealerFolderQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDealerFolder($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DealerFolder', '\Dealer\Model\DealerFolderQuery');
     }
 
     /**
