@@ -14,7 +14,6 @@
 namespace Dealer\Loop;
 
 use Dealer\Model\Dealer;
-use Dealer\Model\DealerContent;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\Map\DealerBrandTableMap;
 use Dealer\Model\Map\DealerContentTableMap;
