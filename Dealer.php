@@ -44,7 +44,7 @@ class Dealer extends BaseModule
     /**
      * @inheritDoc
      */
-    public function update($currentVersion, $newVersion, ConnectionInterface $con)
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
     {
        if($currentVersion == "2.0" && $currentVersion != $newVersion){
            $database = new Database($con);
