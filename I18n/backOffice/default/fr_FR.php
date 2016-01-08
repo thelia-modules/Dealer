@@ -86,7 +86,7 @@ return array(
     "Sunday" => "Dimanche",
 
     /* Associated */
-    "Associated" => "Lié",
+    "Associated" => "Associations",
     "Link a Content" => "Lier un contenu",
     "Do you really want to unlink this content ?" => "Voulez vous retirer le lien vers ce contenu ?",
     "Unlink a content" => "Retirer le lien vers ce contenu",

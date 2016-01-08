@@ -76,6 +76,7 @@
         <form name="dealer-geo" class="Dealer\Form\GeoDealerForm"/>
         <form name="dealer_content_link_create" class="Dealer\Form\ContentLinkForm"/>
         <form name="dealer_folder_link_create" class="Dealer\Form\FolderLinkForm"/>
+        <form name="dealer_brand_link_create" class="Dealer\Form\BrandLinkForm"/>
     </forms>
 
 
