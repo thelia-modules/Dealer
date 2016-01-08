@@ -61,7 +61,7 @@ class DealerEvents
     const DEALER_SCHEDULES_DELETE_BEFORE = "dealer.dealer-schedules.delete.before";
     const DEALER_SCHEDULES_DELETE_AFTER = "dealer.dealer-schedules.delete.after";
 
-    //DEALER Schedules
+    //DEALER Content
     const DEALER_CONTENT_LINK_CREATE = "dealer.content.link.create";
     const DEALER_CONTENT_LINK_CREATE_BEFORE = "dealer.content.link.create.before";
     const DEALER_CONTENT_LINK_CREATE_AFTER = "dealer.content.link.create.after";
@@ -72,7 +72,7 @@ class DealerEvents
     const DEALER_CONTENT_LINK_DELETE_BEFORE = "dealer.content.link.delete.before";
     const DEALER_CONTENT_LINK_DELETE_AFTER = "dealer.content.link.delete.after";
 
-    //DEALER Schedules
+    //DEALER Folder
     const DEALER_FOLDER_LINK_CREATE = "dealer.folder.link.create";
     const DEALER_FOLDER_LINK_CREATE_BEFORE = "dealer.folder.link.create.before";
     const DEALER_FOLDER_LINK_CREATE_AFTER = "dealer.folder.link.create.after";
@@ -82,4 +82,15 @@ class DealerEvents
     const DEALER_FOLDER_LINK_DELETE = "dealer.folder.link.delete";
     const DEALER_FOLDER_LINK_DELETE_BEFORE = "dealer.folder.link.delete.before";
     const DEALER_FOLDER_LINK_DELETE_AFTER = "dealer.folder.link.delete.after";
+
+    //DEALER Brand
+    const DEALER_BRAND_LINK_CREATE = "dealer.brand.link.create";
+    const DEALER_BRAND_LINK_CREATE_BEFORE = "dealer.brand.link.create.before";
+    const DEALER_BRAND_LINK_CREATE_AFTER = "dealer.brand.link.create.after";
+    const DEALER_BRAND_LINK_UPDATE = "dealer.brand.link.update";
+    const DEALER_BRAND_LINK_UPDATE_BEFORE = "dealer.brand.link.update.before";
+    const DEALER_BRAND_LINK_UPDATE_AFTER = "dealer.brand.link.update.after";
+    const DEALER_BRAND_LINK_DELETE = "dealer.brand.link.delete";
+    const DEALER_BRAND_LINK_DELETE_BEFORE = "dealer.brand.link.delete.before";
+    const DEALER_BRAND_LINK_DELETE_AFTER = "dealer.brand.link.delete.after";
 }
