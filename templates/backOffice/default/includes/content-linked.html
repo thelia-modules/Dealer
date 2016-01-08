@@ -64,7 +64,7 @@
                 </div>
                 <div class="toolbar-options hidden">
                     {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
-                        <a class="content-delete" title="{intl l='Delete this content'}" href="#dealer-content-unlink"
+                        <a class="content-delete" title="{intl l='Unlink this content' d="dealer.bo.default"}" href="#dealer-content-unlink"
                            data-id="{$ID}" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span></a>
                     {/loop}
                 </div>

@@ -20,7 +20,7 @@ form_enctype       = {form_enctype form=$form}
 {* DELETE modal *}
 
 {capture "content_link_delete"}
-  {intl l="Do you really want to delete this Contact Info ?" d="dealer.bo.default"}
+  {intl l="Do you really want to unlink this content ?" d="dealer.bo.default"}
   <input type="hidden" name="dealer_content_link_id" id="dealer_content_link_delete_id" value="" />
   <input type="hidden" name="dealer_id" value="{$dealer_id}" />
 {/capture}

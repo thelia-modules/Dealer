@@ -83,5 +83,22 @@ return array(
     "Thursday" => "Jeudi",
     "Friday" => "Vendredi",
     "Saturday" => "Samedi",
-    "Sunday" => "Dimanche"
+    "Sunday" => "Dimanche",
+
+    /* Associated */
+    "Associated" => "Lié",
+    "Link a Content" => "Lier un contenu",
+    "Do you really want to unlink this content ?" => "Voulez vous retirer le lien vers ce contenu ?",
+    "Unlink a content" => "Retirer le lien vers ce contenu",
+    "Link a Folder" => "Lier un dossier",
+    "Do you really want to unlink this folder ?" => "Voulez vous retirer le lien vers ce dossier ?",
+    "Unlink a folder" => "Retirer le lien vers ce dossier",
+    "Content linked" => "Contenu lié",
+    "Folder linked" => "Dossier lié",
+    "Link a new content" => "Lier un nouveau contenu",
+    "Link a new folder" => "Lier un nouveau dossier",
+    "There is no Content linked to this dealer" => "Il n'y a pas de contenu lié à ce magasin",
+    "There is no Folder linked to this dealer" => "Il n'y a pas de dossier lié à ce magasin",
+    "Unlink this content" => "Retirer le lien vers ce contenu",
+    "Unlink this folder" => "Retirer le lien vers ce dossier",
 );
