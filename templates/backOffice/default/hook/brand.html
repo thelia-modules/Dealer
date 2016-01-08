@@ -1,0 +1,46 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="well">
+            <h3>{intl l="Link a Brand" d="dealer.bo.default"}</h3>
+            {form name="dealer_brand_link_create"}
+                <form action="{url path="admin/module/Dealer/brand"}" method="POST">
+                    {include file="form/dealer-brand-link.html" brand_id=$brand_id success_url={$current_url}}
+                    <button type="submit" class="btn btn-primary"><span
+                                class="glyphicon glyphicon-check"></span> {$dialog_ok_label|default:{intl l="Yes"}}
+                    </button>
+                </form>
+            {/form}
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <h3>{intl l="Brand linked to :" d="dealer.bo.default"}</h3>
+            <ul>
+                {loop type="dealer" name="dealer-brand" brand_id=$brand_id}
+                    <li>{$TITLE} <a href="#dealer-brand-unlink" data-toggle="modal" class="brand-delete" data-id="{$ID}"><span class="glyphicon glyphicon-minus"></span></a></li>
+                {/loop}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{* DELETE modal *}
+
+{capture "brand_link_delete"}
+    {intl l="Do you really want to unlink this Dealer ?" d="dealer.bo.default"}
+    <input type="hidden" name="dealer_brand_link_id"  value="{$brand_id}" />
+    <input type="hidden" id="dealer_brand_link_delete_id" name="dealer_id" value="" />
+    <input type="hidden" name="success_url" value="{$current_url}" />
+{/capture}
+
+{include file="includes/generic-confirm-dialog.html"
+
+dialog_id       = "dealer-brand-unlink"
+dialog_title    = {intl l="Unlink a dealer" d="dealer.bo.default"}
+dialog_message  = {$smarty.capture.brand_link_delete nofilter}
+
+dialog_ok_label     = {intl l="Delete"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action         = {token_url path='/admin/module/Dealer/brand/delete'}
+}

@@ -16,6 +16,7 @@ namespace Dealer\Loop;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerContent;
 use Dealer\Model\DealerQuery;
+use Dealer\Model\Map\DealerBrandTableMap;
 use Dealer\Model\Map\DealerContentTableMap;
 use Dealer\Model\Map\DealerFolderTableMap;
 use Dealer\Model\Map\DealerTableMap;
@@ -94,6 +95,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             Argument::createIntListTypeArgument('country_id'),
             Argument::createIntListTypeArgument('content_id'),
             Argument::createIntListTypeArgument('folder_id'),
+            Argument::createIntListTypeArgument('brand_id'),
             Argument::createAnyListTypeArgument('city'),
             Argument::createBooleanTypeArgument('with_prev_next_info', false),
             Argument::createEnumListTypeArgument('order', [
@@ -156,6 +158,18 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $query
                 ->addJoinObject($contentJoin)
                 ->where(DealerFolderTableMap::FOLDER_ID." ".Criteria::IN." (".$folder.")");
+            ;
+
+        }
+
+        if($brand = $this->getBrandId()){
+            if(is_array($brand)){
+                $brand = implode(",", $brand);
+            }
+            $contentJoin = new Join(DealerTableMap::ID,DealerBrandTableMap::DEALER_ID,Criteria::LEFT_JOIN);
+            $query
+                ->addJoinObject($contentJoin)
+                ->where(DealerBrandTableMap::BRAND_ID." ".Criteria::IN." (".$brand.")");
             ;
 
         }

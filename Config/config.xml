@@ -60,6 +60,8 @@
             <tag name="hook.event_listener" event="content.edit-js" type="back" method="onContentEditJs"/>
             <tag name="hook.event_listener" event="folder.tab-content" type="back" method="onFolderModuleTab"/>
             <tag name="hook.event_listener" event="folder.edit-js" type="back" method="onFolderEditJs"/>
+            <tag name="hook.event_listener" event="brand.tab-content" type="back" method="onBrandModuleTab"/>
+            <tag name="hook.event_listener" event="brand.edit-js" type="back" method="onBrandEditJs"/>
             <argument type="service" id="router.dealer"/>
         </hook>
     </hooks>
