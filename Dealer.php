@@ -41,6 +41,18 @@ class Dealer extends BaseModule
         }
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function update($currentVersion, $newVersion, ConnectionInterface $con)
+    {
+       if($currentVersion == "2.1" && $currentVersion != $newVersion){
+           $database = new Database($con);
+           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1-to-2.1.2.sql"]);
+       }
+    }
+
+
     public function getHooks(){
         return [
             array(

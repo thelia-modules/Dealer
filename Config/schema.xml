@@ -141,6 +141,27 @@
         </behavior>
     </table>
 
+    <table name="dealer_brand" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+
+        <column name="dealer_id" required="true" type="INTEGER"/>
+        <column name="brand_id" required="true" type="INTEGER"/>
+
+        <foreign-key foreignTable="dealer" name="fk_dealer_brand_dealer_id" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="dealer_id" />
+        </foreign-key>
+
+        <foreign-key foreignTable="brand" name="fk_dealer_brand_brand_id" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="brand_id" />
+        </foreign-key>
+
+        <behavior name="timestampable" />
+        <behavior name="versionable">
+            <parameter name="log_created_at" value="true" />
+            <parameter name="log_created_by" value="true" />
+        </behavior>
+    </table>
+
 
     <external-schema filename="local/config/schema.xml" referenceOnly="true"/>
 </database>

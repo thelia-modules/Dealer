@@ -226,6 +226,7 @@ class DealerTableMap extends TableMap
         $this->addRelation('DealerContact', '\\Dealer\\Model\\DealerContact', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', null, 'DealerContacts');
         $this->addRelation('DealerContent', '\\Dealer\\Model\\DealerContent', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', 'RESTRICT', 'DealerContents');
         $this->addRelation('DealerFolder', '\\Dealer\\Model\\DealerFolder', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', 'RESTRICT', 'DealerFolders');
+        $this->addRelation('DealerBrand', '\\Dealer\\Model\\DealerBrand', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', 'RESTRICT', 'DealerBrands');
         $this->addRelation('DealerI18n', '\\Dealer\\Model\\DealerI18n', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerI18ns');
         $this->addRelation('DealerVersion', '\\Dealer\\Model\\DealerVersion', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerVersions');
     } // buildRelations()
@@ -255,6 +256,7 @@ class DealerTableMap extends TableMap
                 DealerContactTableMap::clearInstancePool();
                 DealerContentTableMap::clearInstancePool();
                 DealerFolderTableMap::clearInstancePool();
+                DealerBrandTableMap::clearInstancePool();
                 DealerI18nTableMap::clearInstancePool();
                 DealerVersionTableMap::clearInstancePool();
             }
