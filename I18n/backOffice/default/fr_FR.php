@@ -36,6 +36,7 @@ return array(
     "longitude" => "Longitude",
     "Location" => "Géolocalisation",
     "There is no additionnal content for this Dealer" => "Il n'y pas de contenu additionnel pour ce magasin",
+    "General" => "Présentation Générale",
     /* Delete */
     "Delete an entry of Dealer" => "Suppression d'un point de vente",
     "Do you really want to delete this Dealer entry ?" => "Voulez vous supprimer ce point de vente ?",
@@ -50,7 +51,7 @@ return array(
     "There is no Contact info" => "Ce groupe de contact n'a pas de contact",
     'Delete this Contact' => "Supprimer ce group de contact",
     'Modify this Contact' => "Modifier ce group de contact",
-    "Value" => "Valeur",
+    "Value" => "Saisir le contact",
     "The Contact Value" => "La valeur du contact",
     "Contact Type" => "Type de Contact",
     "Do you really want to delete this Contact ?" => "Voulez-vous vraiment supprimer ce group de contact ?",
