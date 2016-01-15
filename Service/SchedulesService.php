@@ -64,6 +64,19 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         return $event->getDealerSchedules();
     }
 
+    public function cloneFromArray($data)
+    {
+        $dealer_schedules = $this->hydrateObjectArray($data);
+        $clone = $dealer_schedules->copy();
+
+        $event = new DealerSchedulesEvent();
+        $event->setDealerSchedules($clone);
+
+        $this->create($event);
+
+        return $event->getDealerSchedules();
+    }
+
     public function updateFromArray($data, $locale = null)
     {
         $dealer_schedules = $this->hydrateObjectArray($data, $locale);

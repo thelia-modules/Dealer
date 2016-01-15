@@ -54,6 +54,9 @@
     <route id="dealer.dealer.schedules.update" path="/admin/module/Dealer/schedules/update" methods="post">
         <default key="_controller">Dealer:Schedules:processUpdate</default>
     </route>
+    <route id="dealer.dealer.schedules.clone" path="/admin/module/Dealer/schedules/clone" methods="post">
+        <default key="_controller">Dealer:Schedules:clone</default>
+    </route>
 
     <!-- Geo -->
     <route id="dealer.geo.update" path="/admin/module/Dealer/location/update" methods="post">

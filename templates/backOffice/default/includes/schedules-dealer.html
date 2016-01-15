@@ -56,6 +56,13 @@
                                     <i class="glyphicon glyphicon-edit"></i>
                                 </a>
                             {/loop}
+                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+                                <a class="btn btn-default btn-xs dealer-schedules-clone"
+                                   title="{intl l='Clone this Schedule' d='dealer.bo.default'}"
+                                   data-target="#dealer-schedules-clone" data-toggle="modal" data-id="{$ID}">
+                                    <i class="glyphicon glyphicon-plus-sign"></i>
+                                </a>
+                            {/loop}
                             {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-delete"
                                    title="{intl l='Delete this Schedule' d='dealer.bo.default'}"

@@ -75,6 +75,7 @@
         <form name="dealer-contact-info.update" class="Dealer\Form\ContactInfoUpdateForm"/>
         <form name="dealer-schedules.create" class="Dealer\Form\SchedulesForm"/>
         <form name="dealer-schedules.update" class="Dealer\Form\SchedulesUpdateForm"/>
+        <form name="dealer-schedules.clone" class="Dealer\Form\SchedulesCloneForm"/>
         <form name="dealer-geo" class="Dealer\Form\GeoDealerForm"/>
         <form name="dealer_content_link_create" class="Dealer\Form\ContentLinkForm"/>
         <form name="dealer_folder_link_create" class="Dealer\Form\FolderLinkForm"/>

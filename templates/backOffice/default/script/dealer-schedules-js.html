@@ -45,6 +45,10 @@
             $('#attr-dealer-schedules-day option[value="' + $(this).data('day') + '"]', '#dealer-schedules-update').prop('selected', true);
             $("#attr-dealer-schedules-closed", "#dealer-schedules-update").val("1");
         });
+        $('a.dealer-schedules-clone').click(function (ev) {
+            $("#attr-dealer-schedules-clone-id", "#dealer-schedules-clone").val($(this).data('id'));
+        });
+
         {$langcode = {lang attr="code"}|substr:0:2}
         $(document).ready(function () {
             $('.input-group.time').datetimepicker({

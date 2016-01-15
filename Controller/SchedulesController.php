@@ -182,7 +182,7 @@ class SchedulesController extends BaseController
     protected function formatData($data, $type = "AM")
     {
         $retour = $data;
-        if (isset($data["begin" . $type]) && $data["begin" . $type] != "" ) {
+        if (isset($data["begin" . $type]) && $data["begin" . $type] != "") {
             $retour["begin"] = $data["begin" . $type];
         } else {
             return null;
@@ -194,5 +194,68 @@ class SchedulesController extends BaseController
         }
 
         return $retour;
+    }
+
+    public function cloneAction()
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+                AccessManager::CREATE)
+        ) {
+            return $response;
+        }
+
+        // Create the Creation Form
+        $cloneForm = $this->getCloneForm($this->getRequest());
+
+        $con = Propel::getConnection();
+        $con->beginTransaction();
+
+        try {
+            // Check the form against constraints violations
+            $form = $this->validateForm($cloneForm, "POST");
+            // Get the form field values
+            $data = $form->getData();
+
+            $this->getService()->cloneFromArray($data);
+
+
+            // Substitute _ID_ in the URL with the ID of the created object
+            $successUrl = $cloneForm->getSuccessUrl();
+
+            $con->commit();
+
+            // Redirect to the success URL
+            return $this->generateRedirect($successUrl);
+
+        } catch (FormValidationException $ex) {
+            $con->rollBack();
+            // Form cannot be validated
+            $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+        } catch (\Exception $ex) {
+            $con->rollBack();
+            // Any other error
+            $error_msg = $ex->getMessage();
+        }
+        if (false !== $error_msg) {
+            $this->setupFormErrorContext(
+                $this->getTranslator()->trans("%obj creation", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
+                $error_msg,
+                $cloneForm,
+                $ex
+            );
+
+            // At this point, the form has error, and should be redisplayed.
+            return $this->getListRenderTemplate();
+        }
+    }
+
+    /**
+     * Method to get Base Clone Form
+     * @return \Thelia\Form\BaseForm
+     */
+    protected function getCloneForm()
+    {
+        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".clone");
     }
 }
