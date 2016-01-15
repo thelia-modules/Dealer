@@ -41,15 +41,6 @@
                         <th>
                             {admin_sortable_header
                                 current_order=$order
-                                order='id'
-                                reverse_order='id-reverse'
-                                path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
-                                label="{intl l='Id' d='dealer.bo.default'}"
-                            }
-                        </th>
-                        <th>
-                            {admin_sortable_header
-                                current_order=$order
                                 order='company'
                                 reverse_order='company-reverse'
                                 path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
@@ -102,10 +93,7 @@
                     {loop name="dealer-list" type="dealer" order=$order force_return=true}
                         <tr>
                             <td>
-                                <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$ID}</a>
-                            </td>
-                            <td>
-                                {$TITLE}
+                                <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$TITLE}</a>
                             </td>
                             <td>
                                 {$ADDRESS1}
