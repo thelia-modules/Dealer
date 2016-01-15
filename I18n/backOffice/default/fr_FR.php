@@ -84,6 +84,9 @@ return array(
     "Friday" => "Vendredi",
     "Saturday" => "Samedi",
     "Sunday" => "Dimanche",
+    "AM" => "Matin",
+    "PM" => "Après-midi",
+    "Period" => "Période",
 
     /* Associated */
     "Associated" => "Associations",

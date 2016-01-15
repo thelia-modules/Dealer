@@ -55,6 +55,26 @@ class SchedulesUpdateForm extends SchedulesForm
                 "constraints" => array(new NotBlank(),),
                 "attr" => array()
             ))
+            ->remove("beginPM")
+            ->remove("endPM")
+            ->remove("beginAM")
+            ->remove("endAM")
+            ->add("begin", "time", [
+                "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-begin"],
+                "input" => "string",
+                "widget" => "single_text",
+                "required" => false,
+                "attr" => array()
+            ])
+            ->add("end", "time", [
+                "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-end"],
+                "input" => "string",
+                "widget" => "single_text",
+                "required" => false,
+                "attr" => array()
+            ])
         ;
     }
 

@@ -54,20 +54,36 @@ class SchedulesForm extends BaseForm
                 "required" => true,
                 "attr" => array()
             ])
-            ->add("begin", "time", [
+            ->add("beginAM", "time", [
                 "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-begin"],
                 "input" => "string",
                 "widget" => "single_text",
-                "required" => true,
+                "required" => false,
                 "attr" => array()
             ])
-            ->add("end", "time", [
+            ->add("endAM", "time", [
                 "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-end"],
                 "input" => "string",
                 "widget" => "single_text",
-                "required" => true,
+                "required" => false,
+                "attr" => array()
+            ])
+            ->add("beginPM", "time", [
+                "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-beginPM"],
+                "input" => "string",
+                "widget" => "single_text",
+                "required" => false,
+                "attr" => array()
+            ])
+            ->add("endPM", "time", [
+                "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-endPM"],
+                "input" => "string",
+                "widget" => "single_text",
+                "required" => false,
                 "attr" => array()
             ])
             ->add("period_begin", "date", [

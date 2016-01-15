@@ -14,8 +14,13 @@
 namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
+use Dealer\Dealer;
 use Dealer\Model\DealerShedules;
+use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 
 
@@ -107,5 +112,87 @@ class SchedulesController extends BaseController
         }
 
         return $this->service;
+    }
+
+    /**
+     * Create an object
+     * @return mixed|\Symfony\Component\HttpFoundation\Response
+     */
+    public function createAction()
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+                AccessManager::CREATE)
+        ) {
+            return $response;
+        }
+
+        // Create the Creation Form
+        $creationForm = $this->getCreationForm($this->getRequest());
+
+        $con = Propel::getConnection();
+        $con->beginTransaction();
+
+        try {
+            // Check the form against constraints violations
+            $form = $this->validateForm($creationForm, "POST");
+            // Get the form field values
+            $data = $form->getData();
+            $dataAM = $this->formatData($data);
+            if (null != $dataAM) {
+                $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
+            }
+            $dataPM = $this->formatData($data, 'PM');
+            if (null != $dataPM) {
+                $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
+            }
+
+
+            // Substitute _ID_ in the URL with the ID of the created object
+            $successUrl = $creationForm->getSuccessUrl();
+
+            $con->commit();
+
+            // Redirect to the success URL
+            return $this->generateRedirect($successUrl);
+
+        } catch (FormValidationException $ex) {
+            $con->rollBack();
+            // Form cannot be validated
+            $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+        } catch (\Exception $ex) {
+            $con->rollBack();
+            // Any other error
+            $error_msg = $ex->getMessage();
+        }
+        if (false !== $error_msg) {
+            $this->setupFormErrorContext(
+                $this->getTranslator()->trans("%obj creation", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
+                $error_msg,
+                $creationForm,
+                $ex
+            );
+
+            // At this point, the form has error, and should be redisplayed.
+            return $this->getListRenderTemplate();
+        }
+
+    }
+
+    protected function formatData($data, $type = "AM")
+    {
+        $retour = $data;
+        if (isset($data["begin" . $type]) && $data["begin" . $type] != "" ) {
+            $retour["begin"] = $data["begin" . $type];
+        } else {
+            return null;
+        }
+        if (isset($data["end" . $type]) && $data["end" . $type] != "") {
+            $retour["end"] = $data["end" . $type];
+        } else {
+            return null;
+        }
+
+        return $retour;
     }
 }

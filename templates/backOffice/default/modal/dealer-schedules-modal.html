@@ -24,7 +24,7 @@ form_enctype       = {form_enctype form=$form}
     {form_field form=$form field="id"}
     <input type="hidden" id="{$label_attr.for}" name="{$name}" value="" />
     {/form_field}
-  {include file="form/dealer-schedules-create.html" form_name="dealer-schedules.update" dealer_id=$smarty.get.dealer_id}
+  {include file="form/dealer-schedules-create.html" form_name="dealer-schedules.update" dealer_id=$smarty.get.dealer_id update=true}
 {/capture}
 
   {include file="includes/generic-create-dialog.html"
