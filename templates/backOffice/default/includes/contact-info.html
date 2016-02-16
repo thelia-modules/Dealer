@@ -9,8 +9,9 @@
                 </a>
             </div>
             <div>
-                <label>{intl l="is default ?" d="dealer.bo.default"}</label>
-                <input type="checkbox" class="form-control default-contact-checkbox" {if $IS_DEFAULT}checked{/if} data-id="{$ID}">
+                <label>{intl l="is default ?" d="dealer.bo.default"}
+                    <input type="checkbox" class="form-control default-contact-checkbox" {if $IS_DEFAULT}checked{/if} data-id="{$ID}">
+                </label>
             </div>
         {/loop}
     </caption>
