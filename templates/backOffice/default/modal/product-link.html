@@ -1,0 +1,38 @@
+{* CREATE Modal *}
+
+{form name="dealer_product_link_create"}
+{capture "product_link_create"}
+  {include file="form/dealer-product-link.html" form_name="dealer_product_link_create" dealer_id=$dealer_id}
+{/capture}
+
+  {include file="includes/generic-create-dialog.html"
+  dialog_id       = "dealer-product-link"
+  dialog_title    = {intl l="Link a Product" d="dealer.bo.default"}
+  dialog_body     = {$smarty.capture.product_link_create nofilter}
+dialog_ok_label     = {intl l="Create"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action        = {url path="admin/module/Dealer/product"}
+form_enctype       = {form_enctype form=$form}
+}
+{/form}
+
+{* DELETE modal *}
+
+{capture "product_link_delete"}
+  {intl l="Do you really want to unlink this product ?" d="dealer.bo.default"}
+  <input type="hidden" name="dealer_product_link_id" id="dealer_product_link_delete_id" value="" />
+  <input type="hidden" name="dealer_id" value="{$dealer_id}" />
+{/capture}
+
+{include file="includes/generic-confirm-dialog.html"
+
+dialog_id       = "dealer-product-unlink"
+dialog_title    = {intl l="Unlink a product" d="dealer.bo.default"}
+dialog_message  = {$smarty.capture.product_link_delete nofilter}
+
+dialog_ok_label     = {intl l="Delete"}
+dialog_cancel_label = {intl l="Cancel"}
+
+form_action         = {token_url path='/admin/module/Dealer/product/delete'}
+}

@@ -93,4 +93,15 @@ class DealerEvents
     const DEALER_BRAND_LINK_DELETE = "dealer.brand.link.delete";
     const DEALER_BRAND_LINK_DELETE_BEFORE = "dealer.brand.link.delete.before";
     const DEALER_BRAND_LINK_DELETE_AFTER = "dealer.brand.link.delete.after";
+
+    //DEALER PRODUCT
+    const DEALER_PRODUCT_LINK_CREATE = "dealer.product.link.create";
+    const DEALER_PRODUCT_LINK_CREATE_BEFORE = "dealer.product.link.create.before";
+    const DEALER_PRODUCT_LINK_CREATE_AFTER = "dealer.product.link.create.after";
+    const DEALER_PRODUCT_LINK_UPDATE = "dealer.product.link.update";
+    const DEALER_PRODUCT_LINK_UPDATE_BEFORE = "dealer.product.link.update.before";
+    const DEALER_PRODUCT_LINK_UPDATE_AFTER = "dealer.product.link.update.after";
+    const DEALER_PRODUCT_LINK_DELETE = "dealer.product.link.delete";
+    const DEALER_PRODUCT_LINK_DELETE_BEFORE = "dealer.product.link.delete.before";
+    const DEALER_PRODUCT_LINK_DELETE_AFTER = "dealer.product.link.delete.after";
 }
