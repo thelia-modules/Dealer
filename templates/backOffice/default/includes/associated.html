@@ -1,14 +1,5 @@
-<div class="row">
-    <div class="col-md-6">
-        {include file="includes/content-linked.html"}
+{ifhook rel="dealer.associated.tabcontent"}
+    <div class="row">
+        {hook name="dealer.associated.tabcontent" dealer_id=$dealer_id}
     </div>
-    <div class="col-md-6">
-        {include file="includes/folder-linked.html"}
-    </div>
-    <div class="col-md-6">
-        {include file="includes/brand-linked.html"}
-    </div>
-    <div class="col-md-6">
-        {include file="includes/product-linked.html"}
-    </div>
-</div>
+{/ifhook}

@@ -107,6 +107,16 @@ class Dealer extends BaseModule
                 ],
                 "active" => true,
             ),
+            array(
+                "type" => TemplateDefinition::BACK_OFFICE,
+                "code" => "dealer.associated.tabcontent",
+                "title" => "Dealer Associated Nav Tab",
+                "description" => [
+                    "en_US" =>"Allow you to insert association content",
+                    "fr_FR" =>"Permet l'ajout de contenu dans la table d'association",
+                ],
+                "active" => true,
+            ),
         ];
     }
 }
