@@ -41,4 +41,24 @@ class InternalHook extends BaseHook
         $event->add($this->render("includes/product-linked.html", $event->getArguments()));
         $event->add($this->render("modal/product-link.html", $event->getArguments()));
     }
+
+    public function insertContentJs(HookRenderEvent $event)
+    {
+        $event->add($this->render("script/dealer-content-js.html", $event->getArguments()));
+    }
+
+    public function insertFolderJs(HookRenderEvent $event)
+    {
+        $event->add($this->render("script/dealer-folder-js.html", $event->getArguments()));
+    }
+
+    public function insertBrandJs(HookRenderEvent $event)
+    {
+        $event->add($this->render("script/dealer-brand-js.html", $event->getArguments()));
+    }
+
+    public function insertProductJs(HookRenderEvent $event)
+    {
+        $event->add($this->render("script/dealer-product-js.html", $event->getArguments()));
+    }
 }

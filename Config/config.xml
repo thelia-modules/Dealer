@@ -65,6 +65,10 @@
             <tag name="hook.event_listener" event="dealer.associated.tabcontent" type="back" method="insertFolder"/>
             <tag name="hook.event_listener" event="dealer.associated.tabcontent" type="back" method="insertBrand"/>
             <tag name="hook.event_listener" event="dealer.associated.tabcontent" type="back" method="insertProduct"/>
+            <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertContentJs"/>
+            <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertFolderJs"/>
+            <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertBrandJs"/>
+            <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertProductJs"/>
         </hook>
         <hook id="dealer.thelia.admin.hook" class="Dealer\Hook\TheliaAdminHook" scope="request">
             <tag name="hook.event_listener" event="content.tab-content" type="back" method="onContentModuleTab"/>
