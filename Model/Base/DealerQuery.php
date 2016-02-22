@@ -81,6 +81,10 @@ use Thelia\Model\Country;
  * @method     ChildDealerQuery rightJoinDealerBrand($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerBrand relation
  * @method     ChildDealerQuery innerJoinDealerBrand($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerBrand relation
  *
+ * @method     ChildDealerQuery leftJoinDealerProduct($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerProduct relation
+ * @method     ChildDealerQuery rightJoinDealerProduct($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerProduct relation
+ * @method     ChildDealerQuery innerJoinDealerProduct($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerProduct relation
+ *
  * @method     ChildDealerQuery leftJoinDealerI18n($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerI18n relation
  * @method     ChildDealerQuery rightJoinDealerI18n($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerI18n relation
  * @method     ChildDealerQuery innerJoinDealerI18n($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerI18n relation
@@ -1253,6 +1257,79 @@ abstract class DealerQuery extends ModelCriteria
         return $this
             ->joinDealerBrand($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'DealerBrand', '\Dealer\Model\DealerBrandQuery');
+    }
+
+    /**
+     * Filter the query by a related \Dealer\Model\DealerProduct object
+     *
+     * @param \Dealer\Model\DealerProduct|ObjectCollection $dealerProduct  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function filterByDealerProduct($dealerProduct, $comparison = null)
+    {
+        if ($dealerProduct instanceof \Dealer\Model\DealerProduct) {
+            return $this
+                ->addUsingAlias(DealerTableMap::ID, $dealerProduct->getDealerId(), $comparison);
+        } elseif ($dealerProduct instanceof ObjectCollection) {
+            return $this
+                ->useDealerProductQuery()
+                ->filterByPrimaryKeys($dealerProduct->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDealerProduct() only accepts arguments of type \Dealer\Model\DealerProduct or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DealerProduct relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function joinDealerProduct($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DealerProduct');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DealerProduct');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DealerProduct relation DealerProduct object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Dealer\Model\DealerProductQuery A secondary query class using the current class as primary query
+     */
+    public function useDealerProductQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDealerProduct($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DealerProduct', '\Dealer\Model\DealerProductQuery');
     }
 
     /**

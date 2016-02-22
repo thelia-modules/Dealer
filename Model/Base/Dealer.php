@@ -20,6 +20,9 @@ use Dealer\Model\DealerFolderQuery as ChildDealerFolderQuery;
 use Dealer\Model\DealerFolderVersionQuery as ChildDealerFolderVersionQuery;
 use Dealer\Model\DealerI18n as ChildDealerI18n;
 use Dealer\Model\DealerI18nQuery as ChildDealerI18nQuery;
+use Dealer\Model\DealerProduct as ChildDealerProduct;
+use Dealer\Model\DealerProductQuery as ChildDealerProductQuery;
+use Dealer\Model\DealerProductVersionQuery as ChildDealerProductVersionQuery;
 use Dealer\Model\DealerQuery as ChildDealerQuery;
 use Dealer\Model\DealerShedules as ChildDealerShedules;
 use Dealer\Model\DealerShedulesQuery as ChildDealerShedulesQuery;
@@ -30,6 +33,7 @@ use Dealer\Model\Map\DealerBrandVersionTableMap;
 use Dealer\Model\Map\DealerContactVersionTableMap;
 use Dealer\Model\Map\DealerContentVersionTableMap;
 use Dealer\Model\Map\DealerFolderVersionTableMap;
+use Dealer\Model\Map\DealerProductVersionTableMap;
 use Dealer\Model\Map\DealerShedulesVersionTableMap;
 use Dealer\Model\Map\DealerTableMap;
 use Dealer\Model\Map\DealerVersionTableMap;
@@ -205,6 +209,12 @@ abstract class Dealer implements ActiveRecordInterface
     protected $collDealerBrandsPartial;
 
     /**
+     * @var        ObjectCollection|ChildDealerProduct[] Collection to store aggregation of ChildDealerProduct objects.
+     */
+    protected $collDealerProducts;
+    protected $collDealerProductsPartial;
+
+    /**
      * @var        ObjectCollection|ChildDealerI18n[] Collection to store aggregation of ChildDealerI18n objects.
      */
     protected $collDealerI18ns;
@@ -275,6 +285,12 @@ abstract class Dealer implements ActiveRecordInterface
      * @var ObjectCollection
      */
     protected $dealerBrandsScheduledForDeletion = null;
+
+    /**
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection
+     */
+    protected $dealerProductsScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -1222,6 +1238,8 @@ abstract class Dealer implements ActiveRecordInterface
 
             $this->collDealerBrands = null;
 
+            $this->collDealerProducts = null;
+
             $this->collDealerI18ns = null;
 
             $this->collDealerVersions = null;
@@ -1462,6 +1480,23 @@ abstract class Dealer implements ActiveRecordInterface
 
                 if ($this->collDealerBrands !== null) {
             foreach ($this->collDealerBrands as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
+            }
+
+            if ($this->dealerProductsScheduledForDeletion !== null) {
+                if (!$this->dealerProductsScheduledForDeletion->isEmpty()) {
+                    \Dealer\Model\DealerProductQuery::create()
+                        ->filterByPrimaryKeys($this->dealerProductsScheduledForDeletion->getPrimaryKeys(false))
+                        ->delete($con);
+                    $this->dealerProductsScheduledForDeletion = null;
+                }
+            }
+
+                if ($this->collDealerProducts !== null) {
+            foreach ($this->collDealerProducts as $referrerFK) {
                     if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
                         $affectedRows += $referrerFK->save($con);
                     }
@@ -1795,6 +1830,9 @@ abstract class Dealer implements ActiveRecordInterface
             if (null !== $this->collDealerBrands) {
                 $result['DealerBrands'] = $this->collDealerBrands->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
+            if (null !== $this->collDealerProducts) {
+                $result['DealerProducts'] = $this->collDealerProducts->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+            }
             if (null !== $this->collDealerI18ns) {
                 $result['DealerI18ns'] = $this->collDealerI18ns->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -2052,6 +2090,12 @@ abstract class Dealer implements ActiveRecordInterface
                 }
             }
 
+            foreach ($this->getDealerProducts() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addDealerProduct($relObj->copy($deepCopy));
+                }
+            }
+
             foreach ($this->getDealerI18ns() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDealerI18n($relObj->copy($deepCopy));
@@ -2170,6 +2214,9 @@ abstract class Dealer implements ActiveRecordInterface
         }
         if ('DealerBrand' == $relationName) {
             return $this->initDealerBrands();
+        }
+        if ('DealerProduct' == $relationName) {
+            return $this->initDealerProducts();
         }
         if ('DealerI18n' == $relationName) {
             return $this->initDealerI18ns();
@@ -3345,6 +3392,249 @@ abstract class Dealer implements ActiveRecordInterface
     }
 
     /**
+     * Clears out the collDealerProducts collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return void
+     * @see        addDealerProducts()
+     */
+    public function clearDealerProducts()
+    {
+        $this->collDealerProducts = null; // important to set this to NULL since that means it is uninitialized
+    }
+
+    /**
+     * Reset is the collDealerProducts collection loaded partially.
+     */
+    public function resetPartialDealerProducts($v = true)
+    {
+        $this->collDealerProductsPartial = $v;
+    }
+
+    /**
+     * Initializes the collDealerProducts collection.
+     *
+     * By default this just sets the collDealerProducts collection to an empty array (like clearcollDealerProducts());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param      boolean $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
+     */
+    public function initDealerProducts($overrideExisting = true)
+    {
+        if (null !== $this->collDealerProducts && !$overrideExisting) {
+            return;
+        }
+        $this->collDealerProducts = new ObjectCollection();
+        $this->collDealerProducts->setModel('\Dealer\Model\DealerProduct');
+    }
+
+    /**
+     * Gets an array of ChildDealerProduct objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildDealer is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @return Collection|ChildDealerProduct[] List of ChildDealerProduct objects
+     * @throws PropelException
+     */
+    public function getDealerProducts($criteria = null, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerProductsPartial && !$this->isNew();
+        if (null === $this->collDealerProducts || null !== $criteria  || $partial) {
+            if ($this->isNew() && null === $this->collDealerProducts) {
+                // return empty collection
+                $this->initDealerProducts();
+            } else {
+                $collDealerProducts = ChildDealerProductQuery::create(null, $criteria)
+                    ->filterByDealer($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collDealerProductsPartial && count($collDealerProducts)) {
+                        $this->initDealerProducts(false);
+
+                        foreach ($collDealerProducts as $obj) {
+                            if (false == $this->collDealerProducts->contains($obj)) {
+                                $this->collDealerProducts->append($obj);
+                            }
+                        }
+
+                        $this->collDealerProductsPartial = true;
+                    }
+
+                    reset($collDealerProducts);
+
+                    return $collDealerProducts;
+                }
+
+                if ($partial && $this->collDealerProducts) {
+                    foreach ($this->collDealerProducts as $obj) {
+                        if ($obj->isNew()) {
+                            $collDealerProducts[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collDealerProducts = $collDealerProducts;
+                $this->collDealerProductsPartial = false;
+            }
+        }
+
+        return $this->collDealerProducts;
+    }
+
+    /**
+     * Sets a collection of DealerProduct objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param      Collection $dealerProducts A Propel collection.
+     * @param      ConnectionInterface $con Optional connection object
+     * @return   ChildDealer The current object (for fluent API support)
+     */
+    public function setDealerProducts(Collection $dealerProducts, ConnectionInterface $con = null)
+    {
+        $dealerProductsToDelete = $this->getDealerProducts(new Criteria(), $con)->diff($dealerProducts);
+
+
+        $this->dealerProductsScheduledForDeletion = $dealerProductsToDelete;
+
+        foreach ($dealerProductsToDelete as $dealerProductRemoved) {
+            $dealerProductRemoved->setDealer(null);
+        }
+
+        $this->collDealerProducts = null;
+        foreach ($dealerProducts as $dealerProduct) {
+            $this->addDealerProduct($dealerProduct);
+        }
+
+        $this->collDealerProducts = $dealerProducts;
+        $this->collDealerProductsPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related DealerProduct objects.
+     *
+     * @param      Criteria $criteria
+     * @param      boolean $distinct
+     * @param      ConnectionInterface $con
+     * @return int             Count of related DealerProduct objects.
+     * @throws PropelException
+     */
+    public function countDealerProducts(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
+    {
+        $partial = $this->collDealerProductsPartial && !$this->isNew();
+        if (null === $this->collDealerProducts || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collDealerProducts) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getDealerProducts());
+            }
+
+            $query = ChildDealerProductQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByDealer($this)
+                ->count($con);
+        }
+
+        return count($this->collDealerProducts);
+    }
+
+    /**
+     * Method called to associate a ChildDealerProduct object to this object
+     * through the ChildDealerProduct foreign key attribute.
+     *
+     * @param    ChildDealerProduct $l ChildDealerProduct
+     * @return   \Dealer\Model\Dealer The current object (for fluent API support)
+     */
+    public function addDealerProduct(ChildDealerProduct $l)
+    {
+        if ($this->collDealerProducts === null) {
+            $this->initDealerProducts();
+            $this->collDealerProductsPartial = true;
+        }
+
+        if (!in_array($l, $this->collDealerProducts->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
+            $this->doAddDealerProduct($l);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param DealerProduct $dealerProduct The dealerProduct object to add.
+     */
+    protected function doAddDealerProduct($dealerProduct)
+    {
+        $this->collDealerProducts[]= $dealerProduct;
+        $dealerProduct->setDealer($this);
+    }
+
+    /**
+     * @param  DealerProduct $dealerProduct The dealerProduct object to remove.
+     * @return ChildDealer The current object (for fluent API support)
+     */
+    public function removeDealerProduct($dealerProduct)
+    {
+        if ($this->getDealerProducts()->contains($dealerProduct)) {
+            $this->collDealerProducts->remove($this->collDealerProducts->search($dealerProduct));
+            if (null === $this->dealerProductsScheduledForDeletion) {
+                $this->dealerProductsScheduledForDeletion = clone $this->collDealerProducts;
+                $this->dealerProductsScheduledForDeletion->clear();
+            }
+            $this->dealerProductsScheduledForDeletion[]= clone $dealerProduct;
+            $dealerProduct->setDealer(null);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * If this collection has already been initialized with
+     * an identical criteria, it returns the collection.
+     * Otherwise if this Dealer is new, it will return
+     * an empty collection; or if this Dealer has previously
+     * been saved, it will retrieve related DealerProducts from storage.
+     *
+     * This method is protected by default in order to keep the public
+     * api reasonable.  You can provide public methods for those you
+     * actually need in Dealer.
+     *
+     * @param      Criteria $criteria optional Criteria object to narrow the query
+     * @param      ConnectionInterface $con optional connection object
+     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+     * @return Collection|ChildDealerProduct[] List of ChildDealerProduct objects
+     */
+    public function getDealerProductsJoinProduct($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
+    {
+        $query = ChildDealerProductQuery::create(null, $criteria);
+        $query->joinWith('Product', $joinBehavior);
+
+        return $this->getDealerProducts($query, $con);
+    }
+
+    /**
      * Clears out the collDealerI18ns collection
      *
      * This does not modify the database; however, it will remove any associated objects, causing
@@ -3854,6 +4144,11 @@ abstract class Dealer implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
+            if ($this->collDealerProducts) {
+                foreach ($this->collDealerProducts as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
             if ($this->collDealerI18ns) {
                 foreach ($this->collDealerI18ns as $o) {
                     $o->clearAllReferences($deep);
@@ -3875,6 +4170,7 @@ abstract class Dealer implements ActiveRecordInterface
         $this->collDealerContents = null;
         $this->collDealerFolders = null;
         $this->collDealerBrands = null;
+        $this->collDealerProducts = null;
         $this->collDealerI18ns = null;
         $this->collDealerVersions = null;
         $this->aCountry = null;
@@ -4138,6 +4434,17 @@ abstract class Dealer implements ActiveRecordInterface
         }
         $this->alreadyInSave = false;
 
+        // to avoid infinite loops, emulate in save
+        $this->alreadyInSave = true;
+        foreach ($this->getDealerProducts(null, $con) as $relatedObject) {
+            if ($relatedObject->isVersioningNecessary($con)) {
+                $this->alreadyInSave = false;
+
+                return true;
+            }
+        }
+        $this->alreadyInSave = false;
+
 
         return false;
     }
@@ -4188,6 +4495,10 @@ abstract class Dealer implements ActiveRecordInterface
         if ($relateds = $this->getDealerBrands($con)->toKeyValue('Id', 'Version')) {
             $version->setDealerBrandIds(array_keys($relateds));
             $version->setDealerBrandVersions(array_values($relateds));
+        }
+        if ($relateds = $this->getDealerProducts($con)->toKeyValue('Id', 'Version')) {
+            $version->setDealerProductIds(array_keys($relateds));
+            $version->setDealerProductVersions(array_values($relateds));
         }
         $version->save($con);
 
@@ -4347,6 +4658,28 @@ abstract class Dealer implements ActiveRecordInterface
                 }
                 $this->addDealerBrand($related);
                 $this->collDealerBrandPartial = false;
+            }
+        }
+        if ($fkValues = $version->getDealerProductIds()) {
+            $this->clearDealerProduct();
+            $fkVersions = $version->getDealerProductVersions();
+            $query = ChildDealerProductVersionQuery::create();
+            foreach ($fkValues as $key => $value) {
+                $c1 = $query->getNewCriterion(DealerProductVersionTableMap::ID, $value);
+                $c2 = $query->getNewCriterion(DealerProductVersionTableMap::VERSION, $fkVersions[$key]);
+                $c1->addAnd($c2);
+                $query->addOr($c1);
+            }
+            foreach ($query->find($con) as $relatedVersion) {
+                if (isset($loadedObjects['ChildDealerProduct']) && isset($loadedObjects['ChildDealerProduct'][$relatedVersion->getId()]) && isset($loadedObjects['ChildDealerProduct'][$relatedVersion->getId()][$relatedVersion->getVersion()])) {
+                    $related = $loadedObjects['ChildDealerProduct'][$relatedVersion->getId()][$relatedVersion->getVersion()];
+                } else {
+                    $related = new ChildDealerProduct();
+                    $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
+                    $related->setNew(false);
+                }
+                $this->addDealerProduct($related);
+                $this->collDealerProductPartial = false;
             }
         }
 

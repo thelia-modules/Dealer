@@ -273,6 +273,32 @@ abstract class DealerVersion implements ActiveRecordInterface
     protected $dealer_brand_versions_unserialized;
 
     /**
+     * The value for the dealer_product_ids field.
+     * @var        array
+     */
+    protected $dealer_product_ids;
+
+    /**
+     * The unserialized $dealer_product_ids value - i.e. the persisted object.
+     * This is necessary to avoid repeated calls to unserialize() at runtime.
+     * @var object
+     */
+    protected $dealer_product_ids_unserialized;
+
+    /**
+     * The value for the dealer_product_versions field.
+     * @var        array
+     */
+    protected $dealer_product_versions;
+
+    /**
+     * The unserialized $dealer_product_versions value - i.e. the persisted object.
+     * This is necessary to avoid repeated calls to unserialize() at runtime.
+     * @var object
+     */
+    protected $dealer_product_versions_unserialized;
+
+    /**
      * @var        Dealer
      */
     protected $aDealer;
@@ -1028,6 +1054,64 @@ abstract class DealerVersion implements ActiveRecordInterface
     {
         return in_array($value, $this->getDealerBrandVersions());
     } // hasDealerBrandVersion()
+
+    /**
+     * Get the [dealer_product_ids] column value.
+     *
+     * @return   array
+     */
+    public function getDealerProductIds()
+    {
+        if (null === $this->dealer_product_ids_unserialized) {
+            $this->dealer_product_ids_unserialized = array();
+        }
+        if (!$this->dealer_product_ids_unserialized && null !== $this->dealer_product_ids) {
+            $dealer_product_ids_unserialized = substr($this->dealer_product_ids, 2, -2);
+            $this->dealer_product_ids_unserialized = $dealer_product_ids_unserialized ? explode(' | ', $dealer_product_ids_unserialized) : array();
+        }
+
+        return $this->dealer_product_ids_unserialized;
+    }
+
+    /**
+     * Test the presence of a value in the [dealer_product_ids] array column value.
+     * @param      mixed $value
+     *
+     * @return boolean
+     */
+    public function hasDealerProductId($value)
+    {
+        return in_array($value, $this->getDealerProductIds());
+    } // hasDealerProductId()
+
+    /**
+     * Get the [dealer_product_versions] column value.
+     *
+     * @return   array
+     */
+    public function getDealerProductVersions()
+    {
+        if (null === $this->dealer_product_versions_unserialized) {
+            $this->dealer_product_versions_unserialized = array();
+        }
+        if (!$this->dealer_product_versions_unserialized && null !== $this->dealer_product_versions) {
+            $dealer_product_versions_unserialized = substr($this->dealer_product_versions, 2, -2);
+            $this->dealer_product_versions_unserialized = $dealer_product_versions_unserialized ? explode(' | ', $dealer_product_versions_unserialized) : array();
+        }
+
+        return $this->dealer_product_versions_unserialized;
+    }
+
+    /**
+     * Test the presence of a value in the [dealer_product_versions] array column value.
+     * @param      mixed $value
+     *
+     * @return boolean
+     */
+    public function hasDealerProductVersion($value)
+    {
+        return in_array($value, $this->getDealerProductVersions());
+    } // hasDealerProductVersion()
 
     /**
      * Set the value of [id] column.
@@ -1848,6 +1932,110 @@ abstract class DealerVersion implements ActiveRecordInterface
     } // removeDealerBrandVersion()
 
     /**
+     * Set the value of [dealer_product_ids] column.
+     *
+     * @param      array $v new value
+     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
+     */
+    public function setDealerProductIds($v)
+    {
+        if ($this->dealer_product_ids_unserialized !== $v) {
+            $this->dealer_product_ids_unserialized = $v;
+            $this->dealer_product_ids = '| ' . implode(' | ', $v) . ' |';
+            $this->modifiedColumns[DealerVersionTableMap::DEALER_PRODUCT_IDS] = true;
+        }
+
+
+        return $this;
+    } // setDealerProductIds()
+
+    /**
+     * Adds a value to the [dealer_product_ids] array column value.
+     * @param      mixed $value
+     *
+     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
+     */
+    public function addDealerProductId($value)
+    {
+        $currentArray = $this->getDealerProductIds();
+        $currentArray []= $value;
+        $this->setDealerProductIds($currentArray);
+
+        return $this;
+    } // addDealerProductId()
+
+    /**
+     * Removes a value from the [dealer_product_ids] array column value.
+     * @param      mixed $value
+     *
+     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
+     */
+    public function removeDealerProductId($value)
+    {
+        $targetArray = array();
+        foreach ($this->getDealerProductIds() as $element) {
+            if ($element != $value) {
+                $targetArray []= $element;
+            }
+        }
+        $this->setDealerProductIds($targetArray);
+
+        return $this;
+    } // removeDealerProductId()
+
+    /**
+     * Set the value of [dealer_product_versions] column.
+     *
+     * @param      array $v new value
+     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
+     */
+    public function setDealerProductVersions($v)
+    {
+        if ($this->dealer_product_versions_unserialized !== $v) {
+            $this->dealer_product_versions_unserialized = $v;
+            $this->dealer_product_versions = '| ' . implode(' | ', $v) . ' |';
+            $this->modifiedColumns[DealerVersionTableMap::DEALER_PRODUCT_VERSIONS] = true;
+        }
+
+
+        return $this;
+    } // setDealerProductVersions()
+
+    /**
+     * Adds a value to the [dealer_product_versions] array column value.
+     * @param      mixed $value
+     *
+     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
+     */
+    public function addDealerProductVersion($value)
+    {
+        $currentArray = $this->getDealerProductVersions();
+        $currentArray []= $value;
+        $this->setDealerProductVersions($currentArray);
+
+        return $this;
+    } // addDealerProductVersion()
+
+    /**
+     * Removes a value from the [dealer_product_versions] array column value.
+     * @param      mixed $value
+     *
+     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
+     */
+    public function removeDealerProductVersion($value)
+    {
+        $targetArray = array();
+        foreach ($this->getDealerProductVersions() as $element) {
+            if ($element != $value) {
+                $targetArray []= $element;
+            }
+        }
+        $this->setDealerProductVersions($targetArray);
+
+        return $this;
+    } // removeDealerProductVersion()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -1986,6 +2174,14 @@ abstract class DealerVersion implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 23 + $startcol : DealerVersionTableMap::translateFieldName('DealerBrandVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_brand_versions = $col;
             $this->dealer_brand_versions_unserialized = null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 24 + $startcol : DealerVersionTableMap::translateFieldName('DealerProductIds', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->dealer_product_ids = $col;
+            $this->dealer_product_ids_unserialized = null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 25 + $startcol : DealerVersionTableMap::translateFieldName('DealerProductVersions', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->dealer_product_versions = $col;
+            $this->dealer_product_versions_unserialized = null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -1994,7 +2190,7 @@ abstract class DealerVersion implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 24; // 24 = DealerVersionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 26; // 26 = DealerVersionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerVersion object", 0, $e);
@@ -2287,6 +2483,12 @@ abstract class DealerVersion implements ActiveRecordInterface
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_BRAND_VERSIONS)) {
             $modifiedColumns[':p' . $index++]  = 'DEALER_BRAND_VERSIONS';
         }
+        if ($this->isColumnModified(DealerVersionTableMap::DEALER_PRODUCT_IDS)) {
+            $modifiedColumns[':p' . $index++]  = 'DEALER_PRODUCT_IDS';
+        }
+        if ($this->isColumnModified(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS)) {
+            $modifiedColumns[':p' . $index++]  = 'DEALER_PRODUCT_VERSIONS';
+        }
 
         $sql = sprintf(
             'INSERT INTO dealer_version (%s) VALUES (%s)',
@@ -2369,6 +2571,12 @@ abstract class DealerVersion implements ActiveRecordInterface
                         break;
                     case 'DEALER_BRAND_VERSIONS':
                         $stmt->bindValue($identifier, $this->dealer_brand_versions, PDO::PARAM_STR);
+                        break;
+                    case 'DEALER_PRODUCT_IDS':
+                        $stmt->bindValue($identifier, $this->dealer_product_ids, PDO::PARAM_STR);
+                        break;
+                    case 'DEALER_PRODUCT_VERSIONS':
+                        $stmt->bindValue($identifier, $this->dealer_product_versions, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -2497,6 +2705,12 @@ abstract class DealerVersion implements ActiveRecordInterface
             case 23:
                 return $this->getDealerBrandVersions();
                 break;
+            case 24:
+                return $this->getDealerProductIds();
+                break;
+            case 25:
+                return $this->getDealerProductVersions();
+                break;
             default:
                 return null;
                 break;
@@ -2550,6 +2764,8 @@ abstract class DealerVersion implements ActiveRecordInterface
             $keys[21] => $this->getDealerFolderVersions(),
             $keys[22] => $this->getDealerBrandIds(),
             $keys[23] => $this->getDealerBrandVersions(),
+            $keys[24] => $this->getDealerProductIds(),
+            $keys[25] => $this->getDealerProductVersions(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -2706,6 +2922,20 @@ abstract class DealerVersion implements ActiveRecordInterface
                 }
                 $this->setDealerBrandVersions($value);
                 break;
+            case 24:
+                if (!is_array($value)) {
+                    $v = trim(substr($value, 2, -2));
+                    $value = $v ? explode(' | ', $v) : array();
+                }
+                $this->setDealerProductIds($value);
+                break;
+            case 25:
+                if (!is_array($value)) {
+                    $v = trim(substr($value, 2, -2));
+                    $value = $v ? explode(' | ', $v) : array();
+                }
+                $this->setDealerProductVersions($value);
+                break;
         } // switch()
     }
 
@@ -2754,6 +2984,8 @@ abstract class DealerVersion implements ActiveRecordInterface
         if (array_key_exists($keys[21], $arr)) $this->setDealerFolderVersions($arr[$keys[21]]);
         if (array_key_exists($keys[22], $arr)) $this->setDealerBrandIds($arr[$keys[22]]);
         if (array_key_exists($keys[23], $arr)) $this->setDealerBrandVersions($arr[$keys[23]]);
+        if (array_key_exists($keys[24], $arr)) $this->setDealerProductIds($arr[$keys[24]]);
+        if (array_key_exists($keys[25], $arr)) $this->setDealerProductVersions($arr[$keys[25]]);
     }
 
     /**
@@ -2789,6 +3021,8 @@ abstract class DealerVersion implements ActiveRecordInterface
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_FOLDER_VERSIONS)) $criteria->add(DealerVersionTableMap::DEALER_FOLDER_VERSIONS, $this->dealer_folder_versions);
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_BRAND_IDS)) $criteria->add(DealerVersionTableMap::DEALER_BRAND_IDS, $this->dealer_brand_ids);
         if ($this->isColumnModified(DealerVersionTableMap::DEALER_BRAND_VERSIONS)) $criteria->add(DealerVersionTableMap::DEALER_BRAND_VERSIONS, $this->dealer_brand_versions);
+        if ($this->isColumnModified(DealerVersionTableMap::DEALER_PRODUCT_IDS)) $criteria->add(DealerVersionTableMap::DEALER_PRODUCT_IDS, $this->dealer_product_ids);
+        if ($this->isColumnModified(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS)) $criteria->add(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS, $this->dealer_product_versions);
 
         return $criteria;
     }
@@ -2883,6 +3117,8 @@ abstract class DealerVersion implements ActiveRecordInterface
         $copyObj->setDealerFolderVersions($this->getDealerFolderVersions());
         $copyObj->setDealerBrandIds($this->getDealerBrandIds());
         $copyObj->setDealerBrandVersions($this->getDealerBrandVersions());
+        $copyObj->setDealerProductIds($this->getDealerProductIds());
+        $copyObj->setDealerProductVersions($this->getDealerProductVersions());
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -3000,6 +3236,10 @@ abstract class DealerVersion implements ActiveRecordInterface
         $this->dealer_brand_ids_unserialized = null;
         $this->dealer_brand_versions = null;
         $this->dealer_brand_versions_unserialized = null;
+        $this->dealer_product_ids = null;
+        $this->dealer_product_ids_unserialized = null;
+        $this->dealer_product_versions = null;
+        $this->dealer_product_versions_unserialized = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

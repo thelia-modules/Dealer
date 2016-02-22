@@ -50,10 +50,16 @@ class Dealer extends BaseModule
            $database = new Database($con);
            $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.0-to-2.1.sql"]);
            $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1-to-2.1.2.sql"]);
+           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1.4-to-2.2.sql"]);
        }
        if($currentVersion == "2.1" && $currentVersion != $newVersion){
            $database = new Database($con);
            $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1-to-2.1.2.sql"]);
+           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1.4-to-2.2.sql"]);
+       }
+       if($currentVersion == "2.1.4" && $currentVersion != $newVersion){
+           $database = new Database($con);
+           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1.4-to-2.2.sql"]);
        }
     }
 

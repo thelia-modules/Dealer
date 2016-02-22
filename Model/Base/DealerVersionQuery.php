@@ -45,6 +45,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerVersionQuery orderByDealerFolderVersions($order = Criteria::ASC) Order by the dealer_folder_versions column
  * @method     ChildDealerVersionQuery orderByDealerBrandIds($order = Criteria::ASC) Order by the dealer_brand_ids column
  * @method     ChildDealerVersionQuery orderByDealerBrandVersions($order = Criteria::ASC) Order by the dealer_brand_versions column
+ * @method     ChildDealerVersionQuery orderByDealerProductIds($order = Criteria::ASC) Order by the dealer_product_ids column
+ * @method     ChildDealerVersionQuery orderByDealerProductVersions($order = Criteria::ASC) Order by the dealer_product_versions column
  *
  * @method     ChildDealerVersionQuery groupById() Group by the id column
  * @method     ChildDealerVersionQuery groupByAddress1() Group by the address1 column
@@ -70,6 +72,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerVersionQuery groupByDealerFolderVersions() Group by the dealer_folder_versions column
  * @method     ChildDealerVersionQuery groupByDealerBrandIds() Group by the dealer_brand_ids column
  * @method     ChildDealerVersionQuery groupByDealerBrandVersions() Group by the dealer_brand_versions column
+ * @method     ChildDealerVersionQuery groupByDealerProductIds() Group by the dealer_product_ids column
+ * @method     ChildDealerVersionQuery groupByDealerProductVersions() Group by the dealer_product_versions column
  *
  * @method     ChildDealerVersionQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildDealerVersionQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -106,6 +110,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerVersion findOneByDealerFolderVersions(array $dealer_folder_versions) Return the first ChildDealerVersion filtered by the dealer_folder_versions column
  * @method     ChildDealerVersion findOneByDealerBrandIds(array $dealer_brand_ids) Return the first ChildDealerVersion filtered by the dealer_brand_ids column
  * @method     ChildDealerVersion findOneByDealerBrandVersions(array $dealer_brand_versions) Return the first ChildDealerVersion filtered by the dealer_brand_versions column
+ * @method     ChildDealerVersion findOneByDealerProductIds(array $dealer_product_ids) Return the first ChildDealerVersion filtered by the dealer_product_ids column
+ * @method     ChildDealerVersion findOneByDealerProductVersions(array $dealer_product_versions) Return the first ChildDealerVersion filtered by the dealer_product_versions column
  *
  * @method     array findById(int $id) Return ChildDealerVersion objects filtered by the id column
  * @method     array findByAddress1(string $address1) Return ChildDealerVersion objects filtered by the address1 column
@@ -131,6 +137,8 @@ use Propel\Runtime\Exception\PropelException;
  * @method     array findByDealerFolderVersions(array $dealer_folder_versions) Return ChildDealerVersion objects filtered by the dealer_folder_versions column
  * @method     array findByDealerBrandIds(array $dealer_brand_ids) Return ChildDealerVersion objects filtered by the dealer_brand_ids column
  * @method     array findByDealerBrandVersions(array $dealer_brand_versions) Return ChildDealerVersion objects filtered by the dealer_brand_versions column
+ * @method     array findByDealerProductIds(array $dealer_product_ids) Return ChildDealerVersion objects filtered by the dealer_product_ids column
+ * @method     array findByDealerProductVersions(array $dealer_product_versions) Return ChildDealerVersion objects filtered by the dealer_product_versions column
  *
  */
 abstract class DealerVersionQuery extends ModelCriteria
@@ -219,7 +227,7 @@ abstract class DealerVersionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY, DEALER_SHEDULES_IDS, DEALER_SHEDULES_VERSIONS, DEALER_CONTACT_IDS, DEALER_CONTACT_VERSIONS, DEALER_CONTENT_IDS, DEALER_CONTENT_VERSIONS, DEALER_FOLDER_IDS, DEALER_FOLDER_VERSIONS, DEALER_BRAND_IDS, DEALER_BRAND_VERSIONS FROM dealer_version WHERE ID = :p0 AND VERSION = :p1';
+        $sql = 'SELECT ID, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY, DEALER_SHEDULES_IDS, DEALER_SHEDULES_VERSIONS, DEALER_CONTACT_IDS, DEALER_CONTACT_VERSIONS, DEALER_CONTENT_IDS, DEALER_CONTENT_VERSIONS, DEALER_FOLDER_IDS, DEALER_FOLDER_VERSIONS, DEALER_BRAND_IDS, DEALER_BRAND_VERSIONS, DEALER_PRODUCT_IDS, DEALER_PRODUCT_VERSIONS FROM dealer_version WHERE ID = :p0 AND VERSION = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -1638,6 +1646,168 @@ abstract class DealerVersionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerVersionTableMap::DEALER_BRAND_VERSIONS, $dealerBrandVersions, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_product_ids column
+     *
+     * @param     array $dealerProductIds The values to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerProductIds($dealerProductIds = null, $comparison = null)
+    {
+        $key = $this->getAliasedColName(DealerVersionTableMap::DEALER_PRODUCT_IDS);
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            foreach ($dealerProductIds as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_SOME) {
+            foreach ($dealerProductIds as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addOr($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            foreach ($dealerProductIds as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::NOT_LIKE);
+                }
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerVersionTableMap::DEALER_PRODUCT_IDS, $dealerProductIds, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_product_ids column
+     * @param     mixed $dealerProductIds The value to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     *
+     * @return ChildDealerVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerProductId($dealerProductIds = null, $comparison = null)
+    {
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            if (is_scalar($dealerProductIds)) {
+                $dealerProductIds = '%| ' . $dealerProductIds . ' |%';
+                $comparison = Criteria::LIKE;
+            }
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            $dealerProductIds = '%| ' . $dealerProductIds . ' |%';
+            $comparison = Criteria::NOT_LIKE;
+            $key = $this->getAliasedColName(DealerVersionTableMap::DEALER_PRODUCT_IDS);
+            if ($this->containsKey($key)) {
+                $this->addAnd($key, $dealerProductIds, $comparison);
+            } else {
+                $this->addAnd($key, $dealerProductIds, $comparison);
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerVersionTableMap::DEALER_PRODUCT_IDS, $dealerProductIds, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_product_versions column
+     *
+     * @param     array $dealerProductVersions The values to use as filter.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerProductVersions($dealerProductVersions = null, $comparison = null)
+    {
+        $key = $this->getAliasedColName(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS);
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            foreach ($dealerProductVersions as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_SOME) {
+            foreach ($dealerProductVersions as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addOr($key, $value, Criteria::LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::LIKE);
+                }
+            }
+
+            return $this;
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            foreach ($dealerProductVersions as $value) {
+                $value = '%| ' . $value . ' |%';
+                if ($this->containsKey($key)) {
+                    $this->addAnd($key, $value, Criteria::NOT_LIKE);
+                } else {
+                    $this->add($key, $value, Criteria::NOT_LIKE);
+                }
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS, $dealerProductVersions, $comparison);
+    }
+
+    /**
+     * Filter the query on the dealer_product_versions column
+     * @param     mixed $dealerProductVersions The value to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::CONTAINS_ALL
+     *
+     * @return ChildDealerVersionQuery The current query, for fluid interface
+     */
+    public function filterByDealerProductVersion($dealerProductVersions = null, $comparison = null)
+    {
+        if (null === $comparison || $comparison == Criteria::CONTAINS_ALL) {
+            if (is_scalar($dealerProductVersions)) {
+                $dealerProductVersions = '%| ' . $dealerProductVersions . ' |%';
+                $comparison = Criteria::LIKE;
+            }
+        } elseif ($comparison == Criteria::CONTAINS_NONE) {
+            $dealerProductVersions = '%| ' . $dealerProductVersions . ' |%';
+            $comparison = Criteria::NOT_LIKE;
+            $key = $this->getAliasedColName(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS);
+            if ($this->containsKey($key)) {
+                $this->addAnd($key, $dealerProductVersions, $comparison);
+            } else {
+                $this->addAnd($key, $dealerProductVersions, $comparison);
+            }
+            $this->addOr($key, null, Criteria::ISNULL);
+
+            return $this;
+        }
+
+        return $this->addUsingAlias(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS, $dealerProductVersions, $comparison);
     }
 
     /**
