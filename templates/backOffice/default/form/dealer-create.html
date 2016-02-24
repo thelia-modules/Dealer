@@ -57,9 +57,9 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="address2"}{$message}{/form_error}
+        {form_error form=$form field="address3"}{$message}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS3}"
                placeholder="{intl l='The Dealer address3' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
