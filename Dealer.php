@@ -12,6 +12,7 @@ use Dealer\Model\DealerContentQuery;
 use Dealer\Model\DealerFolderQuery;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\DealerShedulesQuery;
+use Symfony\Component\Finder\Finder;
 use Thelia\Core\Template\TemplateDefinition;
 use Thelia\Module\BaseModule;
 use Propel\Runtime\Connection\ConnectionInterface;
@@ -46,21 +47,25 @@ class Dealer extends BaseModule
      */
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
     {
-       if($currentVersion == "2.0" && $currentVersion != $newVersion){
-           $database = new Database($con);
-           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.0-to-2.1.sql"]);
-           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1-to-2.1.2.sql"]);
-           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1.4-to-2.2.sql"]);
-       }
-       if($currentVersion == "2.1" && $currentVersion != $newVersion){
-           $database = new Database($con);
-           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1-to-2.1.2.sql"]);
-           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1.4-to-2.2.sql"]);
-       }
-       if($currentVersion == "2.1.4" && $currentVersion != $newVersion){
-           $database = new Database($con);
-           $database->insertSql(null, [__DIR__ . "/Setup/sql/update-2.1.4-to-2.2.sql"]);
-       }
+        $finder = (new Finder)
+            ->files()
+            ->name('#.*?\.sql#')
+            ->in(__DIR__ . DS . 'Setup' . DS . 'sql')
+        ;
+
+        $database = new Database($con);
+
+        /** @var \Symfony\Component\Finder\SplFileInfo $updateSQLFile */
+        foreach ($finder as $updateSQLFile) {
+            if (version_compare($currentVersion, str_replace('.sql', '', $updateSQLFile->getFilename()), '<')) {
+                $database->insertSql(
+                    null,
+                    [
+                        $updateSQLFile->getPathname()
+                    ]
+                );
+            }
+        }
     }
 
 
