@@ -59,6 +59,7 @@ return array(
     "Do you really want to delete this Contact Info ?" => "Voulez-vous vraiment supprimer ce contact ?",
     "Delete an entry of Contact Info" => "Supprimer un contact",
     "is default ?" => "Par defaut ?",
+    "Check if is default contact group" => "Cette option permet de choisir un groupe de contact par defaut",
     /* Schedules */
     "Schedules" => "Horaires",
     "Default Schedules" => "Horaires par defaut",

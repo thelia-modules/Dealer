@@ -118,6 +118,10 @@
 
                 $('#tabbed-menu a[href="#' + hash + '"]').tab('show');
 
+                $(function () {
+                    $('[data-toggle="tooltip"]').tooltip()
+                })
+
             });
         })(jQuery);
     </script>
