@@ -79,10 +79,20 @@ class Dealer extends BaseModule
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.edit.js",
-                "title" => "Dealer Extra Js",
+                "title" => "Dealer Edit Extra Js",
                 "description" => [
                     "en_US" =>"Allow you to insert js on Dealer edit page",
                     "fr_FR" =>"Permet l'ajout de js sur l'edition",
+                ],
+                "active" => true,
+            ),
+            array(
+                "type" => TemplateDefinition::BACK_OFFICE,
+                "code" => "dealer.js",
+                "title" => "Dealer Extra Js",
+                "description" => [
+                    "en_US" =>"Allow you to insert js on Dealer list",
+                    "fr_FR" =>"Permet l'ajout de js sur la liste",
                 ],
                 "active" => true,
             ),
