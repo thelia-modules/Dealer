@@ -122,12 +122,20 @@ class DealerService extends AbstractBaseService implements BaseServiceInterface
         //  Optionnal Field
         if (isset($data['description'])) {
             $model->setDescription($data['description']);
+        }else {
+            $model->setDescription(null);
         }
+
         if (isset($data['address2'])) {
             $model->setAddress2($data['address2']);
+        }else {
+            $model->setAddress2(null);
         }
+
         if (isset($data['address3'])) {
             $model->setAddress3($data['address3']);
+        }else {
+            $model->setAddress3(null);
         }
 
         return $model;
