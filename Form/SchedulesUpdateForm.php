@@ -59,6 +59,14 @@ class SchedulesUpdateForm extends SchedulesForm
             ->remove("endPM")
             ->remove("beginAM")
             ->remove("endAM")
+            ->remove("day")
+            ->add("day", "choice", [
+                "choices" => $this->getDay(),
+                "label" => $this->translator->trans("Day", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-day"],
+                "required" => true,
+                "attr" => array()
+            ])
             ->add("begin", "time", [
                 "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-begin"],

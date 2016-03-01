@@ -13,7 +13,7 @@
         </label>
         {form_error form=$form field="day"}{$message}{/form_error}
 
-        <select class="form-control" name="{$name}" id="{$label_attr.for}">
+        <select class="form-control" name="{$name}" id="{$label_attr.for}" {if {$update|default:false} == false}multiple{/if}>
             {foreach $choices as $choice}
                 <option value="{$choice->value}" {if $DAY == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}
@@ -33,7 +33,7 @@
 
                     {form_error form=$form field="beginAM"}{$message}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
-                        <input type='text' class="form-control" name="{$name}" value="{$BEGIN}"/>
+                        <input type='text' class="form-control" name="{$name}" value="{$BEGIN|default:"9:00"}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>
@@ -49,7 +49,7 @@
 
                     {form_error form=$form field="endAM"}{$message}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
-                        <input type='text' class="form-control" name="{$name}" value="{$END}"/>
+                        <input type='text' class="form-control" name="{$name}" value="{$END|default:"12:00"}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>
@@ -68,7 +68,7 @@
 
                     {form_error form=$form field="beginPM"}{$message}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
-                        <input type='text' class="form-control" name="{$name}" value="{$BEGIN}"/>
+                        <input type='text' class="form-control" name="{$name}" value="{$BEGIN|default:"14:00"}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>
@@ -84,7 +84,7 @@
 
                     {form_error form=$form field="endPM"}{$message}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
-                        <input type='text' class="form-control" name="{$name}" value="{$END}"/>
+                        <input type='text' class="form-control" name="{$name}" value="{$END|default:"19:00"}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>

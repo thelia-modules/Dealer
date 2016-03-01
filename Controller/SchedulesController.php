@@ -138,13 +138,17 @@ class SchedulesController extends BaseController
             $form = $this->validateForm($creationForm, "POST");
             // Get the form field values
             $data = $form->getData();
-            $dataAM = $this->formatData($data);
-            if (null != $dataAM) {
-                $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
-            }
-            $dataPM = $this->formatData($data, 'PM');
-            if (null != $dataPM) {
-                $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
+            foreach ($data["day"] as $day) {
+                $currentData = $data;
+                $currentData["day"] = $day;
+                $dataAM = $this->formatData($currentData);
+                if (null != $dataAM) {
+                    $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
+                }
+                $dataPM = $this->formatData($currentData, 'PM');
+                if (null != $dataPM) {
+                    $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
+                }
             }
 
 

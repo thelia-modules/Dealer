@@ -52,6 +52,7 @@ class SchedulesForm extends BaseForm
                 "label" => $this->translator->trans("Day", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-day"],
                 "required" => true,
+                "multiple" => true,
                 "attr" => array()
             ])
             ->add("beginAM", "time", [
@@ -114,8 +115,7 @@ class SchedulesForm extends BaseForm
                 "required" => true,
                 "constraints" => array(new NotBlank(),),
                 "attr" => array()
-            ))
-        ;
+            ));
     }
 
     protected function getDay()
