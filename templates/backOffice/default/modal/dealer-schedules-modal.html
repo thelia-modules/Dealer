@@ -45,6 +45,7 @@ form_enctype       = {form_enctype form=$form}
     {intl l="Do you really want to delete this schedules ?" d="dealer.bo.default"}
     <input type="hidden" name="dealer-schedules_id" id="dealer_schedules_delete_id" value=""/>
     <input type="hidden" name="dealer_id" value="{$smarty.get.dealer_id}"/>
+    <input type="hidden" name="success_url" value="{url path="/admin/module/Dealer/dealer/edit?dealer_id={$dealer_id}#schedules"}"/>
 {/capture}
 
 {include file="includes/generic-confirm-dialog.html"

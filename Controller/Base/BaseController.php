@@ -16,11 +16,13 @@ namespace Dealer\Controller\Base;
 use Dealer\Dealer;
 use Propel\Generator\Model\Database;
 use Propel\Runtime\Propel;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Thelia;
 use Thelia\Form\Exception\FormValidationException;
+use Thelia\Tools\URL;
 
 /**
  * Class BaseController
@@ -286,10 +288,10 @@ abstract class BaseController extends BaseAdminController
 
             $this->getService()->deleteFromId($this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME . "_id"));
             $con->commit();
-            if ($response == null) {
+            if ($this->getRequest()->request->get("success_url") == null) {
                 return $this->redirectToListTemplate();
             } else {
-                return $response;
+                return new RedirectResponse(URL::getInstance()->absoluteUrl($this->getRequest()->request->get("success_url")));
             }
         } catch (\Exception $e) {
             $con->rollBack();
