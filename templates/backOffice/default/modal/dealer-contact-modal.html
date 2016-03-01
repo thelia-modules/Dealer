@@ -1,8 +1,9 @@
+{assign "dealer_id" value=$smarty.get.dealer_id}
 {* CREATE Modal *}
 
 {form name="dealer-contact.create"}
 {capture "contact_create"}
-  {include file="form/dealer-contact-create.html" form_name="dealer-contact.create" dealer_id=$smarty.get.dealer_id}
+  {include file="form/dealer-contact-create.html" form_name="dealer-contact.create" dealer_id=$dealer_id}
 {/capture}
 
   {include file="includes/generic-create-dialog.html"
@@ -24,7 +25,7 @@ form_enctype       = {form_enctype form=$form}
   {form_field form=$form field="id"}
     <input type="hidden" id="{$label_attr.for}" name="{$name}" value=""/>
   {/form_field}
-  {include file="form/dealer-contact-create.html" form_name="dealer-contact.update" dealer_id=$smarty.get.dealer_id}
+  {include file="form/dealer-contact-create.html" form_name="dealer-contact.update" dealer_id=$dealer_id}
 {/capture}
 
   {include file="includes/generic-create-dialog.html"
@@ -45,6 +46,7 @@ form_enctype       = {form_enctype form=$form}
   {intl l="Do you really want to delete this Contact ?" d="dealer.bo.default"}
   <input type="hidden" name="dealer-contact_id" id="dealer_contact_delete_id" value="" />
   <input type="hidden" name="dealer_id" value="{$smarty.get.dealer_id}" />
+  <input type="hidden" name="success_url" value="{url path="/admin/module/Dealer/dealer/edit?dealer_id={$dealer_id}#contacts"}"/>
 {/capture}
 
 {include file="includes/generic-confirm-dialog.html"
