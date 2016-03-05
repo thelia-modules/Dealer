@@ -93,6 +93,13 @@ abstract class Dealer implements ActiveRecordInterface
     protected $id;
 
     /**
+     * The value for the visible field.
+     * Note: this column has a database default value of: 0
+     * @var        int
+     */
+    protected $visible;
+
+    /**
      * The value for the address1 field.
      * @var        string
      */
@@ -312,6 +319,7 @@ abstract class Dealer implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->visible = 0;
         $this->latitude = '0';
         $this->longitude = '0';
         $this->version = 0;
@@ -589,6 +597,17 @@ abstract class Dealer implements ActiveRecordInterface
     }
 
     /**
+     * Get the [visible] column value.
+     *
+     * @return   int
+     */
+    public function getVisible()
+    {
+
+        return $this->visible;
+    }
+
+    /**
      * Get the [address1] column value.
      *
      * @return   string
@@ -778,6 +797,27 @@ abstract class Dealer implements ActiveRecordInterface
 
         return $this;
     } // setId()
+
+    /**
+     * Set the value of [visible] column.
+     *
+     * @param      int $v new value
+     * @return   \Dealer\Model\Dealer The current object (for fluent API support)
+     */
+    public function setVisible($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->visible !== $v) {
+            $this->visible = $v;
+            $this->modifiedColumns[DealerTableMap::VISIBLE] = true;
+        }
+
+
+        return $this;
+    } // setVisible()
 
     /**
      * Set the value of [address1] column.
@@ -1066,6 +1106,10 @@ abstract class Dealer implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->visible !== 0) {
+                return false;
+            }
+
             if ($this->latitude !== '0') {
                 return false;
             }
@@ -1108,52 +1152,55 @@ abstract class Dealer implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : DealerTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DealerTableMap::translateFieldName('Address1', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DealerTableMap::translateFieldName('Visible', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->visible = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerTableMap::translateFieldName('Address1', TableMap::TYPE_PHPNAME, $indexType)];
             $this->address1 = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerTableMap::translateFieldName('Address2', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerTableMap::translateFieldName('Address2', TableMap::TYPE_PHPNAME, $indexType)];
             $this->address2 = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerTableMap::translateFieldName('Address3', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerTableMap::translateFieldName('Address3', TableMap::TYPE_PHPNAME, $indexType)];
             $this->address3 = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerTableMap::translateFieldName('Zipcode', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerTableMap::translateFieldName('Zipcode', TableMap::TYPE_PHPNAME, $indexType)];
             $this->zipcode = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerTableMap::translateFieldName('City', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerTableMap::translateFieldName('City', TableMap::TYPE_PHPNAME, $indexType)];
             $this->city = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerTableMap::translateFieldName('CountryId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerTableMap::translateFieldName('CountryId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->country_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerTableMap::translateFieldName('Latitude', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerTableMap::translateFieldName('Latitude', TableMap::TYPE_PHPNAME, $indexType)];
             $this->latitude = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerTableMap::translateFieldName('Longitude', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerTableMap::translateFieldName('Longitude', TableMap::TYPE_PHPNAME, $indexType)];
             $this->longitude = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : DealerTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : DealerTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 14 + $startcol : DealerTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
@@ -1163,7 +1210,7 @@ abstract class Dealer implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 14; // 14 = DealerTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 15; // 15 = DealerTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\Dealer object", 0, $e);
@@ -1566,6 +1613,9 @@ abstract class Dealer implements ActiveRecordInterface
         if ($this->isColumnModified(DealerTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
+        if ($this->isColumnModified(DealerTableMap::VISIBLE)) {
+            $modifiedColumns[':p' . $index++]  = 'VISIBLE';
+        }
         if ($this->isColumnModified(DealerTableMap::ADDRESS1)) {
             $modifiedColumns[':p' . $index++]  = 'ADDRESS1';
         }
@@ -1618,6 +1668,9 @@ abstract class Dealer implements ActiveRecordInterface
                 switch ($columnName) {
                     case 'ID':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+                        break;
+                    case 'VISIBLE':
+                        $stmt->bindValue($identifier, $this->visible, PDO::PARAM_INT);
                         break;
                     case 'ADDRESS1':
                         $stmt->bindValue($identifier, $this->address1, PDO::PARAM_STR);
@@ -1724,42 +1777,45 @@ abstract class Dealer implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getAddress1();
+                return $this->getVisible();
                 break;
             case 2:
-                return $this->getAddress2();
+                return $this->getAddress1();
                 break;
             case 3:
-                return $this->getAddress3();
+                return $this->getAddress2();
                 break;
             case 4:
-                return $this->getZipcode();
+                return $this->getAddress3();
                 break;
             case 5:
-                return $this->getCity();
+                return $this->getZipcode();
                 break;
             case 6:
-                return $this->getCountryId();
+                return $this->getCity();
                 break;
             case 7:
-                return $this->getLatitude();
+                return $this->getCountryId();
                 break;
             case 8:
-                return $this->getLongitude();
+                return $this->getLatitude();
                 break;
             case 9:
-                return $this->getCreatedAt();
+                return $this->getLongitude();
                 break;
             case 10:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 11:
-                return $this->getVersion();
+                return $this->getUpdatedAt();
                 break;
             case 12:
-                return $this->getVersionCreatedAt();
+                return $this->getVersion();
                 break;
             case 13:
+                return $this->getVersionCreatedAt();
+                break;
+            case 14:
                 return $this->getVersionCreatedBy();
                 break;
             default:
@@ -1792,19 +1848,20 @@ abstract class Dealer implements ActiveRecordInterface
         $keys = DealerTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getAddress1(),
-            $keys[2] => $this->getAddress2(),
-            $keys[3] => $this->getAddress3(),
-            $keys[4] => $this->getZipcode(),
-            $keys[5] => $this->getCity(),
-            $keys[6] => $this->getCountryId(),
-            $keys[7] => $this->getLatitude(),
-            $keys[8] => $this->getLongitude(),
-            $keys[9] => $this->getCreatedAt(),
-            $keys[10] => $this->getUpdatedAt(),
-            $keys[11] => $this->getVersion(),
-            $keys[12] => $this->getVersionCreatedAt(),
-            $keys[13] => $this->getVersionCreatedBy(),
+            $keys[1] => $this->getVisible(),
+            $keys[2] => $this->getAddress1(),
+            $keys[3] => $this->getAddress2(),
+            $keys[4] => $this->getAddress3(),
+            $keys[5] => $this->getZipcode(),
+            $keys[6] => $this->getCity(),
+            $keys[7] => $this->getCountryId(),
+            $keys[8] => $this->getLatitude(),
+            $keys[9] => $this->getLongitude(),
+            $keys[10] => $this->getCreatedAt(),
+            $keys[11] => $this->getUpdatedAt(),
+            $keys[12] => $this->getVersion(),
+            $keys[13] => $this->getVersionCreatedAt(),
+            $keys[14] => $this->getVersionCreatedBy(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1877,42 +1934,45 @@ abstract class Dealer implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setAddress1($value);
+                $this->setVisible($value);
                 break;
             case 2:
-                $this->setAddress2($value);
+                $this->setAddress1($value);
                 break;
             case 3:
-                $this->setAddress3($value);
+                $this->setAddress2($value);
                 break;
             case 4:
-                $this->setZipcode($value);
+                $this->setAddress3($value);
                 break;
             case 5:
-                $this->setCity($value);
+                $this->setZipcode($value);
                 break;
             case 6:
-                $this->setCountryId($value);
+                $this->setCity($value);
                 break;
             case 7:
-                $this->setLatitude($value);
+                $this->setCountryId($value);
                 break;
             case 8:
-                $this->setLongitude($value);
+                $this->setLatitude($value);
                 break;
             case 9:
-                $this->setCreatedAt($value);
+                $this->setLongitude($value);
                 break;
             case 10:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 11:
-                $this->setVersion($value);
+                $this->setUpdatedAt($value);
                 break;
             case 12:
-                $this->setVersionCreatedAt($value);
+                $this->setVersion($value);
                 break;
             case 13:
+                $this->setVersionCreatedAt($value);
+                break;
+            case 14:
                 $this->setVersionCreatedBy($value);
                 break;
         } // switch()
@@ -1940,19 +2000,20 @@ abstract class Dealer implements ActiveRecordInterface
         $keys = DealerTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setAddress1($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setAddress2($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setAddress3($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setZipcode($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setCity($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setCountryId($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setLatitude($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setLongitude($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setVersion($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setVersionCreatedAt($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setVersionCreatedBy($arr[$keys[13]]);
+        if (array_key_exists($keys[1], $arr)) $this->setVisible($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setAddress1($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setAddress2($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setAddress3($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setZipcode($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setCity($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setCountryId($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setLatitude($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setLongitude($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setCreatedAt($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setUpdatedAt($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setVersion($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setVersionCreatedAt($arr[$keys[13]]);
+        if (array_key_exists($keys[14], $arr)) $this->setVersionCreatedBy($arr[$keys[14]]);
     }
 
     /**
@@ -1965,6 +2026,7 @@ abstract class Dealer implements ActiveRecordInterface
         $criteria = new Criteria(DealerTableMap::DATABASE_NAME);
 
         if ($this->isColumnModified(DealerTableMap::ID)) $criteria->add(DealerTableMap::ID, $this->id);
+        if ($this->isColumnModified(DealerTableMap::VISIBLE)) $criteria->add(DealerTableMap::VISIBLE, $this->visible);
         if ($this->isColumnModified(DealerTableMap::ADDRESS1)) $criteria->add(DealerTableMap::ADDRESS1, $this->address1);
         if ($this->isColumnModified(DealerTableMap::ADDRESS2)) $criteria->add(DealerTableMap::ADDRESS2, $this->address2);
         if ($this->isColumnModified(DealerTableMap::ADDRESS3)) $criteria->add(DealerTableMap::ADDRESS3, $this->address3);
@@ -2041,6 +2103,7 @@ abstract class Dealer implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
+        $copyObj->setVisible($this->getVisible());
         $copyObj->setAddress1($this->getAddress1());
         $copyObj->setAddress2($this->getAddress2());
         $copyObj->setAddress3($this->getAddress3());
@@ -4086,6 +4149,7 @@ abstract class Dealer implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
+        $this->visible = null;
         $this->address1 = null;
         $this->address2 = null;
         $this->address3 = null;
@@ -4347,6 +4411,30 @@ abstract class Dealer implements ActiveRecordInterface
         return $this;
     }
 
+
+        /**
+         * Get the [access] column value.
+         *
+         * @return   string
+         */
+        public function getAccess()
+        {
+        return $this->getCurrentTranslation()->getAccess();
+    }
+
+
+        /**
+         * Set the value of [access] column.
+         *
+         * @param      string $v new value
+         * @return   \Dealer\Model\DealerI18n The current object (for fluent API support)
+         */
+        public function setAccess($v)
+        {    $this->getCurrentTranslation()->setAccess($v);
+
+        return $this;
+    }
+
     // versionable behavior
 
     /**
@@ -4462,6 +4550,7 @@ abstract class Dealer implements ActiveRecordInterface
 
         $version = new ChildDealerVersion();
         $version->setId($this->getId());
+        $version->setVisible($this->getVisible());
         $version->setAddress1($this->getAddress1());
         $version->setAddress2($this->getAddress2());
         $version->setAddress3($this->getAddress3());
@@ -4537,6 +4626,7 @@ abstract class Dealer implements ActiveRecordInterface
     {
         $loadedObjects['ChildDealer'][$version->getId()][$version->getVersion()] = $this;
         $this->setId($version->getId());
+        $this->setVisible($version->getVisible());
         $this->setAddress1($version->getAddress1());
         $this->setAddress2($version->getAddress2());
         $this->setAddress3($version->getAddress3());

@@ -62,6 +62,12 @@ class DealerForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ))
+            ->add("access", "text", array(
+                "label" => $this->translator->trans("Access", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.access"],
+                "required" => false,
+                "attr" => array()
+            ))
             ->add("address1", "text", array(
                 "label" => $this->translator->trans("Address1", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.address1"],

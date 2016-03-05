@@ -25,11 +25,13 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerI18nQuery orderByLocale($order = Criteria::ASC) Order by the locale column
  * @method     ChildDealerI18nQuery orderByTitle($order = Criteria::ASC) Order by the title column
  * @method     ChildDealerI18nQuery orderByDescription($order = Criteria::ASC) Order by the description column
+ * @method     ChildDealerI18nQuery orderByAccess($order = Criteria::ASC) Order by the access column
  *
  * @method     ChildDealerI18nQuery groupById() Group by the id column
  * @method     ChildDealerI18nQuery groupByLocale() Group by the locale column
  * @method     ChildDealerI18nQuery groupByTitle() Group by the title column
  * @method     ChildDealerI18nQuery groupByDescription() Group by the description column
+ * @method     ChildDealerI18nQuery groupByAccess() Group by the access column
  *
  * @method     ChildDealerI18nQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildDealerI18nQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -46,11 +48,13 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerI18n findOneByLocale(string $locale) Return the first ChildDealerI18n filtered by the locale column
  * @method     ChildDealerI18n findOneByTitle(string $title) Return the first ChildDealerI18n filtered by the title column
  * @method     ChildDealerI18n findOneByDescription(string $description) Return the first ChildDealerI18n filtered by the description column
+ * @method     ChildDealerI18n findOneByAccess(string $access) Return the first ChildDealerI18n filtered by the access column
  *
  * @method     array findById(int $id) Return ChildDealerI18n objects filtered by the id column
  * @method     array findByLocale(string $locale) Return ChildDealerI18n objects filtered by the locale column
  * @method     array findByTitle(string $title) Return ChildDealerI18n objects filtered by the title column
  * @method     array findByDescription(string $description) Return ChildDealerI18n objects filtered by the description column
+ * @method     array findByAccess(string $access) Return ChildDealerI18n objects filtered by the access column
  *
  */
 abstract class DealerI18nQuery extends ModelCriteria
@@ -139,7 +143,7 @@ abstract class DealerI18nQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, LOCALE, TITLE, DESCRIPTION FROM dealer_i18n WHERE ID = :p0 AND LOCALE = :p1';
+        $sql = 'SELECT ID, LOCALE, TITLE, DESCRIPTION, ACCESS FROM dealer_i18n WHERE ID = :p0 AND LOCALE = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -368,6 +372,35 @@ abstract class DealerI18nQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerI18nTableMap::DESCRIPTION, $description, $comparison);
+    }
+
+    /**
+     * Filter the query on the access column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAccess('fooValue');   // WHERE access = 'fooValue'
+     * $query->filterByAccess('%fooValue%'); // WHERE access LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $access The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerI18nQuery The current query, for fluid interface
+     */
+    public function filterByAccess($access = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($access)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $access)) {
+                $access = str_replace('*', '%', $access);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(DealerI18nTableMap::ACCESS, $access, $comparison);
     }
 
     /**

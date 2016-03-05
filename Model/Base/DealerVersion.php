@@ -62,6 +62,13 @@ abstract class DealerVersion implements ActiveRecordInterface
     protected $id;
 
     /**
+     * The value for the visible field.
+     * Note: this column has a database default value of: 0
+     * @var        int
+     */
+    protected $visible;
+
+    /**
      * The value for the address1 field.
      * @var        string
      */
@@ -319,6 +326,7 @@ abstract class DealerVersion implements ActiveRecordInterface
      */
     public function applyDefaultValues()
     {
+        $this->visible = 0;
         $this->latitude = '0';
         $this->longitude = '0';
         $this->version = 0;
@@ -593,6 +601,17 @@ abstract class DealerVersion implements ActiveRecordInterface
     {
 
         return $this->id;
+    }
+
+    /**
+     * Get the [visible] column value.
+     *
+     * @return   int
+     */
+    public function getVisible()
+    {
+
+        return $this->visible;
     }
 
     /**
@@ -1137,6 +1156,27 @@ abstract class DealerVersion implements ActiveRecordInterface
 
         return $this;
     } // setId()
+
+    /**
+     * Set the value of [visible] column.
+     *
+     * @param      int $v new value
+     * @return   \Dealer\Model\DealerVersion The current object (for fluent API support)
+     */
+    public function setVisible($v)
+    {
+        if ($v !== null) {
+            $v = (int) $v;
+        }
+
+        if ($this->visible !== $v) {
+            $this->visible = $v;
+            $this->modifiedColumns[DealerVersionTableMap::VISIBLE] = true;
+        }
+
+
+        return $this;
+    } // setVisible()
 
     /**
      * Set the value of [address1] column.
@@ -2045,6 +2085,10 @@ abstract class DealerVersion implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
+            if ($this->visible !== 0) {
+                return false;
+            }
+
             if ($this->latitude !== '0') {
                 return false;
             }
@@ -2087,99 +2131,102 @@ abstract class DealerVersion implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : DealerVersionTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DealerVersionTableMap::translateFieldName('Address1', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : DealerVersionTableMap::translateFieldName('Visible', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->visible = (null !== $col) ? (int) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerVersionTableMap::translateFieldName('Address1', TableMap::TYPE_PHPNAME, $indexType)];
             $this->address1 = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : DealerVersionTableMap::translateFieldName('Address2', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerVersionTableMap::translateFieldName('Address2', TableMap::TYPE_PHPNAME, $indexType)];
             $this->address2 = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerVersionTableMap::translateFieldName('Address3', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerVersionTableMap::translateFieldName('Address3', TableMap::TYPE_PHPNAME, $indexType)];
             $this->address3 = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerVersionTableMap::translateFieldName('Zipcode', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerVersionTableMap::translateFieldName('Zipcode', TableMap::TYPE_PHPNAME, $indexType)];
             $this->zipcode = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerVersionTableMap::translateFieldName('City', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerVersionTableMap::translateFieldName('City', TableMap::TYPE_PHPNAME, $indexType)];
             $this->city = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerVersionTableMap::translateFieldName('CountryId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerVersionTableMap::translateFieldName('CountryId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->country_id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerVersionTableMap::translateFieldName('Latitude', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerVersionTableMap::translateFieldName('Latitude', TableMap::TYPE_PHPNAME, $indexType)];
             $this->latitude = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 8 + $startcol : DealerVersionTableMap::translateFieldName('Longitude', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerVersionTableMap::translateFieldName('Longitude', TableMap::TYPE_PHPNAME, $indexType)];
             $this->longitude = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 9 + $startcol : DealerVersionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerVersionTableMap::translateFieldName('CreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerVersionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerVersionTableMap::translateFieldName('UpdatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerVersionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerVersionTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerVersionTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : DealerVersionTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
             if ($col === '0000-00-00 00:00:00') {
                 $col = null;
             }
             $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 13 + $startcol : DealerVersionTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 14 + $startcol : DealerVersionTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
             $this->version_created_by = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 14 + $startcol : DealerVersionTableMap::translateFieldName('DealerShedulesIds', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 15 + $startcol : DealerVersionTableMap::translateFieldName('DealerShedulesIds', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_shedules_ids = $col;
             $this->dealer_shedules_ids_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 15 + $startcol : DealerVersionTableMap::translateFieldName('DealerShedulesVersions', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 16 + $startcol : DealerVersionTableMap::translateFieldName('DealerShedulesVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_shedules_versions = $col;
             $this->dealer_shedules_versions_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 16 + $startcol : DealerVersionTableMap::translateFieldName('DealerContactIds', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 17 + $startcol : DealerVersionTableMap::translateFieldName('DealerContactIds', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_contact_ids = $col;
             $this->dealer_contact_ids_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 17 + $startcol : DealerVersionTableMap::translateFieldName('DealerContactVersions', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 18 + $startcol : DealerVersionTableMap::translateFieldName('DealerContactVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_contact_versions = $col;
             $this->dealer_contact_versions_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 18 + $startcol : DealerVersionTableMap::translateFieldName('DealerContentIds', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 19 + $startcol : DealerVersionTableMap::translateFieldName('DealerContentIds', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_content_ids = $col;
             $this->dealer_content_ids_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 19 + $startcol : DealerVersionTableMap::translateFieldName('DealerContentVersions', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 20 + $startcol : DealerVersionTableMap::translateFieldName('DealerContentVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_content_versions = $col;
             $this->dealer_content_versions_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 20 + $startcol : DealerVersionTableMap::translateFieldName('DealerFolderIds', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 21 + $startcol : DealerVersionTableMap::translateFieldName('DealerFolderIds', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_folder_ids = $col;
             $this->dealer_folder_ids_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 21 + $startcol : DealerVersionTableMap::translateFieldName('DealerFolderVersions', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 22 + $startcol : DealerVersionTableMap::translateFieldName('DealerFolderVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_folder_versions = $col;
             $this->dealer_folder_versions_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 22 + $startcol : DealerVersionTableMap::translateFieldName('DealerBrandIds', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 23 + $startcol : DealerVersionTableMap::translateFieldName('DealerBrandIds', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_brand_ids = $col;
             $this->dealer_brand_ids_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 23 + $startcol : DealerVersionTableMap::translateFieldName('DealerBrandVersions', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 24 + $startcol : DealerVersionTableMap::translateFieldName('DealerBrandVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_brand_versions = $col;
             $this->dealer_brand_versions_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 24 + $startcol : DealerVersionTableMap::translateFieldName('DealerProductIds', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 25 + $startcol : DealerVersionTableMap::translateFieldName('DealerProductIds', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_product_ids = $col;
             $this->dealer_product_ids_unserialized = null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 25 + $startcol : DealerVersionTableMap::translateFieldName('DealerProductVersions', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 26 + $startcol : DealerVersionTableMap::translateFieldName('DealerProductVersions', TableMap::TYPE_PHPNAME, $indexType)];
             $this->dealer_product_versions = $col;
             $this->dealer_product_versions_unserialized = null;
             $this->resetModified();
@@ -2190,7 +2237,7 @@ abstract class DealerVersion implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 26; // 26 = DealerVersionTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 27; // 27 = DealerVersionTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerVersion object", 0, $e);
@@ -2414,6 +2461,9 @@ abstract class DealerVersion implements ActiveRecordInterface
         if ($this->isColumnModified(DealerVersionTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
         }
+        if ($this->isColumnModified(DealerVersionTableMap::VISIBLE)) {
+            $modifiedColumns[':p' . $index++]  = 'VISIBLE';
+        }
         if ($this->isColumnModified(DealerVersionTableMap::ADDRESS1)) {
             $modifiedColumns[':p' . $index++]  = 'ADDRESS1';
         }
@@ -2502,6 +2552,9 @@ abstract class DealerVersion implements ActiveRecordInterface
                 switch ($columnName) {
                     case 'ID':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+                        break;
+                    case 'VISIBLE':
+                        $stmt->bindValue($identifier, $this->visible, PDO::PARAM_INT);
                         break;
                     case 'ADDRESS1':
                         $stmt->bindValue($identifier, $this->address1, PDO::PARAM_STR);
@@ -2637,78 +2690,81 @@ abstract class DealerVersion implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getAddress1();
+                return $this->getVisible();
                 break;
             case 2:
-                return $this->getAddress2();
+                return $this->getAddress1();
                 break;
             case 3:
-                return $this->getAddress3();
+                return $this->getAddress2();
                 break;
             case 4:
-                return $this->getZipcode();
+                return $this->getAddress3();
                 break;
             case 5:
-                return $this->getCity();
+                return $this->getZipcode();
                 break;
             case 6:
-                return $this->getCountryId();
+                return $this->getCity();
                 break;
             case 7:
-                return $this->getLatitude();
+                return $this->getCountryId();
                 break;
             case 8:
-                return $this->getLongitude();
+                return $this->getLatitude();
                 break;
             case 9:
-                return $this->getCreatedAt();
+                return $this->getLongitude();
                 break;
             case 10:
-                return $this->getUpdatedAt();
+                return $this->getCreatedAt();
                 break;
             case 11:
-                return $this->getVersion();
+                return $this->getUpdatedAt();
                 break;
             case 12:
-                return $this->getVersionCreatedAt();
+                return $this->getVersion();
                 break;
             case 13:
-                return $this->getVersionCreatedBy();
+                return $this->getVersionCreatedAt();
                 break;
             case 14:
-                return $this->getDealerShedulesIds();
+                return $this->getVersionCreatedBy();
                 break;
             case 15:
-                return $this->getDealerShedulesVersions();
+                return $this->getDealerShedulesIds();
                 break;
             case 16:
-                return $this->getDealerContactIds();
+                return $this->getDealerShedulesVersions();
                 break;
             case 17:
-                return $this->getDealerContactVersions();
+                return $this->getDealerContactIds();
                 break;
             case 18:
-                return $this->getDealerContentIds();
+                return $this->getDealerContactVersions();
                 break;
             case 19:
-                return $this->getDealerContentVersions();
+                return $this->getDealerContentIds();
                 break;
             case 20:
-                return $this->getDealerFolderIds();
+                return $this->getDealerContentVersions();
                 break;
             case 21:
-                return $this->getDealerFolderVersions();
+                return $this->getDealerFolderIds();
                 break;
             case 22:
-                return $this->getDealerBrandIds();
+                return $this->getDealerFolderVersions();
                 break;
             case 23:
-                return $this->getDealerBrandVersions();
+                return $this->getDealerBrandIds();
                 break;
             case 24:
-                return $this->getDealerProductIds();
+                return $this->getDealerBrandVersions();
                 break;
             case 25:
+                return $this->getDealerProductIds();
+                break;
+            case 26:
                 return $this->getDealerProductVersions();
                 break;
             default:
@@ -2741,31 +2797,32 @@ abstract class DealerVersion implements ActiveRecordInterface
         $keys = DealerVersionTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getAddress1(),
-            $keys[2] => $this->getAddress2(),
-            $keys[3] => $this->getAddress3(),
-            $keys[4] => $this->getZipcode(),
-            $keys[5] => $this->getCity(),
-            $keys[6] => $this->getCountryId(),
-            $keys[7] => $this->getLatitude(),
-            $keys[8] => $this->getLongitude(),
-            $keys[9] => $this->getCreatedAt(),
-            $keys[10] => $this->getUpdatedAt(),
-            $keys[11] => $this->getVersion(),
-            $keys[12] => $this->getVersionCreatedAt(),
-            $keys[13] => $this->getVersionCreatedBy(),
-            $keys[14] => $this->getDealerShedulesIds(),
-            $keys[15] => $this->getDealerShedulesVersions(),
-            $keys[16] => $this->getDealerContactIds(),
-            $keys[17] => $this->getDealerContactVersions(),
-            $keys[18] => $this->getDealerContentIds(),
-            $keys[19] => $this->getDealerContentVersions(),
-            $keys[20] => $this->getDealerFolderIds(),
-            $keys[21] => $this->getDealerFolderVersions(),
-            $keys[22] => $this->getDealerBrandIds(),
-            $keys[23] => $this->getDealerBrandVersions(),
-            $keys[24] => $this->getDealerProductIds(),
-            $keys[25] => $this->getDealerProductVersions(),
+            $keys[1] => $this->getVisible(),
+            $keys[2] => $this->getAddress1(),
+            $keys[3] => $this->getAddress2(),
+            $keys[4] => $this->getAddress3(),
+            $keys[5] => $this->getZipcode(),
+            $keys[6] => $this->getCity(),
+            $keys[7] => $this->getCountryId(),
+            $keys[8] => $this->getLatitude(),
+            $keys[9] => $this->getLongitude(),
+            $keys[10] => $this->getCreatedAt(),
+            $keys[11] => $this->getUpdatedAt(),
+            $keys[12] => $this->getVersion(),
+            $keys[13] => $this->getVersionCreatedAt(),
+            $keys[14] => $this->getVersionCreatedBy(),
+            $keys[15] => $this->getDealerShedulesIds(),
+            $keys[16] => $this->getDealerShedulesVersions(),
+            $keys[17] => $this->getDealerContactIds(),
+            $keys[18] => $this->getDealerContactVersions(),
+            $keys[19] => $this->getDealerContentIds(),
+            $keys[20] => $this->getDealerContentVersions(),
+            $keys[21] => $this->getDealerFolderIds(),
+            $keys[22] => $this->getDealerFolderVersions(),
+            $keys[23] => $this->getDealerBrandIds(),
+            $keys[24] => $this->getDealerBrandVersions(),
+            $keys[25] => $this->getDealerProductIds(),
+            $keys[26] => $this->getDealerProductVersions(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -2814,122 +2871,125 @@ abstract class DealerVersion implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setAddress1($value);
+                $this->setVisible($value);
                 break;
             case 2:
-                $this->setAddress2($value);
+                $this->setAddress1($value);
                 break;
             case 3:
-                $this->setAddress3($value);
+                $this->setAddress2($value);
                 break;
             case 4:
-                $this->setZipcode($value);
+                $this->setAddress3($value);
                 break;
             case 5:
-                $this->setCity($value);
+                $this->setZipcode($value);
                 break;
             case 6:
-                $this->setCountryId($value);
+                $this->setCity($value);
                 break;
             case 7:
-                $this->setLatitude($value);
+                $this->setCountryId($value);
                 break;
             case 8:
-                $this->setLongitude($value);
+                $this->setLatitude($value);
                 break;
             case 9:
-                $this->setCreatedAt($value);
+                $this->setLongitude($value);
                 break;
             case 10:
-                $this->setUpdatedAt($value);
+                $this->setCreatedAt($value);
                 break;
             case 11:
-                $this->setVersion($value);
+                $this->setUpdatedAt($value);
                 break;
             case 12:
-                $this->setVersionCreatedAt($value);
+                $this->setVersion($value);
                 break;
             case 13:
-                $this->setVersionCreatedBy($value);
+                $this->setVersionCreatedAt($value);
                 break;
             case 14:
-                if (!is_array($value)) {
-                    $v = trim(substr($value, 2, -2));
-                    $value = $v ? explode(' | ', $v) : array();
-                }
-                $this->setDealerShedulesIds($value);
+                $this->setVersionCreatedBy($value);
                 break;
             case 15:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerShedulesVersions($value);
+                $this->setDealerShedulesIds($value);
                 break;
             case 16:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerContactIds($value);
+                $this->setDealerShedulesVersions($value);
                 break;
             case 17:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerContactVersions($value);
+                $this->setDealerContactIds($value);
                 break;
             case 18:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerContentIds($value);
+                $this->setDealerContactVersions($value);
                 break;
             case 19:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerContentVersions($value);
+                $this->setDealerContentIds($value);
                 break;
             case 20:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerFolderIds($value);
+                $this->setDealerContentVersions($value);
                 break;
             case 21:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerFolderVersions($value);
+                $this->setDealerFolderIds($value);
                 break;
             case 22:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerBrandIds($value);
+                $this->setDealerFolderVersions($value);
                 break;
             case 23:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerBrandVersions($value);
+                $this->setDealerBrandIds($value);
                 break;
             case 24:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
                 }
-                $this->setDealerProductIds($value);
+                $this->setDealerBrandVersions($value);
                 break;
             case 25:
+                if (!is_array($value)) {
+                    $v = trim(substr($value, 2, -2));
+                    $value = $v ? explode(' | ', $v) : array();
+                }
+                $this->setDealerProductIds($value);
+                break;
+            case 26:
                 if (!is_array($value)) {
                     $v = trim(substr($value, 2, -2));
                     $value = $v ? explode(' | ', $v) : array();
@@ -2961,31 +3021,32 @@ abstract class DealerVersion implements ActiveRecordInterface
         $keys = DealerVersionTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setAddress1($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setAddress2($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setAddress3($arr[$keys[3]]);
-        if (array_key_exists($keys[4], $arr)) $this->setZipcode($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setCity($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setCountryId($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setLatitude($arr[$keys[7]]);
-        if (array_key_exists($keys[8], $arr)) $this->setLongitude($arr[$keys[8]]);
-        if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setVersion($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setVersionCreatedAt($arr[$keys[12]]);
-        if (array_key_exists($keys[13], $arr)) $this->setVersionCreatedBy($arr[$keys[13]]);
-        if (array_key_exists($keys[14], $arr)) $this->setDealerShedulesIds($arr[$keys[14]]);
-        if (array_key_exists($keys[15], $arr)) $this->setDealerShedulesVersions($arr[$keys[15]]);
-        if (array_key_exists($keys[16], $arr)) $this->setDealerContactIds($arr[$keys[16]]);
-        if (array_key_exists($keys[17], $arr)) $this->setDealerContactVersions($arr[$keys[17]]);
-        if (array_key_exists($keys[18], $arr)) $this->setDealerContentIds($arr[$keys[18]]);
-        if (array_key_exists($keys[19], $arr)) $this->setDealerContentVersions($arr[$keys[19]]);
-        if (array_key_exists($keys[20], $arr)) $this->setDealerFolderIds($arr[$keys[20]]);
-        if (array_key_exists($keys[21], $arr)) $this->setDealerFolderVersions($arr[$keys[21]]);
-        if (array_key_exists($keys[22], $arr)) $this->setDealerBrandIds($arr[$keys[22]]);
-        if (array_key_exists($keys[23], $arr)) $this->setDealerBrandVersions($arr[$keys[23]]);
-        if (array_key_exists($keys[24], $arr)) $this->setDealerProductIds($arr[$keys[24]]);
-        if (array_key_exists($keys[25], $arr)) $this->setDealerProductVersions($arr[$keys[25]]);
+        if (array_key_exists($keys[1], $arr)) $this->setVisible($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setAddress1($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setAddress2($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setAddress3($arr[$keys[4]]);
+        if (array_key_exists($keys[5], $arr)) $this->setZipcode($arr[$keys[5]]);
+        if (array_key_exists($keys[6], $arr)) $this->setCity($arr[$keys[6]]);
+        if (array_key_exists($keys[7], $arr)) $this->setCountryId($arr[$keys[7]]);
+        if (array_key_exists($keys[8], $arr)) $this->setLatitude($arr[$keys[8]]);
+        if (array_key_exists($keys[9], $arr)) $this->setLongitude($arr[$keys[9]]);
+        if (array_key_exists($keys[10], $arr)) $this->setCreatedAt($arr[$keys[10]]);
+        if (array_key_exists($keys[11], $arr)) $this->setUpdatedAt($arr[$keys[11]]);
+        if (array_key_exists($keys[12], $arr)) $this->setVersion($arr[$keys[12]]);
+        if (array_key_exists($keys[13], $arr)) $this->setVersionCreatedAt($arr[$keys[13]]);
+        if (array_key_exists($keys[14], $arr)) $this->setVersionCreatedBy($arr[$keys[14]]);
+        if (array_key_exists($keys[15], $arr)) $this->setDealerShedulesIds($arr[$keys[15]]);
+        if (array_key_exists($keys[16], $arr)) $this->setDealerShedulesVersions($arr[$keys[16]]);
+        if (array_key_exists($keys[17], $arr)) $this->setDealerContactIds($arr[$keys[17]]);
+        if (array_key_exists($keys[18], $arr)) $this->setDealerContactVersions($arr[$keys[18]]);
+        if (array_key_exists($keys[19], $arr)) $this->setDealerContentIds($arr[$keys[19]]);
+        if (array_key_exists($keys[20], $arr)) $this->setDealerContentVersions($arr[$keys[20]]);
+        if (array_key_exists($keys[21], $arr)) $this->setDealerFolderIds($arr[$keys[21]]);
+        if (array_key_exists($keys[22], $arr)) $this->setDealerFolderVersions($arr[$keys[22]]);
+        if (array_key_exists($keys[23], $arr)) $this->setDealerBrandIds($arr[$keys[23]]);
+        if (array_key_exists($keys[24], $arr)) $this->setDealerBrandVersions($arr[$keys[24]]);
+        if (array_key_exists($keys[25], $arr)) $this->setDealerProductIds($arr[$keys[25]]);
+        if (array_key_exists($keys[26], $arr)) $this->setDealerProductVersions($arr[$keys[26]]);
     }
 
     /**
@@ -2998,6 +3059,7 @@ abstract class DealerVersion implements ActiveRecordInterface
         $criteria = new Criteria(DealerVersionTableMap::DATABASE_NAME);
 
         if ($this->isColumnModified(DealerVersionTableMap::ID)) $criteria->add(DealerVersionTableMap::ID, $this->id);
+        if ($this->isColumnModified(DealerVersionTableMap::VISIBLE)) $criteria->add(DealerVersionTableMap::VISIBLE, $this->visible);
         if ($this->isColumnModified(DealerVersionTableMap::ADDRESS1)) $criteria->add(DealerVersionTableMap::ADDRESS1, $this->address1);
         if ($this->isColumnModified(DealerVersionTableMap::ADDRESS2)) $criteria->add(DealerVersionTableMap::ADDRESS2, $this->address2);
         if ($this->isColumnModified(DealerVersionTableMap::ADDRESS3)) $criteria->add(DealerVersionTableMap::ADDRESS3, $this->address3);
@@ -3094,6 +3156,7 @@ abstract class DealerVersion implements ActiveRecordInterface
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
         $copyObj->setId($this->getId());
+        $copyObj->setVisible($this->getVisible());
         $copyObj->setAddress1($this->getAddress1());
         $copyObj->setAddress2($this->getAddress2());
         $copyObj->setAddress3($this->getAddress3());
@@ -3203,6 +3266,7 @@ abstract class DealerVersion implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
+        $this->visible = null;
         $this->address1 = null;
         $this->address2 = null;
         $this->address3 = null;

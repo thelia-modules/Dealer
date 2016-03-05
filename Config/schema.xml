@@ -8,6 +8,9 @@
 
         <column name="title" size="255" type="VARCHAR" required="true"/>
         <column name="description" type="LONGVARCHAR"/>
+        <column name="access" type="LONGVARCHAR"/>
+
+        <column defaultValue="0" name="visible" required="true" type="TINYINT"/>
 
         <column name="address1" size="255" type="VARCHAR" required="true"/>
         <column name="address2" size="255" type="VARCHAR"/>
@@ -26,7 +29,7 @@
 
         <behavior name="timestampable"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="title, description"/>
+            <parameter name="i18n_columns" value="title, description, access"/>
         </behavior>
         <behavior name="versionable">
             <parameter name="log_created_at" value="true"/>

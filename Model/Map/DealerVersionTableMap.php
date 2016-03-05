@@ -58,7 +58,7 @@ class DealerVersionTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 26;
+    const NUM_COLUMNS = 27;
 
     /**
      * The number of lazy-loaded columns
@@ -68,12 +68,17 @@ class DealerVersionTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 26;
+    const NUM_HYDRATE_COLUMNS = 27;
 
     /**
      * the column name for the ID field
      */
     const ID = 'dealer_version.ID';
+
+    /**
+     * the column name for the VISIBLE field
+     */
+    const VISIBLE = 'dealer_version.VISIBLE';
 
     /**
      * the column name for the ADDRESS1 field
@@ -212,12 +217,12 @@ class DealerVersionTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Address1', 'Address2', 'Address3', 'Zipcode', 'City', 'CountryId', 'Latitude', 'Longitude', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', 'DealerShedulesIds', 'DealerShedulesVersions', 'DealerContactIds', 'DealerContactVersions', 'DealerContentIds', 'DealerContentVersions', 'DealerFolderIds', 'DealerFolderVersions', 'DealerBrandIds', 'DealerBrandVersions', 'DealerProductIds', 'DealerProductVersions', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'address1', 'address2', 'address3', 'zipcode', 'city', 'countryId', 'latitude', 'longitude', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', 'dealerShedulesIds', 'dealerShedulesVersions', 'dealerContactIds', 'dealerContactVersions', 'dealerContentIds', 'dealerContentVersions', 'dealerFolderIds', 'dealerFolderVersions', 'dealerBrandIds', 'dealerBrandVersions', 'dealerProductIds', 'dealerProductVersions', ),
-        self::TYPE_COLNAME       => array(DealerVersionTableMap::ID, DealerVersionTableMap::ADDRESS1, DealerVersionTableMap::ADDRESS2, DealerVersionTableMap::ADDRESS3, DealerVersionTableMap::ZIPCODE, DealerVersionTableMap::CITY, DealerVersionTableMap::COUNTRY_ID, DealerVersionTableMap::LATITUDE, DealerVersionTableMap::LONGITUDE, DealerVersionTableMap::CREATED_AT, DealerVersionTableMap::UPDATED_AT, DealerVersionTableMap::VERSION, DealerVersionTableMap::VERSION_CREATED_AT, DealerVersionTableMap::VERSION_CREATED_BY, DealerVersionTableMap::DEALER_SHEDULES_IDS, DealerVersionTableMap::DEALER_SHEDULES_VERSIONS, DealerVersionTableMap::DEALER_CONTACT_IDS, DealerVersionTableMap::DEALER_CONTACT_VERSIONS, DealerVersionTableMap::DEALER_CONTENT_IDS, DealerVersionTableMap::DEALER_CONTENT_VERSIONS, DealerVersionTableMap::DEALER_FOLDER_IDS, DealerVersionTableMap::DEALER_FOLDER_VERSIONS, DealerVersionTableMap::DEALER_BRAND_IDS, DealerVersionTableMap::DEALER_BRAND_VERSIONS, DealerVersionTableMap::DEALER_PRODUCT_IDS, DealerVersionTableMap::DEALER_PRODUCT_VERSIONS, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'ADDRESS1', 'ADDRESS2', 'ADDRESS3', 'ZIPCODE', 'CITY', 'COUNTRY_ID', 'LATITUDE', 'LONGITUDE', 'CREATED_AT', 'UPDATED_AT', 'VERSION', 'VERSION_CREATED_AT', 'VERSION_CREATED_BY', 'DEALER_SHEDULES_IDS', 'DEALER_SHEDULES_VERSIONS', 'DEALER_CONTACT_IDS', 'DEALER_CONTACT_VERSIONS', 'DEALER_CONTENT_IDS', 'DEALER_CONTENT_VERSIONS', 'DEALER_FOLDER_IDS', 'DEALER_FOLDER_VERSIONS', 'DEALER_BRAND_IDS', 'DEALER_BRAND_VERSIONS', 'DEALER_PRODUCT_IDS', 'DEALER_PRODUCT_VERSIONS', ),
-        self::TYPE_FIELDNAME     => array('id', 'address1', 'address2', 'address3', 'zipcode', 'city', 'country_id', 'latitude', 'longitude', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', 'dealer_shedules_ids', 'dealer_shedules_versions', 'dealer_contact_ids', 'dealer_contact_versions', 'dealer_content_ids', 'dealer_content_versions', 'dealer_folder_ids', 'dealer_folder_versions', 'dealer_brand_ids', 'dealer_brand_versions', 'dealer_product_ids', 'dealer_product_versions', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
+        self::TYPE_PHPNAME       => array('Id', 'Visible', 'Address1', 'Address2', 'Address3', 'Zipcode', 'City', 'CountryId', 'Latitude', 'Longitude', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', 'DealerShedulesIds', 'DealerShedulesVersions', 'DealerContactIds', 'DealerContactVersions', 'DealerContentIds', 'DealerContentVersions', 'DealerFolderIds', 'DealerFolderVersions', 'DealerBrandIds', 'DealerBrandVersions', 'DealerProductIds', 'DealerProductVersions', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'visible', 'address1', 'address2', 'address3', 'zipcode', 'city', 'countryId', 'latitude', 'longitude', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', 'dealerShedulesIds', 'dealerShedulesVersions', 'dealerContactIds', 'dealerContactVersions', 'dealerContentIds', 'dealerContentVersions', 'dealerFolderIds', 'dealerFolderVersions', 'dealerBrandIds', 'dealerBrandVersions', 'dealerProductIds', 'dealerProductVersions', ),
+        self::TYPE_COLNAME       => array(DealerVersionTableMap::ID, DealerVersionTableMap::VISIBLE, DealerVersionTableMap::ADDRESS1, DealerVersionTableMap::ADDRESS2, DealerVersionTableMap::ADDRESS3, DealerVersionTableMap::ZIPCODE, DealerVersionTableMap::CITY, DealerVersionTableMap::COUNTRY_ID, DealerVersionTableMap::LATITUDE, DealerVersionTableMap::LONGITUDE, DealerVersionTableMap::CREATED_AT, DealerVersionTableMap::UPDATED_AT, DealerVersionTableMap::VERSION, DealerVersionTableMap::VERSION_CREATED_AT, DealerVersionTableMap::VERSION_CREATED_BY, DealerVersionTableMap::DEALER_SHEDULES_IDS, DealerVersionTableMap::DEALER_SHEDULES_VERSIONS, DealerVersionTableMap::DEALER_CONTACT_IDS, DealerVersionTableMap::DEALER_CONTACT_VERSIONS, DealerVersionTableMap::DEALER_CONTENT_IDS, DealerVersionTableMap::DEALER_CONTENT_VERSIONS, DealerVersionTableMap::DEALER_FOLDER_IDS, DealerVersionTableMap::DEALER_FOLDER_VERSIONS, DealerVersionTableMap::DEALER_BRAND_IDS, DealerVersionTableMap::DEALER_BRAND_VERSIONS, DealerVersionTableMap::DEALER_PRODUCT_IDS, DealerVersionTableMap::DEALER_PRODUCT_VERSIONS, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'VISIBLE', 'ADDRESS1', 'ADDRESS2', 'ADDRESS3', 'ZIPCODE', 'CITY', 'COUNTRY_ID', 'LATITUDE', 'LONGITUDE', 'CREATED_AT', 'UPDATED_AT', 'VERSION', 'VERSION_CREATED_AT', 'VERSION_CREATED_BY', 'DEALER_SHEDULES_IDS', 'DEALER_SHEDULES_VERSIONS', 'DEALER_CONTACT_IDS', 'DEALER_CONTACT_VERSIONS', 'DEALER_CONTENT_IDS', 'DEALER_CONTENT_VERSIONS', 'DEALER_FOLDER_IDS', 'DEALER_FOLDER_VERSIONS', 'DEALER_BRAND_IDS', 'DEALER_BRAND_VERSIONS', 'DEALER_PRODUCT_IDS', 'DEALER_PRODUCT_VERSIONS', ),
+        self::TYPE_FIELDNAME     => array('id', 'visible', 'address1', 'address2', 'address3', 'zipcode', 'city', 'country_id', 'latitude', 'longitude', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', 'dealer_shedules_ids', 'dealer_shedules_versions', 'dealer_contact_ids', 'dealer_contact_versions', 'dealer_content_ids', 'dealer_content_versions', 'dealer_folder_ids', 'dealer_folder_versions', 'dealer_brand_ids', 'dealer_brand_versions', 'dealer_product_ids', 'dealer_product_versions', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, )
     );
 
     /**
@@ -227,12 +232,12 @@ class DealerVersionTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Address1' => 1, 'Address2' => 2, 'Address3' => 3, 'Zipcode' => 4, 'City' => 5, 'CountryId' => 6, 'Latitude' => 7, 'Longitude' => 8, 'CreatedAt' => 9, 'UpdatedAt' => 10, 'Version' => 11, 'VersionCreatedAt' => 12, 'VersionCreatedBy' => 13, 'DealerShedulesIds' => 14, 'DealerShedulesVersions' => 15, 'DealerContactIds' => 16, 'DealerContactVersions' => 17, 'DealerContentIds' => 18, 'DealerContentVersions' => 19, 'DealerFolderIds' => 20, 'DealerFolderVersions' => 21, 'DealerBrandIds' => 22, 'DealerBrandVersions' => 23, 'DealerProductIds' => 24, 'DealerProductVersions' => 25, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'address1' => 1, 'address2' => 2, 'address3' => 3, 'zipcode' => 4, 'city' => 5, 'countryId' => 6, 'latitude' => 7, 'longitude' => 8, 'createdAt' => 9, 'updatedAt' => 10, 'version' => 11, 'versionCreatedAt' => 12, 'versionCreatedBy' => 13, 'dealerShedulesIds' => 14, 'dealerShedulesVersions' => 15, 'dealerContactIds' => 16, 'dealerContactVersions' => 17, 'dealerContentIds' => 18, 'dealerContentVersions' => 19, 'dealerFolderIds' => 20, 'dealerFolderVersions' => 21, 'dealerBrandIds' => 22, 'dealerBrandVersions' => 23, 'dealerProductIds' => 24, 'dealerProductVersions' => 25, ),
-        self::TYPE_COLNAME       => array(DealerVersionTableMap::ID => 0, DealerVersionTableMap::ADDRESS1 => 1, DealerVersionTableMap::ADDRESS2 => 2, DealerVersionTableMap::ADDRESS3 => 3, DealerVersionTableMap::ZIPCODE => 4, DealerVersionTableMap::CITY => 5, DealerVersionTableMap::COUNTRY_ID => 6, DealerVersionTableMap::LATITUDE => 7, DealerVersionTableMap::LONGITUDE => 8, DealerVersionTableMap::CREATED_AT => 9, DealerVersionTableMap::UPDATED_AT => 10, DealerVersionTableMap::VERSION => 11, DealerVersionTableMap::VERSION_CREATED_AT => 12, DealerVersionTableMap::VERSION_CREATED_BY => 13, DealerVersionTableMap::DEALER_SHEDULES_IDS => 14, DealerVersionTableMap::DEALER_SHEDULES_VERSIONS => 15, DealerVersionTableMap::DEALER_CONTACT_IDS => 16, DealerVersionTableMap::DEALER_CONTACT_VERSIONS => 17, DealerVersionTableMap::DEALER_CONTENT_IDS => 18, DealerVersionTableMap::DEALER_CONTENT_VERSIONS => 19, DealerVersionTableMap::DEALER_FOLDER_IDS => 20, DealerVersionTableMap::DEALER_FOLDER_VERSIONS => 21, DealerVersionTableMap::DEALER_BRAND_IDS => 22, DealerVersionTableMap::DEALER_BRAND_VERSIONS => 23, DealerVersionTableMap::DEALER_PRODUCT_IDS => 24, DealerVersionTableMap::DEALER_PRODUCT_VERSIONS => 25, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'ADDRESS1' => 1, 'ADDRESS2' => 2, 'ADDRESS3' => 3, 'ZIPCODE' => 4, 'CITY' => 5, 'COUNTRY_ID' => 6, 'LATITUDE' => 7, 'LONGITUDE' => 8, 'CREATED_AT' => 9, 'UPDATED_AT' => 10, 'VERSION' => 11, 'VERSION_CREATED_AT' => 12, 'VERSION_CREATED_BY' => 13, 'DEALER_SHEDULES_IDS' => 14, 'DEALER_SHEDULES_VERSIONS' => 15, 'DEALER_CONTACT_IDS' => 16, 'DEALER_CONTACT_VERSIONS' => 17, 'DEALER_CONTENT_IDS' => 18, 'DEALER_CONTENT_VERSIONS' => 19, 'DEALER_FOLDER_IDS' => 20, 'DEALER_FOLDER_VERSIONS' => 21, 'DEALER_BRAND_IDS' => 22, 'DEALER_BRAND_VERSIONS' => 23, 'DEALER_PRODUCT_IDS' => 24, 'DEALER_PRODUCT_VERSIONS' => 25, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'address1' => 1, 'address2' => 2, 'address3' => 3, 'zipcode' => 4, 'city' => 5, 'country_id' => 6, 'latitude' => 7, 'longitude' => 8, 'created_at' => 9, 'updated_at' => 10, 'version' => 11, 'version_created_at' => 12, 'version_created_by' => 13, 'dealer_shedules_ids' => 14, 'dealer_shedules_versions' => 15, 'dealer_contact_ids' => 16, 'dealer_contact_versions' => 17, 'dealer_content_ids' => 18, 'dealer_content_versions' => 19, 'dealer_folder_ids' => 20, 'dealer_folder_versions' => 21, 'dealer_brand_ids' => 22, 'dealer_brand_versions' => 23, 'dealer_product_ids' => 24, 'dealer_product_versions' => 25, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Visible' => 1, 'Address1' => 2, 'Address2' => 3, 'Address3' => 4, 'Zipcode' => 5, 'City' => 6, 'CountryId' => 7, 'Latitude' => 8, 'Longitude' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, 'Version' => 12, 'VersionCreatedAt' => 13, 'VersionCreatedBy' => 14, 'DealerShedulesIds' => 15, 'DealerShedulesVersions' => 16, 'DealerContactIds' => 17, 'DealerContactVersions' => 18, 'DealerContentIds' => 19, 'DealerContentVersions' => 20, 'DealerFolderIds' => 21, 'DealerFolderVersions' => 22, 'DealerBrandIds' => 23, 'DealerBrandVersions' => 24, 'DealerProductIds' => 25, 'DealerProductVersions' => 26, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'visible' => 1, 'address1' => 2, 'address2' => 3, 'address3' => 4, 'zipcode' => 5, 'city' => 6, 'countryId' => 7, 'latitude' => 8, 'longitude' => 9, 'createdAt' => 10, 'updatedAt' => 11, 'version' => 12, 'versionCreatedAt' => 13, 'versionCreatedBy' => 14, 'dealerShedulesIds' => 15, 'dealerShedulesVersions' => 16, 'dealerContactIds' => 17, 'dealerContactVersions' => 18, 'dealerContentIds' => 19, 'dealerContentVersions' => 20, 'dealerFolderIds' => 21, 'dealerFolderVersions' => 22, 'dealerBrandIds' => 23, 'dealerBrandVersions' => 24, 'dealerProductIds' => 25, 'dealerProductVersions' => 26, ),
+        self::TYPE_COLNAME       => array(DealerVersionTableMap::ID => 0, DealerVersionTableMap::VISIBLE => 1, DealerVersionTableMap::ADDRESS1 => 2, DealerVersionTableMap::ADDRESS2 => 3, DealerVersionTableMap::ADDRESS3 => 4, DealerVersionTableMap::ZIPCODE => 5, DealerVersionTableMap::CITY => 6, DealerVersionTableMap::COUNTRY_ID => 7, DealerVersionTableMap::LATITUDE => 8, DealerVersionTableMap::LONGITUDE => 9, DealerVersionTableMap::CREATED_AT => 10, DealerVersionTableMap::UPDATED_AT => 11, DealerVersionTableMap::VERSION => 12, DealerVersionTableMap::VERSION_CREATED_AT => 13, DealerVersionTableMap::VERSION_CREATED_BY => 14, DealerVersionTableMap::DEALER_SHEDULES_IDS => 15, DealerVersionTableMap::DEALER_SHEDULES_VERSIONS => 16, DealerVersionTableMap::DEALER_CONTACT_IDS => 17, DealerVersionTableMap::DEALER_CONTACT_VERSIONS => 18, DealerVersionTableMap::DEALER_CONTENT_IDS => 19, DealerVersionTableMap::DEALER_CONTENT_VERSIONS => 20, DealerVersionTableMap::DEALER_FOLDER_IDS => 21, DealerVersionTableMap::DEALER_FOLDER_VERSIONS => 22, DealerVersionTableMap::DEALER_BRAND_IDS => 23, DealerVersionTableMap::DEALER_BRAND_VERSIONS => 24, DealerVersionTableMap::DEALER_PRODUCT_IDS => 25, DealerVersionTableMap::DEALER_PRODUCT_VERSIONS => 26, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'VISIBLE' => 1, 'ADDRESS1' => 2, 'ADDRESS2' => 3, 'ADDRESS3' => 4, 'ZIPCODE' => 5, 'CITY' => 6, 'COUNTRY_ID' => 7, 'LATITUDE' => 8, 'LONGITUDE' => 9, 'CREATED_AT' => 10, 'UPDATED_AT' => 11, 'VERSION' => 12, 'VERSION_CREATED_AT' => 13, 'VERSION_CREATED_BY' => 14, 'DEALER_SHEDULES_IDS' => 15, 'DEALER_SHEDULES_VERSIONS' => 16, 'DEALER_CONTACT_IDS' => 17, 'DEALER_CONTACT_VERSIONS' => 18, 'DEALER_CONTENT_IDS' => 19, 'DEALER_CONTENT_VERSIONS' => 20, 'DEALER_FOLDER_IDS' => 21, 'DEALER_FOLDER_VERSIONS' => 22, 'DEALER_BRAND_IDS' => 23, 'DEALER_BRAND_VERSIONS' => 24, 'DEALER_PRODUCT_IDS' => 25, 'DEALER_PRODUCT_VERSIONS' => 26, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'visible' => 1, 'address1' => 2, 'address2' => 3, 'address3' => 4, 'zipcode' => 5, 'city' => 6, 'country_id' => 7, 'latitude' => 8, 'longitude' => 9, 'created_at' => 10, 'updated_at' => 11, 'version' => 12, 'version_created_at' => 13, 'version_created_by' => 14, 'dealer_shedules_ids' => 15, 'dealer_shedules_versions' => 16, 'dealer_contact_ids' => 17, 'dealer_contact_versions' => 18, 'dealer_content_ids' => 19, 'dealer_content_versions' => 20, 'dealer_folder_ids' => 21, 'dealer_folder_versions' => 22, 'dealer_brand_ids' => 23, 'dealer_brand_versions' => 24, 'dealer_product_ids' => 25, 'dealer_product_versions' => 26, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, )
     );
 
     /**
@@ -252,6 +257,7 @@ class DealerVersionTableMap extends TableMap
         $this->setUseIdGenerator(false);
         // columns
         $this->addForeignPrimaryKey('ID', 'Id', 'INTEGER' , 'dealer', 'ID', true, null, null);
+        $this->addColumn('VISIBLE', 'Visible', 'TINYINT', true, null, 0);
         $this->addColumn('ADDRESS1', 'Address1', 'VARCHAR', true, 255, null);
         $this->addColumn('ADDRESS2', 'Address2', 'VARCHAR', false, 255, null);
         $this->addColumn('ADDRESS3', 'Address3', 'VARCHAR', false, 255, null);
@@ -354,11 +360,11 @@ class DealerVersionTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 11 + $offset : static::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null && $row[TableMap::TYPE_NUM == $indexType ? 12 + $offset : static::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 11 + $offset : static::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)]));
+        return serialize(array((string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)], (string) $row[TableMap::TYPE_NUM == $indexType ? 12 + $offset : static::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)]));
     }
 
     /**
@@ -475,6 +481,7 @@ class DealerVersionTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(DealerVersionTableMap::ID);
+            $criteria->addSelectColumn(DealerVersionTableMap::VISIBLE);
             $criteria->addSelectColumn(DealerVersionTableMap::ADDRESS1);
             $criteria->addSelectColumn(DealerVersionTableMap::ADDRESS2);
             $criteria->addSelectColumn(DealerVersionTableMap::ADDRESS3);
@@ -502,6 +509,7 @@ class DealerVersionTableMap extends TableMap
             $criteria->addSelectColumn(DealerVersionTableMap::DEALER_PRODUCT_VERSIONS);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
+            $criteria->addSelectColumn($alias . '.VISIBLE');
             $criteria->addSelectColumn($alias . '.ADDRESS1');
             $criteria->addSelectColumn($alias . '.ADDRESS2');
             $criteria->addSelectColumn($alias . '.ADDRESS3');

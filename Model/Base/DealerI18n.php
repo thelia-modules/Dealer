@@ -79,6 +79,12 @@ abstract class DealerI18n implements ActiveRecordInterface
     protected $description;
 
     /**
+     * The value for the access field.
+     * @var        string
+     */
+    protected $access;
+
+    /**
      * @var        Dealer
      */
     protected $aDealer;
@@ -407,6 +413,17 @@ abstract class DealerI18n implements ActiveRecordInterface
     }
 
     /**
+     * Get the [access] column value.
+     *
+     * @return   string
+     */
+    public function getAccess()
+    {
+
+        return $this->access;
+    }
+
+    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -495,6 +512,27 @@ abstract class DealerI18n implements ActiveRecordInterface
     } // setDescription()
 
     /**
+     * Set the value of [access] column.
+     *
+     * @param      string $v new value
+     * @return   \Dealer\Model\DealerI18n The current object (for fluent API support)
+     */
+    public function setAccess($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->access !== $v) {
+            $this->access = $v;
+            $this->modifiedColumns[DealerI18nTableMap::ACCESS] = true;
+        }
+
+
+        return $this;
+    } // setAccess()
+
+    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -546,6 +584,9 @@ abstract class DealerI18n implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : DealerI18nTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
             $this->description = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 4 + $startcol : DealerI18nTableMap::translateFieldName('Access', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->access = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -554,7 +595,7 @@ abstract class DealerI18n implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = DealerI18nTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = DealerI18nTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerI18n object", 0, $e);
@@ -787,6 +828,9 @@ abstract class DealerI18n implements ActiveRecordInterface
         if ($this->isColumnModified(DealerI18nTableMap::DESCRIPTION)) {
             $modifiedColumns[':p' . $index++]  = 'DESCRIPTION';
         }
+        if ($this->isColumnModified(DealerI18nTableMap::ACCESS)) {
+            $modifiedColumns[':p' . $index++]  = 'ACCESS';
+        }
 
         $sql = sprintf(
             'INSERT INTO dealer_i18n (%s) VALUES (%s)',
@@ -809,6 +853,9 @@ abstract class DealerI18n implements ActiveRecordInterface
                         break;
                     case 'DESCRIPTION':
                         $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+                        break;
+                    case 'ACCESS':
+                        $stmt->bindValue($identifier, $this->access, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -877,6 +924,9 @@ abstract class DealerI18n implements ActiveRecordInterface
             case 3:
                 return $this->getDescription();
                 break;
+            case 4:
+                return $this->getAccess();
+                break;
             default:
                 return null;
                 break;
@@ -910,6 +960,7 @@ abstract class DealerI18n implements ActiveRecordInterface
             $keys[1] => $this->getLocale(),
             $keys[2] => $this->getTitle(),
             $keys[3] => $this->getDescription(),
+            $keys[4] => $this->getAccess(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -966,6 +1017,9 @@ abstract class DealerI18n implements ActiveRecordInterface
             case 3:
                 $this->setDescription($value);
                 break;
+            case 4:
+                $this->setAccess($value);
+                break;
         } // switch()
     }
 
@@ -994,6 +1048,7 @@ abstract class DealerI18n implements ActiveRecordInterface
         if (array_key_exists($keys[1], $arr)) $this->setLocale($arr[$keys[1]]);
         if (array_key_exists($keys[2], $arr)) $this->setTitle($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setDescription($arr[$keys[3]]);
+        if (array_key_exists($keys[4], $arr)) $this->setAccess($arr[$keys[4]]);
     }
 
     /**
@@ -1009,6 +1064,7 @@ abstract class DealerI18n implements ActiveRecordInterface
         if ($this->isColumnModified(DealerI18nTableMap::LOCALE)) $criteria->add(DealerI18nTableMap::LOCALE, $this->locale);
         if ($this->isColumnModified(DealerI18nTableMap::TITLE)) $criteria->add(DealerI18nTableMap::TITLE, $this->title);
         if ($this->isColumnModified(DealerI18nTableMap::DESCRIPTION)) $criteria->add(DealerI18nTableMap::DESCRIPTION, $this->description);
+        if ($this->isColumnModified(DealerI18nTableMap::ACCESS)) $criteria->add(DealerI18nTableMap::ACCESS, $this->access);
 
         return $criteria;
     }
@@ -1083,6 +1139,7 @@ abstract class DealerI18n implements ActiveRecordInterface
         $copyObj->setLocale($this->getLocale());
         $copyObj->setTitle($this->getTitle());
         $copyObj->setDescription($this->getDescription());
+        $copyObj->setAccess($this->getAccess());
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -1170,6 +1227,7 @@ abstract class DealerI18n implements ActiveRecordInterface
         $this->locale = null;
         $this->title = null;
         $this->description = null;
+        $this->access = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();

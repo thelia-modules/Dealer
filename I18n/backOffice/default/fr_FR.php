@@ -12,6 +12,7 @@ return array(
     "PhoneNumber" => "Numéro de téléphone",
     "WebSite" => "Site Web",
     "Title" => "Nom",
+    "Access" => "Accès",
     /* Création */
     "Schedule" => "Horaires",
     "Phone number" => "Numéro de téléphone",

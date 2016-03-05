@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS `dealer`;
 CREATE TABLE `dealer`
 (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `visible` TINYINT DEFAULT 0 NOT NULL,
     `address1` VARCHAR(255) NOT NULL,
     `address2` VARCHAR(255),
     `address3` VARCHAR(255),
@@ -246,6 +247,7 @@ CREATE TABLE `dealer_i18n`
     `locale` VARCHAR(5) DEFAULT 'en_US' NOT NULL,
     `title` VARCHAR(255) NOT NULL,
     `description` TEXT,
+    `access` TEXT,
     PRIMARY KEY (`id`,`locale`),
     CONSTRAINT `dealer_i18n_FK_1`
         FOREIGN KEY (`id`)
@@ -298,6 +300,7 @@ DROP TABLE IF EXISTS `dealer_version`;
 CREATE TABLE `dealer_version`
 (
     `id` INTEGER NOT NULL,
+    `visible` TINYINT DEFAULT 0 NOT NULL,
     `address1` VARCHAR(255) NOT NULL,
     `address2` VARCHAR(255),
     `address3` VARCHAR(255),

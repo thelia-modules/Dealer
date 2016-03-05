@@ -87,6 +87,21 @@ class DealerService extends AbstractBaseService implements BaseServiceInterface
         }
     }
 
+
+    public function toggleVisibilityFromId($id)
+    {
+        $dealer = DealerQuery::create()->findOneById($id);
+
+        $dealer->setVisible($dealer->getVisible() ? 0 : 1);
+
+        $event = new DealerEvent();
+        $event->setDealer($dealer);
+
+        $this->update($event);
+
+        return $event->getDealer();
+    }
+
     protected function hydrateObjectArray($data, $locale = null)
     {
         $model = new Dealer();
@@ -118,23 +133,32 @@ class DealerService extends AbstractBaseService implements BaseServiceInterface
         if (isset($data['country_id'])) {
             $model->setCountryId($data['country_id']);
         }
+        if (isset($data['visible'])) {
+            $model->setVisible($data['visible']);
+        }
 
         //  Optionnal Field
         if (isset($data['description'])) {
             $model->setDescription($data['description']);
-        }else {
+        } else {
             $model->setDescription(null);
+        }
+
+        if (isset($data['access'])) {
+            $model->setAccess($data['access']);
+        } else {
+            $model->setAccess(null);
         }
 
         if (isset($data['address2'])) {
             $model->setAddress2($data['address2']);
-        }else {
+        } else {
             $model->setAddress2(null);
         }
 
         if (isset($data['address3'])) {
             $model->setAddress3($data['address3']);
-        }else {
+        } else {
             $model->setAddress3(null);
         }
 

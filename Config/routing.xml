@@ -18,6 +18,10 @@
     <route id="dealer.dealer.delete" path="/admin/module/Dealer/dealer/delete" methods="post">
         <default key="_controller">Dealer:Dealer:delete</default>
     </route>
+    <route id="dealer.dealer.toggle.visible" path="/admin/module/Dealer/dealer/toggle-online/{id}" methods="post">
+        <default key="_controller">Dealer:Dealer:toggleVisible</default>
+        <requirement key="id">\d+</requirement>
+    </route>
 
     <!-- Contact -->
     <route id="dealer.dealer.contact.create" path="/admin/module/Dealer/contact" methods="post">

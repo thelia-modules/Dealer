@@ -24,6 +24,7 @@ use Thelia\Model\Country;
  *
  *
  * @method     ChildDealerQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildDealerQuery orderByVisible($order = Criteria::ASC) Order by the visible column
  * @method     ChildDealerQuery orderByAddress1($order = Criteria::ASC) Order by the address1 column
  * @method     ChildDealerQuery orderByAddress2($order = Criteria::ASC) Order by the address2 column
  * @method     ChildDealerQuery orderByAddress3($order = Criteria::ASC) Order by the address3 column
@@ -39,6 +40,7 @@ use Thelia\Model\Country;
  * @method     ChildDealerQuery orderByVersionCreatedBy($order = Criteria::ASC) Order by the version_created_by column
  *
  * @method     ChildDealerQuery groupById() Group by the id column
+ * @method     ChildDealerQuery groupByVisible() Group by the visible column
  * @method     ChildDealerQuery groupByAddress1() Group by the address1 column
  * @method     ChildDealerQuery groupByAddress2() Group by the address2 column
  * @method     ChildDealerQuery groupByAddress3() Group by the address3 column
@@ -97,6 +99,7 @@ use Thelia\Model\Country;
  * @method     ChildDealer findOneOrCreate(ConnectionInterface $con = null) Return the first ChildDealer matching the query, or a new ChildDealer object populated from the query conditions when no match is found
  *
  * @method     ChildDealer findOneById(int $id) Return the first ChildDealer filtered by the id column
+ * @method     ChildDealer findOneByVisible(int $visible) Return the first ChildDealer filtered by the visible column
  * @method     ChildDealer findOneByAddress1(string $address1) Return the first ChildDealer filtered by the address1 column
  * @method     ChildDealer findOneByAddress2(string $address2) Return the first ChildDealer filtered by the address2 column
  * @method     ChildDealer findOneByAddress3(string $address3) Return the first ChildDealer filtered by the address3 column
@@ -112,6 +115,7 @@ use Thelia\Model\Country;
  * @method     ChildDealer findOneByVersionCreatedBy(string $version_created_by) Return the first ChildDealer filtered by the version_created_by column
  *
  * @method     array findById(int $id) Return ChildDealer objects filtered by the id column
+ * @method     array findByVisible(int $visible) Return ChildDealer objects filtered by the visible column
  * @method     array findByAddress1(string $address1) Return ChildDealer objects filtered by the address1 column
  * @method     array findByAddress2(string $address2) Return ChildDealer objects filtered by the address2 column
  * @method     array findByAddress3(string $address3) Return ChildDealer objects filtered by the address3 column
@@ -220,7 +224,7 @@ abstract class DealerQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer WHERE ID = :p0';
+        $sql = 'SELECT ID, VISIBLE, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -348,6 +352,47 @@ abstract class DealerQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerTableMap::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the visible column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVisible(1234); // WHERE visible = 1234
+     * $query->filterByVisible(array(12, 34)); // WHERE visible IN (12, 34)
+     * $query->filterByVisible(array('min' => 12)); // WHERE visible > 12
+     * </code>
+     *
+     * @param     mixed $visible The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function filterByVisible($visible = null, $comparison = null)
+    {
+        if (is_array($visible)) {
+            $useMinMax = false;
+            if (isset($visible['min'])) {
+                $this->addUsingAlias(DealerTableMap::VISIBLE, $visible['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($visible['max'])) {
+                $this->addUsingAlias(DealerTableMap::VISIBLE, $visible['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DealerTableMap::VISIBLE, $visible, $comparison);
     }
 
     /**

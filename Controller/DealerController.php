@@ -14,9 +14,14 @@
 namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
+use Dealer\Dealer as DealerModule;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
+use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Thelia\Core\HttpFoundation\JsonResponse;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Tools\URL;
 
 /**
@@ -106,6 +111,52 @@ class DealerController extends BaseController
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
             ["dealer_id" => $id,]));
+    }
+
+    public function toggleVisibleAction($id)
+    {
+        // Check current user authorization
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, DealerModule::getModuleCode(),
+                AccessManager::UPDATE)
+        ) {
+            return $response;
+        }
+
+        // Error (Default: false)
+        $error_msg = false;
+
+        $retour = [];
+        $code = 200;
+
+
+        $con = Propel::getConnection();
+        $con->beginTransaction();
+
+        try {
+
+            $updatedObject = $this->getService()->toggleVisibilityFromId($id);
+
+            // Check if object exist
+            if (!$updatedObject) {
+                throw new \LogicException(
+                    $this->getTranslator()->trans("No %obj was updated.", ['%obj' => static::CONTROLLER_ENTITY_NAME])
+                );
+            }
+
+            $con->commit();
+
+            $retour["message"] = "Visibility was updated";
+
+
+        } catch (\Exception $ex) {
+            $con->rollBack();
+            // Any other error
+            $retour["message"] = "Visibility can be updated";
+            $code = 500;
+            $retour["error"] = $ex->getMessage();
+        }
+
+        return JsonResponse::create($retour, $code);
     }
 
 }

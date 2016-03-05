@@ -58,10 +58,16 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 ->set("LAT", $dealer->getLatitude())
                 ->set("LON", $dealer->getLongitude())
                 ->set("CREATE_DATE", $dealer->getCreatedAt())
-                ->set("UPDATE_DATE", $dealer->getUpdatedAt());
+                ->set("UPDATE_DATE", $dealer->getUpdatedAt())
+                ->set("VISIBLE", $dealer->getVisible())
+            ;
 
             if ($dealer->hasVirtualColumn('i18n_TITLE')) {
                 $loopResultRow->set("TITLE", $dealer->getVirtualColumn('i18n_TITLE'));
+            }
+
+            if ($dealer->hasVirtualColumn('i18n_ACCESS')) {
+                $loopResultRow->set("ACCESS", $dealer->getVirtualColumn('i18n_ACCESS'));
             }
 
             if ($dealer->hasVirtualColumn('i18n_DESCRIPTION')) {
@@ -120,7 +126,8 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $query,
             [
                 'TITLE',
-                'DESCRIPTION'
+                'DESCRIPTION',
+                'ACCESS'
             ],
             null,
             'ID',

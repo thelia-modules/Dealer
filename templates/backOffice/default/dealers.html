@@ -48,6 +48,9 @@
                             }
                         </th>
                         <th>
+                            {intl l="Visible"}
+                        </th>
+                        <th>
                             {admin_sortable_header
                                 current_order=$order
                                 order='address1'
@@ -94,6 +97,24 @@
                         <tr>
                             <td>
                                 <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$TITLE}</a>
+                            </td>
+                            <td>
+                                {loop type="auth" name="can_change" role="ADMIN" resource="admin.folder" access="UPDATE"}
+                                    <div class="make-switch switch-small toggle-visible" data-id="{$ID}" data-on="success"
+                                         data-off="danger" data-on-label="<i class='glyphicon glyphicon-ok'></i>"
+                                         data-off-label="<i class='glyphicon glyphicon-remove'></i>">
+                                        <input type="checkbox" class="link" {if $VISIBLE == 1}checked="checked"{/if}>
+                                    </div>
+                                {/loop}
+
+                                {elseloop rel="can_change"}
+                                    <div class="make-switch switch-small" data-on="success" data-off="danger"
+                                         data-on-label="<i class='glyphicon glyphicon-ok'></i>"
+                                         data-off-label="<i class='glyphicon glyphicon-remove'></i>">
+                                        <input type="checkbox" class="disabled" disabled="disabled"
+                                               {if $VISIBLE == 1}checked="checked"{/if}>
+                                    </div>
+                                {/elseloop}
                             </td>
                             <td>
                                 {$ADDRESS1}
@@ -203,10 +224,23 @@
 {/block}
 
 {block name="javascript-initialization"}
+    {javascripts file='assets/js/bootstrap-switch/bootstrap-switch.js'}
+        <script src="{$asset_url}"></script>
+    {/javascripts}
+
     <script>
         $(function() {
             $('a.dealer-delete').click(function(ev) {
                 $('#dealer_delete_id').val($(this).data('id'));
+            });
+
+            {* Toggle object visibility *}
+
+            $(".toggle-visible").on('switch-change', function (event, data) {
+                $.ajax({
+                    method: "POST",
+                    url: "{url path='admin/module/Dealer/dealer/toggle-online/'}" + $(this).data('id')
+                });
             });
         });
     </script>

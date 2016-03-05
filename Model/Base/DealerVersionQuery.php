@@ -22,6 +22,7 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildDealerVersionQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildDealerVersionQuery orderByVisible($order = Criteria::ASC) Order by the visible column
  * @method     ChildDealerVersionQuery orderByAddress1($order = Criteria::ASC) Order by the address1 column
  * @method     ChildDealerVersionQuery orderByAddress2($order = Criteria::ASC) Order by the address2 column
  * @method     ChildDealerVersionQuery orderByAddress3($order = Criteria::ASC) Order by the address3 column
@@ -49,6 +50,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerVersionQuery orderByDealerProductVersions($order = Criteria::ASC) Order by the dealer_product_versions column
  *
  * @method     ChildDealerVersionQuery groupById() Group by the id column
+ * @method     ChildDealerVersionQuery groupByVisible() Group by the visible column
  * @method     ChildDealerVersionQuery groupByAddress1() Group by the address1 column
  * @method     ChildDealerVersionQuery groupByAddress2() Group by the address2 column
  * @method     ChildDealerVersionQuery groupByAddress3() Group by the address3 column
@@ -87,6 +89,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerVersion findOneOrCreate(ConnectionInterface $con = null) Return the first ChildDealerVersion matching the query, or a new ChildDealerVersion object populated from the query conditions when no match is found
  *
  * @method     ChildDealerVersion findOneById(int $id) Return the first ChildDealerVersion filtered by the id column
+ * @method     ChildDealerVersion findOneByVisible(int $visible) Return the first ChildDealerVersion filtered by the visible column
  * @method     ChildDealerVersion findOneByAddress1(string $address1) Return the first ChildDealerVersion filtered by the address1 column
  * @method     ChildDealerVersion findOneByAddress2(string $address2) Return the first ChildDealerVersion filtered by the address2 column
  * @method     ChildDealerVersion findOneByAddress3(string $address3) Return the first ChildDealerVersion filtered by the address3 column
@@ -114,6 +117,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildDealerVersion findOneByDealerProductVersions(array $dealer_product_versions) Return the first ChildDealerVersion filtered by the dealer_product_versions column
  *
  * @method     array findById(int $id) Return ChildDealerVersion objects filtered by the id column
+ * @method     array findByVisible(int $visible) Return ChildDealerVersion objects filtered by the visible column
  * @method     array findByAddress1(string $address1) Return ChildDealerVersion objects filtered by the address1 column
  * @method     array findByAddress2(string $address2) Return ChildDealerVersion objects filtered by the address2 column
  * @method     array findByAddress3(string $address3) Return ChildDealerVersion objects filtered by the address3 column
@@ -227,7 +231,7 @@ abstract class DealerVersionQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY, DEALER_SHEDULES_IDS, DEALER_SHEDULES_VERSIONS, DEALER_CONTACT_IDS, DEALER_CONTACT_VERSIONS, DEALER_CONTENT_IDS, DEALER_CONTENT_VERSIONS, DEALER_FOLDER_IDS, DEALER_FOLDER_VERSIONS, DEALER_BRAND_IDS, DEALER_BRAND_VERSIONS, DEALER_PRODUCT_IDS, DEALER_PRODUCT_VERSIONS FROM dealer_version WHERE ID = :p0 AND VERSION = :p1';
+        $sql = 'SELECT ID, VISIBLE, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY, DEALER_SHEDULES_IDS, DEALER_SHEDULES_VERSIONS, DEALER_CONTACT_IDS, DEALER_CONTACT_VERSIONS, DEALER_CONTENT_IDS, DEALER_CONTENT_VERSIONS, DEALER_FOLDER_IDS, DEALER_FOLDER_VERSIONS, DEALER_BRAND_IDS, DEALER_BRAND_VERSIONS, DEALER_PRODUCT_IDS, DEALER_PRODUCT_VERSIONS FROM dealer_version WHERE ID = :p0 AND VERSION = :p1';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key[0], PDO::PARAM_INT);
@@ -369,6 +373,47 @@ abstract class DealerVersionQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerVersionTableMap::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the visible column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByVisible(1234); // WHERE visible = 1234
+     * $query->filterByVisible(array(12, 34)); // WHERE visible IN (12, 34)
+     * $query->filterByVisible(array('min' => 12)); // WHERE visible > 12
+     * </code>
+     *
+     * @param     mixed $visible The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerVersionQuery The current query, for fluid interface
+     */
+    public function filterByVisible($visible = null, $comparison = null)
+    {
+        if (is_array($visible)) {
+            $useMinMax = false;
+            if (isset($visible['min'])) {
+                $this->addUsingAlias(DealerVersionTableMap::VISIBLE, $visible['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($visible['max'])) {
+                $this->addUsingAlias(DealerVersionTableMap::VISIBLE, $visible['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+
+        return $this->addUsingAlias(DealerVersionTableMap::VISIBLE, $visible, $comparison);
     }
 
     /**

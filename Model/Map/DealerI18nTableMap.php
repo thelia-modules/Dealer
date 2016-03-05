@@ -58,7 +58,7 @@ class DealerI18nTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class DealerI18nTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the ID field
@@ -91,6 +91,11 @@ class DealerI18nTableMap extends TableMap
     const DESCRIPTION = 'dealer_i18n.DESCRIPTION';
 
     /**
+     * the column name for the ACCESS field
+     */
+    const ACCESS = 'dealer_i18n.ACCESS';
+
+    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -102,12 +107,12 @@ class DealerI18nTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Locale', 'Title', 'Description', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'locale', 'title', 'description', ),
-        self::TYPE_COLNAME       => array(DealerI18nTableMap::ID, DealerI18nTableMap::LOCALE, DealerI18nTableMap::TITLE, DealerI18nTableMap::DESCRIPTION, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'LOCALE', 'TITLE', 'DESCRIPTION', ),
-        self::TYPE_FIELDNAME     => array('id', 'locale', 'title', 'description', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id', 'Locale', 'Title', 'Description', 'Access', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'locale', 'title', 'description', 'access', ),
+        self::TYPE_COLNAME       => array(DealerI18nTableMap::ID, DealerI18nTableMap::LOCALE, DealerI18nTableMap::TITLE, DealerI18nTableMap::DESCRIPTION, DealerI18nTableMap::ACCESS, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'LOCALE', 'TITLE', 'DESCRIPTION', 'ACCESS', ),
+        self::TYPE_FIELDNAME     => array('id', 'locale', 'title', 'description', 'access', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -117,12 +122,12 @@ class DealerI18nTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Locale' => 1, 'Title' => 2, 'Description' => 3, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'locale' => 1, 'title' => 2, 'description' => 3, ),
-        self::TYPE_COLNAME       => array(DealerI18nTableMap::ID => 0, DealerI18nTableMap::LOCALE => 1, DealerI18nTableMap::TITLE => 2, DealerI18nTableMap::DESCRIPTION => 3, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'LOCALE' => 1, 'TITLE' => 2, 'DESCRIPTION' => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'locale' => 1, 'title' => 2, 'description' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Locale' => 1, 'Title' => 2, 'Description' => 3, 'Access' => 4, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'locale' => 1, 'title' => 2, 'description' => 3, 'access' => 4, ),
+        self::TYPE_COLNAME       => array(DealerI18nTableMap::ID => 0, DealerI18nTableMap::LOCALE => 1, DealerI18nTableMap::TITLE => 2, DealerI18nTableMap::DESCRIPTION => 3, DealerI18nTableMap::ACCESS => 4, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'LOCALE' => 1, 'TITLE' => 2, 'DESCRIPTION' => 3, 'ACCESS' => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'locale' => 1, 'title' => 2, 'description' => 3, 'access' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -145,6 +150,7 @@ class DealerI18nTableMap extends TableMap
         $this->addPrimaryKey('LOCALE', 'Locale', 'VARCHAR', true, 5, 'en_US');
         $this->addColumn('TITLE', 'Title', 'VARCHAR', true, 255, null);
         $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', false, null, null);
+        $this->addColumn('ACCESS', 'Access', 'LONGVARCHAR', false, null, null);
     } // initialize()
 
     /**
@@ -346,11 +352,13 @@ class DealerI18nTableMap extends TableMap
             $criteria->addSelectColumn(DealerI18nTableMap::LOCALE);
             $criteria->addSelectColumn(DealerI18nTableMap::TITLE);
             $criteria->addSelectColumn(DealerI18nTableMap::DESCRIPTION);
+            $criteria->addSelectColumn(DealerI18nTableMap::ACCESS);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.LOCALE');
             $criteria->addSelectColumn($alias . '.TITLE');
             $criteria->addSelectColumn($alias . '.DESCRIPTION');
+            $criteria->addSelectColumn($alias . '.ACCESS');
         }
     }
 

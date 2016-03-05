@@ -1,0 +1,8 @@
+ALTER TABLE `dealer`
+ADD COLUMN `visible` TINYINT DEFAULT 0 NOT NULL AFTER `id`;
+
+ALTER TABLE `dealer_i18n`
+ADD COLUMN `access` TEXT AFTER `description`;
+
+ALTER TABLE `dealer_version`
+ADD COLUMN `visible` TINYINT DEFAULT 0 NOT NULL AFTER `id`;
