@@ -103,6 +103,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             Argument::createIntListTypeArgument('folder_id'),
             Argument::createIntListTypeArgument('brand_id'),
             Argument::createIntListTypeArgument('product_id'),
+            Argument::createBooleanTypeArgument('visible'),
             Argument::createAnyListTypeArgument('city'),
             Argument::createBooleanTypeArgument('with_prev_next_info', false),
             Argument::createEnumListTypeArgument('order', [
@@ -144,6 +145,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
         if ($city = $this->getCity()) {
             $query->filterByCity($city);
+        }
+
+        if (null != $visible = $this->getVisible()) {
+            $query->filterByVisible($visible);
         }
 
         if($content = $this->getContentId()){
