@@ -26,7 +26,7 @@
         <div class="general-block-decorator">
             <div class="title title-without-tabs">
                 <div class="pull-right">
-                    {loop type="dealer" name="dealer-page" backend_context="yes" id=$smarty.get.dealer_id with_prev_next_info=true}
+                    {loop type="dealer" name="dealer-page" backend_context="yes" id=$smarty.get.dealer_id with_prev_next_info=true limit=1}
                     {if $HAS_PREVIOUS}
                         <a href="{url path="/admin/module/Dealer/dealer/edit" dealer_id=$PREVIOUS}"
                            class="btn btn-default" title="{intl l='Edit previous dealer' d="dealer.bo.default"}"><span
