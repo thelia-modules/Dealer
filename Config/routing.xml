@@ -98,4 +98,9 @@
     <route id="dealer.product.unlink" path="/admin/module/Dealer/product/delete" methods="post">
         <default key="_controller">Dealer:ProductLink:delete</default>
     </route>
+
+    <!-- API -->
+    <route id="dealer.api.default" path="/api/3/dealer" methods="get">
+        <default key="_controller">Dealer:Api:default</default>
+    </route>
 </routes>
