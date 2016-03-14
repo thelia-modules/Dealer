@@ -13,8 +13,9 @@ use Dealer\Model\DealerContact;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\Map\TableMap;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Thelia\Controller\Api\BaseApiController;
 use Thelia\Core\HttpFoundation\JsonResponse;
-use Thelia\Controller\Admin\ApiController as BaseApiController;
+
 
 
 /**
@@ -36,18 +37,28 @@ class ApiController extends BaseApiController
                 ->joinWithI18n($this->getLocale())
                 ->filterByVisible(1);
 
-            $query->limit($this->getLimit());
-            $query->offset($this->getPageOffset());
-
             if (null != $id = $this->getRequest()->get("dealer_id")) {
                 $query->filterById($id);
+            }
+
+            $return["total"] = $query->count();
+
+            $query->limit($this->getLimit());
+            $return["limit"] = $this->getLimit();
+
+
+            if ($this->getPageOffset() != 0) {
+                $query->offset($this->getPageOffset());
+                $return["offset"] = $this->getPageOffset();
+            }
+            if ($this->getOffset() != 0) {
+                $query->offset($this->getOffset());
+                $return["offset"] = $this->getOffset();
             }
 
             $dealers = $query->find();
 
             $return["data"] = [];
-            $return["limit"] = $this->getLimit();
-            $return["offset"] = $this->getOffset();
 
             /** @var Dealer $dealer */
             foreach ($dealers as $dealer) {
