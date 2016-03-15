@@ -11,11 +11,11 @@ namespace Dealer\Controller;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerContact;
 use Dealer\Model\DealerQuery;
+use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Thelia\Controller\Api\BaseApiController;
-use Thelia\Core\HttpFoundation\JsonResponse;
-
 
 
 /**
@@ -27,6 +27,9 @@ class ApiController extends BaseApiController
 
     const DEFAULT_LIMIT = 10;
 
+    /**
+     * @return JsonResponse
+     */
     public function defaultAction()
     {
         $return = [];
@@ -56,17 +59,22 @@ class ApiController extends BaseApiController
                 $return["offset"] = $this->getOffset();
             }
 
+            $query = $this->addOrder($query);
+
             $dealers = $query->find();
 
             $return["data"] = [];
 
             /** @var Dealer $dealer */
             foreach ($dealers as $dealer) {
+
                 $dataI18n = $dealer->getDealerI18ns()->getData()[0]->toArray(TableMap::TYPE_FIELDNAME);
                 $dataRow = array_merge($dealer->toArray(TableMap::TYPE_FIELDNAME), $dataI18n);
                 $dataRow["contacts"] = $this->getContacts($dealer);
                 $dataRow["default_schedules"] = $this->getDefaultSchedules($dealer);
                 $dataRow["extra_schedules"] = $this->getExtraSchedules($dealer);
+
+                $dataRow = $this->afterProcessDealer($dataRow, $dealer);
 
                 $return["data"][] = $dataRow;
             }
@@ -80,6 +88,10 @@ class ApiController extends BaseApiController
         return new JsonResponse($return, $code);
     }
 
+    /**
+     * @param Dealer $dealer
+     * @return array
+     */
     protected function getContacts(Dealer $dealer)
     {
 
@@ -93,6 +105,10 @@ class ApiController extends BaseApiController
         return $return;
     }
 
+    /**
+     * @param DealerContact $contact
+     * @return array
+     */
     protected function getContactInfo(DealerContact $contact)
     {
         $return = [];
@@ -104,6 +120,10 @@ class ApiController extends BaseApiController
         return $return;
     }
 
+    /**
+     * @param Dealer $dealer
+     * @return array
+     */
     protected function getDefaultSchedules(Dealer $dealer)
     {
         $return = [];
@@ -113,6 +133,10 @@ class ApiController extends BaseApiController
         return $return;
     }
 
+    /**
+     * @param Dealer $dealer
+     * @return array
+     */
     protected function getExtraSchedules(Dealer $dealer)
     {
         $return = [];
@@ -122,27 +146,77 @@ class ApiController extends BaseApiController
         return $return;
     }
 
+    /**
+     * @return int|mixed
+     */
     protected function getLimit()
     {
         $limit = $this->getRequest()->get("limit");
         return ($limit) ? $limit : static::DEFAULT_LIMIT;
     }
 
+    /**
+     * @return int|mixed
+     */
     protected function getOffset()
     {
         $offset = $this->getRequest()->get("offset");
         return ($offset) ? $offset : 0;
     }
 
+    /**
+     * @return int|mixed
+     */
     protected function getPageOffset()
     {
         $page = $this->getRequest()->get("page");
         return ($page) ? ($page - 1) * $this->getLimit() : 0;
     }
 
+    /**
+     * @return mixed|string
+     */
     protected function getLocale()
     {
         $locale = $this->getRequest()->get("locale");
         return ($locale) ? $locale : 'fr_FR';
+    }
+
+    /**
+     * @param DealerQuery $query
+     * @return DealerQuery
+     */
+    protected function addOrder(DealerQuery $query)
+    {
+
+        $order = $this->getRequest()->get("order");
+        switch ($order) {
+            case "id" :
+                $query->orderById();
+                break;
+            case "id-reverse" :
+                $query->orderById(Criteria::DESC);
+                break;
+            case "date" :
+                $query->orderByCreatedAt();
+                break;
+            case "date-reverse" :
+                $query->orderByCreatedAt(Criteria::DESC);
+                break;
+            default:
+                $query->orderById();
+                break;
+        }
+        return $query;
+    }
+
+    /**
+     * @param $dataRow
+     * @param Dealer $dealer
+     * @return mixed
+     */
+    protected function afterProcessDealer($dataRow, Dealer $dealer)
+    {
+        return $dataRow;
     }
 }
