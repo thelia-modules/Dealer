@@ -27,6 +27,7 @@ use Thelia\Tools\URL;
 class ContactController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer-contact";
+    const CONTROLLER_CHECK_RESOURCE = Dealer::RESOURCES_CONTACT;
 
     /**
      * Use to get render of list

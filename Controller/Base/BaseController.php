@@ -14,6 +14,7 @@
 namespace Dealer\Controller\Base;
 
 use Dealer\Dealer;
+use Dealer\Model\DealerQuery;
 use Propel\Generator\Model\Database;
 use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,6 +36,10 @@ abstract class BaseController extends BaseAdminController
      * Name of entity associated with controller
      */
     const CONTROLLER_ENTITY_NAME = null;
+    /**
+     * Name of resource to check
+     */
+    const CONTROLLER_CHECK_RESOURCE = [];
 
     /**
      * Current Service Associated to controller
@@ -96,7 +101,7 @@ abstract class BaseController extends BaseAdminController
     public function defaultAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
                 AccessManager::VIEW)
         ) {
             return $response;
@@ -112,7 +117,7 @@ abstract class BaseController extends BaseAdminController
     public function createAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
                 AccessManager::CREATE)
         ) {
             return $response;
@@ -172,7 +177,7 @@ abstract class BaseController extends BaseAdminController
     public function updateAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE,Dealer::getModuleCode(),
                 AccessManager::UPDATE)
         ) {
             return $response;
@@ -199,7 +204,7 @@ abstract class BaseController extends BaseAdminController
     public function processUpdateAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
                 AccessManager::UPDATE)
         ) {
             return $response;
@@ -272,7 +277,7 @@ abstract class BaseController extends BaseAdminController
     public function deleteAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
                 AccessManager::DELETE)
         ) {
             return $response;
@@ -353,6 +358,37 @@ abstract class BaseController extends BaseAdminController
             ->setGeneralError($errorMessage);
 
         return $this->defaultAction();
+    }
+
+    protected function checkUserAccessDealer($id = null)
+    {
+        $admin = $this->getSecurityContext()->getAdminUser();
+        if (in_array("SUPERADMIN", $admin->getRoles())) {
+            return null;
+        }
+
+        $dealers = DealerQuery::create()->filterById($id)->useDealerAdminQuery()->filterByAdminId($admin->getId())->endUse()->find();
+
+        if (count($dealers) > 0) {
+            return null;
+        }
+
+        return $this->errorPage($this->getTranslator()->trans("Sorry, you're not allowed to perform this action"), 403);
+    }
+
+    protected function getAdminDealer()
+    {
+        $admin = $this->getSecurityContext()->getAdminUser();
+
+        if ($admin === null) {
+            return null;
+        }
+
+        if (in_array("SUPERADMIN", $admin->getRoles())) {
+            return DealerQuery::create()->find();
+        }
+
+        return DealerQuery::create()->useDealerAdminQuery()->filterByAdminId($admin->getId())->endUse()->find();
     }
 
 

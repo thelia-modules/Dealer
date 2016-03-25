@@ -7,7 +7,6 @@
 
 {block name="page-title"}{intl l='Dealer' d='dealer.bo.default'}{/block}
 
-{block name="check-resource"}admin.module{/block}
 {block name="check-access"}view{/block}
 {block name="check-module"}Dealer{/block}
 
@@ -27,7 +26,7 @@
                     <caption class="clearfix">
                         {intl l="Dealer" d='dealer.bo.default'}
 
-                        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+                        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
                             <div class="pull-right">
                                 <a class="btn btn-default btn-primary" title="{intl l='Create a new Dealer entry' d='dealer.bo.default'}" data-target="#dealer-create" data-toggle="modal">
                                     <i class="glyphicon glyphicon-plus-sign"></i>
@@ -93,13 +92,13 @@
                     </thead>
 
                     <tbody>
-                    {loop name="dealer-list" type="dealer" order=$order force_return=true}
+                    {loop name="dealer-list" type="dealer" order=$order force_return=true id=$dealers}
                         <tr>
                             <td>
                                 <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$TITLE}</a>
                             </td>
                             <td>
-                                {loop type="auth" name="can_change" role="ADMIN" resource="admin.folder" access="UPDATE"}
+                                {loop type="auth" name="can_change" role="ADMIN" resource="admin.dealer" module="Dealer" access="UPDATE"}
                                     <div class="make-switch switch-small toggle-visible" data-id="{$ID}" data-on="success"
                                          data-off="danger" data-on-label="<i class='glyphicon glyphicon-ok'></i>"
                                          data-off-label="<i class='glyphicon glyphicon-remove'></i>">
@@ -133,12 +132,12 @@
                             {* Actions *}
                             <td>
                                 <div class="btn-group">
-                                    {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
+                                    {loop name="auth-edit" type="auth" role="ADMIN" access="UPDATE" module="Dealer"}
                                         <a class="btn btn-default btn-xs" title="{intl l='Edit this Dealer' d='dealer.bo.default'}"  href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">
                                             <i class="glyphicon glyphicon-edit"></i>
                                         </a>
                                     {/loop}
-                                    {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                                    {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.dealer" access="DELETE" module="Dealer"}
                                         <a class="btn btn-default btn-xs dealer-delete" title="{intl l='Delete this Dealer' d='dealer.bo.default'}" data-target="#dealer-delete" data-toggle="modal" data-id="{$ID}">
                                             <i class="glyphicon glyphicon-trash"></i>
                                         </a>

@@ -38,9 +38,11 @@
                            placeholder="{intl l='The Dealer longitude' d="dealer.bo.default"}"/>
                 </div>
             {/form_field}
+            {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.geo" access="UPDATE" module="Dealer"}
             <div class="btn-grp">
                 <button type="submit" class="btn btn-primary">{intl l="Save"}</button>
             </div>
+            {/loop}
         </form>
         {/loop}
     </div>

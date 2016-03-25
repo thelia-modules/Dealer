@@ -29,6 +29,8 @@ use Thelia\Tools\URL;
 class FolderLinkController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer_folder_link";
+
+    const CONTROLLER_CHECK_RESOURCE = Dealer::RESOURCES_ASSOCIATED;
     /**
      * @inheritDoc
      */

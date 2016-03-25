@@ -29,6 +29,7 @@ use Thelia\Tools\URL;
 class ProductLinkController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer_product_link";
+    const CONTROLLER_CHECK_RESOURCE = Dealer::RESOURCES_ASSOCIATED;
     /**
      * @inheritDoc
      */

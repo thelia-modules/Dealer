@@ -29,6 +29,7 @@ use Thelia\Tools\URL;
 class AdminLinkController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer_admin_link";
+    const CONTROLLER_CHECK_RESOURCE = Dealer::RESOURCES_USERS;
     /**
      * @inheritDoc
      */

@@ -29,6 +29,7 @@ use Thelia\Tools\URL;
 class ContentController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer_content_link";
+    const CONTROLLER_CHECK_RESOURCE = Dealer::RESOURCES_ASSOCIATED;
     /**
      * @inheritDoc
      */

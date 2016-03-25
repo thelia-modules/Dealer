@@ -3,7 +3,7 @@
         <!-- Default Schedules -->
         <table class="table table-striped table-condensed">
             <caption class="clearfix">
-                {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+                {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="CREATE" module="Dealer"}
                     <div class="pull-right">
                         <a class="btn btn-default btn-primary dealer-schedules-default"
                            title="{intl l='Create a new Default Schedules' d='dealer.bo.default'}"
@@ -47,7 +47,7 @@
                     {* Actions *}
                     <td>
                         <div class="btn-group">
-                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
+                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="UPDATE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-update-default"
                                    title="{intl l='Modify this Schedule' d='dealer.bo.default'}"
                                    data-target="#dealer-schedules-update" data-toggle="modal" data-id="{$ID}"
@@ -56,14 +56,14 @@
                                     <i class="glyphicon glyphicon-edit"></i>
                                 </a>
                             {/loop}
-                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="CREATE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-clone"
                                    title="{intl l='Clone this Schedule' d='dealer.bo.default'}"
                                    data-target="#dealer-schedules-clone" data-toggle="modal" data-id="{$ID}">
                                     <i class="glyphicon glyphicon-plus-sign"></i>
                                 </a>
                             {/loop}
-                            {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                            {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="DELETE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-delete"
                                    title="{intl l='Delete this Schedule' d='dealer.bo.default'}"
                                    data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
@@ -92,7 +92,7 @@
         <!-- Extra Schedules -->
         <table class="table table-striped table-condensed">
             <caption class="clearfix">
-                {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+                {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="CREATE" module="Dealer"}
                     <div class="pull-right">
                         <a class="btn btn-default btn-primary dealer-schedules-extra"
                            title="{intl l='Create a new Extra Schedules' d='dealer.bo.default'}"
@@ -148,7 +148,7 @@
                     {* Actions *}
                     <td>
                         <div class="btn-group">
-                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
+                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="UPDATE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-update-extra"
                                    title="{intl l='Modify this Schedule' d='dealer.bo.default'}"
                                    data-target="#dealer-schedules-update" data-toggle="modal" data-id="{$ID}"
@@ -159,7 +159,7 @@
                                     <i class="glyphicon glyphicon-edit"></i>
                                 </a>
                             {/loop}
-                            {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                            {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="DELETE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-delete"
                                    title="{intl l='Delete this Schedule' d='dealer.bo.default'}"
                                    data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">
@@ -186,7 +186,7 @@
         <!-- Closed Schedules -->
         <table class="table table-striped table-condensed">
             <caption class="clearfix">
-                {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+                {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="CREATE" module="Dealer"}
                     <div class="pull-right">
                         <a class="btn btn-default btn-primary dealer-schedules-closed"
                            title="{intl l='Create a new Extra Schedules' d='dealer.bo.default'}"
@@ -242,7 +242,7 @@
                     {* Actions *}
                     <td>
                         <div class="btn-group">
-                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="UPDATE" module="Dealer"}
+                            {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="UPDATE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-update-closed"
                                    title="{intl l='Modify this Schedule' d='dealer.bo.default'}"
                                    data-target="#dealer-schedules-update" data-toggle="modal" data-id="{$ID}"
@@ -253,7 +253,7 @@
                                     <i class="glyphicon glyphicon-edit"></i>
                                 </a>
                             {/loop}
-                            {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                            {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="DELETE" module="Dealer"}
                                 <a class="btn btn-default btn-xs dealer-schedules-delete"
                                    title="{intl l='Delete this Schedule' d='dealer.bo.default'}"
                                    data-target="#dealer-schedules-delete" data-toggle="modal" data-id="{$ID}">

@@ -1,7 +1,7 @@
 <div class="col-sm-6">
     <table class="table table-striped table-condensed">
         <caption class="clearfix">
-            {loop name="auth-create" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="Dealer"}
+            {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.associated" access="CREATE" module="Dealer"}
                 <div class="pull-right">
                     <a class="btn btn-default btn-primary dealer-folder-link"
                        title="{intl l='Link a new folder' d='dealer.bo.default'}"
@@ -65,7 +65,7 @@
                         <span class="glyphicon glyphicon-cog"></span>
                     </div>
                     <div class="toolbar-options hidden">
-                        {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.module" access="DELETE" module="Dealer"}
+                        {loop name="auth-delete" type="auth" role="ADMIN" resource="admin.dealer.associated" access="DELETE" module="Dealer"}
                             <a class="folder-delete" title="{intl l='Unlink this folder' d="dealer.bo.default"}"
                                href="#dealer-folder-unlink"
                                data-id="{$ID}" data-toggle="modal"><span class="glyphicon glyphicon-trash"></span></a>

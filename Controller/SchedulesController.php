@@ -31,6 +31,7 @@ use Thelia\Tools\URL;
 class SchedulesController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer-schedules";
+    const CONTROLLER_CHECK_RESOURCE = Dealer::RESOURCES_SCHEDULES;
 
     /**
      * Use to get render of list

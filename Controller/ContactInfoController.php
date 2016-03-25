@@ -14,6 +14,7 @@
 namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
+use Dealer\Dealer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Tools\URL;
 
@@ -24,6 +25,7 @@ use Thelia\Tools\URL;
 class ContactInfoController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer-contact-info";
+    const CONTROLLER_CHECK_RESOURCE = Dealer::RESOURCES_CONTACT;
     /**
      * Use to get render of list
      * @return mixed
