@@ -87,6 +87,10 @@ use Thelia\Model\Country;
  * @method     ChildDealerQuery rightJoinDealerProduct($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerProduct relation
  * @method     ChildDealerQuery innerJoinDealerProduct($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerProduct relation
  *
+ * @method     ChildDealerQuery leftJoinDealerAdmin($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerAdmin relation
+ * @method     ChildDealerQuery rightJoinDealerAdmin($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerAdmin relation
+ * @method     ChildDealerQuery innerJoinDealerAdmin($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerAdmin relation
+ *
  * @method     ChildDealerQuery leftJoinDealerI18n($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerI18n relation
  * @method     ChildDealerQuery rightJoinDealerI18n($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerI18n relation
  * @method     ChildDealerQuery innerJoinDealerI18n($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerI18n relation
@@ -1375,6 +1379,79 @@ abstract class DealerQuery extends ModelCriteria
         return $this
             ->joinDealerProduct($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'DealerProduct', '\Dealer\Model\DealerProductQuery');
+    }
+
+    /**
+     * Filter the query by a related \Dealer\Model\DealerAdmin object
+     *
+     * @param \Dealer\Model\DealerAdmin|ObjectCollection $dealerAdmin  the related object to use as filter
+     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function filterByDealerAdmin($dealerAdmin, $comparison = null)
+    {
+        if ($dealerAdmin instanceof \Dealer\Model\DealerAdmin) {
+            return $this
+                ->addUsingAlias(DealerTableMap::ID, $dealerAdmin->getDealerId(), $comparison);
+        } elseif ($dealerAdmin instanceof ObjectCollection) {
+            return $this
+                ->useDealerAdminQuery()
+                ->filterByPrimaryKeys($dealerAdmin->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByDealerAdmin() only accepts arguments of type \Dealer\Model\DealerAdmin or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the DealerAdmin relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return ChildDealerQuery The current query, for fluid interface
+     */
+    public function joinDealerAdmin($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('DealerAdmin');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'DealerAdmin');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the DealerAdmin relation DealerAdmin object
+     *
+     * @see useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return   \Dealer\Model\DealerAdminQuery A secondary query class using the current class as primary query
+     */
+    public function useDealerAdminQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinDealerAdmin($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'DealerAdmin', '\Dealer\Model\DealerAdminQuery');
     }
 
     /**

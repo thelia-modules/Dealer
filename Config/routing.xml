@@ -91,6 +91,15 @@
         <default key="_controller">Dealer:BrandLink:delete</default>
     </route>
 
+
+    <!-- Admin Link -->
+    <route id="dealer.admin.link" path="/admin/module/Dealer/admin" methods="post">
+        <default key="_controller">Dealer:AdminLink:create</default>
+    </route>
+    <route id="dealer.admin.unlink" path="/admin/module/Dealer/admin/delete" methods="post">
+        <default key="_controller">Dealer:AdminLink:delete</default>
+    </route>
+
     <!-- Product Link -->
     <route id="dealer.product.link" path="/admin/module/Dealer/product" methods="post">
         <default key="_controller">Dealer:ProductLink:create</default>

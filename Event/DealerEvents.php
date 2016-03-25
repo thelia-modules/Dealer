@@ -104,4 +104,14 @@ class DealerEvents
     const DEALER_PRODUCT_LINK_DELETE = "dealer.product.link.delete";
     const DEALER_PRODUCT_LINK_DELETE_BEFORE = "dealer.product.link.delete.before";
     const DEALER_PRODUCT_LINK_DELETE_AFTER = "dealer.product.link.delete.after";
+
+    const ADMIN_LINK_CREATE = "dealer.admin.link.create";
+    const ADMIN_LINK_CREATE_BEFORE = "dealer.admin.link.create.before";
+    const ADMIN_LINK_CREATE_AFTER = "dealer.admin.link.create.after";
+    const ADMIN_LINK_UPDATE = "dealer.admin.link.update";
+    const ADMIN_LINK_UPDATE_BEFORE = "dealer.admin.link.update.before";
+    const ADMIN_LINK_UPDATE_AFTER = "dealer.admin.link.update.after";
+    const ADMIN_LINK_DELETE = "dealer.admin.link.delete";
+    const ADMIN_LINK_DELETE_BEFORE = "dealer.admin.link.delete.before";
+    const ADMIN_LINK_DELETE_AFTER = "dealer.admin.link.delete.after";
 }

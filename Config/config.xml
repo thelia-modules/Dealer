@@ -46,6 +46,11 @@
                 <argument type="service" id="event_dispatcher"/>
             </call>
         </service>
+        <service id="dealer_admin_link_service" class="Dealer\Service\AdminLinkService">
+            <call method="setDispatcher">
+                <argument type="service" id="event_dispatcher"/>
+            </call>
+        </service>
         <service id="dealer_product_link_service" class="Dealer\Service\ProductLinkService">
             <call method="setDispatcher">
                 <argument type="service" id="event_dispatcher"/>
@@ -98,6 +103,7 @@
         <form name="dealer_folder_link_create" class="Dealer\Form\FolderLinkForm"/>
         <form name="dealer_brand_link_create" class="Dealer\Form\BrandLinkForm"/>
         <form name="dealer_product_link_create" class="Dealer\Form\ProductLinkForm"/>
+        <form name="dealer_admin_link_create" class="Dealer\Form\AdminLinkForm"/>
     </forms>
 
 
@@ -110,6 +116,7 @@
         <loop name="dealer_folder" class="Dealer\Loop\FolderLoop"/>
         <loop name="dealer_brand" class="Dealer\Loop\BrandLoop"/>
         <loop name="dealer_product" class="Dealer\Loop\ProductLoop"/>
+        <loop name="dealer_admin" class="Dealer\Loop\AdminLoop"/>
     </loops>
     <!--
       <exports>

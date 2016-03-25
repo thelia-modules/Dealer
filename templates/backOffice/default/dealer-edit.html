@@ -51,6 +51,7 @@
                     {forhook rel="dealer.additional"}
                         <li><a href="#{$id}" data-toggle="tab">{$title}</a></li>
                     {/forhook}
+                    <li><a href="#users" data-toggle="tab">{intl l="Users" d="dealer.bo.default"}</a></li>
                     <li><a href="#modules" data-toggle="tab">{intl l="Modules"}</a></li>
                 </ul>
                 <div class="tab-content">
@@ -76,6 +77,9 @@
                             {$content nofilter}
                         </div>
                     {/forhook}
+                    <div class="tab-pane fade" id="users">
+                        {include file="includes/users.html"}
+                    </div>
                     <div class="tab-pane fade" id="modules">
                         {ifhook rel="dealer.extra.content.edit"}
                         {hook name="dealer.extra.content.edit"}
@@ -94,6 +98,7 @@
     {include file="modal/dealer-contact-modal.html"}
     {include file="modal/dealer-contact-info-modal.html"}
     {include file="modal/dealer-schedules-modal.html"}
+    {include file="modal/admin-link.html"}
 
 {/block}
 
@@ -108,6 +113,7 @@
     {include file="script/dealer-contact-info-js.html"}
     {include file="script/dealer-schedules-js.html"}
     {include file="script/dealer-geo-js.html"}
+    {include file="script/dealer-admin-js.html"}
     <script>
         (function ($) {
             $(document).ready(function () {
