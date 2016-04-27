@@ -135,15 +135,15 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $this->getForceReturn()
         );
 
-        if ($id = $this->getId()) {
+        if (null != $id = $this->getId()) {
             $query->filterById($id);
         }
 
-        if ($country_id = $this->getCountryId()) {
+        if (null != $country_id = $this->getCountryId()) {
             $query->filterByCountryId($country_id);
         }
 
-        if ($city = $this->getCity()) {
+        if (null != $city = $this->getCity()) {
             $query->filterByCity($city);
         }
 
@@ -198,6 +198,8 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             ;
 
         }
+        
+        $query =$this->getAdminDealer($query);
 
         foreach ($this->getOrder() as $order) {
             switch ($order) {
@@ -275,5 +277,24 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
         }
 
         return $query->findOne();
+    }
+
+    /**
+     * @param DealerQuery $query
+     * @return DealerQuery
+     */
+    protected function getAdminDealer($query)
+    {
+        $admin = $this->securityContext->getAdminUser();
+
+        if ($admin === null) {
+            return $query;
+        }
+
+        if ($admin->getProfileId() === null) {
+            return $query;
+        }
+
+        return $query->useDealerAdminQuery()->filterByAdminId($admin->getId())->endUse();
     }
 }

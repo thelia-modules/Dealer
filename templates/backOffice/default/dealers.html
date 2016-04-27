@@ -92,7 +92,7 @@
                     </thead>
 
                     <tbody>
-                    {loop name="dealer-list" type="dealer" order=$order force_return=true id=$dealers}
+                    {loop name="dealer-list" type="dealer" order=$order force_return=true}
                         <tr>
                             <td>
                                 <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$TITLE}</a>

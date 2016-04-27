@@ -70,12 +70,7 @@ class DealerController extends BaseController
      */
     protected function getListRenderTemplate()
     {
-        $dealers = $this->getAdminDealer();
-        $ids = "";
-        foreach ($dealers as $dealer){
-            $ids=$dealer->getId();
-        }
-        return $this->render("dealers",["dealers" => $ids]);
+        return $this->render("dealers");
     }
 
     /**

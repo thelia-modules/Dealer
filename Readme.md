@@ -1,4 +1,4 @@
-# Dealer 2.0
+# Dealer 2.4.2
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/thelia-modules/Dealer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/thelia-modules/Dealer/?branch=master)
 
