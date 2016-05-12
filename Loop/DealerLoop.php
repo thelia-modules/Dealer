@@ -286,12 +286,13 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     protected function getAdminDealer($query)
     {
         $admin = $this->securityContext->getAdminUser();
+        $auth = $this->securityContext->isGranted(array("ADMIN"), array(AdminResources::MODULE), array('Dealer'), array(AccessManager::VIEW));
 
         if ($admin === null) {
             return $query;
         }
 
-        if ($admin->getProfileId() === null) {
+        if ($admin->getProfileId() === null || $auth === true) {
             return $query;
         }
 
