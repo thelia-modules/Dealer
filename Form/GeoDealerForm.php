@@ -34,7 +34,7 @@ class GeoDealerForm extends BaseForm
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.geo.id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("latitude", "number", array(
@@ -42,14 +42,14 @@ class GeoDealerForm extends BaseForm
                 "label_attr" => ["for" => "attr-dealer-geo-lat"],
                 "required" => false,
                 "constraints" => array(),
-                "attr" => array("step" => "0.01",)
+                "attr" => array("step" => "0.01", )
             ))
             ->add("longitude", "number", array(
                 "label" => $this->translator->trans("Longitude", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-geo-lon"],
                 "required" => false,
                 "constraints" => array(),
-                "attr" => array("step" => "0.01",)
+                "attr" => array("step" => "0.01", )
             ));
     }
 

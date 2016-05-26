@@ -23,7 +23,6 @@ use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 
-
 /**
  * Class SchedulesController
  * @package Dealer\Controller
@@ -42,7 +41,7 @@ class SchedulesController extends BaseController
         $id = $this->getRequest()->request->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**
@@ -54,7 +53,7 @@ class SchedulesController extends BaseController
         $id = $this->getRequest()->request->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**
@@ -160,7 +159,6 @@ class SchedulesController extends BaseController
 
             // Redirect to the success URL
             return $this->generateRedirect($successUrl);
-
         } catch (FormValidationException $ex) {
             $con->rollBack();
             // Form cannot be validated
@@ -181,7 +179,6 @@ class SchedulesController extends BaseController
             // At this point, the form has error, and should be redisplayed.
             return $this->getListRenderTemplate();
         }
-
     }
 
     protected function formatData($data, $type = "AM")
@@ -232,7 +229,6 @@ class SchedulesController extends BaseController
 
             // Redirect to the success URL
             return $this->generateRedirect($successUrl);
-
         } catch (FormValidationException $ex) {
             $con->rollBack();
             // Form cannot be validated

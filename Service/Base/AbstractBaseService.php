@@ -138,6 +138,4 @@ abstract class AbstractBaseService
     {
         $this->dispatcher = $dispatcher;
     }
-
-
 }

@@ -52,7 +52,7 @@ class DealerUpdateForm extends DealerForm
                 "label" => $this->translator->trans("Title", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.title"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
         ;

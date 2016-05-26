@@ -113,7 +113,7 @@ class SchedulesForm extends BaseForm
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-dealer_id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ));
     }

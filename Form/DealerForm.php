@@ -53,7 +53,7 @@ class DealerForm extends BaseForm
                 "label" => $this->translator->trans("Title", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.title"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("description", "text", array(
@@ -72,7 +72,7 @@ class DealerForm extends BaseForm
                 "label" => $this->translator->trans("Address1", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.address1"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("address2", "text", array(
@@ -91,14 +91,14 @@ class DealerForm extends BaseForm
                 "label" => $this->translator->trans("Zipcode", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.zipcode"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("city", "text", array(
                 "label" => $this->translator->trans("City", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.city"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("country_id", "choice", array(

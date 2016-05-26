@@ -101,7 +101,7 @@ class BrandLinkService extends AbstractBaseService implements BaseServiceInterfa
     {
         $link = null;
 
-        if(isset($data["brand_id"]) && isset($data["dealer_id"])){
+        if (isset($data["brand_id"]) && isset($data["dealer_id"])) {
             $link = DealerBrandQuery::create()->filterByDealerId($data["dealer_id"])->filterByBrandId($data["brand_id"])->findOne();
         }
 
@@ -124,10 +124,10 @@ class BrandLinkService extends AbstractBaseService implements BaseServiceInterfa
             }
         }
 
-        if(isset($data["brand_id"]) && isset($data["dealer_id"])){
+        if (isset($data["brand_id"]) && isset($data["dealer_id"])) {
             $link = DealerBrandQuery::create()->filterByDealerId($data["dealer_id"])->filterByBrandId($data["brand_id"])->findOne();
             if ($link) {
-                throw new \Exception("A link already exist",403);
+                throw new \Exception("A link already exist", 403);
             }
 
             $model->setBrandId($data["brand_id"]);

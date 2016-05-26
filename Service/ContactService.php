@@ -133,7 +133,6 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
 
     protected function resetDefault($data)
     {
-
         if (isset($data['id'])) {
             $dealer = DealerContactQuery::create()->findOneById($data['id']);
             $defaultsContacts = DealerContactQuery::create()->filterByDealerId($dealer->getDealerId())->filterByIsDefault(true)->find();
@@ -144,6 +143,5 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
                     ->save();
             }
         }
-
     }
 }

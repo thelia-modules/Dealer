@@ -42,6 +42,4 @@ class DealerFolderLinkEvent extends Event
     {
         $this->dealerFolderLink = $dealerFolderLink;
     }
-
-
 }

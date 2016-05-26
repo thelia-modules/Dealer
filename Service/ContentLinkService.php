@@ -100,7 +100,7 @@ class ContentLinkService extends AbstractBaseService implements BaseServiceInter
     {
         $link = null;
 
-        if(isset($data["content_id"]) && isset($data["dealer_id"])){
+        if (isset($data["content_id"]) && isset($data["dealer_id"])) {
             $link = DealerContentQuery::create()->filterByDealerId($data["dealer_id"])->filterByContentId($data["content_id"])->findOne();
         }
 
@@ -123,10 +123,10 @@ class ContentLinkService extends AbstractBaseService implements BaseServiceInter
             }
         }
 
-        if(isset($data["content_id"]) && isset($data["dealer_id"])){
+        if (isset($data["content_id"]) && isset($data["dealer_id"])) {
             $link = DealerContentQuery::create()->filterByDealerId($data["dealer_id"])->filterByContentId($data["content_id"])->findOne();
             if ($link) {
-                throw new \Exception("A link already exist",403);
+                throw new \Exception("A link already exist", 403);
             }
 
             $model->setContentId($data["content_id"]);
@@ -135,6 +135,4 @@ class ContentLinkService extends AbstractBaseService implements BaseServiceInter
 
         return $model;
     }
-
-
 }

@@ -52,7 +52,7 @@ class SchedulesUpdateForm extends SchedulesForm
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->remove("beginPM")

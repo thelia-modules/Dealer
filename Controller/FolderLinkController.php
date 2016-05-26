@@ -39,7 +39,7 @@ class FolderLinkController extends BaseController
         $id = $this->getRequest()->query->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit#associated",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**
@@ -50,7 +50,7 @@ class FolderLinkController extends BaseController
         $id = $this->getRequest()->request->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit#associated",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**

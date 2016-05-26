@@ -164,5 +164,4 @@ class DealerService extends AbstractBaseService implements BaseServiceInterface
 
         return $model;
     }
-
 }

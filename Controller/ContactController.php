@@ -38,7 +38,7 @@ class ContactController extends BaseController
         $id = $this->getRequest()->query->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**
@@ -50,7 +50,7 @@ class ContactController extends BaseController
         $id = $this->getRequest()->request->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**
@@ -137,6 +137,4 @@ class ContactController extends BaseController
             return $this->renderAfterDeleteError($e);
         }
     }
-
-
 }

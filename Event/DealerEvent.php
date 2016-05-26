@@ -12,6 +12,7 @@
 /*************************************************************************************/
 
 namespace Dealer\Event;
+
 use Dealer\Model\Dealer;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -40,6 +41,4 @@ class DealerEvent extends Event
     {
         $this->dealer = $dealer;
     }
-
-
 }

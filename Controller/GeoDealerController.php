@@ -70,12 +70,11 @@ class GeoDealerController extends BaseAdminController
                 $id = $this->getRequest()->query->get("dealer_id");
 
                 return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-                    ["dealer_id" => $id,]));
+                    ["dealer_id" => $id, ]));
             }
 
             // Redirect to the success URL
             return $this->generateSuccessRedirect($changeForm);
-
         } catch (FormValidationException $ex) {
             // Form cannot be validated
             $error_msg = $this->createStandardFormValidationErrorMessage($ex);
@@ -96,7 +95,7 @@ class GeoDealerController extends BaseAdminController
             $id = $this->getRequest()->query->get("dealer_id");
 
             return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-                ["dealer_id" => $id,]));
+                ["dealer_id" => $id, ]));
         }
     }
 
@@ -109,7 +108,8 @@ class GeoDealerController extends BaseAdminController
         return $this->createForm("dealer-geo", "form", $data);
     }
 
-    protected function getService(){
+    protected function getService()
+    {
         if (!$this->service) {
             $this->service = $this->getContainer()->get("dealer_geo_service");
         }

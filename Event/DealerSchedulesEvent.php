@@ -42,6 +42,4 @@ class DealerSchedulesEvent extends Event
     {
         $this->dealer_schedules = $dealer_schedules;
     }
-
-
 }

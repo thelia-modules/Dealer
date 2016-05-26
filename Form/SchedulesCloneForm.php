@@ -34,7 +34,7 @@ class SchedulesCloneForm extends BaseForm
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-clone-id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("day", "choice", [

@@ -101,7 +101,7 @@ class AdminLinkService extends AbstractBaseService implements BaseServiceInterfa
     {
         $link = null;
 
-        if(isset($data["admin_id"]) && isset($data["dealer_id"])){
+        if (isset($data["admin_id"]) && isset($data["dealer_id"])) {
             $link = DealerAdminQuery::create()->filterByDealerId($data["dealer_id"])->filterByAdminId($data["admin_id"])->findOne();
         }
 
@@ -124,10 +124,10 @@ class AdminLinkService extends AbstractBaseService implements BaseServiceInterfa
             }
         }
 
-        if(isset($data["admin_id"]) && isset($data["dealer_id"])){
+        if (isset($data["admin_id"]) && isset($data["dealer_id"])) {
             $link = DealerAdminQuery::create()->filterByDealerId($data["dealer_id"])->filterByAdminId($data["admin_id"])->findOne();
             if ($link) {
-                throw new \Exception("A link already exist",403);
+                throw new \Exception("A link already exist", 403);
             }
 
             $model->setAdminId($data["admin_id"]);

@@ -17,7 +17,6 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Thelia\Controller\Api\BaseApiController;
 
-
 /**
  * Class ApiController
  * @package Dealer\Controller
@@ -67,7 +66,6 @@ class ApiController extends BaseApiController
 
             /** @var Dealer $dealer */
             foreach ($dealers as $dealer) {
-
                 $dataI18n = $dealer->getDealerI18ns()->getData()[0]->toArray(TableMap::TYPE_FIELDNAME);
                 $dataRow = array_merge($dealer->toArray(TableMap::TYPE_FIELDNAME), $dataI18n);
                 $dataRow["contacts"] = $this->getContacts($dealer);
@@ -78,7 +76,6 @@ class ApiController extends BaseApiController
 
                 $return["data"][] = $dataRow;
             }
-
         } catch (Exception $e) {
             $code = 500;
             $return["error"] = $e->getMessage();
@@ -94,7 +91,6 @@ class ApiController extends BaseApiController
      */
     protected function getContacts(Dealer $dealer)
     {
-
         $return = [];
         foreach ($dealer->getDealerContacts() as $dealerContact) {
             $dataRow = $dealerContact->toArray(TableMap::TYPE_FIELDNAME);
@@ -188,7 +184,6 @@ class ApiController extends BaseApiController
      */
     protected function addOrder(DealerQuery $query)
     {
-
         $order = $this->getRequest()->get("order");
         switch ($order) {
             case "id" :

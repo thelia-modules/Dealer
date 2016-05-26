@@ -43,6 +43,4 @@ class DealerProductLinkEvent extends Event
     {
         $this->dealerProductLink = $dealerProductLink;
     }
-
-
 }

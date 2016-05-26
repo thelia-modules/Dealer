@@ -48,7 +48,7 @@ class ContactInfoForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("type",'choice', array(
+            ->add("type", 'choice', array(
                 "choices" => DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE),
                 "label" => $this->translator->trans("Contact Type", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-type"],
@@ -59,14 +59,14 @@ class ContactInfoForm extends BaseForm
                 "label" => $this->translator->trans("Value", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-value"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add('contact_id', 'integer', array(
                 "label" => $this->translator->trans("Contact", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-contact_id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("locale", "text", array(

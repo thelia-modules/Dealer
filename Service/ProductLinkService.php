@@ -101,7 +101,7 @@ class ProductLinkService extends AbstractBaseService implements BaseServiceInter
     {
         $link = null;
 
-        if(isset($data["product_id"]) && isset($data["dealer_id"])){
+        if (isset($data["product_id"]) && isset($data["dealer_id"])) {
             $link = DealerProductQuery::create()->filterByDealerId($data["dealer_id"])->filterByProductId($data["product_id"])->findOne();
         }
 
@@ -124,10 +124,10 @@ class ProductLinkService extends AbstractBaseService implements BaseServiceInter
             }
         }
 
-        if(isset($data["product_id"]) && isset($data["dealer_id"])){
+        if (isset($data["product_id"]) && isset($data["dealer_id"])) {
             $link = DealerProductQuery::create()->filterByDealerId($data["dealer_id"])->filterByProductId($data["product_id"])->findOne();
             if ($link) {
-                throw new \Exception("A link already exist",403);
+                throw new \Exception("A link already exist", 403);
             }
 
             $model->setProductId($data["product_id"]);

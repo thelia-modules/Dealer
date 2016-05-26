@@ -51,14 +51,14 @@ class ContactForm extends BaseForm
                 "label" => $this->translator->trans("Label", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-label"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add('dealer_id', 'integer', array(
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-dealer_id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(),),
+                "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
             ->add("locale", "text", array(

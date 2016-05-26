@@ -101,7 +101,7 @@ class FolderLinkService extends AbstractBaseService implements BaseServiceInterf
     {
         $link = null;
 
-        if(isset($data["folder_id"]) && isset($data["dealer_id"])){
+        if (isset($data["folder_id"]) && isset($data["dealer_id"])) {
             $link = DealerFolderQuery::create()->filterByDealerId($data["dealer_id"])->filterByFolderId($data["folder_id"])->findOne();
         }
 
@@ -124,10 +124,10 @@ class FolderLinkService extends AbstractBaseService implements BaseServiceInterf
             }
         }
 
-        if(isset($data["folder_id"]) && isset($data["dealer_id"])){
+        if (isset($data["folder_id"]) && isset($data["dealer_id"])) {
             $link = DealerFolderQuery::create()->filterByDealerId($data["dealer_id"])->filterByFolderId($data["folder_id"])->findOne();
             if ($link) {
-                throw new \Exception("A link already exist",403);
+                throw new \Exception("A link already exist", 403);
             }
 
             $model->setFolderId($data["folder_id"]);
@@ -136,6 +136,4 @@ class FolderLinkService extends AbstractBaseService implements BaseServiceInterf
 
         return $model;
     }
-
-
 }

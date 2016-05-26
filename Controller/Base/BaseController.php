@@ -145,7 +145,6 @@ abstract class BaseController extends BaseAdminController
 
             // Redirect to the success URL
             return $this->generateRedirect($successUrl);
-
         } catch (FormValidationException $ex) {
             $con->rollBack();
             // Form cannot be validated
@@ -166,7 +165,6 @@ abstract class BaseController extends BaseAdminController
             // At this point, the form has error, and should be redisplayed.
             return $this->getListRenderTemplate();
         }
-
     }
 
     /**
@@ -177,7 +175,7 @@ abstract class BaseController extends BaseAdminController
     public function updateAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE,Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
                 AccessManager::UPDATE)
         ) {
             return $response;
@@ -245,7 +243,6 @@ abstract class BaseController extends BaseAdminController
 
             // Redirect to the success URL
             return $this->generateSuccessRedirect($changeForm);
-
         } catch (FormValidationException $ex) {
             $con->rollBack();
             // Form cannot be validated
@@ -390,6 +387,4 @@ abstract class BaseController extends BaseAdminController
 
         return DealerQuery::create()->useDealerAdminQuery()->filterByAdminId($admin->getId())->endUse()->find();
     }
-
-
 }

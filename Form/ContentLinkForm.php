@@ -74,6 +74,4 @@ class ContentLinkForm extends BaseForm
 
         return $choices;
     }
-
-
 }

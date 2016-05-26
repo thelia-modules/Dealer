@@ -7,9 +7,9 @@
  */
 
 namespace Dealer\Event;
+
 use Dealer\Model\DealerAdmin;
 use Symfony\Component\EventDispatcher\Event;
-
 
 /**
  * Class DealerAdminLinkEvent

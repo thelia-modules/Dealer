@@ -110,7 +110,7 @@ class DealerController extends BaseController
         $id = $this->getRequest()->query->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     public function toggleVisibleAction($id)
@@ -133,7 +133,6 @@ class DealerController extends BaseController
         $con->beginTransaction();
 
         try {
-
             $updatedObject = $this->getService()->toggleVisibilityFromId($id);
 
             // Check if object exist
@@ -146,8 +145,6 @@ class DealerController extends BaseController
             $con->commit();
 
             $retour["message"] = "Visibility was updated";
-
-
         } catch (\Exception $ex) {
             $con->rollBack();
             // Any other error
@@ -158,5 +155,4 @@ class DealerController extends BaseController
 
         return JsonResponse::create($retour, $code);
     }
-
 }

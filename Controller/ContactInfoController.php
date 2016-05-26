@@ -35,7 +35,7 @@ class ContactInfoController extends BaseController
         $id = $this->getRequest()->request->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**
@@ -47,7 +47,7 @@ class ContactInfoController extends BaseController
         $id = $this->getRequest()->request->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id,]));
+            ["dealer_id" => $id, ]));
     }
 
     /**
