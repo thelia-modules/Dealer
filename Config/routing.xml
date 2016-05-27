@@ -23,6 +23,11 @@
         <requirement key="id">\d+</requirement>
     </route>
 
+    <!-- Configuration -->
+    <route id="dealer.config" path="/admin/module/Dealer/configure" methods="post">
+        <default key="_controller">Dealer:Configure:configure</default>
+    </route>
+
     <!-- Contact -->
     <route id="dealer.dealer.contact.create" path="/admin/module/Dealer/contact" methods="post">
         <default key="_controller">Dealer:Contact:create</default>
