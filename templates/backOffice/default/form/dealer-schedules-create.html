@@ -2,11 +2,12 @@
 {form_hidden_fields form=$form}
 
 {render_form_field form=$form field="success_url" value={url path="/admin/module/Dealer/dealer/edit?dealer_id={$dealer_id|default:$DEALER_ID}#schedules"}}
+{render_form_field form=$form field="error_url" value={url path="/admin/module/Dealer/dealer/edit?dealer_id={$dealer_id|default:$DEALER_ID}#schedules"}}
 {form_field form=$form field="closed"}
     <input type="hidden" id="{$label_attr.for}" name="{$name}" value="{$closed|default:0}"/>
 {/form_field}
 {form_field form=$form field="day"}
-    <div class="form-group">
+    <div class="form-group {if $error}has-error{/if}">
         <label class="control-label" for="{$label_attr.for}">
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
@@ -25,7 +26,7 @@
         <div class="col-sm-6">
             <h3>{intl l="AM" d="dealer.bo.default"}</h3>
             {form_field form=$form field="beginAM"}
-                <div class="form-group">
+                <div class="form-group {if $error}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
@@ -41,7 +42,7 @@
                 </div>
             {/form_field}
             {form_field form=$form field="endAM"}
-                <div class="form-group">
+                <div class="form-group {if $error}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
@@ -60,7 +61,7 @@
         <div class="col-sm-6">
             <h3>{intl l="PM" d="dealer.bo.default"}</h3>
             {form_field form=$form field="beginPM"}
-                <div class="form-group">
+                <div class="form-group {if $error}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
@@ -76,7 +77,7 @@
                 </div>
             {/form_field}
             {form_field form=$form field="endPM"}
-                <div class="form-group">
+                <div class="form-group {if $error}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
@@ -95,7 +96,7 @@
     </div>
 {else}
     {form_field form=$form field="begin"}
-        <div class="form-group">
+        <div class="form-group {if $error}has-error{/if}">
             <label class="control-label" for="{$label_attr.for}">
                 {intl l=$label d="dealer.bo.default"}
                 {if $required}<span class="required">*</span>{/if}
@@ -111,7 +112,7 @@
         </div>
     {/form_field}
     {form_field form=$form field="end"}
-        <div class="form-group">
+        <div class="form-group {if $error}has-error{/if}">
             <label class="control-label" for="{$label_attr.for}">
                 {intl l=$label d="dealer.bo.default"}
                 {if $required}<span class="required">*</span>{/if}
@@ -129,7 +130,7 @@
 {/if}
     <h3 class="period">{intl l="Period" d="dealer.bo.default"}</h3>
 {form_field form=$form field="period_begin"}
-    <div class="form-group period">
+    <div class="form-group {if $error}has-error{/if} period">
         <label class="control-label" for="{$label_attr.for}">
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
@@ -145,7 +146,7 @@
     </div>
 {/form_field}
 {form_field form=$form field="period_end"}
-    <div class="form-group period">
+    <div class="form-group {if $error}has-error{/if} period">
         <label class="control-label" for="{$label_attr.for}">
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}

@@ -177,7 +177,7 @@ class SchedulesController extends BaseController
             );
 
             // At this point, the form has error, and should be redisplayed.
-            return $this->getListRenderTemplate();
+            return $this->generateErrorRedirect($creationForm);
         }
     }
 
