@@ -22,6 +22,8 @@ use Dealer\Model\Map\DealerProductTableMap;
 use Dealer\Model\Map\DealerTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
@@ -110,9 +112,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 'id',
                 'id-reverse',
                 'date',
-                'date-reverse',
-                'title',
-                'title-reverse',
+                'date-reverse'
             ], 'id')
         );
     }
@@ -217,12 +217,6 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 case 'date-reverse' :
                     $query->orderByCreatedAt(Criteria::DESC);
                     break;
-                case 'title' :
-                    $query->useDealerI18nQuery()->orderByTitle()->endUse();
-                    break;
-                case 'title-reverse' :
-                    $query->useDealerI18nQuery()->orderByTitle(Criteria::DESC)->endUse();
-                    break;
                 default:
                     break;
             }
@@ -294,12 +288,13 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     protected function getAdminDealer($query)
     {
         $admin = $this->securityContext->getAdminUser();
+        $auth = $this->securityContext->isGranted(array("ADMIN"), array(AdminResources::MODULE), array('Dealer'), array(AccessManager::VIEW));
 
         if ($admin === null) {
             return $query;
         }
 
-        if ($admin->getProfileId() === null) {
+        if ($admin->getProfileId() === null || $auth === true) {
             return $query;
         }
 
