@@ -55,7 +55,6 @@ class AdminLoop extends Admin
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
                 ->where(DealerAdminTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
-
         }
 
         return $query;

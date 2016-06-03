@@ -55,7 +55,6 @@ class BrandLoop extends Brand
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
                 ->where(DealerBrandTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
-
         }
 
         return $query;

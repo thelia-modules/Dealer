@@ -55,7 +55,6 @@ class ProductLoop extends Product
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
                 ->where(DealerProductTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
-
         }
 
         return $query;

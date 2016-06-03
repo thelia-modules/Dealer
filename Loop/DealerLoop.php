@@ -75,7 +75,6 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             }
 
             if ($this->getWithPrevNextInfo()) {
-
                 $previous = $this->getPrevious($dealer);
                 $next = $this->getNext($dealer);
                 $loopResultRow
@@ -153,52 +152,48 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $query->filterByVisible($visible);
         }
 
-        if($content = $this->getContentId()){
-            if(is_array($content)){
+        if ($content = $this->getContentId()) {
+            if (is_array($content)) {
                 $content = implode(",", $content);
             }
-            $contentJoin = new Join(DealerTableMap::ID,DealerContentTableMap::DEALER_ID,Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::ID, DealerContentTableMap::DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
                 ->where(DealerContentTableMap::CONTENT_ID." ".Criteria::IN." (".$content.")");
             ;
-
         }
 
-        if($folder = $this->getFolderId()){
-            if(is_array($folder)){
+        if ($folder = $this->getFolderId()) {
+            if (is_array($folder)) {
                 $folder = implode(",", $folder);
             }
-            $contentJoin = new Join(DealerTableMap::ID,DealerFolderTableMap::DEALER_ID,Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::ID, DealerFolderTableMap::DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
                 ->where(DealerFolderTableMap::FOLDER_ID." ".Criteria::IN." (".$folder.")");
             ;
-
         }
 
-        if($brand = $this->getBrandId()){
-            if(is_array($brand)){
+        if ($brand = $this->getBrandId()) {
+            if (is_array($brand)) {
                 $brand = implode(",", $brand);
             }
-            $contentJoin = new Join(DealerTableMap::ID,DealerBrandTableMap::DEALER_ID,Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::ID, DealerBrandTableMap::DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
                 ->where(DealerBrandTableMap::BRAND_ID." ".Criteria::IN." (".$brand.")");
             ;
-
         }
 
-        if($product = $this->getProductId()){
-            if(is_array($product)){
+        if ($product = $this->getProductId()) {
+            if (is_array($product)) {
                 $product = implode(",", $product);
             }
-            $contentJoin = new Join(DealerTableMap::ID,DealerProductTableMap::DEALER_ID,Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::ID, DealerProductTableMap::DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
                 ->where(DealerProductTableMap::PRODUCT_ID." ".Criteria::IN." (".$product.")");
             ;
-
         }
         
         $query =$this->getAdminDealer($query);
@@ -243,15 +238,15 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             switch ($order) {
                 case 'id' :
                     $query->orderById(Criteria::DESC);
-                    $query->filterById($dealer->getId(),Criteria::LESS_THAN);
+                    $query->filterById($dealer->getId(), Criteria::LESS_THAN);
                     break;
                 case 'id-reverse' :
                     $query->orderById();
-                    $query->filterById($dealer->getId(),Criteria::GREATER_THAN);
+                    $query->filterById($dealer->getId(), Criteria::GREATER_THAN);
                     break;
                 default:
                     $query->orderById(Criteria::DESC);
-                    $query->filterById($dealer->getId(),Criteria::LESS_THAN);
+                    $query->filterById($dealer->getId(), Criteria::LESS_THAN);
                     break;
             }
         }
@@ -271,15 +266,15 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             switch ($order) {
                 case 'id' :
                     $query->orderById();
-                    $query->filterById($dealer->getId(),Criteria::GREATER_THAN);
+                    $query->filterById($dealer->getId(), Criteria::GREATER_THAN);
                     break;
                 case 'id-reverse' :
                     $query->orderById(Criteria::DESC);
-                    $query->filterById($dealer->getId(),Criteria::LESS_THAN);
+                    $query->filterById($dealer->getId(), Criteria::LESS_THAN);
                     break;
                 default:
                     $query->orderById();
-                    $query->filterById($dealer->getId(),Criteria::GREATER_THAN);
+                    $query->filterById($dealer->getId(), Criteria::GREATER_THAN);
                     break;
             }
         }

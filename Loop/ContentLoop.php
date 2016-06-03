@@ -55,11 +55,8 @@ class ContentLoop extends Content
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
                 ->where(DealerContentTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
-
         }
 
         return $query;
     }
-
-
 }

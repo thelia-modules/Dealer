@@ -84,12 +84,10 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      */
     protected function getArgDefinitions()
     {
-
-
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('contact_id'),
-            Argument::createEnumListTypeArgument('contact_type', DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE),null),
+            Argument::createEnumListTypeArgument('contact_type', DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE), null),
             Argument::createEnumListTypeArgument('order', [
                 'id',
                 'id-reverse',
@@ -123,7 +121,7 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             $query->filterById($id);
         }
 
-        if(null != $type = $this->getContactType()){
+        if (null != $type = $this->getContactType()) {
             $query->filterByContactType($type);
         }
 

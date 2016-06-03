@@ -55,7 +55,6 @@ class FolderLoop extends Folder
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
                 ->where(DealerFolderTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
-
         }
 
         return $query;
