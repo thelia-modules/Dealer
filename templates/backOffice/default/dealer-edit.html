@@ -144,7 +144,6 @@
     {include file="script/dealer-contact-js.html"}
     {include file="script/dealer-contact-info-js.html"}
     {include file="script/dealer-schedules-js.html"}
-    {include file="script/dealer-geo-js.html"}
     {include file="script/dealer-admin-js.html"}
     <script>
         (function ($) {
@@ -164,4 +163,8 @@
         })(jQuery);
     </script>
     {hook name="dealer.edit.js"}
+{/block}
+
+{block name="javascript-last-call"}
+{hook name="wysiwyg.js" location="wysiwyg-document-edit-js" }
 {/block}

@@ -8,8 +8,10 @@
 
 namespace Dealer\Hook;
 
+use Dealer\Dealer;
 use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
+use Dealer\Model\DealerQuery;
 
 
 /**
@@ -60,5 +62,34 @@ class InternalHook extends BaseHook
     public function insertProductJs(HookRenderEvent $event)
     {
         //$event->add($this->render("script/dealer-product-js.html", $event->getArguments()));
+    }
+    
+    public function insertGoogleMapsApiJs(HookRenderEvent $event)
+    {
+        $address = '';
+        if($this->getRequest()->query->has('dealer_id')) {
+            $dearler_id = $this->getRequest()->query->get('dealer_id');
+            if($dearler_id != '') {
+                $dealer = DealerQuery::create()->findOneById($dearler_id);
+                $address = $dealer->getAddress1();
+                if($dealer->getAddress2()) {
+                    $address .= ', ' . $dealer->getAddress2();
+                }
+                if($dealer->getAddress3()) {
+                    $address .= ', ' . $dealer->getAddress3();
+                }
+                $address .= ', ' . $dealer->getCity() . ', ' . $dealer->getZipcode() . ', ' . $dealer->getCountry()->getTitle();
+            }
+        }
+
+        $event->add(
+            $this->render(
+                "script/dealer-geo-js.html",
+                [
+                    'address' => $address,
+                    'googlemapsapi_key' => Dealer::getConfigValue('googlemapsapi_key')
+                ]
+            )
+        );
     }
 }

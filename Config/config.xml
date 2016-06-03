@@ -61,6 +61,9 @@
     </services>
 
     <hooks>
+        <hook id="dealer.configuration.hook" class="Dealer\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfigure" />
+        </hook>
         <hook id="dealer.admin.hook" class="Dealer\Hook\AdminInterfaceHook" scope="request">
             <tag name="hook.event_listener" event="main.top-menu-modules" type="back" method="onTopMenuTools"/>
             <argument type="service" id="router.dealer"/>
@@ -74,6 +77,7 @@
             <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertFolderJs"/>
             <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertBrandJs"/>
             <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertProductJs"/>
+            <tag name="hook.event_listener" event="dealer.edit.js" type="back" method="insertGoogleMapsApiJs"/>
         </hook>
         <hook id="dealer.thelia.admin.hook" class="Dealer\Hook\TheliaAdminHook" scope="request">
             <tag name="hook.event_listener" event="content.tab-content" type="back" method="onContentModuleTab"/>
@@ -89,6 +93,7 @@
     </hooks>
 
     <forms>
+        <form name="dealer.configuration.form" class="Dealer\Form\Configuration" />
         <form name="dealer.create" class="Dealer\Form\DealerForm"/>
         <form name="dealer.update" class="Dealer\Form\DealerUpdateForm"/>
         <form name="dealer-contact.create" class="Dealer\Form\ContactForm"/>

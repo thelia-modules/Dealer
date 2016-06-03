@@ -105,30 +105,9 @@
         </select>
     </div>
 {/form_field}
-{form_field form=$form field="description"}
-    <div class="form-group">
-        <label class="control-label" for="{$label_attr.for}">
-            {intl l=$label d="dealer.bo.default"}
-            {if $required}<span class="required">*</span>{/if}
-        </label>
 
-        {form_error form=$form field="description"}{$message}{/form_error}
+{render_form_field field="description" extra_class="wysiwyg" value=$DESCRIPTION}
 
-        <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
-                  placeholder="{intl l='The Dealer description' d="dealer.bo.default"}">{$DESCRIPTION}</textarea>
-    </div>
-{/form_field}
-{form_field form=$form field="access"}
-    <div class="form-group">
-        <label class="control-label" for="{$label_attr.for}">
-            {intl l=$label d="dealer.bo.default"}
-            {if $required}<span class="required">*</span>{/if}
-        </label>
+{render_form_field field="access" extra_class="wysiwyg" value=$ACCESS}
 
-        {form_error form=$form field="access"}{$message}{/form_error}
-
-        <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
-                  placeholder="{intl l='The Dealer access' d="dealer.bo.default"}">{$ACCESS}</textarea>
-    </div>
-{/form_field}
 {/form}

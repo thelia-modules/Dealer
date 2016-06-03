@@ -1,4 +1,4 @@
-<script type="text/javascript" src="http://maps.google.com/maps/api/js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?{if $googlemapsapi_key}key={$googlemapsapi_key}{/if}"></script>
 <script>
     (function($){
         $('a[href="#location"]').on("shown.bs.tab",function(){
@@ -33,7 +33,49 @@
                 $("#attr-dealer-geo-lon").val(e.latLng.lng());
             });
 
+            $('#dealer-googlemaps-get').on('click', function(e){
+                removeDealerInfoClassAlert();
+                $('#dealer-googlemaps-get-info').addClass('alert-warning').html("{intl l='<strong>Get the location...</strong>' d='dealer.bo.default'}");
+                var geocoder = new google.maps.Geocoder();
+                geocoder.geocode(
+                    {
+                    'address': "{$address}"
+                    }, function(results, status) {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        removeDealerInfoClassAlert();
+                        $('#dealer-googlemaps-get-info').addClass('alert-success').html('{intl l='Ok. Remember to <strong>Save</strong> the new coordinates' d='dealer.bo.default'}');
+                        map.setCenter(results[0].geometry.location);
+                        marker.setPosition(results[0].geometry.location);
+                        $("#attr-dealer-geo-lat").val(results[0].geometry.location.lat());
+                        $("#attr-dealer-geo-lon").val(results[0].geometry.location.lng());
 
+                    } else {
+                        removeDealerInfoClassAlert();
+                        $('#dealer-googlemaps-get-info').addClass('alert-danger').html('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            });
         });
+
+        //dealer-googlemaps-get
+        {if $googlemapsapi_key == ''}
+            removeDealerInfoClassAlert();
+            $('#dealer-googlemaps-get-info').addClass('alert-warning').html("{intl l='Dealer Google API key is not set. To use this feature you must enter the key.' d='dealer.bo.default'}");
+            $('#dealer-googlemaps-get').prop('disabled', true);
+        {else}
+            {if $address == ''}
+                removeDealerInfoClassAlert();
+                $('#dealer-googlemaps-get-info').addClass('alert-warning').html("{intl l='The address is undefined!' d='dealer.bo.default'}");
+                $('#dealer-googlemaps-get').prop('disabled', true);
+            {else}
+                $('#dealer-googlemaps-get-info').addClass('alert-info').html("{intl l='Click on <strong>Get the coordinate via the address</strong> or enter the value' d='dealer.bo.default'}");
+            {/if}
+        {/if}
+
+        function removeDealerInfoClassAlert(){
+            $('#dealer-googlemaps-get-info').removeClass (function (index, css) {
+                return (css.match (/(^|\s)alert-\S+/g) || []).join(' ');
+            });
+        }
     })(jQuery);
 </script>

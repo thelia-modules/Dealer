@@ -39,9 +39,13 @@
                 </div>
             {/form_field}
             {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.geo" access="UPDATE" module="Dealer"}
+
             <div class="btn-grp">
+                <button type="button" id="dealer-googlemaps-get" name="dealer_googlemaps_get" class="btn btn-secondary" title="{intl d='dealer.bo.default' l='Get the coordinate via the address'}">{intl d='dealer.bo.default' l='Get the coordinate via the address'}</button>
                 <button type="submit" class="btn btn-primary">{intl l="Save"}</button>
             </div>
+
+            <div id="dealer-googlemaps-get-info" class="alert" role="alert"></div>
             {/loop}
         </form>
         {/loop}

@@ -83,6 +83,11 @@ class Dealer extends BaseModule
                 );
             }
         }
+        
+        if (!self::getConfigValue('is_initialized', false)) {
+            self::setConfigValue('googlemapsapi_key', '');
+            self::setConfigValue('is_initialized', true);
+        }
     }
 
     public function getHooks()
