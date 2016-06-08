@@ -124,7 +124,7 @@ class DealerContactInfoTableMap extends TableMap
     const CONTACT_TYPE_TWITTER = 'TWITTER';
     const CONTACT_TYPE_PINTEREST = 'PINTEREST';
     const CONTACT_TYPE_GOOGLE = 'GOOGLE';
-    const CONTACT_TYPE_YOUTUB = 'YOUTUB';
+    const CONTACT_TYPE_YOUTUBE = 'YOUTUBE';
     const CONTACT_TYPE_INSTAGRAM = 'INSTAGRAM';
 
     // i18n behavior
@@ -177,7 +177,7 @@ class DealerContactInfoTableMap extends TableMap
             self::CONTACT_TYPE_TWITTER,
             self::CONTACT_TYPE_PINTEREST,
             self::CONTACT_TYPE_GOOGLE,
-            self::CONTACT_TYPE_YOUTUB,
+            self::CONTACT_TYPE_YOUTUBE,
             self::CONTACT_TYPE_INSTAGRAM,
         ),
     );
