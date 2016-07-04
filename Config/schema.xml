@@ -41,9 +41,9 @@
         <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER"/>
         <column name="dealer_id" required="true" type="INTEGER"/>
 
-        <column name="day" required="true" type="INTEGER"/>
-        <column name="begin" required="true" type="TIME"/>
-        <column name="end" required="true" type="TIME"/>
+        <column name="day" type="INTEGER"/>
+        <column name="begin" type="TIME"/>
+        <column name="end" type="TIME"/>
 
         <column name="closed" type="BOOLEAN" default="false"/>
 

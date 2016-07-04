@@ -193,9 +193,9 @@ class DealerShedulesVersionTableMap extends TableMap
         // columns
         $this->addForeignPrimaryKey('ID', 'Id', 'INTEGER' , 'dealer_shedules', 'ID', true, null, null);
         $this->addColumn('DEALER_ID', 'DealerId', 'INTEGER', true, null, null);
-        $this->addColumn('DAY', 'Day', 'INTEGER', true, null, null);
-        $this->addColumn('BEGIN', 'Begin', 'TIME', true, null, null);
-        $this->addColumn('END', 'End', 'TIME', true, null, null);
+        $this->addColumn('DAY', 'Day', 'INTEGER', false, null, null);
+        $this->addColumn('BEGIN', 'Begin', 'TIME', false, null, null);
+        $this->addColumn('END', 'End', 'TIME', false, null, null);
         $this->addColumn('CLOSED', 'Closed', 'BOOLEAN', false, 1, false);
         $this->addColumn('PERIOD_BEGIN', 'PeriodBegin', 'DATE', false, null, null);
         $this->addColumn('PERIOD_END', 'PeriodEnd', 'DATE', false, null, null);

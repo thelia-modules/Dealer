@@ -107,13 +107,15 @@ You can find main Dealer interface on modules admin menu.
 
 ### Input arguments
 
-|Argument           |Description                                                |
-|---                |---                                                        |
-|**id**             | filter by id                                              |
-|**dealer_id**      | filter by dealer                                          |
-|**default_period** | filter by default schedule                                |
-|**day** 			| filter by day 		                                    |
-|**order**          | order result by "id","id-reverse","day","day-reverse"		|
+|Argument           |Description                                                                                                                |
+|---                |---                                                                                                                        |
+|**id**             | filter by id                                                                                                              |
+|**dealer_id**      | filter by dealer                                                                                                          |
+|**default_period** | filter by default schedule                                                                                                |
+|**hide_past**      | boolean for hide past schedules (default: false)                                                                          |
+|**closed**         | boolean for closed or open schedule (default: false)                                                                      |
+|**day** 			| filter by day 		                                                                                                    |
+|**order**          | order result by "id","id-reverse","day","day-reverse","begin","begin-reverse","period-begin","period-begin-reverse"		|
 
 
 ### Output arguments
@@ -128,3 +130,45 @@ You can find main Dealer interface on modules admin menu.
 |$END    			| Schedules end 	 	    |
 |$PERIOD_BEGIN 		| Schedules period start	|
 |$PERIOD_END    	| Schedules period end		|
+
+### RegularSchedulesLoop
+
+### Input arguments
+
+|Argument               |Description                                                                            |
+|---                    |---                                                                                    |
+|**id**                 | filter by id                                                                          |
+|**dealer_id**          | filter by dealer                                                                      |
+|**day** 			    | filter by day 		                                                                |
+|**hour_separator**     | separator between hours for ouput formatted_hours (default: ' - ') 		            |
+|**half_day_separator** | separator between half day for ouput formatted_hours (default: ' / ') 	            |
+|**merge_day**          | boolean to allow concatenated hours of schedule with the same day (default: true)     |
+|**order**              | order result by "id","id-reverse","day","day-reverse","begin","begin-reverse"         |
+
+### Output arguments
+
+|Variable       	|Description                                                                        |
+|---            	|---                                                                                |
+|$ID            	| id                                                                                |
+|$DEALER_ID    		| Associated Dealer id                                                              |
+|$DAY    			| Day value     			                                                        |
+|$DAY_LABEL   		| Day label					                                                        |
+|$BEGIN 			| Schedules start 			                                                        |
+|$END    			| Schedules end (end of the afternoon when merge_day input argument is true	 	    |
+|$FORMATTED_HOURS   | Formatted hours when merge_day input argument is true 	 	                    |
+
+### ExtraSchedulesLoop
+
+### Input arguments
+
+|Argument               |Description                                                                                                                |
+|---                    |---                                                                                                                        |
+|**id**                 | filter by id                                                                                                              |
+|**dealer_id**          | filter by dealer                                                                                                          |
+|**day** 			    | filter by day 		                                                                                                    |
+|**hour_separator**     | separator between hours for ouput formatted_hours (default:  ' - ') 		                                                |
+|**half_day_separator** | separator between half day for ouput formatted_hours (default:  ' / ') 	                                                |
+|**merge_day**          | boolean to allow concatenated hours of schedule with the same periods (default = true)                                    |
+|**hide_past**          | boolean for hide past schedules (default: false)                                                                          |
+|**closed**             | boolean for closed or open schedule (default: false)                                                                      |
+|**order**              | order result by "id","id-reverse","day","day-reverse","begin","begin-reverse","period-begin","period-begin-reverse"       |

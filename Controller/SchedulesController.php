@@ -138,16 +138,38 @@ class SchedulesController extends BaseController
             $form = $this->validateForm($creationForm, "POST");
             // Get the form field values
             $data = $form->getData();
-            foreach ($data["day"] as $day) {
-                $currentData = $data;
-                $currentData["day"] = $day;
-                $dataAM = $this->formatData($currentData);
-                if (null != $dataAM) {
+
+            if (empty($data["day"])) {
+                $dataAM = $this->formatData($data);
+                $dataPM = $this->formatData($data, 'PM');
+
+                if ($this->hasNullDate($dataAM) && $this->hasNullDate($dataPM)) {
                     $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
+                } else {
+                    if (!$this->hasNullDate($dataAM)) {
+                        $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
+                    }
+                    if (!$this->hasNullDate($dataPM)) {
+                        $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
+                    }
                 }
-                $dataPM = $this->formatData($currentData, 'PM');
-                if (null != $dataPM) {
-                    $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
+            } else {
+                foreach ($data["day"] as $day) {
+                    $currentData = $data;
+                    $currentData["day"] = $day;
+                    $dataAM = $this->formatData($currentData);
+                    $dataPM = $this->formatData($currentData, 'PM');
+
+                    if ($this->hasNullDate($dataAM) && $this->hasNullDate($dataPM)) {
+                        $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
+                    } else {
+                        if (!$this->hasNullDate($dataAM)) {
+                            $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
+                        }
+                        if (!$this->hasNullDate($dataPM)) {
+                            $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
+                        }
+                    }
                 }
             }
 
@@ -187,15 +209,20 @@ class SchedulesController extends BaseController
         if (isset($data["begin" . $type]) && $data["begin" . $type] != "") {
             $retour["begin"] = $data["begin" . $type];
         } else {
-            return null;
+            $retour["begin"] = null;
         }
         if (isset($data["end" . $type]) && $data["end" . $type] != "") {
             $retour["end"] = $data["end" . $type];
         } else {
-            return null;
+            $retour["end"] = null;
         }
 
         return $retour;
+    }
+
+    protected function hasNullDate($data)
+    {
+        return !($data["begin"] && $data["end"]);
     }
 
     public function cloneAction()
