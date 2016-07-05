@@ -100,6 +100,8 @@ class SchedulesLoop extends BaseLoop implements PropelSearchLoopInterface
                 'day-reverse',
                 'begin',
                 'begin-reverse',
+                'period-begin',
+                'period-begin-reverse'
             ], 'id')
 
         );
@@ -156,6 +158,12 @@ class SchedulesLoop extends BaseLoop implements PropelSearchLoopInterface
                     break;
                 case 'begin-reverse':
                     $query->orderByBegin(Criteria::DESC);
+                    break;
+                case 'period-begin':
+                    $query->orderByPeriodBegin();
+                    break;
+                case 'period-begin-reverse':
+                    $query->orderByPeriodBegin(Criteria::DESC);
                     break;
                 default:
                     break;

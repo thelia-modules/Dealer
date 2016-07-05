@@ -112,6 +112,8 @@
         <loop name="dealer_contact" class="Dealer\Loop\ContactLoop"/>
         <loop name="dealer_contact_info" class="Dealer\Loop\ContactInfoLoop"/>
         <loop name="dealer_schedules" class="Dealer\Loop\SchedulesLoop"/>
+        <loop name="dealer_regular_schedules" class="Dealer\Loop\RegularSchedulesLoop"/>
+        <loop name="dealer_extra_schedules" class="Dealer\Loop\ExtraSchedulesLoop"/>
         <loop name="dealer_content" class="Dealer\Loop\ContentLoop"/>
         <loop name="dealer_folder" class="Dealer\Loop\FolderLoop"/>
         <loop name="dealer_brand" class="Dealer\Loop\BrandLoop"/>

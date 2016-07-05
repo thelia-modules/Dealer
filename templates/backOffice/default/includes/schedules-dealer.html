@@ -33,7 +33,7 @@
             </thead>
 
             <tbody>
-            {loop name="dealer-schedules-defaults" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=true order="day"}
+            {loop name="dealer-schedules-defaults" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=true order="day,begin"}
                 <tr>
                     <td>
                         {$DAY_LABEL}
@@ -128,16 +128,16 @@
             </thead>
 
             <tbody>
-            {loop name="dealer-schedules" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=false order="day"}
+            {loop name="dealer-schedules" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=false order="period-begin,day,begin"}
                 <tr>
                     <td>
-                        {$DAY_LABEL}
+                        {if $DAY_LABEL}{$DAY_LABEL}{/if}
                     </td>
                     <td>
-                        {format_date date=$BEGIN format="H:i"}
+                        {if $BEGIN}{format_date date=$BEGIN format="H:i"}{/if}
                     </td>
                     <td>
-                        {format_date date=$END format="H:i"}
+                        {if $END}{format_date date=$END format="H:i"}{/if}
                     </td>
                     <td>
                         {format_date date=$PERIOD_BEGIN format="d/m/y"}
@@ -223,16 +223,16 @@
             </thead>
 
             <tbody>
-            {loop name="dealer-schedules" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=false closed=true order="day"}
+            {loop name="dealer-schedules" type="dealer_schedules" dealer_id=$smarty.get.dealer_id default_period=false closed=true order="period-begin,day,begin"}
                 <tr>
                     <td>
-                        {$DAY_LABEL}
+                        {if $DAY_LABEL}{$DAY_LABEL}{/if}
                     </td>
                     <td>
-                        {format_date date=$BEGIN format="H:i"}
+                        {if $BEGIN}{format_date date=$BEGIN format="H:i"}{/if}
                     </td>
                     <td>
-                        {format_date date=$END format="H:i"}
+                        {if $END}{format_date date=$END format="H:i"}{/if}
                     </td>
                     <td>
                         {format_date date=$PERIOD_BEGIN format="d/m/y"}

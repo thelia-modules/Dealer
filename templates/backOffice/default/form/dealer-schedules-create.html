@@ -15,6 +15,9 @@
         {form_error form=$form field="day"}{$message}{/form_error}
 
         <select class="form-control" name="{$name}" id="{$label_attr.for}" {if {$update|default:false} == false}multiple{/if}>
+            {if {$update|default:false} == true}
+                <option value="" selected></option>
+            {/if}
             {foreach $choices as $choice}
                 <option value="{$choice->value}" {if $DAY == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}

@@ -51,7 +51,7 @@ class SchedulesForm extends BaseForm
                 "choices" => $this->getDay(),
                 "label" => $this->translator->trans("Day", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-day"],
-                "required" => true,
+                "required" => false,
                 "multiple" => true,
                 "attr" => array()
             ])
