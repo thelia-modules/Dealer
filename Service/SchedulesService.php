@@ -113,7 +113,7 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         }
 
         // Require Field
-        if (isset($data['day']) && $data['day'] !== array()) {
+        if (array_key_exists('day', $data) && $data['day'] !== array()) {
             $model->setDay($data['day']);
         }
         if (isset($data['begin'])) {

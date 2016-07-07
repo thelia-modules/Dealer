@@ -80,7 +80,7 @@ class ExtraSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
 
         $query->filterByPeriodNotNull();
         if ($this->getHidePast()) {
-            $query->filterByPeriodEnd(new \DateTime(), Criteria::GREATER_THAN);
+            $query->filterByPeriodEnd((new \DateTime())->add(\DateInterval::createFromDateString('yesterday')), Criteria::GREATER_THAN);
         }
 
         if ($id = $this->getId()) {
