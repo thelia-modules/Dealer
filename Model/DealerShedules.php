@@ -34,6 +34,6 @@ class DealerShedules extends BaseDealerShedules
 
     public function getDayFormated()
     {
-        return $this->days[$this->getDay()];
+        return isset($this->days[$this->getDay()]) ? $this->days[$this->getDay()] : null;
     }
 }
