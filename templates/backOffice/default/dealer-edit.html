@@ -43,7 +43,7 @@
                     {/loop}
                     {/loop}
                 </div>
-                {intl l="Dealer edit" d="dealer.bo.default"} {loop type="dealer" name="dealer-title" id=$smarty.get.dealer_id limit=1}- {$TITLE}{/loop}
+                {intl l="Dealer edit" d="dealer.bo.default"} {loop type="dealer" name="dealer-title" backend_context="yes" id=$smarty.get.dealer_id limit=1}- {$TITLE}{/loop}
             </div>
             {hookblock name="dealer.additional" dealer=$smarty.get.dealer_id}
                 <ul class="nav nav-tabs" id="tabbed-menu">

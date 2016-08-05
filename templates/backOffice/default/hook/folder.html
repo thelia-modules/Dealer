@@ -16,7 +16,7 @@
         <div class="well">
             <h3>{intl l="Folder linked to :" d="dealer.bo.default"}</h3>
             <ul>
-                {loop type="dealer" name="dealer-folder" folder_id=$folder_id}
+                {loop type="dealer" backend_context="yes" name="dealer-folder" folder_id=$folder_id}
                     <li>{$TITLE} <a href="#dealer-folder-unlink" data-toggle="modal" class="folder-delete" data-id="{$ID}"><span class="glyphicon glyphicon-minus"></span></a></li>
                 {/loop}
             </ul>

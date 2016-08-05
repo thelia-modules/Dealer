@@ -42,7 +42,7 @@
 
 
         <select class="form-control" name="{$name}">
-            {loop type="dealer" name="dealer_list"}
+            {loop type="dealer" backend_context="yes" name="dealer_list"}
                 <option value="{$ID}">{$TITLE}</option>
             {/loop}
         </select>
