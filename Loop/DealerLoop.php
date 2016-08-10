@@ -197,8 +197,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 ->where(DealerProductTableMap::PRODUCT_ID." ".Criteria::IN." (".$product.")");
             ;
         }
-        
-        $query =$this->getAdminDealer($query);
+
+        if ($this->getBackendContext() === true) {
+            $query =$this->getAdminDealer($query);
+        }
 
         foreach ($this->getOrder() as $order) {
             switch ($order) {

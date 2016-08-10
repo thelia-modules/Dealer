@@ -16,7 +16,7 @@
         <div class="well">
             <h3>{intl l="Brand linked to :" d="dealer.bo.default"}</h3>
             <ul>
-                {loop type="dealer" name="dealer-brand" brand_id=$brand_id}
+                {loop type="dealer" backend_context="yes" name="dealer-brand" brand_id=$brand_id}
                     <li>{$TITLE} <a href="#dealer-brand-unlink" data-toggle="modal" class="brand-delete" data-id="{$ID}"><span class="glyphicon glyphicon-minus"></span></a></li>
                 {/loop}
             </ul>
