@@ -19,7 +19,6 @@ use Thelia\Core\Event\Hook\HookRenderBlockEvent;
 use Thelia\Core\Hook\BaseHook;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\SecurityContext;
-use Thelia\Tools\URL;
 use Thelia\Core\Translation\Translator;
 
 /**

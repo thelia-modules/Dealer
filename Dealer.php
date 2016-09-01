@@ -37,6 +37,9 @@ class Dealer extends BaseModule
     const RESOURCES_USERS = "admin.dealer.users";
     const RESOURCES_MODULE = "admin.dealer.module";
 
+    // List of admin profile_id allowed to see ALL the dealers (separated by coma)
+    const CONFIG_ALLOW_PROFILE_ID = 'admin_profile_id';
+
     public function postActivation(ConnectionInterface $con = null)
     {
         try {
@@ -58,6 +61,9 @@ class Dealer extends BaseModule
         $this->addResource(self::RESOURCES_ASSOCIATED);
         $this->addResource(self::RESOURCES_USERS);
         $this->addResource(self::RESOURCES_MODULE);
+
+        //Initialize the module_config
+        self::setConfigValue(self::CONFIG_ALLOW_PROFILE_ID, '');
     }
 
     /**
