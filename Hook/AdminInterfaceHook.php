@@ -17,7 +17,8 @@ use Dealer\Dealer;
 use Symfony\Component\Routing\Router;
 use Thelia\Core\Event\Hook\HookRenderBlockEvent;
 use Thelia\Core\Hook\BaseHook;
-use Thelia\Tools\URL;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Translation\Translator;
 
 /**
@@ -27,9 +28,12 @@ class AdminInterfaceHook extends BaseHook
 {
     protected $router;
 
-    public function __construct(Router $router)
+    protected $securityContext;
+
+    public function __construct(Router $router, SecurityContext $securityContext)
     {
         $this->router = $router;
+        $this->securityContext = $securityContext;
     }
 
     protected function transQuick($id, $locale, $parameters = [])
@@ -43,18 +47,27 @@ class AdminInterfaceHook extends BaseHook
 
     public function onTopMenuTools(HookRenderBlockEvent $event)
     {
-        $url = $this->router->generate("dealer.list");
-        $lang = $this->getSession()->getLang();
-        $title = $this->transQuick("Dealer", $lang->getLocale());
-
-        $event->add(
-            [
-                "id" => "dealer",
-                "class" => "",
-                "title" => $title,
-                "url" => $url
-
-            ]
+        $isGranted = $this->securityContext->isGranted(
+            ["ADMIN"],
+            [],
+            [Dealer::getModuleCode()],
+            [AccessManager::VIEW]
         );
+
+        if ($isGranted) {
+            $url = $this->router->generate("dealer.list");
+            $lang = $this->getSession()->getLang();
+            $title = $this->transQuick("Dealer", $lang->getLocale());
+
+            $event->add(
+                [
+                    "id" => "dealer",
+                    "class" => "",
+                    "title" => $title,
+                    "url" => $url
+
+                ]
+            );
+        }
     }
 }

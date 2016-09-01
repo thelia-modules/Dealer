@@ -64,6 +64,7 @@
         <hook id="dealer.admin.hook" class="Dealer\Hook\AdminInterfaceHook" scope="request">
             <tag name="hook.event_listener" event="main.top-menu-modules" type="back" method="onTopMenuTools"/>
             <argument type="service" id="router.dealer"/>
+            <argument type="service" id="thelia.securityContext"/>
         </hook>
         <hook id="dealer.internal.hook" class="Dealer\Hook\InternalHook" scope="request">
             <tag name="hook.event_listener" event="dealer.associated.tabcontent" type="back" method="insertContent"/>

@@ -22,8 +22,6 @@ use Dealer\Model\Map\DealerProductTableMap;
 use Dealer\Model\Map\DealerTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
-use Thelia\Core\Security\AccessManager;
-use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
@@ -292,6 +290,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      */
     protected function getAdminDealer($query)
     {
+        /** @var \Thelia\Model\Admin $admin */
         $admin = $this->securityContext->getAdminUser();
     
         if ($admin === null) {
@@ -300,6 +299,15 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
         if ($admin->getProfileId() === null) {
             return $query;
+        }
+
+        // If the current admin has an allowed profile_id, let him see all the dealers
+        if (null != $configProfileIds = \Dealer\Dealer::getConfigValue(\Dealer\Dealer::CONFIG_ALLOW_PROFILE_ID)) {
+            $profileIds = explode(',', $configProfileIds);
+
+            if (in_array($admin->getProfileId(), $profileIds)) {
+                return $query;
+            }
         }
 
         return $query->useDealerAdminQuery()->filterByAdminId($admin->getId())->endUse();
