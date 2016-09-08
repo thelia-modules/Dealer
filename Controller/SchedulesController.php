@@ -121,7 +121,7 @@ class SchedulesController extends BaseController
     public function createAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(self::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
                 AccessManager::CREATE)
         ) {
             return $response;
@@ -228,7 +228,7 @@ class SchedulesController extends BaseController
     public function cloneAction()
     {
         // Check current user authorization
-        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
+        if (null !== $response = $this->checkAuth(self::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
                 AccessManager::CREATE)
         ) {
             return $response;
