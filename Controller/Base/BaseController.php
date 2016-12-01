@@ -39,7 +39,7 @@ abstract class BaseController extends BaseAdminController
     /**
      * Name of resource to check
      */
-    const CONTROLLER_CHECK_RESOURCE = [];
+    const CONTROLLER_CHECK_RESOURCE = '';
 
     /**
      * Current Service Associated to controller
