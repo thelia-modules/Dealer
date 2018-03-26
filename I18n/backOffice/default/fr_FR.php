@@ -1,7 +1,9 @@
 <?php
 return array(
+    "Users" => "Utilisateurs",
     /* List */
     "Dealer" => "Magasin",
+    "Dealers" => "Magasins",
     "Company" => "Nom",
     "Address1" => "Adresse 1",
     "Address2" => "Adresse 2",
@@ -11,6 +13,7 @@ return array(
     "City" => "Ville",
     "PhoneNumber" => "Numéro de téléphone",
     "WebSite" => "Site Web",
+    "There is no Dealer" => "Aucun magasin",
     "Title" => "Nom",
     "Access" => "Accès",
     /* Création */
@@ -18,6 +21,14 @@ return array(
     "Phone number" => "Numéro de téléphone",
     "Web site" => "Site web",
     "Create an entry of Dealer" => "Créer un nouveau point de vente",
+    "The Dealer title" => "Nom du magasin",
+    "The Dealer address1" => "Magasin - adresse 1",
+    "The Dealer address2" => "Magasin - adresse 2",
+    "The Dealer address3" => "Magasin - adresse 3",
+    "The Dealer zipcode" => "Code postal du magasin",
+    "The Dealer city" => "Ville du magasin",
+    "The Dealer description" => "Description du magasin",
+    "The Dealer access" => "Accès au magasin",
     /* Edition */
     "Dealer edit" => "Edition d'un magasin",
     "company" => "Nom",
@@ -38,6 +49,7 @@ return array(
     "Location" => "Géolocalisation",
     "There is no additionnal content for this Dealer" => "Il n'y pas de contenu additionnel pour ce magasin",
     "General" => "Présentation Générale",
+    "Dealer created on %created_at. Last modification: %updated_at" => "Magasin créé le %created_at. Dernière modification  le %updated_at",
     /* Delete */
     "Delete an entry of Dealer" => "Suppression d'un point de vente",
     "Do you really want to delete this Dealer entry ?" => "Voulez vous supprimer ce point de vente ?",
@@ -91,12 +103,15 @@ return array(
     "AM" => "Matin",
     "PM" => "Après-midi",
     "Period" => "Période",
+    "Clone this Schedule" => "Cloner cet horaire",
 
     /* Associated */
     "Associated" => "Associations",
+    "Content" => "Contenu",
     "Link a Content" => "Lier un contenu",
     "Do you really want to unlink this content ?" => "Voulez vous retirer le lien vers ce contenu ?",
     "Unlink a content" => "Retirer le lien vers ce contenu",
+    "Folder" => "Dossier",
     "Link a Folder" => "Lier un dossier",
     "Link a Brand" => "Lier une marque",
     "Link a Product" => "Lier un produit",
@@ -106,7 +121,9 @@ return array(
     "Unlink a folder" => "Retirer le lien vers ce dossier",
     "Content linked" => "Contenu lié",
     "Folder linked" => "Dossier lié",
+    "Brand" => "Marque",
     "Brand linked" => "Marque liée",
+    "Brand title" => "Titre de la marque",
     "Product linked" => "Produit lié",
     "Content linked to :" => "Contenu lié à :",
     "Folder linked to :" => "Dossier lié à :",
@@ -124,4 +141,14 @@ return array(
     "Unlink this folder" => "Retirer le lien vers ce dossier",
     "Unlink this brand" => "Retirer le lien vers cette marque",
     "Unlink this product" => "Retirer le lien vers ce produit",
+
+    /* Users */
+    "Admin linked" => "Administrateurs liés",
+    "Admin title" => "Administrateur",
+    "Do you really want to unlink this admin ?" => "Voulez-vous vraiment retirer cet administrateur ?",
+    "Link a Admin" => "Lier un administrateur",
+    "Link a new admin" => "Lier un nouvel administrateur",
+    "There is no Admin linked to this dealer" => "Aucun administrateur lié à ce magasin",
+    "Unlink a admin" => "Retirer un administrateur",
+    "Unlink this admin" => "Retirer cet administrateur",
 );

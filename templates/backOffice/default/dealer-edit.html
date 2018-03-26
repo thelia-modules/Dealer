@@ -2,7 +2,7 @@
 {default_translation_domain domain='dealer.bo.default'}
 
 {block name="no-return-functions"}
-    {$admin_current_location = 'modules'}
+    {$admin_current_location = 'dealer'}
 {/block}
 
 {block name="page-title"}{intl l='Dealer' d="dealer.bo.default"}{/block}
@@ -25,80 +25,83 @@
         <div class="general-block-decorator">
             <div class="title title-without-tabs">
                 <div class="pull-right">
-                    {loop type="dealer" name="dealer-page" backend_context="yes" id=$smarty.get.dealer_id with_prev_next_info=true limit=1}
+                    {loop type="dealer" name="dealer-page" backend_context="yes" id=$dealer_id with_prev_next_info=true limit=1}
                         {assign "dealer_title" $TITLE}
-                    {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
-                    {if $HAS_PREVIOUS}
-                        <a href="{url path="/admin/module/Dealer/dealer/edit" dealer_id=$PREVIOUS}"
-                           class="btn btn-default" title="{intl l='Edit previous dealer' d="dealer.bo.default"}"><span
-                                    class="glyphicon glyphicon-arrow-left"></span></a>
-                    {/if}
-                    {/loop}
-                    {hook name="dealer.edit.nav.bar" dealer_id=$ID}
-                    {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
-                    {if $HAS_NEXT}
-                        <a href="{url path="/admin/module/Dealer/dealer/edit" dealer_id=$NEXT}" class="btn btn-default"
-                           title="{intl l='Edit next dealer' d="dealer.bo.default"}"><span class="glyphicon glyphicon-arrow-right"></span></a>
-                    {/if}
-                    {/loop}
+                        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
+                            {if $HAS_PREVIOUS}
+                                <a href="{url path="/admin/module/Dealer/dealer/edit" dealer_id=$PREVIOUS}"
+                                   class="btn btn-default" title="{intl l='Edit previous dealer' d="dealer.bo.default"}"><span class="glyphicon glyphicon-arrow-left"></span></a>
+                            {/if}
+                        {/loop}
+
+                        {hook name="dealer.edit.nav.bar" dealer_id=$ID}
+
+                        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
+                            {if $HAS_NEXT}
+                                <a href="{url path="/admin/module/Dealer/dealer/edit" dealer_id=$NEXT}" class="btn btn-default"
+                                   title="{intl l='Edit next dealer' d="dealer.bo.default"}"><span class="glyphicon glyphicon-arrow-right"></span></a>
+                            {/if}
+                        {/loop}
                     {/loop}
                 </div>
-                {intl l="Dealer edit" d="dealer.bo.default"} {loop type="dealer" name="dealer-title" backend_context="yes" id=$smarty.get.dealer_id limit=1}- {$TITLE}{/loop}
+                {intl l="Dealer edit" d="dealer.bo.default"} {loop type="dealer" name="dealer-title" backend_context="yes" id=$dealer_id limit=1}- {$TITLE}{/loop}
             </div>
-            {hookblock name="dealer.additional" dealer=$smarty.get.dealer_id}
+
+            {hookblock name="dealer.additional" dealer=$dealer_id}
                 <ul class="nav nav-tabs" id="tabbed-menu">
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="VIEW" module="Dealer"}
-                    <li class="active"><a href="#general" data-toggle="tab">{intl l="General" d="dealer.bo.default"}</a></li>
+                        <li class="active"><a href="#general" data-toggle="tab">{intl l="General" d="dealer.bo.default"}</a></li>
                     {/loop}
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.geo" access="VIEW" module="Dealer"}
-                    <li><a href="#location" data-toggle="tab">{intl l="Location" d="dealer.bo.default"}</a></li>
+                        <li><a href="#location" data-toggle="tab">{intl l="Location" d="dealer.bo.default"}</a></li>
                     {/loop}
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.contact" access="VIEW" module="Dealer"}
-                    <li><a href="#contacts" data-toggle="tab">{intl l="Contacts"}</a></li>
+                        <li><a href="#contacts" data-toggle="tab">{intl l="Contacts"}</a></li>
                     {/loop}
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="VIEW" module="Dealer"}
-                    <li><a href="#schedules" data-toggle="tab">{intl l="Schedules" d="dealer.bo.default"}</a></li>
+                        <li><a href="#schedules" data-toggle="tab">{intl l="Schedules" d="dealer.bo.default"}</a></li>
                     {/loop}
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.associated" access="VIEW" module="Dealer"}
-                    <li><a href="#associated" data-toggle="tab">{intl l="Associated" d="dealer.bo.default"}</a></li>
+                        <li><a href="#associated" data-toggle="tab">{intl l="Associated" d="dealer.bo.default"}</a></li>
                     {/loop}
                     {forhook rel="dealer.additional"}
                         <li><a href="#{$id}" data-toggle="tab">{$title}</a></li>
                     {/forhook}
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.users" access="VIEW" module="Dealer"}
-                    <li><a href="#users" data-toggle="tab">{intl l="Users" d="dealer.bo.default"}</a></li>
+                        <li><a href="#users" data-toggle="tab">{intl l="Users" d="dealer.bo.default"}</a></li>
                     {/loop}
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.module" access="VIEW" module="Dealer"}
-                    <li><a href="#modules" data-toggle="tab">{intl l="Modules"}</a></li>
+                        <li><a href="#modules" data-toggle="tab">{intl l="Modules"}</a></li>
                     {/loop}
                 </ul>
+
                 <div class="tab-content">
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer" access="VIEW" module="Dealer"}
-                    <div class="tab-pane fade in active" id="general">
-                        {include file="form/dealer-update.html"}
-                    </div>
+                        <div class="tab-pane fade in active" id="general">
+                            {include file="form/dealer-update.html"}
+                        </div>
                     {/loop}
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer.geo" access="VIEW" module="Dealer"}
-                    <div class="tab-pane fade" id="location">
-                        {include file="includes/dealer-location.html"}
-                    </div>
+                        <div class="tab-pane fade" id="location">
+                            {include file="includes/dealer-location.html"}
+                        </div>
                     {/loop}
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer.contact" access="VIEW" module="Dealer"}
-                    <div class="tab-pane fade" id="contacts">
-                        <div class="form-container">
-                            {include file="includes/contact-dealer.html"}
+                        <div class="tab-pane fade" id="contacts">
+                            <div class="form-container">
+                                {include file="includes/contact-dealer.html"}
+                            </div>
                         </div>
-                    </div>
                     {/loop}
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer.schedules" access="VIEW" module="Dealer"}
-                    <div class="tab-pane fade" id="schedules">
-                        {include file="includes/schedules-dealer.html"}
-                    </div>
+                        <div class="tab-pane fade" id="schedules">
+                            {include file="includes/schedules-dealer.html"}
+                        </div>
                     {/loop}
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer.associated" access="VIEW" module="Dealer"}
-                    <div class="tab-pane fade" id="associated">
-                        {include file="includes/associated.html"}
-                    </div>
+                        <div class="tab-pane fade" id="associated">
+                            {include file="includes/associated.html"}
+                        </div>
                     {/loop}
                     {forhook rel="dealer.additional"}
                         <div class="tab-pane fade" id="{$id}">
@@ -106,27 +109,27 @@
                         </div>
                     {/forhook}
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer.users" access="VIEW" module="Dealer"}
-                    <div class="tab-pane fade" id="users">
-                        {include file="includes/users.html"}
-                    </div>
+                        <div class="tab-pane fade" id="users">
+                            {include file="includes/users.html"}
+                        </div>
                     {/loop}
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer.module" access="VIEW" module="Dealer"}
-                    <div class="tab-pane fade" id="modules">
-                        {ifhook rel="dealer.extra.content.edit"}
-                        {hook name="dealer.extra.content.edit"}
-                        {/ifhook}
-                        {elsehook rel="dealer.extra.content.edit"}
-                            <div class="alert alert-info">
-                                {intl l="There is no additionnal content for this Dealer" d="dealer.bo.default"}
-                            </div>
-                        {/elsehook}
-                    </div>
+                        <div class="tab-pane fade" id="modules">
+                            {ifhook rel="dealer.extra.content.edit"}
+                                {hook name="dealer.extra.content.edit" dealer_id=$dealer_id}
+                            {/ifhook}
+                            {elsehook rel="dealer.extra.content.edit"}
+                                <div class="alert alert-info">
+                                    {intl l="There is no additionnal content for this Dealer" d="dealer.bo.default"}
+                                </div>
+                            {/elsehook}
+                        </div>
                     {/loop}
-
                 </div>
             {/hookblock}
         </div>
     </div>
+
     {include file="modal/dealer-contact-modal.html"}
     {include file="modal/dealer-contact-info-modal.html"}
     {include file="modal/dealer-schedules-modal.html"}

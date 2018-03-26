@@ -1,6 +1,6 @@
 {form name=$form_name}
 {form_hidden_fields form=$form}
-{render_form_field form=$form field="success_url" value={$success_url|default:{url path="/admin/module/Dealer/dealer/edit#associated" dealer_id=$dealer_id}}}
+{render_form_field form=$form field="success_url" value={$success_url|default:{url path="/admin/module/Dealer/dealer/edit#users" dealer_id=$dealer_id}}}
 {form_field form=$form field="admin_id"}
 {if $admin_id}
     <div class="form-group hidden">

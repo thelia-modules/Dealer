@@ -16,6 +16,7 @@ namespace Dealer\Hook;
 use Dealer\Dealer;
 use Symfony\Component\Routing\Router;
 use Thelia\Core\Event\Hook\HookRenderBlockEvent;
+use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\SecurityContext;
@@ -45,7 +46,7 @@ class AdminInterfaceHook extends BaseHook
         return $this->trans($id, $parameters, Dealer::MESSAGE_DOMAIN, $locale);
     }
 
-    public function onTopMenuTools(HookRenderBlockEvent $event)
+    public function onMainTopMenuTools(HookRenderEvent $event)
     {
         $isGranted = $this->securityContext->isGranted(
             ["ADMIN"],
@@ -55,19 +56,7 @@ class AdminInterfaceHook extends BaseHook
         );
 
         if ($isGranted) {
-            $url = $this->router->generate("dealer.list");
-            $lang = $this->getSession()->getLang();
-            $title = $this->transQuick("Dealer", $lang->getLocale());
-
-            $event->add(
-                [
-                    "id" => "dealer",
-                    "class" => "",
-                    "title" => $title,
-                    "url" => $url
-
-                ]
-            );
+            $event->add($this->render("menu-hook.html", $event->getArguments()));
         }
     }
 }

@@ -62,7 +62,7 @@
 
     <hooks>
         <hook id="dealer.admin.hook" class="Dealer\Hook\AdminInterfaceHook" scope="request">
-            <tag name="hook.event_listener" event="main.top-menu-modules" type="back" method="onTopMenuTools"/>
+            <tag name="hook.event_listener" event="main.in-top-menu-items" type="back" method="onMainTopMenuTools"/>
             <argument type="service" id="router.dealer"/>
             <argument type="service" id="thelia.securityContext"/>
         </hook>
