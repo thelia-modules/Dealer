@@ -33,7 +33,7 @@
                     order='alpha'
                     reverse_order='alpha_reverse'
                     path={url path='/admin/Dealer/dealer/edit' dealer_id=$dealer_id target='admins'}
-                    label="{intl l='Admin title'}"
+                    label="{intl l='Admin title' d="dealer.bo.default"}"
                     }
 
                     {hook name="admins.header" location="admin_list_header" }
@@ -48,8 +48,7 @@
                 <tr>
                     <td>{$ID}</td>
 
-                    <td class="object-title"><a href="{url path="/admin/admin/update/%id" id=$ID}"
-                                                title="{intl l='Edit this admin'}">{$FIRSTNAME} {$LASTNAME}</a></td>
+                    <td class="object-title">{$FIRSTNAME} {$LASTNAME}</td>
 
                     {hook name="admins.row" location="admin_list_row" }
 
