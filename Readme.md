@@ -111,7 +111,7 @@ You can find main Dealer interface on modules admin menu.
 |---                |---                                                                                                                        |
 |**id**             | filter by id                                                                                                              |
 |**dealer_id**      | filter by dealer                                                                                                          |
-|**default_period** | filter by default schedule                                                                                                |
+|**default_period** | boolean filter by default schedule                                                                                                |
 |**hide_past**      | boolean for hide past schedules (default: false)                                                                          |
 |**closed**         | boolean for closed or open schedule (default: false)                                                                      |
 |**day** 			| filter by day 		                                                                                                    |

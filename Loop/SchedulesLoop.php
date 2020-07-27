@@ -128,9 +128,9 @@ class SchedulesLoop extends BaseLoop implements PropelSearchLoopInterface
             $query->filterByDealerId($dealer_id);
         }
 
-        if ($this->getDefaultPeriod()) {
+        if (true == $this->getDefaultPeriod()) {
             $query->filterByPeriodNull();
-        } else {
+        } elseif (false == $this->getDefaultPeriod() && !is_null($this->getDefaultPeriod())) {
             $query->filterByPeriodNotNull();
             if ($this->getHidePast()) {
                 $query->filterByPeriodEnd(new \DateTime(), Criteria::GREATER_THAN);
