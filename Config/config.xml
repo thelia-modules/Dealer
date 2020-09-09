@@ -121,11 +121,46 @@
         <loop name="dealer_product" class="Dealer\Loop\ProductLoop"/>
         <loop name="dealer_admin" class="Dealer\Loop\AdminLoop"/>
     </loops>
-    <!--
-      <exports>
 
-      </exports>
-      -->
+    <exports>
+        <export id="dealer.export" class="Dealer\ImportExport\Export\DealerExport" category_id="dealer.export">
+            <export_descriptive locale="en_US">
+                <title>Dealers export</title>
+                <description>Export the information about your dealers (id, title, description, access, address, zipcode, city, country, location)</description>
+            </export_descriptive>
+            <export_descriptive locale="fr_FR">
+                <title>Exportation des magasins</title>
+                <description>Exporter les informations à propos de vos magasins (id, title, description, access, address, zipcode, city, country, location)</description>
+            </export_descriptive>
+        </export>
+        <export id="dealer.export.contact" class="Dealer\ImportExport\Export\DealerContactExport" category_id="dealer.export">
+            <export_descriptive locale="en_US">
+                <title>Contact export</title>
+                <description>Export the contacts about your dealers</description>
+            </export_descriptive>
+            <export_descriptive locale="fr_FR">
+                <title>Exportation des Contacts</title>
+                <description>Exporter les contacts à propos de vos magasins</description>
+            </export_descriptive>
+        </export>
+        <export id="dealer.export.schedules" class="Dealer\ImportExport\Export\DealerSchedulesExport" category_id="dealer.export">
+            <export_descriptive locale="en_US">
+                <title>Schedules export</title>
+                <description>Export the schedules about your dealers</description>
+            </export_descriptive>
+            <export_descriptive locale="fr_FR">
+                <title>Exportation des Horaires</title>
+                <description>Exporter les horaires de vos magasins</description>
+            </export_descriptive>
+        </export>
+    </exports>
+
+    <export_categories>
+        <export_category id="dealer.export">
+            <title locale="en_US">Dealers</title>
+            <title locale="fr_FR">Magasins</title>
+        </export_category>
+    </export_categories>
     <!--
       <imports>
 
