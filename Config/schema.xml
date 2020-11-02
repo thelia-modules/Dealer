@@ -31,10 +31,6 @@
         <behavior name="i18n">
             <parameter name="i18n_columns" value="title, description, access"/>
         </behavior>
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true"/>
-            <parameter name="log_created_by" value="true"/>
-        </behavior>
     </table>
 
     <table name="dealer_shedules" namespace="Dealer\Model">
@@ -55,10 +51,6 @@
         </foreign-key>
 
         <behavior name="timestampable"/>
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true"/>
-            <parameter name="log_created_by" value="true"/>
-        </behavior>
     </table>
 
     <table name="dealer_contact" namespace="Dealer\Model">
@@ -74,10 +66,6 @@
         <behavior name="timestampable"/>
         <behavior name="i18n">
             <parameter name="i18n_columns" value="label"/>
-        </behavior>
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true"/>
-            <parameter name="log_created_by" value="true"/>
         </behavior>
     </table>
 
@@ -96,10 +84,6 @@
         <behavior name="i18n">
             <parameter name="i18n_columns" value="value"/>
         </behavior>
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true"/>
-            <parameter name="log_created_by" value="true"/>
-        </behavior>
     </table>
 
     <table name="dealer_content" namespace="Dealer\Model">
@@ -117,10 +101,6 @@
         </foreign-key>
 
         <behavior name="timestampable" />
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-        </behavior>
     </table>
 
     <table name="dealer_folder" namespace="Dealer\Model">
@@ -138,10 +118,6 @@
         </foreign-key>
 
         <behavior name="timestampable" />
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-        </behavior>
     </table>
 
     <table name="dealer_brand" namespace="Dealer\Model">
@@ -159,10 +135,6 @@
         </foreign-key>
 
         <behavior name="timestampable" />
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-        </behavior>
     </table>
 
     <table name="dealer_product" namespace="Dealer\Model">
@@ -180,10 +152,6 @@
         </foreign-key>
 
         <behavior name="timestampable" />
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-        </behavior>
     </table>
 
     <table name="dealer_admin" namespace="Dealer\Model">
@@ -201,10 +169,6 @@
         </foreign-key>
 
         <behavior name="timestampable" />
-        <behavior name="versionable">
-            <parameter name="log_created_at" value="true" />
-            <parameter name="log_created_by" value="true" />
-        </behavior>
     </table>
 
 
