@@ -8,18 +8,13 @@ use \PDO;
 use Dealer\Model\Dealer as ChildDealer;
 use Dealer\Model\DealerAdmin as ChildDealerAdmin;
 use Dealer\Model\DealerAdminQuery as ChildDealerAdminQuery;
-use Dealer\Model\DealerAdminVersion as ChildDealerAdminVersion;
-use Dealer\Model\DealerAdminVersionQuery as ChildDealerAdminVersionQuery;
 use Dealer\Model\DealerQuery as ChildDealerQuery;
-use Dealer\Model\DealerVersionQuery as ChildDealerVersionQuery;
 use Dealer\Model\Map\DealerAdminTableMap;
-use Dealer\Model\Map\DealerAdminVersionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
@@ -94,25 +89,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * The value for the version field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $version;
-
-    /**
-     * The value for the version_created_at field.
-     * @var        string
-     */
-    protected $version_created_at;
-
-    /**
-     * The value for the version_created_by field.
-     * @var        string
-     */
-    protected $version_created_by;
-
-    /**
      * @var        Dealer
      */
     protected $aDealer;
@@ -123,12 +99,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
     protected $aAdmin;
 
     /**
-     * @var        ObjectCollection|ChildDealerAdminVersion[] Collection to store aggregation of ChildDealerAdminVersion objects.
-     */
-    protected $collDealerAdminVersions;
-    protected $collDealerAdminVersionsPartial;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      *
@@ -136,38 +106,11 @@ abstract class DealerAdmin implements ActiveRecordInterface
      */
     protected $alreadyInSave = false;
 
-    // versionable behavior
-
-
-    /**
-     * @var bool
-     */
-    protected $enforceVersion = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection
-     */
-    protected $dealerAdminVersionsScheduledForDeletion = null;
-
-    /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see __construct()
-     */
-    public function applyDefaultValues()
-    {
-        $this->version = 0;
-    }
-
     /**
      * Initializes internal state of Dealer\Model\Base\DealerAdmin object.
-     * @see applyDefaults()
      */
     public function __construct()
     {
-        $this->applyDefaultValues();
     }
 
     /**
@@ -495,48 +438,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
     }
 
     /**
-     * Get the [version] column value.
-     *
-     * @return   int
-     */
-    public function getVersion()
-    {
-
-        return $this->version;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [version_created_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getVersionCreatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->version_created_at;
-        } else {
-            return $this->version_created_at instanceof \DateTime ? $this->version_created_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [version_created_by] column value.
-     *
-     * @return   string
-     */
-    public function getVersionCreatedBy()
-    {
-
-        return $this->version_created_by;
-    }
-
-    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -650,69 +551,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
     } // setUpdatedAt()
 
     /**
-     * Set the value of [version] column.
-     *
-     * @param      int $v new value
-     * @return   \Dealer\Model\DealerAdmin The current object (for fluent API support)
-     */
-    public function setVersion($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->version !== $v) {
-            $this->version = $v;
-            $this->modifiedColumns[DealerAdminTableMap::VERSION] = true;
-        }
-
-
-        return $this;
-    } // setVersion()
-
-    /**
-     * Sets the value of [version_created_at] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerAdmin The current object (for fluent API support)
-     */
-    public function setVersionCreatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->version_created_at !== null || $dt !== null) {
-            if ($dt !== $this->version_created_at) {
-                $this->version_created_at = $dt;
-                $this->modifiedColumns[DealerAdminTableMap::VERSION_CREATED_AT] = true;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setVersionCreatedAt()
-
-    /**
-     * Set the value of [version_created_by] column.
-     *
-     * @param      string $v new value
-     * @return   \Dealer\Model\DealerAdmin The current object (for fluent API support)
-     */
-    public function setVersionCreatedBy($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->version_created_by !== $v) {
-            $this->version_created_by = $v;
-            $this->modifiedColumns[DealerAdminTableMap::VERSION_CREATED_BY] = true;
-        }
-
-
-        return $this;
-    } // setVersionCreatedBy()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -722,10 +560,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->version !== 0) {
-                return false;
-            }
-
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -773,18 +607,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerAdminTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->version = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerAdminTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerAdminTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -793,7 +615,7 @@ abstract class DealerAdmin implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = DealerAdminTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = DealerAdminTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerAdmin object", 0, $e);
@@ -862,8 +684,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
 
             $this->aDealer = null;
             $this->aAdmin = null;
-            $this->collDealerAdminVersions = null;
-
         } // if (deep)
     }
 
@@ -932,14 +752,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
         $isInsert = $this->isNew();
         try {
             $ret = $this->preSave($con);
-            // versionable behavior
-            if ($this->isVersioningNecessary()) {
-                $this->setVersion($this->isNew() ? 1 : $this->getLastVersionNumber($con) + 1);
-                if (!$this->isColumnModified(DealerAdminTableMap::VERSION_CREATED_AT)) {
-                    $this->setVersionCreatedAt(time());
-                }
-                $createVersion = true; // for postSave hook
-            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
@@ -964,10 +776,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                // versionable behavior
-                if (isset($createVersion)) {
-                    $this->addVersion($con);
-                }
                 DealerAdminTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
@@ -1028,23 +836,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
                 $this->resetModified();
             }
 
-            if ($this->dealerAdminVersionsScheduledForDeletion !== null) {
-                if (!$this->dealerAdminVersionsScheduledForDeletion->isEmpty()) {
-                    \Dealer\Model\DealerAdminVersionQuery::create()
-                        ->filterByPrimaryKeys($this->dealerAdminVersionsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->dealerAdminVersionsScheduledForDeletion = null;
-                }
-            }
-
-                if ($this->collDealerAdminVersions !== null) {
-            foreach ($this->collDealerAdminVersions as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             $this->alreadyInSave = false;
 
         }
@@ -1086,15 +877,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
         if ($this->isColumnModified(DealerAdminTableMap::UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'UPDATED_AT';
         }
-        if ($this->isColumnModified(DealerAdminTableMap::VERSION)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION';
-        }
-        if ($this->isColumnModified(DealerAdminTableMap::VERSION_CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_AT';
-        }
-        if ($this->isColumnModified(DealerAdminTableMap::VERSION_CREATED_BY)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_BY';
-        }
 
         $sql = sprintf(
             'INSERT INTO dealer_admin (%s) VALUES (%s)',
@@ -1120,15 +902,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
                         break;
                     case 'UPDATED_AT':
                         $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'VERSION':
-                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
-                        break;
-                    case 'VERSION_CREATED_AT':
-                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'VERSION_CREATED_BY':
-                        $stmt->bindValue($identifier, $this->version_created_by, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1207,15 +980,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
             case 4:
                 return $this->getUpdatedAt();
                 break;
-            case 5:
-                return $this->getVersion();
-                break;
-            case 6:
-                return $this->getVersionCreatedAt();
-                break;
-            case 7:
-                return $this->getVersionCreatedBy();
-                break;
             default:
                 return null;
                 break;
@@ -1250,9 +1014,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
             $keys[2] => $this->getAdminId(),
             $keys[3] => $this->getCreatedAt(),
             $keys[4] => $this->getUpdatedAt(),
-            $keys[5] => $this->getVersion(),
-            $keys[6] => $this->getVersionCreatedAt(),
-            $keys[7] => $this->getVersionCreatedBy(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1265,9 +1026,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
             }
             if (null !== $this->aAdmin) {
                 $result['Admin'] = $this->aAdmin->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collDealerAdminVersions) {
-                $result['DealerAdminVersions'] = $this->collDealerAdminVersions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1318,15 +1076,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
             case 4:
                 $this->setUpdatedAt($value);
                 break;
-            case 5:
-                $this->setVersion($value);
-                break;
-            case 6:
-                $this->setVersionCreatedAt($value);
-                break;
-            case 7:
-                $this->setVersionCreatedBy($value);
-                break;
         } // switch()
     }
 
@@ -1356,9 +1105,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
         if (array_key_exists($keys[2], $arr)) $this->setAdminId($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setCreatedAt($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setUpdatedAt($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setVersion($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setVersionCreatedAt($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setVersionCreatedBy($arr[$keys[7]]);
     }
 
     /**
@@ -1375,9 +1121,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
         if ($this->isColumnModified(DealerAdminTableMap::ADMIN_ID)) $criteria->add(DealerAdminTableMap::ADMIN_ID, $this->admin_id);
         if ($this->isColumnModified(DealerAdminTableMap::CREATED_AT)) $criteria->add(DealerAdminTableMap::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(DealerAdminTableMap::UPDATED_AT)) $criteria->add(DealerAdminTableMap::UPDATED_AT, $this->updated_at);
-        if ($this->isColumnModified(DealerAdminTableMap::VERSION)) $criteria->add(DealerAdminTableMap::VERSION, $this->version);
-        if ($this->isColumnModified(DealerAdminTableMap::VERSION_CREATED_AT)) $criteria->add(DealerAdminTableMap::VERSION_CREATED_AT, $this->version_created_at);
-        if ($this->isColumnModified(DealerAdminTableMap::VERSION_CREATED_BY)) $criteria->add(DealerAdminTableMap::VERSION_CREATED_BY, $this->version_created_by);
 
         return $criteria;
     }
@@ -1445,23 +1188,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
         $copyObj->setAdminId($this->getAdminId());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
-        $copyObj->setVersion($this->getVersion());
-        $copyObj->setVersionCreatedAt($this->getVersionCreatedAt());
-        $copyObj->setVersionCreatedBy($this->getVersionCreatedBy());
-
-        if ($deepCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-
-            foreach ($this->getDealerAdminVersions() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDealerAdminVersion($relObj->copy($deepCopy));
-                }
-            }
-
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1592,243 +1318,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
         return $this->aAdmin;
     }
 
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param      string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('DealerAdminVersion' == $relationName) {
-            return $this->initDealerAdminVersions();
-        }
-    }
-
-    /**
-     * Clears out the collDealerAdminVersions collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addDealerAdminVersions()
-     */
-    public function clearDealerAdminVersions()
-    {
-        $this->collDealerAdminVersions = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collDealerAdminVersions collection loaded partially.
-     */
-    public function resetPartialDealerAdminVersions($v = true)
-    {
-        $this->collDealerAdminVersionsPartial = $v;
-    }
-
-    /**
-     * Initializes the collDealerAdminVersions collection.
-     *
-     * By default this just sets the collDealerAdminVersions collection to an empty array (like clearcollDealerAdminVersions());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDealerAdminVersions($overrideExisting = true)
-    {
-        if (null !== $this->collDealerAdminVersions && !$overrideExisting) {
-            return;
-        }
-        $this->collDealerAdminVersions = new ObjectCollection();
-        $this->collDealerAdminVersions->setModel('\Dealer\Model\DealerAdminVersion');
-    }
-
-    /**
-     * Gets an array of ChildDealerAdminVersion objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildDealerAdmin is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildDealerAdminVersion[] List of ChildDealerAdminVersion objects
-     * @throws PropelException
-     */
-    public function getDealerAdminVersions($criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerAdminVersionsPartial && !$this->isNew();
-        if (null === $this->collDealerAdminVersions || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDealerAdminVersions) {
-                // return empty collection
-                $this->initDealerAdminVersions();
-            } else {
-                $collDealerAdminVersions = ChildDealerAdminVersionQuery::create(null, $criteria)
-                    ->filterByDealerAdmin($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collDealerAdminVersionsPartial && count($collDealerAdminVersions)) {
-                        $this->initDealerAdminVersions(false);
-
-                        foreach ($collDealerAdminVersions as $obj) {
-                            if (false == $this->collDealerAdminVersions->contains($obj)) {
-                                $this->collDealerAdminVersions->append($obj);
-                            }
-                        }
-
-                        $this->collDealerAdminVersionsPartial = true;
-                    }
-
-                    reset($collDealerAdminVersions);
-
-                    return $collDealerAdminVersions;
-                }
-
-                if ($partial && $this->collDealerAdminVersions) {
-                    foreach ($this->collDealerAdminVersions as $obj) {
-                        if ($obj->isNew()) {
-                            $collDealerAdminVersions[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDealerAdminVersions = $collDealerAdminVersions;
-                $this->collDealerAdminVersionsPartial = false;
-            }
-        }
-
-        return $this->collDealerAdminVersions;
-    }
-
-    /**
-     * Sets a collection of DealerAdminVersion objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $dealerAdminVersions A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildDealerAdmin The current object (for fluent API support)
-     */
-    public function setDealerAdminVersions(Collection $dealerAdminVersions, ConnectionInterface $con = null)
-    {
-        $dealerAdminVersionsToDelete = $this->getDealerAdminVersions(new Criteria(), $con)->diff($dealerAdminVersions);
-
-
-        //since at least one column in the foreign key is at the same time a PK
-        //we can not just set a PK to NULL in the lines below. We have to store
-        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->dealerAdminVersionsScheduledForDeletion = clone $dealerAdminVersionsToDelete;
-
-        foreach ($dealerAdminVersionsToDelete as $dealerAdminVersionRemoved) {
-            $dealerAdminVersionRemoved->setDealerAdmin(null);
-        }
-
-        $this->collDealerAdminVersions = null;
-        foreach ($dealerAdminVersions as $dealerAdminVersion) {
-            $this->addDealerAdminVersion($dealerAdminVersion);
-        }
-
-        $this->collDealerAdminVersions = $dealerAdminVersions;
-        $this->collDealerAdminVersionsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related DealerAdminVersion objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related DealerAdminVersion objects.
-     * @throws PropelException
-     */
-    public function countDealerAdminVersions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerAdminVersionsPartial && !$this->isNew();
-        if (null === $this->collDealerAdminVersions || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDealerAdminVersions) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getDealerAdminVersions());
-            }
-
-            $query = ChildDealerAdminVersionQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByDealerAdmin($this)
-                ->count($con);
-        }
-
-        return count($this->collDealerAdminVersions);
-    }
-
-    /**
-     * Method called to associate a ChildDealerAdminVersion object to this object
-     * through the ChildDealerAdminVersion foreign key attribute.
-     *
-     * @param    ChildDealerAdminVersion $l ChildDealerAdminVersion
-     * @return   \Dealer\Model\DealerAdmin The current object (for fluent API support)
-     */
-    public function addDealerAdminVersion(ChildDealerAdminVersion $l)
-    {
-        if ($this->collDealerAdminVersions === null) {
-            $this->initDealerAdminVersions();
-            $this->collDealerAdminVersionsPartial = true;
-        }
-
-        if (!in_array($l, $this->collDealerAdminVersions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDealerAdminVersion($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param DealerAdminVersion $dealerAdminVersion The dealerAdminVersion object to add.
-     */
-    protected function doAddDealerAdminVersion($dealerAdminVersion)
-    {
-        $this->collDealerAdminVersions[]= $dealerAdminVersion;
-        $dealerAdminVersion->setDealerAdmin($this);
-    }
-
-    /**
-     * @param  DealerAdminVersion $dealerAdminVersion The dealerAdminVersion object to remove.
-     * @return ChildDealerAdmin The current object (for fluent API support)
-     */
-    public function removeDealerAdminVersion($dealerAdminVersion)
-    {
-        if ($this->getDealerAdminVersions()->contains($dealerAdminVersion)) {
-            $this->collDealerAdminVersions->remove($this->collDealerAdminVersions->search($dealerAdminVersion));
-            if (null === $this->dealerAdminVersionsScheduledForDeletion) {
-                $this->dealerAdminVersionsScheduledForDeletion = clone $this->collDealerAdminVersions;
-                $this->dealerAdminVersionsScheduledForDeletion->clear();
-            }
-            $this->dealerAdminVersionsScheduledForDeletion[]= clone $dealerAdminVersion;
-            $dealerAdminVersion->setDealerAdmin(null);
-        }
-
-        return $this;
-    }
-
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -1839,12 +1328,8 @@ abstract class DealerAdmin implements ActiveRecordInterface
         $this->admin_id = null;
         $this->created_at = null;
         $this->updated_at = null;
-        $this->version = null;
-        $this->version_created_at = null;
-        $this->version_created_by = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -1862,14 +1347,8 @@ abstract class DealerAdmin implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collDealerAdminVersions) {
-                foreach ($this->collDealerAdminVersions as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
-        $this->collDealerAdminVersions = null;
         $this->aDealer = null;
         $this->aAdmin = null;
     }
@@ -1898,309 +1377,6 @@ abstract class DealerAdmin implements ActiveRecordInterface
         return $this;
     }
 
-    // versionable behavior
-
-    /**
-     * Enforce a new Version of this object upon next save.
-     *
-     * @return \Dealer\Model\DealerAdmin
-     */
-    public function enforceVersioning()
-    {
-        $this->enforceVersion = true;
-
-        return $this;
-    }
-
-    /**
-     * Checks whether the current state must be recorded as a version
-     *
-     * @return  boolean
-     */
-    public function isVersioningNecessary($con = null)
-    {
-        if ($this->alreadyInSave) {
-            return false;
-        }
-
-        if ($this->enforceVersion) {
-            return true;
-        }
-
-        if (ChildDealerAdminQuery::isVersioningEnabled() && ($this->isNew() || $this->isModified()) || $this->isDeleted()) {
-            return true;
-        }
-        if (null !== ($object = $this->getDealer($con)) && $object->isVersioningNecessary($con)) {
-            return true;
-        }
-
-
-        return false;
-    }
-
-    /**
-     * Creates a version of the current object and saves it.
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildDealerAdminVersion A version object
-     */
-    public function addVersion($con = null)
-    {
-        $this->enforceVersion = false;
-
-        $version = new ChildDealerAdminVersion();
-        $version->setId($this->getId());
-        $version->setDealerId($this->getDealerId());
-        $version->setAdminId($this->getAdminId());
-        $version->setCreatedAt($this->getCreatedAt());
-        $version->setUpdatedAt($this->getUpdatedAt());
-        $version->setVersion($this->getVersion());
-        $version->setVersionCreatedAt($this->getVersionCreatedAt());
-        $version->setVersionCreatedBy($this->getVersionCreatedBy());
-        $version->setDealerAdmin($this);
-        if (($related = $this->getDealer($con)) && $related->getVersion()) {
-            $version->setDealerIdVersion($related->getVersion());
-        }
-        $version->save($con);
-
-        return $version;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con The connection to use
-     *
-     * @return  ChildDealerAdmin The current object (for fluent API support)
-     */
-    public function toVersion($versionNumber, $con = null)
-    {
-        $version = $this->getOneVersion($versionNumber, $con);
-        if (!$version) {
-            throw new PropelException(sprintf('No ChildDealerAdmin object found with version %d', $version));
-        }
-        $this->populateFromVersion($version, $con);
-
-        return $this;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param ChildDealerAdminVersion $version The version object to use
-     * @param ConnectionInterface   $con the connection to use
-     * @param array                 $loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
-     *
-     * @return ChildDealerAdmin The current object (for fluent API support)
-     */
-    public function populateFromVersion($version, $con = null, &$loadedObjects = array())
-    {
-        $loadedObjects['ChildDealerAdmin'][$version->getId()][$version->getVersion()] = $this;
-        $this->setId($version->getId());
-        $this->setDealerId($version->getDealerId());
-        $this->setAdminId($version->getAdminId());
-        $this->setCreatedAt($version->getCreatedAt());
-        $this->setUpdatedAt($version->getUpdatedAt());
-        $this->setVersion($version->getVersion());
-        $this->setVersionCreatedAt($version->getVersionCreatedAt());
-        $this->setVersionCreatedBy($version->getVersionCreatedBy());
-        if ($fkValue = $version->getDealerId()) {
-            if (isset($loadedObjects['ChildDealer']) && isset($loadedObjects['ChildDealer'][$fkValue]) && isset($loadedObjects['ChildDealer'][$fkValue][$version->getDealerIdVersion()])) {
-                $related = $loadedObjects['ChildDealer'][$fkValue][$version->getDealerIdVersion()];
-            } else {
-                $related = new ChildDealer();
-                $relatedVersion = ChildDealerVersionQuery::create()
-                    ->filterById($fkValue)
-                    ->filterByVersion($version->getDealerIdVersion())
-                    ->findOne($con);
-                $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
-                $related->setNew(false);
-            }
-            $this->setDealer($related);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Gets the latest persisted version number for the current object
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  integer
-     */
-    public function getLastVersionNumber($con = null)
-    {
-        $v = ChildDealerAdminVersionQuery::create()
-            ->filterByDealerAdmin($this)
-            ->orderByVersion('desc')
-            ->findOne($con);
-        if (!$v) {
-            return 0;
-        }
-
-        return $v->getVersion();
-    }
-
-    /**
-     * Checks whether the current object is the latest one
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  Boolean
-     */
-    public function isLastVersion($con = null)
-    {
-        return $this->getLastVersionNumber($con) == $this->getVersion();
-    }
-
-    /**
-     * Retrieves a version object for this entity and a version number
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildDealerAdminVersion A version object
-     */
-    public function getOneVersion($versionNumber, $con = null)
-    {
-        return ChildDealerAdminVersionQuery::create()
-            ->filterByDealerAdmin($this)
-            ->filterByVersion($versionNumber)
-            ->findOne($con);
-    }
-
-    /**
-     * Gets all the versions of this object, in incremental order
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ObjectCollection A list of ChildDealerAdminVersion objects
-     */
-    public function getAllVersions($con = null)
-    {
-        $criteria = new Criteria();
-        $criteria->addAscendingOrderByColumn(DealerAdminVersionTableMap::VERSION);
-
-        return $this->getDealerAdminVersions($criteria, $con);
-    }
-
-    /**
-     * Compares the current object with another of its version.
-     * <code>
-     * print_r($book->compareVersion(1));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $versionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersion($versionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->toArray();
-        $toVersion = $this->getOneVersion($versionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Compares two versions of the current object.
-     * <code>
-     * print_r($book->compareVersions(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $fromVersionNumber
-     * @param   integer             $toVersionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->getOneVersion($fromVersionNumber, $con)->toArray();
-        $toVersion = $this->getOneVersion($toVersionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Computes the diff between two versions.
-     * <code>
-     * print_r($book->computeDiff(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   array     $fromVersion     An array representing the original version.
-     * @param   array     $toVersion       An array representing the destination version.
-     * @param   string    $keys            Main key used for the result diff (versions|columns).
-     * @param   array     $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    protected function computeDiff($fromVersion, $toVersion, $keys = 'columns', $ignoredColumns = array())
-    {
-        $fromVersionNumber = $fromVersion['Version'];
-        $toVersionNumber = $toVersion['Version'];
-        $ignoredColumns = array_merge(array(
-            'Version',
-            'VersionCreatedAt',
-            'VersionCreatedBy',
-        ), $ignoredColumns);
-        $diff = array();
-        foreach ($fromVersion as $key => $value) {
-            if (in_array($key, $ignoredColumns)) {
-                continue;
-            }
-            if ($toVersion[$key] != $value) {
-                switch ($keys) {
-                    case 'versions':
-                        $diff[$fromVersionNumber][$key] = $value;
-                        $diff[$toVersionNumber][$key] = $toVersion[$key];
-                        break;
-                    default:
-                        $diff[$key] = array(
-                            $fromVersionNumber => $value,
-                            $toVersionNumber => $toVersion[$key],
-                        );
-                        break;
-                }
-            }
-        }
-
-        return $diff;
-    }
-    /**
-     * retrieve the last $number versions.
-     *
-     * @param Integer $number the number of record to return.
-     * @return PropelCollection|array \Dealer\Model\DealerAdminVersion[] List of \Dealer\Model\DealerAdminVersion objects
-     */
-    public function getLastVersions($number = 10, $criteria = null, $con = null)
-    {
-        $criteria = ChildDealerAdminVersionQuery::create(null, $criteria);
-        $criteria->addDescendingOrderByColumn(DealerAdminVersionTableMap::VERSION);
-        $criteria->limit($number);
-
-        return $this->getDealerAdminVersions($criteria, $con);
-    }
     /**
      * Code to be run before persisting the object
      * @param  ConnectionInterface $con

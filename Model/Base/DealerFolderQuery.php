@@ -27,18 +27,12 @@ use Thelia\Model\Folder;
  * @method     ChildDealerFolderQuery orderByFolderId($order = Criteria::ASC) Order by the folder_id column
  * @method     ChildDealerFolderQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildDealerFolderQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
- * @method     ChildDealerFolderQuery orderByVersion($order = Criteria::ASC) Order by the version column
- * @method     ChildDealerFolderQuery orderByVersionCreatedAt($order = Criteria::ASC) Order by the version_created_at column
- * @method     ChildDealerFolderQuery orderByVersionCreatedBy($order = Criteria::ASC) Order by the version_created_by column
  *
  * @method     ChildDealerFolderQuery groupById() Group by the id column
  * @method     ChildDealerFolderQuery groupByDealerId() Group by the dealer_id column
  * @method     ChildDealerFolderQuery groupByFolderId() Group by the folder_id column
  * @method     ChildDealerFolderQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildDealerFolderQuery groupByUpdatedAt() Group by the updated_at column
- * @method     ChildDealerFolderQuery groupByVersion() Group by the version column
- * @method     ChildDealerFolderQuery groupByVersionCreatedAt() Group by the version_created_at column
- * @method     ChildDealerFolderQuery groupByVersionCreatedBy() Group by the version_created_by column
  *
  * @method     ChildDealerFolderQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildDealerFolderQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -52,10 +46,6 @@ use Thelia\Model\Folder;
  * @method     ChildDealerFolderQuery rightJoinFolder($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Folder relation
  * @method     ChildDealerFolderQuery innerJoinFolder($relationAlias = null) Adds a INNER JOIN clause to the query using the Folder relation
  *
- * @method     ChildDealerFolderQuery leftJoinDealerFolderVersion($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerFolderVersion relation
- * @method     ChildDealerFolderQuery rightJoinDealerFolderVersion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerFolderVersion relation
- * @method     ChildDealerFolderQuery innerJoinDealerFolderVersion($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerFolderVersion relation
- *
  * @method     ChildDealerFolder findOne(ConnectionInterface $con = null) Return the first ChildDealerFolder matching the query
  * @method     ChildDealerFolder findOneOrCreate(ConnectionInterface $con = null) Return the first ChildDealerFolder matching the query, or a new ChildDealerFolder object populated from the query conditions when no match is found
  *
@@ -64,29 +54,16 @@ use Thelia\Model\Folder;
  * @method     ChildDealerFolder findOneByFolderId(int $folder_id) Return the first ChildDealerFolder filtered by the folder_id column
  * @method     ChildDealerFolder findOneByCreatedAt(string $created_at) Return the first ChildDealerFolder filtered by the created_at column
  * @method     ChildDealerFolder findOneByUpdatedAt(string $updated_at) Return the first ChildDealerFolder filtered by the updated_at column
- * @method     ChildDealerFolder findOneByVersion(int $version) Return the first ChildDealerFolder filtered by the version column
- * @method     ChildDealerFolder findOneByVersionCreatedAt(string $version_created_at) Return the first ChildDealerFolder filtered by the version_created_at column
- * @method     ChildDealerFolder findOneByVersionCreatedBy(string $version_created_by) Return the first ChildDealerFolder filtered by the version_created_by column
  *
  * @method     array findById(int $id) Return ChildDealerFolder objects filtered by the id column
  * @method     array findByDealerId(int $dealer_id) Return ChildDealerFolder objects filtered by the dealer_id column
  * @method     array findByFolderId(int $folder_id) Return ChildDealerFolder objects filtered by the folder_id column
  * @method     array findByCreatedAt(string $created_at) Return ChildDealerFolder objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return ChildDealerFolder objects filtered by the updated_at column
- * @method     array findByVersion(int $version) Return ChildDealerFolder objects filtered by the version column
- * @method     array findByVersionCreatedAt(string $version_created_at) Return ChildDealerFolder objects filtered by the version_created_at column
- * @method     array findByVersionCreatedBy(string $version_created_by) Return ChildDealerFolder objects filtered by the version_created_by column
  *
  */
 abstract class DealerFolderQuery extends ModelCriteria
 {
-
-    // versionable behavior
-
-    /**
-     * Whether the versioning is enabled
-     */
-    static $isVersioningEnabled = true;
 
     /**
      * Initializes internal state of \Dealer\Model\Base\DealerFolderQuery object.
@@ -171,7 +148,7 @@ abstract class DealerFolderQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, DEALER_ID, FOLDER_ID, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer_folder WHERE ID = :p0';
+        $sql = 'SELECT ID, DEALER_ID, FOLDER_ID, CREATED_AT, UPDATED_AT FROM dealer_folder WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -474,119 +451,6 @@ abstract class DealerFolderQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the version column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVersion(1234); // WHERE version = 1234
-     * $query->filterByVersion(array(12, 34)); // WHERE version IN (12, 34)
-     * $query->filterByVersion(array('min' => 12)); // WHERE version > 12
-     * </code>
-     *
-     * @param     mixed $version The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerFolderQuery The current query, for fluid interface
-     */
-    public function filterByVersion($version = null, $comparison = null)
-    {
-        if (is_array($version)) {
-            $useMinMax = false;
-            if (isset($version['min'])) {
-                $this->addUsingAlias(DealerFolderTableMap::VERSION, $version['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($version['max'])) {
-                $this->addUsingAlias(DealerFolderTableMap::VERSION, $version['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(DealerFolderTableMap::VERSION, $version, $comparison);
-    }
-
-    /**
-     * Filter the query on the version_created_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVersionCreatedAt('2011-03-14'); // WHERE version_created_at = '2011-03-14'
-     * $query->filterByVersionCreatedAt('now'); // WHERE version_created_at = '2011-03-14'
-     * $query->filterByVersionCreatedAt(array('max' => 'yesterday')); // WHERE version_created_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $versionCreatedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerFolderQuery The current query, for fluid interface
-     */
-    public function filterByVersionCreatedAt($versionCreatedAt = null, $comparison = null)
-    {
-        if (is_array($versionCreatedAt)) {
-            $useMinMax = false;
-            if (isset($versionCreatedAt['min'])) {
-                $this->addUsingAlias(DealerFolderTableMap::VERSION_CREATED_AT, $versionCreatedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($versionCreatedAt['max'])) {
-                $this->addUsingAlias(DealerFolderTableMap::VERSION_CREATED_AT, $versionCreatedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(DealerFolderTableMap::VERSION_CREATED_AT, $versionCreatedAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the version_created_by column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVersionCreatedBy('fooValue');   // WHERE version_created_by = 'fooValue'
-     * $query->filterByVersionCreatedBy('%fooValue%'); // WHERE version_created_by LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $versionCreatedBy The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerFolderQuery The current query, for fluid interface
-     */
-    public function filterByVersionCreatedBy($versionCreatedBy = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($versionCreatedBy)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $versionCreatedBy)) {
-                $versionCreatedBy = str_replace('*', '%', $versionCreatedBy);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(DealerFolderTableMap::VERSION_CREATED_BY, $versionCreatedBy, $comparison);
-    }
-
-    /**
      * Filter the query by a related \Dealer\Model\Dealer object
      *
      * @param \Dealer\Model\Dealer|ObjectCollection $dealer The related object(s) to use as filter
@@ -734,79 +598,6 @@ abstract class DealerFolderQuery extends ModelCriteria
         return $this
             ->joinFolder($relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'Folder', '\Thelia\Model\FolderQuery');
-    }
-
-    /**
-     * Filter the query by a related \Dealer\Model\DealerFolderVersion object
-     *
-     * @param \Dealer\Model\DealerFolderVersion|ObjectCollection $dealerFolderVersion  the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerFolderQuery The current query, for fluid interface
-     */
-    public function filterByDealerFolderVersion($dealerFolderVersion, $comparison = null)
-    {
-        if ($dealerFolderVersion instanceof \Dealer\Model\DealerFolderVersion) {
-            return $this
-                ->addUsingAlias(DealerFolderTableMap::ID, $dealerFolderVersion->getId(), $comparison);
-        } elseif ($dealerFolderVersion instanceof ObjectCollection) {
-            return $this
-                ->useDealerFolderVersionQuery()
-                ->filterByPrimaryKeys($dealerFolderVersion->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByDealerFolderVersion() only accepts arguments of type \Dealer\Model\DealerFolderVersion or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the DealerFolderVersion relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ChildDealerFolderQuery The current query, for fluid interface
-     */
-    public function joinDealerFolderVersion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('DealerFolderVersion');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'DealerFolderVersion');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the DealerFolderVersion relation DealerFolderVersion object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Dealer\Model\DealerFolderVersionQuery A secondary query class using the current class as primary query
-     */
-    public function useDealerFolderVersionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinDealerFolderVersion($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'DealerFolderVersion', '\Dealer\Model\DealerFolderVersionQuery');
     }
 
     /**
@@ -964,34 +755,6 @@ abstract class DealerFolderQuery extends ModelCriteria
     public function firstCreatedFirst()
     {
         return $this->addAscendingOrderByColumn(DealerFolderTableMap::CREATED_AT);
-    }
-
-    // versionable behavior
-
-    /**
-     * Checks whether versioning is enabled
-     *
-     * @return boolean
-     */
-    static public function isVersioningEnabled()
-    {
-        return self::$isVersioningEnabled;
-    }
-
-    /**
-     * Enables versioning
-     */
-    static public function enableVersioning()
-    {
-        self::$isVersioningEnabled = true;
-    }
-
-    /**
-     * Disables versioning
-     */
-    static public function disableVersioning()
-    {
-        self::$isVersioningEnabled = false;
     }
 
 } // DealerFolderQuery

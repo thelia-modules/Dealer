@@ -58,7 +58,7 @@ class DealerTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 15;
+    const NUM_COLUMNS = 12;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class DealerTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 15;
+    const NUM_HYDRATE_COLUMNS = 12;
 
     /**
      * the column name for the ID field
@@ -131,21 +131,6 @@ class DealerTableMap extends TableMap
     const UPDATED_AT = 'dealer.UPDATED_AT';
 
     /**
-     * the column name for the VERSION field
-     */
-    const VERSION = 'dealer.VERSION';
-
-    /**
-     * the column name for the VERSION_CREATED_AT field
-     */
-    const VERSION_CREATED_AT = 'dealer.VERSION_CREATED_AT';
-
-    /**
-     * the column name for the VERSION_CREATED_BY field
-     */
-    const VERSION_CREATED_BY = 'dealer.VERSION_CREATED_BY';
-
-    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -166,12 +151,12 @@ class DealerTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Visible', 'Address1', 'Address2', 'Address3', 'Zipcode', 'City', 'CountryId', 'Latitude', 'Longitude', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'visible', 'address1', 'address2', 'address3', 'zipcode', 'city', 'countryId', 'latitude', 'longitude', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
-        self::TYPE_COLNAME       => array(DealerTableMap::ID, DealerTableMap::VISIBLE, DealerTableMap::ADDRESS1, DealerTableMap::ADDRESS2, DealerTableMap::ADDRESS3, DealerTableMap::ZIPCODE, DealerTableMap::CITY, DealerTableMap::COUNTRY_ID, DealerTableMap::LATITUDE, DealerTableMap::LONGITUDE, DealerTableMap::CREATED_AT, DealerTableMap::UPDATED_AT, DealerTableMap::VERSION, DealerTableMap::VERSION_CREATED_AT, DealerTableMap::VERSION_CREATED_BY, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'VISIBLE', 'ADDRESS1', 'ADDRESS2', 'ADDRESS3', 'ZIPCODE', 'CITY', 'COUNTRY_ID', 'LATITUDE', 'LONGITUDE', 'CREATED_AT', 'UPDATED_AT', 'VERSION', 'VERSION_CREATED_AT', 'VERSION_CREATED_BY', ),
-        self::TYPE_FIELDNAME     => array('id', 'visible', 'address1', 'address2', 'address3', 'zipcode', 'city', 'country_id', 'latitude', 'longitude', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
+        self::TYPE_PHPNAME       => array('Id', 'Visible', 'Address1', 'Address2', 'Address3', 'Zipcode', 'City', 'CountryId', 'Latitude', 'Longitude', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'visible', 'address1', 'address2', 'address3', 'zipcode', 'city', 'countryId', 'latitude', 'longitude', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(DealerTableMap::ID, DealerTableMap::VISIBLE, DealerTableMap::ADDRESS1, DealerTableMap::ADDRESS2, DealerTableMap::ADDRESS3, DealerTableMap::ZIPCODE, DealerTableMap::CITY, DealerTableMap::COUNTRY_ID, DealerTableMap::LATITUDE, DealerTableMap::LONGITUDE, DealerTableMap::CREATED_AT, DealerTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'VISIBLE', 'ADDRESS1', 'ADDRESS2', 'ADDRESS3', 'ZIPCODE', 'CITY', 'COUNTRY_ID', 'LATITUDE', 'LONGITUDE', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'visible', 'address1', 'address2', 'address3', 'zipcode', 'city', 'country_id', 'latitude', 'longitude', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
     /**
@@ -181,12 +166,12 @@ class DealerTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Visible' => 1, 'Address1' => 2, 'Address2' => 3, 'Address3' => 4, 'Zipcode' => 5, 'City' => 6, 'CountryId' => 7, 'Latitude' => 8, 'Longitude' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, 'Version' => 12, 'VersionCreatedAt' => 13, 'VersionCreatedBy' => 14, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'visible' => 1, 'address1' => 2, 'address2' => 3, 'address3' => 4, 'zipcode' => 5, 'city' => 6, 'countryId' => 7, 'latitude' => 8, 'longitude' => 9, 'createdAt' => 10, 'updatedAt' => 11, 'version' => 12, 'versionCreatedAt' => 13, 'versionCreatedBy' => 14, ),
-        self::TYPE_COLNAME       => array(DealerTableMap::ID => 0, DealerTableMap::VISIBLE => 1, DealerTableMap::ADDRESS1 => 2, DealerTableMap::ADDRESS2 => 3, DealerTableMap::ADDRESS3 => 4, DealerTableMap::ZIPCODE => 5, DealerTableMap::CITY => 6, DealerTableMap::COUNTRY_ID => 7, DealerTableMap::LATITUDE => 8, DealerTableMap::LONGITUDE => 9, DealerTableMap::CREATED_AT => 10, DealerTableMap::UPDATED_AT => 11, DealerTableMap::VERSION => 12, DealerTableMap::VERSION_CREATED_AT => 13, DealerTableMap::VERSION_CREATED_BY => 14, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'VISIBLE' => 1, 'ADDRESS1' => 2, 'ADDRESS2' => 3, 'ADDRESS3' => 4, 'ZIPCODE' => 5, 'CITY' => 6, 'COUNTRY_ID' => 7, 'LATITUDE' => 8, 'LONGITUDE' => 9, 'CREATED_AT' => 10, 'UPDATED_AT' => 11, 'VERSION' => 12, 'VERSION_CREATED_AT' => 13, 'VERSION_CREATED_BY' => 14, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'visible' => 1, 'address1' => 2, 'address2' => 3, 'address3' => 4, 'zipcode' => 5, 'city' => 6, 'country_id' => 7, 'latitude' => 8, 'longitude' => 9, 'created_at' => 10, 'updated_at' => 11, 'version' => 12, 'version_created_at' => 13, 'version_created_by' => 14, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'Visible' => 1, 'Address1' => 2, 'Address2' => 3, 'Address3' => 4, 'Zipcode' => 5, 'City' => 6, 'CountryId' => 7, 'Latitude' => 8, 'Longitude' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'visible' => 1, 'address1' => 2, 'address2' => 3, 'address3' => 4, 'zipcode' => 5, 'city' => 6, 'countryId' => 7, 'latitude' => 8, 'longitude' => 9, 'createdAt' => 10, 'updatedAt' => 11, ),
+        self::TYPE_COLNAME       => array(DealerTableMap::ID => 0, DealerTableMap::VISIBLE => 1, DealerTableMap::ADDRESS1 => 2, DealerTableMap::ADDRESS2 => 3, DealerTableMap::ADDRESS3 => 4, DealerTableMap::ZIPCODE => 5, DealerTableMap::CITY => 6, DealerTableMap::COUNTRY_ID => 7, DealerTableMap::LATITUDE => 8, DealerTableMap::LONGITUDE => 9, DealerTableMap::CREATED_AT => 10, DealerTableMap::UPDATED_AT => 11, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'VISIBLE' => 1, 'ADDRESS1' => 2, 'ADDRESS2' => 3, 'ADDRESS3' => 4, 'ZIPCODE' => 5, 'CITY' => 6, 'COUNTRY_ID' => 7, 'LATITUDE' => 8, 'LONGITUDE' => 9, 'CREATED_AT' => 10, 'UPDATED_AT' => 11, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'visible' => 1, 'address1' => 2, 'address2' => 3, 'address3' => 4, 'zipcode' => 5, 'city' => 6, 'country_id' => 7, 'latitude' => 8, 'longitude' => 9, 'created_at' => 10, 'updated_at' => 11, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
     );
 
     /**
@@ -217,9 +202,6 @@ class DealerTableMap extends TableMap
         $this->addColumn('LONGITUDE', 'Longitude', 'DECIMAL', false, 16, 0);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('VERSION', 'Version', 'INTEGER', false, null, 0);
-        $this->addColumn('VERSION_CREATED_AT', 'VersionCreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('VERSION_CREATED_BY', 'VersionCreatedBy', 'VARCHAR', false, 100, null);
     } // initialize()
 
     /**
@@ -236,7 +218,6 @@ class DealerTableMap extends TableMap
         $this->addRelation('DealerProduct', '\\Dealer\\Model\\DealerProduct', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', 'RESTRICT', 'DealerProducts');
         $this->addRelation('DealerAdmin', '\\Dealer\\Model\\DealerAdmin', RelationMap::ONE_TO_MANY, array('id' => 'dealer_id', ), 'CASCADE', 'RESTRICT', 'DealerAdmins');
         $this->addRelation('DealerI18n', '\\Dealer\\Model\\DealerI18n', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerI18ns');
-        $this->addRelation('DealerVersion', '\\Dealer\\Model\\DealerVersion', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerVersions');
     } // buildRelations()
 
     /**
@@ -250,7 +231,6 @@ class DealerTableMap extends TableMap
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
             'i18n' => array('i18n_table' => '%TABLE%_i18n', 'i18n_phpname' => '%PHPNAME%I18n', 'i18n_columns' => 'title, description, access', 'locale_column' => 'locale', 'locale_length' => '5', 'default_locale' => '', 'locale_alias' => '', ),
-            'versionable' => array('version_column' => 'version', 'version_table' => '', 'log_created_at' => 'true', 'log_created_by' => 'true', 'log_comment' => 'false', 'version_created_at_column' => 'version_created_at', 'version_created_by_column' => 'version_created_by', 'version_comment_column' => 'version_comment', ),
         );
     } // getBehaviors()
     /**
@@ -268,7 +248,6 @@ class DealerTableMap extends TableMap
                 DealerProductTableMap::clearInstancePool();
                 DealerAdminTableMap::clearInstancePool();
                 DealerI18nTableMap::clearInstancePool();
-                DealerVersionTableMap::clearInstancePool();
             }
 
     /**
@@ -421,9 +400,6 @@ class DealerTableMap extends TableMap
             $criteria->addSelectColumn(DealerTableMap::LONGITUDE);
             $criteria->addSelectColumn(DealerTableMap::CREATED_AT);
             $criteria->addSelectColumn(DealerTableMap::UPDATED_AT);
-            $criteria->addSelectColumn(DealerTableMap::VERSION);
-            $criteria->addSelectColumn(DealerTableMap::VERSION_CREATED_AT);
-            $criteria->addSelectColumn(DealerTableMap::VERSION_CREATED_BY);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.VISIBLE');
@@ -437,9 +413,6 @@ class DealerTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.LONGITUDE');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
-            $criteria->addSelectColumn($alias . '.VERSION');
-            $criteria->addSelectColumn($alias . '.VERSION_CREATED_AT');
-            $criteria->addSelectColumn($alias . '.VERSION_CREATED_BY');
         }
     }
 

@@ -2,12 +2,12 @@
 <config xmlns="http://thelia.net/schema/dic/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
     <commands>
-        <!--
-            <command class="Dealer\Command\MySuperCommand" />
-            -->
+        <command class="Dealer\Commands\UpdateDealerTables" />
     </commands>
 
     <services>
+        <service id="dealer.command.update_tables" class="Dealer\Service\UpdateTablesService">
+        </service>
         <service id="dealer_listener" class="Dealer\EventListener\DealerListener">
             <tag name="kernel.event_subscriber"/>
         </service>

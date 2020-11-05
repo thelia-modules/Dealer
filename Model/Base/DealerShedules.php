@@ -9,17 +9,12 @@ use Dealer\Model\Dealer as ChildDealer;
 use Dealer\Model\DealerQuery as ChildDealerQuery;
 use Dealer\Model\DealerShedules as ChildDealerShedules;
 use Dealer\Model\DealerShedulesQuery as ChildDealerShedulesQuery;
-use Dealer\Model\DealerShedulesVersion as ChildDealerShedulesVersion;
-use Dealer\Model\DealerShedulesVersionQuery as ChildDealerShedulesVersionQuery;
-use Dealer\Model\DealerVersionQuery as ChildDealerVersionQuery;
 use Dealer\Model\Map\DealerShedulesTableMap;
-use Dealer\Model\Map\DealerShedulesVersionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
-use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\PropelException;
@@ -123,34 +118,9 @@ abstract class DealerShedules implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * The value for the version field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $version;
-
-    /**
-     * The value for the version_created_at field.
-     * @var        string
-     */
-    protected $version_created_at;
-
-    /**
-     * The value for the version_created_by field.
-     * @var        string
-     */
-    protected $version_created_by;
-
-    /**
      * @var        Dealer
      */
     protected $aDealer;
-
-    /**
-     * @var        ObjectCollection|ChildDealerShedulesVersion[] Collection to store aggregation of ChildDealerShedulesVersion objects.
-     */
-    protected $collDealerShedulesVersions;
-    protected $collDealerShedulesVersionsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -159,20 +129,6 @@ abstract class DealerShedules implements ActiveRecordInterface
      * @var boolean
      */
     protected $alreadyInSave = false;
-
-    // versionable behavior
-
-
-    /**
-     * @var bool
-     */
-    protected $enforceVersion = false;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection
-     */
-    protected $dealerShedulesVersionsScheduledForDeletion = null;
 
     /**
      * Applies default values to this object.
@@ -183,7 +139,6 @@ abstract class DealerShedules implements ActiveRecordInterface
     public function applyDefaultValues()
     {
         $this->closed = false;
-        $this->version = 0;
     }
 
     /**
@@ -611,48 +566,6 @@ abstract class DealerShedules implements ActiveRecordInterface
     }
 
     /**
-     * Get the [version] column value.
-     *
-     * @return   int
-     */
-    public function getVersion()
-    {
-
-        return $this->version;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [version_created_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getVersionCreatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->version_created_at;
-        } else {
-            return $this->version_created_at instanceof \DateTime ? $this->version_created_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [version_created_by] column value.
-     *
-     * @return   string
-     */
-    public function getVersionCreatedBy()
-    {
-
-        return $this->version_created_by;
-    }
-
-    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -875,69 +788,6 @@ abstract class DealerShedules implements ActiveRecordInterface
     } // setUpdatedAt()
 
     /**
-     * Set the value of [version] column.
-     *
-     * @param      int $v new value
-     * @return   \Dealer\Model\DealerShedules The current object (for fluent API support)
-     */
-    public function setVersion($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->version !== $v) {
-            $this->version = $v;
-            $this->modifiedColumns[DealerShedulesTableMap::VERSION] = true;
-        }
-
-
-        return $this;
-    } // setVersion()
-
-    /**
-     * Sets the value of [version_created_at] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerShedules The current object (for fluent API support)
-     */
-    public function setVersionCreatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->version_created_at !== null || $dt !== null) {
-            if ($dt !== $this->version_created_at) {
-                $this->version_created_at = $dt;
-                $this->modifiedColumns[DealerShedulesTableMap::VERSION_CREATED_AT] = true;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setVersionCreatedAt()
-
-    /**
-     * Set the value of [version_created_by] column.
-     *
-     * @param      string $v new value
-     * @return   \Dealer\Model\DealerShedules The current object (for fluent API support)
-     */
-    public function setVersionCreatedBy($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->version_created_by !== $v) {
-            $this->version_created_by = $v;
-            $this->modifiedColumns[DealerShedulesTableMap::VERSION_CREATED_BY] = true;
-        }
-
-
-        return $this;
-    } // setVersionCreatedBy()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -948,10 +798,6 @@ abstract class DealerShedules implements ActiveRecordInterface
     public function hasOnlyDefaultValues()
     {
             if ($this->closed !== false) {
-                return false;
-            }
-
-            if ($this->version !== 0) {
                 return false;
             }
 
@@ -1023,18 +869,6 @@ abstract class DealerShedules implements ActiveRecordInterface
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 10 + $startcol : DealerShedulesTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->version = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 11 + $startcol : DealerShedulesTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 12 + $startcol : DealerShedulesTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -1043,7 +877,7 @@ abstract class DealerShedules implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 13; // 13 = DealerShedulesTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 10; // 10 = DealerShedulesTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerShedules object", 0, $e);
@@ -1108,8 +942,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         if ($deep) {  // also de-associate any related objects?
 
             $this->aDealer = null;
-            $this->collDealerShedulesVersions = null;
-
         } // if (deep)
     }
 
@@ -1178,14 +1010,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         $isInsert = $this->isNew();
         try {
             $ret = $this->preSave($con);
-            // versionable behavior
-            if ($this->isVersioningNecessary()) {
-                $this->setVersion($this->isNew() ? 1 : $this->getLastVersionNumber($con) + 1);
-                if (!$this->isColumnModified(DealerShedulesTableMap::VERSION_CREATED_AT)) {
-                    $this->setVersionCreatedAt(time());
-                }
-                $createVersion = true; // for postSave hook
-            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
@@ -1210,10 +1034,6 @@ abstract class DealerShedules implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                // versionable behavior
-                if (isset($createVersion)) {
-                    $this->addVersion($con);
-                }
                 DealerShedulesTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
@@ -1265,23 +1085,6 @@ abstract class DealerShedules implements ActiveRecordInterface
                 }
                 $affectedRows += 1;
                 $this->resetModified();
-            }
-
-            if ($this->dealerShedulesVersionsScheduledForDeletion !== null) {
-                if (!$this->dealerShedulesVersionsScheduledForDeletion->isEmpty()) {
-                    \Dealer\Model\DealerShedulesVersionQuery::create()
-                        ->filterByPrimaryKeys($this->dealerShedulesVersionsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->dealerShedulesVersionsScheduledForDeletion = null;
-                }
-            }
-
-                if ($this->collDealerShedulesVersions !== null) {
-            foreach ($this->collDealerShedulesVersions as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             $this->alreadyInSave = false;
@@ -1340,15 +1143,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         if ($this->isColumnModified(DealerShedulesTableMap::UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'UPDATED_AT';
         }
-        if ($this->isColumnModified(DealerShedulesTableMap::VERSION)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION';
-        }
-        if ($this->isColumnModified(DealerShedulesTableMap::VERSION_CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_AT';
-        }
-        if ($this->isColumnModified(DealerShedulesTableMap::VERSION_CREATED_BY)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_BY';
-        }
 
         $sql = sprintf(
             'INSERT INTO dealer_shedules (%s) VALUES (%s)',
@@ -1389,15 +1183,6 @@ abstract class DealerShedules implements ActiveRecordInterface
                         break;
                     case 'UPDATED_AT':
                         $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'VERSION':
-                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
-                        break;
-                    case 'VERSION_CREATED_AT':
-                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'VERSION_CREATED_BY':
-                        $stmt->bindValue($identifier, $this->version_created_by, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1491,15 +1276,6 @@ abstract class DealerShedules implements ActiveRecordInterface
             case 9:
                 return $this->getUpdatedAt();
                 break;
-            case 10:
-                return $this->getVersion();
-                break;
-            case 11:
-                return $this->getVersionCreatedAt();
-                break;
-            case 12:
-                return $this->getVersionCreatedBy();
-                break;
             default:
                 return null;
                 break;
@@ -1539,9 +1315,6 @@ abstract class DealerShedules implements ActiveRecordInterface
             $keys[7] => $this->getPeriodEnd(),
             $keys[8] => $this->getCreatedAt(),
             $keys[9] => $this->getUpdatedAt(),
-            $keys[10] => $this->getVersion(),
-            $keys[11] => $this->getVersionCreatedAt(),
-            $keys[12] => $this->getVersionCreatedBy(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1551,9 +1324,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         if ($includeForeignObjects) {
             if (null !== $this->aDealer) {
                 $result['Dealer'] = $this->aDealer->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-            }
-            if (null !== $this->collDealerShedulesVersions) {
-                $result['DealerShedulesVersions'] = $this->collDealerShedulesVersions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1619,15 +1389,6 @@ abstract class DealerShedules implements ActiveRecordInterface
             case 9:
                 $this->setUpdatedAt($value);
                 break;
-            case 10:
-                $this->setVersion($value);
-                break;
-            case 11:
-                $this->setVersionCreatedAt($value);
-                break;
-            case 12:
-                $this->setVersionCreatedBy($value);
-                break;
         } // switch()
     }
 
@@ -1662,9 +1423,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         if (array_key_exists($keys[7], $arr)) $this->setPeriodEnd($arr[$keys[7]]);
         if (array_key_exists($keys[8], $arr)) $this->setCreatedAt($arr[$keys[8]]);
         if (array_key_exists($keys[9], $arr)) $this->setUpdatedAt($arr[$keys[9]]);
-        if (array_key_exists($keys[10], $arr)) $this->setVersion($arr[$keys[10]]);
-        if (array_key_exists($keys[11], $arr)) $this->setVersionCreatedAt($arr[$keys[11]]);
-        if (array_key_exists($keys[12], $arr)) $this->setVersionCreatedBy($arr[$keys[12]]);
     }
 
     /**
@@ -1686,9 +1444,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         if ($this->isColumnModified(DealerShedulesTableMap::PERIOD_END)) $criteria->add(DealerShedulesTableMap::PERIOD_END, $this->period_end);
         if ($this->isColumnModified(DealerShedulesTableMap::CREATED_AT)) $criteria->add(DealerShedulesTableMap::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(DealerShedulesTableMap::UPDATED_AT)) $criteria->add(DealerShedulesTableMap::UPDATED_AT, $this->updated_at);
-        if ($this->isColumnModified(DealerShedulesTableMap::VERSION)) $criteria->add(DealerShedulesTableMap::VERSION, $this->version);
-        if ($this->isColumnModified(DealerShedulesTableMap::VERSION_CREATED_AT)) $criteria->add(DealerShedulesTableMap::VERSION_CREATED_AT, $this->version_created_at);
-        if ($this->isColumnModified(DealerShedulesTableMap::VERSION_CREATED_BY)) $criteria->add(DealerShedulesTableMap::VERSION_CREATED_BY, $this->version_created_by);
 
         return $criteria;
     }
@@ -1761,23 +1516,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         $copyObj->setPeriodEnd($this->getPeriodEnd());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
-        $copyObj->setVersion($this->getVersion());
-        $copyObj->setVersionCreatedAt($this->getVersionCreatedAt());
-        $copyObj->setVersionCreatedBy($this->getVersionCreatedBy());
-
-        if ($deepCopy) {
-            // important: temporarily setNew(false) because this affects the behavior of
-            // the getter/setter methods for fkey referrer objects.
-            $copyObj->setNew(false);
-
-            foreach ($this->getDealerShedulesVersions() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDealerShedulesVersion($relObj->copy($deepCopy));
-                }
-            }
-
-        } // if ($deepCopy)
-
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1857,243 +1595,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         return $this->aDealer;
     }
 
-
-    /**
-     * Initializes a collection based on the name of a relation.
-     * Avoids crafting an 'init[$relationName]s' method name
-     * that wouldn't work when StandardEnglishPluralizer is used.
-     *
-     * @param      string $relationName The name of the relation to initialize
-     * @return void
-     */
-    public function initRelation($relationName)
-    {
-        if ('DealerShedulesVersion' == $relationName) {
-            return $this->initDealerShedulesVersions();
-        }
-    }
-
-    /**
-     * Clears out the collDealerShedulesVersions collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addDealerShedulesVersions()
-     */
-    public function clearDealerShedulesVersions()
-    {
-        $this->collDealerShedulesVersions = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collDealerShedulesVersions collection loaded partially.
-     */
-    public function resetPartialDealerShedulesVersions($v = true)
-    {
-        $this->collDealerShedulesVersionsPartial = $v;
-    }
-
-    /**
-     * Initializes the collDealerShedulesVersions collection.
-     *
-     * By default this just sets the collDealerShedulesVersions collection to an empty array (like clearcollDealerShedulesVersions());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDealerShedulesVersions($overrideExisting = true)
-    {
-        if (null !== $this->collDealerShedulesVersions && !$overrideExisting) {
-            return;
-        }
-        $this->collDealerShedulesVersions = new ObjectCollection();
-        $this->collDealerShedulesVersions->setModel('\Dealer\Model\DealerShedulesVersion');
-    }
-
-    /**
-     * Gets an array of ChildDealerShedulesVersion objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildDealerShedules is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildDealerShedulesVersion[] List of ChildDealerShedulesVersion objects
-     * @throws PropelException
-     */
-    public function getDealerShedulesVersions($criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerShedulesVersionsPartial && !$this->isNew();
-        if (null === $this->collDealerShedulesVersions || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDealerShedulesVersions) {
-                // return empty collection
-                $this->initDealerShedulesVersions();
-            } else {
-                $collDealerShedulesVersions = ChildDealerShedulesVersionQuery::create(null, $criteria)
-                    ->filterByDealerShedules($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collDealerShedulesVersionsPartial && count($collDealerShedulesVersions)) {
-                        $this->initDealerShedulesVersions(false);
-
-                        foreach ($collDealerShedulesVersions as $obj) {
-                            if (false == $this->collDealerShedulesVersions->contains($obj)) {
-                                $this->collDealerShedulesVersions->append($obj);
-                            }
-                        }
-
-                        $this->collDealerShedulesVersionsPartial = true;
-                    }
-
-                    reset($collDealerShedulesVersions);
-
-                    return $collDealerShedulesVersions;
-                }
-
-                if ($partial && $this->collDealerShedulesVersions) {
-                    foreach ($this->collDealerShedulesVersions as $obj) {
-                        if ($obj->isNew()) {
-                            $collDealerShedulesVersions[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDealerShedulesVersions = $collDealerShedulesVersions;
-                $this->collDealerShedulesVersionsPartial = false;
-            }
-        }
-
-        return $this->collDealerShedulesVersions;
-    }
-
-    /**
-     * Sets a collection of DealerShedulesVersion objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $dealerShedulesVersions A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildDealerShedules The current object (for fluent API support)
-     */
-    public function setDealerShedulesVersions(Collection $dealerShedulesVersions, ConnectionInterface $con = null)
-    {
-        $dealerShedulesVersionsToDelete = $this->getDealerShedulesVersions(new Criteria(), $con)->diff($dealerShedulesVersions);
-
-
-        //since at least one column in the foreign key is at the same time a PK
-        //we can not just set a PK to NULL in the lines below. We have to store
-        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->dealerShedulesVersionsScheduledForDeletion = clone $dealerShedulesVersionsToDelete;
-
-        foreach ($dealerShedulesVersionsToDelete as $dealerShedulesVersionRemoved) {
-            $dealerShedulesVersionRemoved->setDealerShedules(null);
-        }
-
-        $this->collDealerShedulesVersions = null;
-        foreach ($dealerShedulesVersions as $dealerShedulesVersion) {
-            $this->addDealerShedulesVersion($dealerShedulesVersion);
-        }
-
-        $this->collDealerShedulesVersions = $dealerShedulesVersions;
-        $this->collDealerShedulesVersionsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related DealerShedulesVersion objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related DealerShedulesVersion objects.
-     * @throws PropelException
-     */
-    public function countDealerShedulesVersions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerShedulesVersionsPartial && !$this->isNew();
-        if (null === $this->collDealerShedulesVersions || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDealerShedulesVersions) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getDealerShedulesVersions());
-            }
-
-            $query = ChildDealerShedulesVersionQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByDealerShedules($this)
-                ->count($con);
-        }
-
-        return count($this->collDealerShedulesVersions);
-    }
-
-    /**
-     * Method called to associate a ChildDealerShedulesVersion object to this object
-     * through the ChildDealerShedulesVersion foreign key attribute.
-     *
-     * @param    ChildDealerShedulesVersion $l ChildDealerShedulesVersion
-     * @return   \Dealer\Model\DealerShedules The current object (for fluent API support)
-     */
-    public function addDealerShedulesVersion(ChildDealerShedulesVersion $l)
-    {
-        if ($this->collDealerShedulesVersions === null) {
-            $this->initDealerShedulesVersions();
-            $this->collDealerShedulesVersionsPartial = true;
-        }
-
-        if (!in_array($l, $this->collDealerShedulesVersions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDealerShedulesVersion($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param DealerShedulesVersion $dealerShedulesVersion The dealerShedulesVersion object to add.
-     */
-    protected function doAddDealerShedulesVersion($dealerShedulesVersion)
-    {
-        $this->collDealerShedulesVersions[]= $dealerShedulesVersion;
-        $dealerShedulesVersion->setDealerShedules($this);
-    }
-
-    /**
-     * @param  DealerShedulesVersion $dealerShedulesVersion The dealerShedulesVersion object to remove.
-     * @return ChildDealerShedules The current object (for fluent API support)
-     */
-    public function removeDealerShedulesVersion($dealerShedulesVersion)
-    {
-        if ($this->getDealerShedulesVersions()->contains($dealerShedulesVersion)) {
-            $this->collDealerShedulesVersions->remove($this->collDealerShedulesVersions->search($dealerShedulesVersion));
-            if (null === $this->dealerShedulesVersionsScheduledForDeletion) {
-                $this->dealerShedulesVersionsScheduledForDeletion = clone $this->collDealerShedulesVersions;
-                $this->dealerShedulesVersionsScheduledForDeletion->clear();
-            }
-            $this->dealerShedulesVersionsScheduledForDeletion[]= clone $dealerShedulesVersion;
-            $dealerShedulesVersion->setDealerShedules(null);
-        }
-
-        return $this;
-    }
-
     /**
      * Clears the current object and sets all attributes to their default values
      */
@@ -2109,9 +1610,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         $this->period_end = null;
         $this->created_at = null;
         $this->updated_at = null;
-        $this->version = null;
-        $this->version_created_at = null;
-        $this->version_created_by = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->applyDefaultValues();
@@ -2132,14 +1630,8 @@ abstract class DealerShedules implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collDealerShedulesVersions) {
-                foreach ($this->collDealerShedulesVersions as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
-        $this->collDealerShedulesVersions = null;
         $this->aDealer = null;
     }
 
@@ -2167,319 +1659,6 @@ abstract class DealerShedules implements ActiveRecordInterface
         return $this;
     }
 
-    // versionable behavior
-
-    /**
-     * Enforce a new Version of this object upon next save.
-     *
-     * @return \Dealer\Model\DealerShedules
-     */
-    public function enforceVersioning()
-    {
-        $this->enforceVersion = true;
-
-        return $this;
-    }
-
-    /**
-     * Checks whether the current state must be recorded as a version
-     *
-     * @return  boolean
-     */
-    public function isVersioningNecessary($con = null)
-    {
-        if ($this->alreadyInSave) {
-            return false;
-        }
-
-        if ($this->enforceVersion) {
-            return true;
-        }
-
-        if (ChildDealerShedulesQuery::isVersioningEnabled() && ($this->isNew() || $this->isModified()) || $this->isDeleted()) {
-            return true;
-        }
-        if (null !== ($object = $this->getDealer($con)) && $object->isVersioningNecessary($con)) {
-            return true;
-        }
-
-
-        return false;
-    }
-
-    /**
-     * Creates a version of the current object and saves it.
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildDealerShedulesVersion A version object
-     */
-    public function addVersion($con = null)
-    {
-        $this->enforceVersion = false;
-
-        $version = new ChildDealerShedulesVersion();
-        $version->setId($this->getId());
-        $version->setDealerId($this->getDealerId());
-        $version->setDay($this->getDay());
-        $version->setBegin($this->getBegin());
-        $version->setEnd($this->getEnd());
-        $version->setClosed($this->getClosed());
-        $version->setPeriodBegin($this->getPeriodBegin());
-        $version->setPeriodEnd($this->getPeriodEnd());
-        $version->setCreatedAt($this->getCreatedAt());
-        $version->setUpdatedAt($this->getUpdatedAt());
-        $version->setVersion($this->getVersion());
-        $version->setVersionCreatedAt($this->getVersionCreatedAt());
-        $version->setVersionCreatedBy($this->getVersionCreatedBy());
-        $version->setDealerShedules($this);
-        if (($related = $this->getDealer($con)) && $related->getVersion()) {
-            $version->setDealerIdVersion($related->getVersion());
-        }
-        $version->save($con);
-
-        return $version;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con The connection to use
-     *
-     * @return  ChildDealerShedules The current object (for fluent API support)
-     */
-    public function toVersion($versionNumber, $con = null)
-    {
-        $version = $this->getOneVersion($versionNumber, $con);
-        if (!$version) {
-            throw new PropelException(sprintf('No ChildDealerShedules object found with version %d', $version));
-        }
-        $this->populateFromVersion($version, $con);
-
-        return $this;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param ChildDealerShedulesVersion $version The version object to use
-     * @param ConnectionInterface   $con the connection to use
-     * @param array                 $loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
-     *
-     * @return ChildDealerShedules The current object (for fluent API support)
-     */
-    public function populateFromVersion($version, $con = null, &$loadedObjects = array())
-    {
-        $loadedObjects['ChildDealerShedules'][$version->getId()][$version->getVersion()] = $this;
-        $this->setId($version->getId());
-        $this->setDealerId($version->getDealerId());
-        $this->setDay($version->getDay());
-        $this->setBegin($version->getBegin());
-        $this->setEnd($version->getEnd());
-        $this->setClosed($version->getClosed());
-        $this->setPeriodBegin($version->getPeriodBegin());
-        $this->setPeriodEnd($version->getPeriodEnd());
-        $this->setCreatedAt($version->getCreatedAt());
-        $this->setUpdatedAt($version->getUpdatedAt());
-        $this->setVersion($version->getVersion());
-        $this->setVersionCreatedAt($version->getVersionCreatedAt());
-        $this->setVersionCreatedBy($version->getVersionCreatedBy());
-        if ($fkValue = $version->getDealerId()) {
-            if (isset($loadedObjects['ChildDealer']) && isset($loadedObjects['ChildDealer'][$fkValue]) && isset($loadedObjects['ChildDealer'][$fkValue][$version->getDealerIdVersion()])) {
-                $related = $loadedObjects['ChildDealer'][$fkValue][$version->getDealerIdVersion()];
-            } else {
-                $related = new ChildDealer();
-                $relatedVersion = ChildDealerVersionQuery::create()
-                    ->filterById($fkValue)
-                    ->filterByVersion($version->getDealerIdVersion())
-                    ->findOne($con);
-                $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
-                $related->setNew(false);
-            }
-            $this->setDealer($related);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Gets the latest persisted version number for the current object
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  integer
-     */
-    public function getLastVersionNumber($con = null)
-    {
-        $v = ChildDealerShedulesVersionQuery::create()
-            ->filterByDealerShedules($this)
-            ->orderByVersion('desc')
-            ->findOne($con);
-        if (!$v) {
-            return 0;
-        }
-
-        return $v->getVersion();
-    }
-
-    /**
-     * Checks whether the current object is the latest one
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  Boolean
-     */
-    public function isLastVersion($con = null)
-    {
-        return $this->getLastVersionNumber($con) == $this->getVersion();
-    }
-
-    /**
-     * Retrieves a version object for this entity and a version number
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildDealerShedulesVersion A version object
-     */
-    public function getOneVersion($versionNumber, $con = null)
-    {
-        return ChildDealerShedulesVersionQuery::create()
-            ->filterByDealerShedules($this)
-            ->filterByVersion($versionNumber)
-            ->findOne($con);
-    }
-
-    /**
-     * Gets all the versions of this object, in incremental order
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ObjectCollection A list of ChildDealerShedulesVersion objects
-     */
-    public function getAllVersions($con = null)
-    {
-        $criteria = new Criteria();
-        $criteria->addAscendingOrderByColumn(DealerShedulesVersionTableMap::VERSION);
-
-        return $this->getDealerShedulesVersions($criteria, $con);
-    }
-
-    /**
-     * Compares the current object with another of its version.
-     * <code>
-     * print_r($book->compareVersion(1));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $versionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersion($versionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->toArray();
-        $toVersion = $this->getOneVersion($versionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Compares two versions of the current object.
-     * <code>
-     * print_r($book->compareVersions(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $fromVersionNumber
-     * @param   integer             $toVersionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->getOneVersion($fromVersionNumber, $con)->toArray();
-        $toVersion = $this->getOneVersion($toVersionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Computes the diff between two versions.
-     * <code>
-     * print_r($book->computeDiff(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   array     $fromVersion     An array representing the original version.
-     * @param   array     $toVersion       An array representing the destination version.
-     * @param   string    $keys            Main key used for the result diff (versions|columns).
-     * @param   array     $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    protected function computeDiff($fromVersion, $toVersion, $keys = 'columns', $ignoredColumns = array())
-    {
-        $fromVersionNumber = $fromVersion['Version'];
-        $toVersionNumber = $toVersion['Version'];
-        $ignoredColumns = array_merge(array(
-            'Version',
-            'VersionCreatedAt',
-            'VersionCreatedBy',
-        ), $ignoredColumns);
-        $diff = array();
-        foreach ($fromVersion as $key => $value) {
-            if (in_array($key, $ignoredColumns)) {
-                continue;
-            }
-            if ($toVersion[$key] != $value) {
-                switch ($keys) {
-                    case 'versions':
-                        $diff[$fromVersionNumber][$key] = $value;
-                        $diff[$toVersionNumber][$key] = $toVersion[$key];
-                        break;
-                    default:
-                        $diff[$key] = array(
-                            $fromVersionNumber => $value,
-                            $toVersionNumber => $toVersion[$key],
-                        );
-                        break;
-                }
-            }
-        }
-
-        return $diff;
-    }
-    /**
-     * retrieve the last $number versions.
-     *
-     * @param Integer $number the number of record to return.
-     * @return PropelCollection|array \Dealer\Model\DealerShedulesVersion[] List of \Dealer\Model\DealerShedulesVersion objects
-     */
-    public function getLastVersions($number = 10, $criteria = null, $con = null)
-    {
-        $criteria = ChildDealerShedulesVersionQuery::create(null, $criteria);
-        $criteria->addDescendingOrderByColumn(DealerShedulesVersionTableMap::VERSION);
-        $criteria->limit($number);
-
-        return $this->getDealerShedulesVersions($criteria, $con);
-    }
     /**
      * Code to be run before persisting the object
      * @param  ConnectionInterface $con

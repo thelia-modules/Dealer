@@ -35,9 +35,6 @@ use Thelia\Model\Country;
  * @method     ChildDealerQuery orderByLongitude($order = Criteria::ASC) Order by the longitude column
  * @method     ChildDealerQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     ChildDealerQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
- * @method     ChildDealerQuery orderByVersion($order = Criteria::ASC) Order by the version column
- * @method     ChildDealerQuery orderByVersionCreatedAt($order = Criteria::ASC) Order by the version_created_at column
- * @method     ChildDealerQuery orderByVersionCreatedBy($order = Criteria::ASC) Order by the version_created_by column
  *
  * @method     ChildDealerQuery groupById() Group by the id column
  * @method     ChildDealerQuery groupByVisible() Group by the visible column
@@ -51,9 +48,6 @@ use Thelia\Model\Country;
  * @method     ChildDealerQuery groupByLongitude() Group by the longitude column
  * @method     ChildDealerQuery groupByCreatedAt() Group by the created_at column
  * @method     ChildDealerQuery groupByUpdatedAt() Group by the updated_at column
- * @method     ChildDealerQuery groupByVersion() Group by the version column
- * @method     ChildDealerQuery groupByVersionCreatedAt() Group by the version_created_at column
- * @method     ChildDealerQuery groupByVersionCreatedBy() Group by the version_created_by column
  *
  * @method     ChildDealerQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildDealerQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -95,10 +89,6 @@ use Thelia\Model\Country;
  * @method     ChildDealerQuery rightJoinDealerI18n($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerI18n relation
  * @method     ChildDealerQuery innerJoinDealerI18n($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerI18n relation
  *
- * @method     ChildDealerQuery leftJoinDealerVersion($relationAlias = null) Adds a LEFT JOIN clause to the query using the DealerVersion relation
- * @method     ChildDealerQuery rightJoinDealerVersion($relationAlias = null) Adds a RIGHT JOIN clause to the query using the DealerVersion relation
- * @method     ChildDealerQuery innerJoinDealerVersion($relationAlias = null) Adds a INNER JOIN clause to the query using the DealerVersion relation
- *
  * @method     ChildDealer findOne(ConnectionInterface $con = null) Return the first ChildDealer matching the query
  * @method     ChildDealer findOneOrCreate(ConnectionInterface $con = null) Return the first ChildDealer matching the query, or a new ChildDealer object populated from the query conditions when no match is found
  *
@@ -114,9 +104,6 @@ use Thelia\Model\Country;
  * @method     ChildDealer findOneByLongitude(string $longitude) Return the first ChildDealer filtered by the longitude column
  * @method     ChildDealer findOneByCreatedAt(string $created_at) Return the first ChildDealer filtered by the created_at column
  * @method     ChildDealer findOneByUpdatedAt(string $updated_at) Return the first ChildDealer filtered by the updated_at column
- * @method     ChildDealer findOneByVersion(int $version) Return the first ChildDealer filtered by the version column
- * @method     ChildDealer findOneByVersionCreatedAt(string $version_created_at) Return the first ChildDealer filtered by the version_created_at column
- * @method     ChildDealer findOneByVersionCreatedBy(string $version_created_by) Return the first ChildDealer filtered by the version_created_by column
  *
  * @method     array findById(int $id) Return ChildDealer objects filtered by the id column
  * @method     array findByVisible(int $visible) Return ChildDealer objects filtered by the visible column
@@ -130,20 +117,10 @@ use Thelia\Model\Country;
  * @method     array findByLongitude(string $longitude) Return ChildDealer objects filtered by the longitude column
  * @method     array findByCreatedAt(string $created_at) Return ChildDealer objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return ChildDealer objects filtered by the updated_at column
- * @method     array findByVersion(int $version) Return ChildDealer objects filtered by the version column
- * @method     array findByVersionCreatedAt(string $version_created_at) Return ChildDealer objects filtered by the version_created_at column
- * @method     array findByVersionCreatedBy(string $version_created_by) Return ChildDealer objects filtered by the version_created_by column
  *
  */
 abstract class DealerQuery extends ModelCriteria
 {
-
-    // versionable behavior
-
-    /**
-     * Whether the versioning is enabled
-     */
-    static $isVersioningEnabled = true;
 
     /**
      * Initializes internal state of \Dealer\Model\Base\DealerQuery object.
@@ -228,7 +205,7 @@ abstract class DealerQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, VISIBLE, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT, VERSION, VERSION_CREATED_AT, VERSION_CREATED_BY FROM dealer WHERE ID = :p0';
+        $sql = 'SELECT ID, VISIBLE, ADDRESS1, ADDRESS2, ADDRESS3, ZIPCODE, CITY, COUNTRY_ID, LATITUDE, LONGITUDE, CREATED_AT, UPDATED_AT FROM dealer WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -753,119 +730,6 @@ abstract class DealerQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(DealerTableMap::UPDATED_AT, $updatedAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the version column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVersion(1234); // WHERE version = 1234
-     * $query->filterByVersion(array(12, 34)); // WHERE version IN (12, 34)
-     * $query->filterByVersion(array('min' => 12)); // WHERE version > 12
-     * </code>
-     *
-     * @param     mixed $version The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerQuery The current query, for fluid interface
-     */
-    public function filterByVersion($version = null, $comparison = null)
-    {
-        if (is_array($version)) {
-            $useMinMax = false;
-            if (isset($version['min'])) {
-                $this->addUsingAlias(DealerTableMap::VERSION, $version['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($version['max'])) {
-                $this->addUsingAlias(DealerTableMap::VERSION, $version['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(DealerTableMap::VERSION, $version, $comparison);
-    }
-
-    /**
-     * Filter the query on the version_created_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVersionCreatedAt('2011-03-14'); // WHERE version_created_at = '2011-03-14'
-     * $query->filterByVersionCreatedAt('now'); // WHERE version_created_at = '2011-03-14'
-     * $query->filterByVersionCreatedAt(array('max' => 'yesterday')); // WHERE version_created_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $versionCreatedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerQuery The current query, for fluid interface
-     */
-    public function filterByVersionCreatedAt($versionCreatedAt = null, $comparison = null)
-    {
-        if (is_array($versionCreatedAt)) {
-            $useMinMax = false;
-            if (isset($versionCreatedAt['min'])) {
-                $this->addUsingAlias(DealerTableMap::VERSION_CREATED_AT, $versionCreatedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($versionCreatedAt['max'])) {
-                $this->addUsingAlias(DealerTableMap::VERSION_CREATED_AT, $versionCreatedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-
-        return $this->addUsingAlias(DealerTableMap::VERSION_CREATED_AT, $versionCreatedAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the version_created_by column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVersionCreatedBy('fooValue');   // WHERE version_created_by = 'fooValue'
-     * $query->filterByVersionCreatedBy('%fooValue%'); // WHERE version_created_by LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $versionCreatedBy The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerQuery The current query, for fluid interface
-     */
-    public function filterByVersionCreatedBy($versionCreatedBy = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($versionCreatedBy)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $versionCreatedBy)) {
-                $versionCreatedBy = str_replace('*', '%', $versionCreatedBy);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(DealerTableMap::VERSION_CREATED_BY, $versionCreatedBy, $comparison);
     }
 
     /**
@@ -1528,79 +1392,6 @@ abstract class DealerQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query by a related \Dealer\Model\DealerVersion object
-     *
-     * @param \Dealer\Model\DealerVersion|ObjectCollection $dealerVersion  the related object to use as filter
-     * @param string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildDealerQuery The current query, for fluid interface
-     */
-    public function filterByDealerVersion($dealerVersion, $comparison = null)
-    {
-        if ($dealerVersion instanceof \Dealer\Model\DealerVersion) {
-            return $this
-                ->addUsingAlias(DealerTableMap::ID, $dealerVersion->getId(), $comparison);
-        } elseif ($dealerVersion instanceof ObjectCollection) {
-            return $this
-                ->useDealerVersionQuery()
-                ->filterByPrimaryKeys($dealerVersion->getPrimaryKeys())
-                ->endUse();
-        } else {
-            throw new PropelException('filterByDealerVersion() only accepts arguments of type \Dealer\Model\DealerVersion or Collection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the DealerVersion relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return ChildDealerQuery The current query, for fluid interface
-     */
-    public function joinDealerVersion($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('DealerVersion');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if ($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'DealerVersion');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Use the DealerVersion relation DealerVersion object
-     *
-     * @see useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return   \Dealer\Model\DealerVersionQuery A secondary query class using the current class as primary query
-     */
-    public function useDealerVersionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-    {
-        return $this
-            ->joinDealerVersion($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'DealerVersion', '\Dealer\Model\DealerVersionQuery');
-    }
-
-    /**
      * Exclude object from result
      *
      * @param   ChildDealer $dealer Object to remove from the list of results
@@ -1812,34 +1603,6 @@ abstract class DealerQuery extends ModelCriteria
         return $this
             ->joinI18n($locale, $relationAlias, $joinType)
             ->useQuery($relationAlias ? $relationAlias : 'DealerI18n', '\Dealer\Model\DealerI18nQuery');
-    }
-
-    // versionable behavior
-
-    /**
-     * Checks whether versioning is enabled
-     *
-     * @return boolean
-     */
-    static public function isVersioningEnabled()
-    {
-        return self::$isVersioningEnabled;
-    }
-
-    /**
-     * Enables versioning
-     */
-    static public function enableVersioning()
-    {
-        self::$isVersioningEnabled = true;
-    }
-
-    /**
-     * Disables versioning
-     */
-    static public function disableVersioning()
-    {
-        self::$isVersioningEnabled = false;
     }
 
 } // DealerQuery

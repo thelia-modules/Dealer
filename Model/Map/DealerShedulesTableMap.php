@@ -58,7 +58,7 @@ class DealerShedulesTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 13;
+    const NUM_COLUMNS = 10;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class DealerShedulesTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 13;
+    const NUM_HYDRATE_COLUMNS = 10;
 
     /**
      * the column name for the ID field
@@ -121,21 +121,6 @@ class DealerShedulesTableMap extends TableMap
     const UPDATED_AT = 'dealer_shedules.UPDATED_AT';
 
     /**
-     * the column name for the VERSION field
-     */
-    const VERSION = 'dealer_shedules.VERSION';
-
-    /**
-     * the column name for the VERSION_CREATED_AT field
-     */
-    const VERSION_CREATED_AT = 'dealer_shedules.VERSION_CREATED_AT';
-
-    /**
-     * the column name for the VERSION_CREATED_BY field
-     */
-    const VERSION_CREATED_BY = 'dealer_shedules.VERSION_CREATED_BY';
-
-    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -147,12 +132,12 @@ class DealerShedulesTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'DealerId', 'Day', 'Begin', 'End', 'Closed', 'PeriodBegin', 'PeriodEnd', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'dealerId', 'day', 'begin', 'end', 'closed', 'periodBegin', 'periodEnd', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
-        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID, DealerShedulesTableMap::DEALER_ID, DealerShedulesTableMap::DAY, DealerShedulesTableMap::BEGIN, DealerShedulesTableMap::END, DealerShedulesTableMap::CLOSED, DealerShedulesTableMap::PERIOD_BEGIN, DealerShedulesTableMap::PERIOD_END, DealerShedulesTableMap::CREATED_AT, DealerShedulesTableMap::UPDATED_AT, DealerShedulesTableMap::VERSION, DealerShedulesTableMap::VERSION_CREATED_AT, DealerShedulesTableMap::VERSION_CREATED_BY, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'DEALER_ID', 'DAY', 'BEGIN', 'END', 'CLOSED', 'PERIOD_BEGIN', 'PERIOD_END', 'CREATED_AT', 'UPDATED_AT', 'VERSION', 'VERSION_CREATED_AT', 'VERSION_CREATED_BY', ),
-        self::TYPE_FIELDNAME     => array('id', 'dealer_id', 'day', 'begin', 'end', 'closed', 'period_begin', 'period_end', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('Id', 'DealerId', 'Day', 'Begin', 'End', 'Closed', 'PeriodBegin', 'PeriodEnd', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'dealerId', 'day', 'begin', 'end', 'closed', 'periodBegin', 'periodEnd', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID, DealerShedulesTableMap::DEALER_ID, DealerShedulesTableMap::DAY, DealerShedulesTableMap::BEGIN, DealerShedulesTableMap::END, DealerShedulesTableMap::CLOSED, DealerShedulesTableMap::PERIOD_BEGIN, DealerShedulesTableMap::PERIOD_END, DealerShedulesTableMap::CREATED_AT, DealerShedulesTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'DEALER_ID', 'DAY', 'BEGIN', 'END', 'CLOSED', 'PERIOD_BEGIN', 'PERIOD_END', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'dealer_id', 'day', 'begin', 'end', 'closed', 'period_begin', 'period_end', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -162,12 +147,12 @@ class DealerShedulesTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'DealerId' => 1, 'Day' => 2, 'Begin' => 3, 'End' => 4, 'Closed' => 5, 'PeriodBegin' => 6, 'PeriodEnd' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, 'Version' => 10, 'VersionCreatedAt' => 11, 'VersionCreatedBy' => 12, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'dealerId' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'closed' => 5, 'periodBegin' => 6, 'periodEnd' => 7, 'createdAt' => 8, 'updatedAt' => 9, 'version' => 10, 'versionCreatedAt' => 11, 'versionCreatedBy' => 12, ),
-        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID => 0, DealerShedulesTableMap::DEALER_ID => 1, DealerShedulesTableMap::DAY => 2, DealerShedulesTableMap::BEGIN => 3, DealerShedulesTableMap::END => 4, DealerShedulesTableMap::CLOSED => 5, DealerShedulesTableMap::PERIOD_BEGIN => 6, DealerShedulesTableMap::PERIOD_END => 7, DealerShedulesTableMap::CREATED_AT => 8, DealerShedulesTableMap::UPDATED_AT => 9, DealerShedulesTableMap::VERSION => 10, DealerShedulesTableMap::VERSION_CREATED_AT => 11, DealerShedulesTableMap::VERSION_CREATED_BY => 12, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'DEALER_ID' => 1, 'DAY' => 2, 'BEGIN' => 3, 'END' => 4, 'CLOSED' => 5, 'PERIOD_BEGIN' => 6, 'PERIOD_END' => 7, 'CREATED_AT' => 8, 'UPDATED_AT' => 9, 'VERSION' => 10, 'VERSION_CREATED_AT' => 11, 'VERSION_CREATED_BY' => 12, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'dealer_id' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'closed' => 5, 'period_begin' => 6, 'period_end' => 7, 'created_at' => 8, 'updated_at' => 9, 'version' => 10, 'version_created_at' => 11, 'version_created_by' => 12, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'DealerId' => 1, 'Day' => 2, 'Begin' => 3, 'End' => 4, 'Closed' => 5, 'PeriodBegin' => 6, 'PeriodEnd' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'dealerId' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'closed' => 5, 'periodBegin' => 6, 'periodEnd' => 7, 'createdAt' => 8, 'updatedAt' => 9, ),
+        self::TYPE_COLNAME       => array(DealerShedulesTableMap::ID => 0, DealerShedulesTableMap::DEALER_ID => 1, DealerShedulesTableMap::DAY => 2, DealerShedulesTableMap::BEGIN => 3, DealerShedulesTableMap::END => 4, DealerShedulesTableMap::CLOSED => 5, DealerShedulesTableMap::PERIOD_BEGIN => 6, DealerShedulesTableMap::PERIOD_END => 7, DealerShedulesTableMap::CREATED_AT => 8, DealerShedulesTableMap::UPDATED_AT => 9, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'DEALER_ID' => 1, 'DAY' => 2, 'BEGIN' => 3, 'END' => 4, 'CLOSED' => 5, 'PERIOD_BEGIN' => 6, 'PERIOD_END' => 7, 'CREATED_AT' => 8, 'UPDATED_AT' => 9, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'dealer_id' => 1, 'day' => 2, 'begin' => 3, 'end' => 4, 'closed' => 5, 'period_begin' => 6, 'period_end' => 7, 'created_at' => 8, 'updated_at' => 9, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
     );
 
     /**
@@ -196,9 +181,6 @@ class DealerShedulesTableMap extends TableMap
         $this->addColumn('PERIOD_END', 'PeriodEnd', 'DATE', false, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('VERSION', 'Version', 'INTEGER', false, null, 0);
-        $this->addColumn('VERSION_CREATED_AT', 'VersionCreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('VERSION_CREATED_BY', 'VersionCreatedBy', 'VARCHAR', false, 100, null);
     } // initialize()
 
     /**
@@ -207,7 +189,6 @@ class DealerShedulesTableMap extends TableMap
     public function buildRelations()
     {
         $this->addRelation('Dealer', '\\Dealer\\Model\\Dealer', RelationMap::MANY_TO_ONE, array('dealer_id' => 'id', ), 'CASCADE', null);
-        $this->addRelation('DealerShedulesVersion', '\\Dealer\\Model\\DealerShedulesVersion', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerShedulesVersions');
     } // buildRelations()
 
     /**
@@ -220,18 +201,8 @@ class DealerShedulesTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
-            'versionable' => array('version_column' => 'version', 'version_table' => '', 'log_created_at' => 'true', 'log_created_by' => 'true', 'log_comment' => 'false', 'version_created_at_column' => 'version_created_at', 'version_created_by_column' => 'version_created_by', 'version_comment_column' => 'version_comment', ),
         );
     } // getBehaviors()
-    /**
-     * Method to invalidate the instance pool of all tables related to dealer_shedules     * by a foreign key with ON DELETE CASCADE
-     */
-    public static function clearRelatedInstancePool()
-    {
-        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-                DealerShedulesVersionTableMap::clearInstancePool();
-            }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -381,9 +352,6 @@ class DealerShedulesTableMap extends TableMap
             $criteria->addSelectColumn(DealerShedulesTableMap::PERIOD_END);
             $criteria->addSelectColumn(DealerShedulesTableMap::CREATED_AT);
             $criteria->addSelectColumn(DealerShedulesTableMap::UPDATED_AT);
-            $criteria->addSelectColumn(DealerShedulesTableMap::VERSION);
-            $criteria->addSelectColumn(DealerShedulesTableMap::VERSION_CREATED_AT);
-            $criteria->addSelectColumn(DealerShedulesTableMap::VERSION_CREATED_BY);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.DEALER_ID');
@@ -395,9 +363,6 @@ class DealerShedulesTableMap extends TableMap
             $criteria->addSelectColumn($alias . '.PERIOD_END');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
-            $criteria->addSelectColumn($alias . '.VERSION');
-            $criteria->addSelectColumn($alias . '.VERSION_CREATED_AT');
-            $criteria->addSelectColumn($alias . '.VERSION_CREATED_BY');
         }
     }
 

@@ -10,12 +10,8 @@ use Dealer\Model\DealerContactInfo as ChildDealerContactInfo;
 use Dealer\Model\DealerContactInfoI18n as ChildDealerContactInfoI18n;
 use Dealer\Model\DealerContactInfoI18nQuery as ChildDealerContactInfoI18nQuery;
 use Dealer\Model\DealerContactInfoQuery as ChildDealerContactInfoQuery;
-use Dealer\Model\DealerContactInfoVersion as ChildDealerContactInfoVersion;
-use Dealer\Model\DealerContactInfoVersionQuery as ChildDealerContactInfoVersionQuery;
 use Dealer\Model\DealerContactQuery as ChildDealerContactQuery;
-use Dealer\Model\DealerContactVersionQuery as ChildDealerContactVersionQuery;
 use Dealer\Model\Map\DealerContactInfoTableMap;
-use Dealer\Model\Map\DealerContactInfoVersionTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -94,25 +90,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * The value for the version field.
-     * Note: this column has a database default value of: 0
-     * @var        int
-     */
-    protected $version;
-
-    /**
-     * The value for the version_created_at field.
-     * @var        string
-     */
-    protected $version_created_at;
-
-    /**
-     * The value for the version_created_by field.
-     * @var        string
-     */
-    protected $version_created_by;
-
-    /**
      * @var        DealerContact
      */
     protected $aDealerContact;
@@ -122,12 +99,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
      */
     protected $collDealerContactInfoI18ns;
     protected $collDealerContactInfoI18nsPartial;
-
-    /**
-     * @var        ObjectCollection|ChildDealerContactInfoVersion[] Collection to store aggregation of ChildDealerContactInfoVersion objects.
-     */
-    protected $collDealerContactInfoVersions;
-    protected $collDealerContactInfoVersionsPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -151,14 +122,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
      */
     protected $currentTranslations;
 
-    // versionable behavior
-
-
-    /**
-     * @var bool
-     */
-    protected $enforceVersion = false;
-
     /**
      * An array of objects scheduled for deletion.
      * @var ObjectCollection
@@ -166,29 +129,10 @@ abstract class DealerContactInfo implements ActiveRecordInterface
     protected $dealerContactInfoI18nsScheduledForDeletion = null;
 
     /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection
-     */
-    protected $dealerContactInfoVersionsScheduledForDeletion = null;
-
-    /**
-     * Applies default values to this object.
-     * This method should be called from the object's constructor (or
-     * equivalent initialization method).
-     * @see __construct()
-     */
-    public function applyDefaultValues()
-    {
-        $this->version = 0;
-    }
-
-    /**
      * Initializes internal state of Dealer\Model\Base\DealerContactInfo object.
-     * @see applyDefaults()
      */
     public function __construct()
     {
-        $this->applyDefaultValues();
     }
 
     /**
@@ -523,48 +467,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
     }
 
     /**
-     * Get the [version] column value.
-     *
-     * @return   int
-     */
-    public function getVersion()
-    {
-
-        return $this->version;
-    }
-
-    /**
-     * Get the [optionally formatted] temporal [version_created_at] column value.
-     *
-     *
-     * @param      string $format The date/time format string (either date()-style or strftime()-style).
-     *                            If format is NULL, then the raw \DateTime object will be returned.
-     *
-     * @return mixed Formatted date/time value as string or \DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-     *
-     * @throws PropelException - if unable to parse/validate the date/time value.
-     */
-    public function getVersionCreatedAt($format = NULL)
-    {
-        if ($format === null) {
-            return $this->version_created_at;
-        } else {
-            return $this->version_created_at instanceof \DateTime ? $this->version_created_at->format($format) : null;
-        }
-    }
-
-    /**
-     * Get the [version_created_by] column value.
-     *
-     * @return   string
-     */
-    public function getVersionCreatedBy()
-    {
-
-        return $this->version_created_by;
-    }
-
-    /**
      * Set the value of [id] column.
      *
      * @param      int $v new value
@@ -678,69 +580,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
     } // setUpdatedAt()
 
     /**
-     * Set the value of [version] column.
-     *
-     * @param      int $v new value
-     * @return   \Dealer\Model\DealerContactInfo The current object (for fluent API support)
-     */
-    public function setVersion($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->version !== $v) {
-            $this->version = $v;
-            $this->modifiedColumns[DealerContactInfoTableMap::VERSION] = true;
-        }
-
-
-        return $this;
-    } // setVersion()
-
-    /**
-     * Sets the value of [version_created_at] column to a normalized version of the date/time value specified.
-     *
-     * @param      mixed $v string, integer (timestamp), or \DateTime value.
-     *               Empty strings are treated as NULL.
-     * @return   \Dealer\Model\DealerContactInfo The current object (for fluent API support)
-     */
-    public function setVersionCreatedAt($v)
-    {
-        $dt = PropelDateTime::newInstance($v, null, '\DateTime');
-        if ($this->version_created_at !== null || $dt !== null) {
-            if ($dt !== $this->version_created_at) {
-                $this->version_created_at = $dt;
-                $this->modifiedColumns[DealerContactInfoTableMap::VERSION_CREATED_AT] = true;
-            }
-        } // if either are not null
-
-
-        return $this;
-    } // setVersionCreatedAt()
-
-    /**
-     * Set the value of [version_created_by] column.
-     *
-     * @param      string $v new value
-     * @return   \Dealer\Model\DealerContactInfo The current object (for fluent API support)
-     */
-    public function setVersionCreatedBy($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->version_created_by !== $v) {
-            $this->version_created_by = $v;
-            $this->modifiedColumns[DealerContactInfoTableMap::VERSION_CREATED_BY] = true;
-        }
-
-
-        return $this;
-    } // setVersionCreatedBy()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -750,10 +589,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
      */
     public function hasOnlyDefaultValues()
     {
-            if ($this->version !== 0) {
-                return false;
-            }
-
         // otherwise, everything was equal, so return TRUE
         return true;
     } // hasOnlyDefaultValues()
@@ -801,18 +636,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
                 $col = null;
             }
             $this->updated_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 5 + $startcol : DealerContactInfoTableMap::translateFieldName('Version', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->version = (null !== $col) ? (int) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 6 + $startcol : DealerContactInfoTableMap::translateFieldName('VersionCreatedAt', TableMap::TYPE_PHPNAME, $indexType)];
-            if ($col === '0000-00-00 00:00:00') {
-                $col = null;
-            }
-            $this->version_created_at = (null !== $col) ? PropelDateTime::newInstance($col, null, '\DateTime') : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 7 + $startcol : DealerContactInfoTableMap::translateFieldName('VersionCreatedBy', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->version_created_by = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -821,7 +644,7 @@ abstract class DealerContactInfo implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 8; // 8 = DealerContactInfoTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 5; // 5 = DealerContactInfoTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Dealer\Model\DealerContactInfo object", 0, $e);
@@ -887,8 +710,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
 
             $this->aDealerContact = null;
             $this->collDealerContactInfoI18ns = null;
-
-            $this->collDealerContactInfoVersions = null;
 
         } // if (deep)
     }
@@ -958,14 +779,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         $isInsert = $this->isNew();
         try {
             $ret = $this->preSave($con);
-            // versionable behavior
-            if ($this->isVersioningNecessary()) {
-                $this->setVersion($this->isNew() ? 1 : $this->getLastVersionNumber($con) + 1);
-                if (!$this->isColumnModified(DealerContactInfoTableMap::VERSION_CREATED_AT)) {
-                    $this->setVersionCreatedAt(time());
-                }
-                $createVersion = true; // for postSave hook
-            }
             if ($isInsert) {
                 $ret = $ret && $this->preInsert($con);
                 // timestampable behavior
@@ -990,10 +803,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                // versionable behavior
-                if (isset($createVersion)) {
-                    $this->addVersion($con);
-                }
                 DealerContactInfoTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
@@ -1064,23 +873,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
                 }
             }
 
-            if ($this->dealerContactInfoVersionsScheduledForDeletion !== null) {
-                if (!$this->dealerContactInfoVersionsScheduledForDeletion->isEmpty()) {
-                    \Dealer\Model\DealerContactInfoVersionQuery::create()
-                        ->filterByPrimaryKeys($this->dealerContactInfoVersionsScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->dealerContactInfoVersionsScheduledForDeletion = null;
-                }
-            }
-
-                if ($this->collDealerContactInfoVersions !== null) {
-            foreach ($this->collDealerContactInfoVersions as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
             $this->alreadyInSave = false;
 
         }
@@ -1122,15 +914,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         if ($this->isColumnModified(DealerContactInfoTableMap::UPDATED_AT)) {
             $modifiedColumns[':p' . $index++]  = 'UPDATED_AT';
         }
-        if ($this->isColumnModified(DealerContactInfoTableMap::VERSION)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION';
-        }
-        if ($this->isColumnModified(DealerContactInfoTableMap::VERSION_CREATED_AT)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_AT';
-        }
-        if ($this->isColumnModified(DealerContactInfoTableMap::VERSION_CREATED_BY)) {
-            $modifiedColumns[':p' . $index++]  = 'VERSION_CREATED_BY';
-        }
 
         $sql = sprintf(
             'INSERT INTO dealer_contact_info (%s) VALUES (%s)',
@@ -1156,15 +939,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
                         break;
                     case 'UPDATED_AT':
                         $stmt->bindValue($identifier, $this->updated_at ? $this->updated_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'VERSION':
-                        $stmt->bindValue($identifier, $this->version, PDO::PARAM_INT);
-                        break;
-                    case 'VERSION_CREATED_AT':
-                        $stmt->bindValue($identifier, $this->version_created_at ? $this->version_created_at->format("Y-m-d H:i:s") : null, PDO::PARAM_STR);
-                        break;
-                    case 'VERSION_CREATED_BY':
-                        $stmt->bindValue($identifier, $this->version_created_by, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -1243,15 +1017,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
             case 4:
                 return $this->getUpdatedAt();
                 break;
-            case 5:
-                return $this->getVersion();
-                break;
-            case 6:
-                return $this->getVersionCreatedAt();
-                break;
-            case 7:
-                return $this->getVersionCreatedBy();
-                break;
             default:
                 return null;
                 break;
@@ -1286,9 +1051,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
             $keys[2] => $this->getContactType(),
             $keys[3] => $this->getCreatedAt(),
             $keys[4] => $this->getUpdatedAt(),
-            $keys[5] => $this->getVersion(),
-            $keys[6] => $this->getVersionCreatedAt(),
-            $keys[7] => $this->getVersionCreatedBy(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -1301,9 +1063,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
             }
             if (null !== $this->collDealerContactInfoI18ns) {
                 $result['DealerContactInfoI18ns'] = $this->collDealerContactInfoI18ns->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collDealerContactInfoVersions) {
-                $result['DealerContactInfoVersions'] = $this->collDealerContactInfoVersions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -1358,15 +1117,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
             case 4:
                 $this->setUpdatedAt($value);
                 break;
-            case 5:
-                $this->setVersion($value);
-                break;
-            case 6:
-                $this->setVersionCreatedAt($value);
-                break;
-            case 7:
-                $this->setVersionCreatedBy($value);
-                break;
         } // switch()
     }
 
@@ -1396,9 +1146,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         if (array_key_exists($keys[2], $arr)) $this->setContactType($arr[$keys[2]]);
         if (array_key_exists($keys[3], $arr)) $this->setCreatedAt($arr[$keys[3]]);
         if (array_key_exists($keys[4], $arr)) $this->setUpdatedAt($arr[$keys[4]]);
-        if (array_key_exists($keys[5], $arr)) $this->setVersion($arr[$keys[5]]);
-        if (array_key_exists($keys[6], $arr)) $this->setVersionCreatedAt($arr[$keys[6]]);
-        if (array_key_exists($keys[7], $arr)) $this->setVersionCreatedBy($arr[$keys[7]]);
     }
 
     /**
@@ -1415,9 +1162,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         if ($this->isColumnModified(DealerContactInfoTableMap::CONTACT_TYPE)) $criteria->add(DealerContactInfoTableMap::CONTACT_TYPE, $this->contact_type);
         if ($this->isColumnModified(DealerContactInfoTableMap::CREATED_AT)) $criteria->add(DealerContactInfoTableMap::CREATED_AT, $this->created_at);
         if ($this->isColumnModified(DealerContactInfoTableMap::UPDATED_AT)) $criteria->add(DealerContactInfoTableMap::UPDATED_AT, $this->updated_at);
-        if ($this->isColumnModified(DealerContactInfoTableMap::VERSION)) $criteria->add(DealerContactInfoTableMap::VERSION, $this->version);
-        if ($this->isColumnModified(DealerContactInfoTableMap::VERSION_CREATED_AT)) $criteria->add(DealerContactInfoTableMap::VERSION_CREATED_AT, $this->version_created_at);
-        if ($this->isColumnModified(DealerContactInfoTableMap::VERSION_CREATED_BY)) $criteria->add(DealerContactInfoTableMap::VERSION_CREATED_BY, $this->version_created_by);
 
         return $criteria;
     }
@@ -1485,9 +1229,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         $copyObj->setContactType($this->getContactType());
         $copyObj->setCreatedAt($this->getCreatedAt());
         $copyObj->setUpdatedAt($this->getUpdatedAt());
-        $copyObj->setVersion($this->getVersion());
-        $copyObj->setVersionCreatedAt($this->getVersionCreatedAt());
-        $copyObj->setVersionCreatedBy($this->getVersionCreatedBy());
 
         if ($deepCopy) {
             // important: temporarily setNew(false) because this affects the behavior of
@@ -1497,12 +1238,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
             foreach ($this->getDealerContactInfoI18ns() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addDealerContactInfoI18n($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getDealerContactInfoVersions() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addDealerContactInfoVersion($relObj->copy($deepCopy));
                 }
             }
 
@@ -1600,9 +1335,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
     {
         if ('DealerContactInfoI18n' == $relationName) {
             return $this->initDealerContactInfoI18ns();
-        }
-        if ('DealerContactInfoVersion' == $relationName) {
-            return $this->initDealerContactInfoVersions();
         }
     }
 
@@ -1832,227 +1564,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
     }
 
     /**
-     * Clears out the collDealerContactInfoVersions collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addDealerContactInfoVersions()
-     */
-    public function clearDealerContactInfoVersions()
-    {
-        $this->collDealerContactInfoVersions = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collDealerContactInfoVersions collection loaded partially.
-     */
-    public function resetPartialDealerContactInfoVersions($v = true)
-    {
-        $this->collDealerContactInfoVersionsPartial = $v;
-    }
-
-    /**
-     * Initializes the collDealerContactInfoVersions collection.
-     *
-     * By default this just sets the collDealerContactInfoVersions collection to an empty array (like clearcollDealerContactInfoVersions());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initDealerContactInfoVersions($overrideExisting = true)
-    {
-        if (null !== $this->collDealerContactInfoVersions && !$overrideExisting) {
-            return;
-        }
-        $this->collDealerContactInfoVersions = new ObjectCollection();
-        $this->collDealerContactInfoVersions->setModel('\Dealer\Model\DealerContactInfoVersion');
-    }
-
-    /**
-     * Gets an array of ChildDealerContactInfoVersion objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildDealerContactInfo is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildDealerContactInfoVersion[] List of ChildDealerContactInfoVersion objects
-     * @throws PropelException
-     */
-    public function getDealerContactInfoVersions($criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerContactInfoVersionsPartial && !$this->isNew();
-        if (null === $this->collDealerContactInfoVersions || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collDealerContactInfoVersions) {
-                // return empty collection
-                $this->initDealerContactInfoVersions();
-            } else {
-                $collDealerContactInfoVersions = ChildDealerContactInfoVersionQuery::create(null, $criteria)
-                    ->filterByDealerContactInfo($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collDealerContactInfoVersionsPartial && count($collDealerContactInfoVersions)) {
-                        $this->initDealerContactInfoVersions(false);
-
-                        foreach ($collDealerContactInfoVersions as $obj) {
-                            if (false == $this->collDealerContactInfoVersions->contains($obj)) {
-                                $this->collDealerContactInfoVersions->append($obj);
-                            }
-                        }
-
-                        $this->collDealerContactInfoVersionsPartial = true;
-                    }
-
-                    reset($collDealerContactInfoVersions);
-
-                    return $collDealerContactInfoVersions;
-                }
-
-                if ($partial && $this->collDealerContactInfoVersions) {
-                    foreach ($this->collDealerContactInfoVersions as $obj) {
-                        if ($obj->isNew()) {
-                            $collDealerContactInfoVersions[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collDealerContactInfoVersions = $collDealerContactInfoVersions;
-                $this->collDealerContactInfoVersionsPartial = false;
-            }
-        }
-
-        return $this->collDealerContactInfoVersions;
-    }
-
-    /**
-     * Sets a collection of DealerContactInfoVersion objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $dealerContactInfoVersions A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildDealerContactInfo The current object (for fluent API support)
-     */
-    public function setDealerContactInfoVersions(Collection $dealerContactInfoVersions, ConnectionInterface $con = null)
-    {
-        $dealerContactInfoVersionsToDelete = $this->getDealerContactInfoVersions(new Criteria(), $con)->diff($dealerContactInfoVersions);
-
-
-        //since at least one column in the foreign key is at the same time a PK
-        //we can not just set a PK to NULL in the lines below. We have to store
-        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->dealerContactInfoVersionsScheduledForDeletion = clone $dealerContactInfoVersionsToDelete;
-
-        foreach ($dealerContactInfoVersionsToDelete as $dealerContactInfoVersionRemoved) {
-            $dealerContactInfoVersionRemoved->setDealerContactInfo(null);
-        }
-
-        $this->collDealerContactInfoVersions = null;
-        foreach ($dealerContactInfoVersions as $dealerContactInfoVersion) {
-            $this->addDealerContactInfoVersion($dealerContactInfoVersion);
-        }
-
-        $this->collDealerContactInfoVersions = $dealerContactInfoVersions;
-        $this->collDealerContactInfoVersionsPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related DealerContactInfoVersion objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related DealerContactInfoVersion objects.
-     * @throws PropelException
-     */
-    public function countDealerContactInfoVersions(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collDealerContactInfoVersionsPartial && !$this->isNew();
-        if (null === $this->collDealerContactInfoVersions || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDealerContactInfoVersions) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getDealerContactInfoVersions());
-            }
-
-            $query = ChildDealerContactInfoVersionQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByDealerContactInfo($this)
-                ->count($con);
-        }
-
-        return count($this->collDealerContactInfoVersions);
-    }
-
-    /**
-     * Method called to associate a ChildDealerContactInfoVersion object to this object
-     * through the ChildDealerContactInfoVersion foreign key attribute.
-     *
-     * @param    ChildDealerContactInfoVersion $l ChildDealerContactInfoVersion
-     * @return   \Dealer\Model\DealerContactInfo The current object (for fluent API support)
-     */
-    public function addDealerContactInfoVersion(ChildDealerContactInfoVersion $l)
-    {
-        if ($this->collDealerContactInfoVersions === null) {
-            $this->initDealerContactInfoVersions();
-            $this->collDealerContactInfoVersionsPartial = true;
-        }
-
-        if (!in_array($l, $this->collDealerContactInfoVersions->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddDealerContactInfoVersion($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param DealerContactInfoVersion $dealerContactInfoVersion The dealerContactInfoVersion object to add.
-     */
-    protected function doAddDealerContactInfoVersion($dealerContactInfoVersion)
-    {
-        $this->collDealerContactInfoVersions[]= $dealerContactInfoVersion;
-        $dealerContactInfoVersion->setDealerContactInfo($this);
-    }
-
-    /**
-     * @param  DealerContactInfoVersion $dealerContactInfoVersion The dealerContactInfoVersion object to remove.
-     * @return ChildDealerContactInfo The current object (for fluent API support)
-     */
-    public function removeDealerContactInfoVersion($dealerContactInfoVersion)
-    {
-        if ($this->getDealerContactInfoVersions()->contains($dealerContactInfoVersion)) {
-            $this->collDealerContactInfoVersions->remove($this->collDealerContactInfoVersions->search($dealerContactInfoVersion));
-            if (null === $this->dealerContactInfoVersionsScheduledForDeletion) {
-                $this->dealerContactInfoVersionsScheduledForDeletion = clone $this->collDealerContactInfoVersions;
-                $this->dealerContactInfoVersionsScheduledForDeletion->clear();
-            }
-            $this->dealerContactInfoVersionsScheduledForDeletion[]= clone $dealerContactInfoVersion;
-            $dealerContactInfoVersion->setDealerContactInfo(null);
-        }
-
-        return $this;
-    }
-
-    /**
      * Clears the current object and sets all attributes to their default values
      */
     public function clear()
@@ -2062,12 +1573,8 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         $this->contact_type = null;
         $this->created_at = null;
         $this->updated_at = null;
-        $this->version = null;
-        $this->version_created_at = null;
-        $this->version_created_by = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
-        $this->applyDefaultValues();
         $this->resetModified();
         $this->setNew(true);
         $this->setDeleted(false);
@@ -2090,11 +1597,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
                     $o->clearAllReferences($deep);
                 }
             }
-            if ($this->collDealerContactInfoVersions) {
-                foreach ($this->collDealerContactInfoVersions as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
         } // if ($deep)
 
         // i18n behavior
@@ -2102,7 +1604,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         $this->currentTranslations = null;
 
         $this->collDealerContactInfoI18ns = null;
-        $this->collDealerContactInfoVersions = null;
         $this->aDealerContact = null;
     }
 
@@ -2253,309 +1754,6 @@ abstract class DealerContactInfo implements ActiveRecordInterface
         return $this;
     }
 
-    // versionable behavior
-
-    /**
-     * Enforce a new Version of this object upon next save.
-     *
-     * @return \Dealer\Model\DealerContactInfo
-     */
-    public function enforceVersioning()
-    {
-        $this->enforceVersion = true;
-
-        return $this;
-    }
-
-    /**
-     * Checks whether the current state must be recorded as a version
-     *
-     * @return  boolean
-     */
-    public function isVersioningNecessary($con = null)
-    {
-        if ($this->alreadyInSave) {
-            return false;
-        }
-
-        if ($this->enforceVersion) {
-            return true;
-        }
-
-        if (ChildDealerContactInfoQuery::isVersioningEnabled() && ($this->isNew() || $this->isModified()) || $this->isDeleted()) {
-            return true;
-        }
-        if (null !== ($object = $this->getDealerContact($con)) && $object->isVersioningNecessary($con)) {
-            return true;
-        }
-
-
-        return false;
-    }
-
-    /**
-     * Creates a version of the current object and saves it.
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildDealerContactInfoVersion A version object
-     */
-    public function addVersion($con = null)
-    {
-        $this->enforceVersion = false;
-
-        $version = new ChildDealerContactInfoVersion();
-        $version->setId($this->getId());
-        $version->setContactId($this->getContactId());
-        $version->setContactType($this->getContactType());
-        $version->setCreatedAt($this->getCreatedAt());
-        $version->setUpdatedAt($this->getUpdatedAt());
-        $version->setVersion($this->getVersion());
-        $version->setVersionCreatedAt($this->getVersionCreatedAt());
-        $version->setVersionCreatedBy($this->getVersionCreatedBy());
-        $version->setDealerContactInfo($this);
-        if (($related = $this->getDealerContact($con)) && $related->getVersion()) {
-            $version->setContactIdVersion($related->getVersion());
-        }
-        $version->save($con);
-
-        return $version;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con The connection to use
-     *
-     * @return  ChildDealerContactInfo The current object (for fluent API support)
-     */
-    public function toVersion($versionNumber, $con = null)
-    {
-        $version = $this->getOneVersion($versionNumber, $con);
-        if (!$version) {
-            throw new PropelException(sprintf('No ChildDealerContactInfo object found with version %d', $version));
-        }
-        $this->populateFromVersion($version, $con);
-
-        return $this;
-    }
-
-    /**
-     * Sets the properties of the current object to the value they had at a specific version
-     *
-     * @param ChildDealerContactInfoVersion $version The version object to use
-     * @param ConnectionInterface   $con the connection to use
-     * @param array                 $loadedObjects objects that been loaded in a chain of populateFromVersion calls on referrer or fk objects.
-     *
-     * @return ChildDealerContactInfo The current object (for fluent API support)
-     */
-    public function populateFromVersion($version, $con = null, &$loadedObjects = array())
-    {
-        $loadedObjects['ChildDealerContactInfo'][$version->getId()][$version->getVersion()] = $this;
-        $this->setId($version->getId());
-        $this->setContactId($version->getContactId());
-        $this->setContactType($version->getContactType());
-        $this->setCreatedAt($version->getCreatedAt());
-        $this->setUpdatedAt($version->getUpdatedAt());
-        $this->setVersion($version->getVersion());
-        $this->setVersionCreatedAt($version->getVersionCreatedAt());
-        $this->setVersionCreatedBy($version->getVersionCreatedBy());
-        if ($fkValue = $version->getContactId()) {
-            if (isset($loadedObjects['ChildDealerContact']) && isset($loadedObjects['ChildDealerContact'][$fkValue]) && isset($loadedObjects['ChildDealerContact'][$fkValue][$version->getContactIdVersion()])) {
-                $related = $loadedObjects['ChildDealerContact'][$fkValue][$version->getContactIdVersion()];
-            } else {
-                $related = new ChildDealerContact();
-                $relatedVersion = ChildDealerContactVersionQuery::create()
-                    ->filterById($fkValue)
-                    ->filterByVersion($version->getContactIdVersion())
-                    ->findOne($con);
-                $related->populateFromVersion($relatedVersion, $con, $loadedObjects);
-                $related->setNew(false);
-            }
-            $this->setDealerContact($related);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Gets the latest persisted version number for the current object
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  integer
-     */
-    public function getLastVersionNumber($con = null)
-    {
-        $v = ChildDealerContactInfoVersionQuery::create()
-            ->filterByDealerContactInfo($this)
-            ->orderByVersion('desc')
-            ->findOne($con);
-        if (!$v) {
-            return 0;
-        }
-
-        return $v->getVersion();
-    }
-
-    /**
-     * Checks whether the current object is the latest one
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  Boolean
-     */
-    public function isLastVersion($con = null)
-    {
-        return $this->getLastVersionNumber($con) == $this->getVersion();
-    }
-
-    /**
-     * Retrieves a version object for this entity and a version number
-     *
-     * @param   integer $versionNumber The version number to read
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ChildDealerContactInfoVersion A version object
-     */
-    public function getOneVersion($versionNumber, $con = null)
-    {
-        return ChildDealerContactInfoVersionQuery::create()
-            ->filterByDealerContactInfo($this)
-            ->filterByVersion($versionNumber)
-            ->findOne($con);
-    }
-
-    /**
-     * Gets all the versions of this object, in incremental order
-     *
-     * @param   ConnectionInterface $con the connection to use
-     *
-     * @return  ObjectCollection A list of ChildDealerContactInfoVersion objects
-     */
-    public function getAllVersions($con = null)
-    {
-        $criteria = new Criteria();
-        $criteria->addAscendingOrderByColumn(DealerContactInfoVersionTableMap::VERSION);
-
-        return $this->getDealerContactInfoVersions($criteria, $con);
-    }
-
-    /**
-     * Compares the current object with another of its version.
-     * <code>
-     * print_r($book->compareVersion(1));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $versionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersion($versionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->toArray();
-        $toVersion = $this->getOneVersion($versionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Compares two versions of the current object.
-     * <code>
-     * print_r($book->compareVersions(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   integer             $fromVersionNumber
-     * @param   integer             $toVersionNumber
-     * @param   string              $keys Main key used for the result diff (versions|columns)
-     * @param   ConnectionInterface $con the connection to use
-     * @param   array               $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    public function compareVersions($fromVersionNumber, $toVersionNumber, $keys = 'columns', $con = null, $ignoredColumns = array())
-    {
-        $fromVersion = $this->getOneVersion($fromVersionNumber, $con)->toArray();
-        $toVersion = $this->getOneVersion($toVersionNumber, $con)->toArray();
-
-        return $this->computeDiff($fromVersion, $toVersion, $keys, $ignoredColumns);
-    }
-
-    /**
-     * Computes the diff between two versions.
-     * <code>
-     * print_r($book->computeDiff(1, 2));
-     * => array(
-     *   '1' => array('Title' => 'Book title at version 1'),
-     *   '2' => array('Title' => 'Book title at version 2')
-     * );
-     * </code>
-     *
-     * @param   array     $fromVersion     An array representing the original version.
-     * @param   array     $toVersion       An array representing the destination version.
-     * @param   string    $keys            Main key used for the result diff (versions|columns).
-     * @param   array     $ignoredColumns  The columns to exclude from the diff.
-     *
-     * @return  array A list of differences
-     */
-    protected function computeDiff($fromVersion, $toVersion, $keys = 'columns', $ignoredColumns = array())
-    {
-        $fromVersionNumber = $fromVersion['Version'];
-        $toVersionNumber = $toVersion['Version'];
-        $ignoredColumns = array_merge(array(
-            'Version',
-            'VersionCreatedAt',
-            'VersionCreatedBy',
-        ), $ignoredColumns);
-        $diff = array();
-        foreach ($fromVersion as $key => $value) {
-            if (in_array($key, $ignoredColumns)) {
-                continue;
-            }
-            if ($toVersion[$key] != $value) {
-                switch ($keys) {
-                    case 'versions':
-                        $diff[$fromVersionNumber][$key] = $value;
-                        $diff[$toVersionNumber][$key] = $toVersion[$key];
-                        break;
-                    default:
-                        $diff[$key] = array(
-                            $fromVersionNumber => $value,
-                            $toVersionNumber => $toVersion[$key],
-                        );
-                        break;
-                }
-            }
-        }
-
-        return $diff;
-    }
-    /**
-     * retrieve the last $number versions.
-     *
-     * @param Integer $number the number of record to return.
-     * @return PropelCollection|array \Dealer\Model\DealerContactInfoVersion[] List of \Dealer\Model\DealerContactInfoVersion objects
-     */
-    public function getLastVersions($number = 10, $criteria = null, $con = null)
-    {
-        $criteria = ChildDealerContactInfoVersionQuery::create(null, $criteria);
-        $criteria->addDescendingOrderByColumn(DealerContactInfoVersionTableMap::VERSION);
-        $criteria->limit($number);
-
-        return $this->getDealerContactInfoVersions($criteria, $con);
-    }
     /**
      * Code to be run before persisting the object
      * @param  ConnectionInterface $con

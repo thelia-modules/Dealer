@@ -58,7 +58,7 @@ class DealerBrandTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 8;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class DealerBrandTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 8;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
      * the column name for the ID field
@@ -96,21 +96,6 @@ class DealerBrandTableMap extends TableMap
     const UPDATED_AT = 'dealer_brand.UPDATED_AT';
 
     /**
-     * the column name for the VERSION field
-     */
-    const VERSION = 'dealer_brand.VERSION';
-
-    /**
-     * the column name for the VERSION_CREATED_AT field
-     */
-    const VERSION_CREATED_AT = 'dealer_brand.VERSION_CREATED_AT';
-
-    /**
-     * the column name for the VERSION_CREATED_BY field
-     */
-    const VERSION_CREATED_BY = 'dealer_brand.VERSION_CREATED_BY';
-
-    /**
      * The default string format for model objects of the related table
      */
     const DEFAULT_STRING_FORMAT = 'YAML';
@@ -122,12 +107,12 @@ class DealerBrandTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'DealerId', 'BrandId', 'CreatedAt', 'UpdatedAt', 'Version', 'VersionCreatedAt', 'VersionCreatedBy', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'dealerId', 'brandId', 'createdAt', 'updatedAt', 'version', 'versionCreatedAt', 'versionCreatedBy', ),
-        self::TYPE_COLNAME       => array(DealerBrandTableMap::ID, DealerBrandTableMap::DEALER_ID, DealerBrandTableMap::BRAND_ID, DealerBrandTableMap::CREATED_AT, DealerBrandTableMap::UPDATED_AT, DealerBrandTableMap::VERSION, DealerBrandTableMap::VERSION_CREATED_AT, DealerBrandTableMap::VERSION_CREATED_BY, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'DEALER_ID', 'BRAND_ID', 'CREATED_AT', 'UPDATED_AT', 'VERSION', 'VERSION_CREATED_AT', 'VERSION_CREATED_BY', ),
-        self::TYPE_FIELDNAME     => array('id', 'dealer_id', 'brand_id', 'created_at', 'updated_at', 'version', 'version_created_at', 'version_created_by', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id', 'DealerId', 'BrandId', 'CreatedAt', 'UpdatedAt', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'dealerId', 'brandId', 'createdAt', 'updatedAt', ),
+        self::TYPE_COLNAME       => array(DealerBrandTableMap::ID, DealerBrandTableMap::DEALER_ID, DealerBrandTableMap::BRAND_ID, DealerBrandTableMap::CREATED_AT, DealerBrandTableMap::UPDATED_AT, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'DEALER_ID', 'BRAND_ID', 'CREATED_AT', 'UPDATED_AT', ),
+        self::TYPE_FIELDNAME     => array('id', 'dealer_id', 'brand_id', 'created_at', 'updated_at', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -137,12 +122,12 @@ class DealerBrandTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'DealerId' => 1, 'BrandId' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, 'Version' => 5, 'VersionCreatedAt' => 6, 'VersionCreatedBy' => 7, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'dealerId' => 1, 'brandId' => 2, 'createdAt' => 3, 'updatedAt' => 4, 'version' => 5, 'versionCreatedAt' => 6, 'versionCreatedBy' => 7, ),
-        self::TYPE_COLNAME       => array(DealerBrandTableMap::ID => 0, DealerBrandTableMap::DEALER_ID => 1, DealerBrandTableMap::BRAND_ID => 2, DealerBrandTableMap::CREATED_AT => 3, DealerBrandTableMap::UPDATED_AT => 4, DealerBrandTableMap::VERSION => 5, DealerBrandTableMap::VERSION_CREATED_AT => 6, DealerBrandTableMap::VERSION_CREATED_BY => 7, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'DEALER_ID' => 1, 'BRAND_ID' => 2, 'CREATED_AT' => 3, 'UPDATED_AT' => 4, 'VERSION' => 5, 'VERSION_CREATED_AT' => 6, 'VERSION_CREATED_BY' => 7, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'dealer_id' => 1, 'brand_id' => 2, 'created_at' => 3, 'updated_at' => 4, 'version' => 5, 'version_created_at' => 6, 'version_created_by' => 7, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, 4, 5, 6, 7, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'DealerId' => 1, 'BrandId' => 2, 'CreatedAt' => 3, 'UpdatedAt' => 4, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'dealerId' => 1, 'brandId' => 2, 'createdAt' => 3, 'updatedAt' => 4, ),
+        self::TYPE_COLNAME       => array(DealerBrandTableMap::ID => 0, DealerBrandTableMap::DEALER_ID => 1, DealerBrandTableMap::BRAND_ID => 2, DealerBrandTableMap::CREATED_AT => 3, DealerBrandTableMap::UPDATED_AT => 4, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'DEALER_ID' => 1, 'BRAND_ID' => 2, 'CREATED_AT' => 3, 'UPDATED_AT' => 4, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'dealer_id' => 1, 'brand_id' => 2, 'created_at' => 3, 'updated_at' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -166,9 +151,6 @@ class DealerBrandTableMap extends TableMap
         $this->addForeignKey('BRAND_ID', 'BrandId', 'INTEGER', 'brand', 'ID', true, null, null);
         $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
         $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('VERSION', 'Version', 'INTEGER', false, null, 0);
-        $this->addColumn('VERSION_CREATED_AT', 'VersionCreatedAt', 'TIMESTAMP', false, null, null);
-        $this->addColumn('VERSION_CREATED_BY', 'VersionCreatedBy', 'VARCHAR', false, 100, null);
     } // initialize()
 
     /**
@@ -178,7 +160,6 @@ class DealerBrandTableMap extends TableMap
     {
         $this->addRelation('Dealer', '\\Dealer\\Model\\Dealer', RelationMap::MANY_TO_ONE, array('dealer_id' => 'id', ), 'CASCADE', 'RESTRICT');
         $this->addRelation('Brand', '\\Thelia\\Model\\Brand', RelationMap::MANY_TO_ONE, array('brand_id' => 'id', ), 'CASCADE', 'RESTRICT');
-        $this->addRelation('DealerBrandVersion', '\\Dealer\\Model\\DealerBrandVersion', RelationMap::ONE_TO_MANY, array('id' => 'id', ), 'CASCADE', null, 'DealerBrandVersions');
     } // buildRelations()
 
     /**
@@ -191,18 +172,8 @@ class DealerBrandTableMap extends TableMap
     {
         return array(
             'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
-            'versionable' => array('version_column' => 'version', 'version_table' => '', 'log_created_at' => 'true', 'log_created_by' => 'true', 'log_comment' => 'false', 'version_created_at_column' => 'version_created_at', 'version_created_by_column' => 'version_created_by', 'version_comment_column' => 'version_comment', ),
         );
     } // getBehaviors()
-    /**
-     * Method to invalidate the instance pool of all tables related to dealer_brand     * by a foreign key with ON DELETE CASCADE
-     */
-    public static function clearRelatedInstancePool()
-    {
-        // Invalidate objects in ".$this->getClassNameFromBuilder($joinedTableTableMapBuilder)." instance pool,
-        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-                DealerBrandVersionTableMap::clearInstancePool();
-            }
 
     /**
      * Retrieves a string version of the primary key from the DB resultset row that can be used to uniquely identify a row in this table.
@@ -347,18 +318,12 @@ class DealerBrandTableMap extends TableMap
             $criteria->addSelectColumn(DealerBrandTableMap::BRAND_ID);
             $criteria->addSelectColumn(DealerBrandTableMap::CREATED_AT);
             $criteria->addSelectColumn(DealerBrandTableMap::UPDATED_AT);
-            $criteria->addSelectColumn(DealerBrandTableMap::VERSION);
-            $criteria->addSelectColumn(DealerBrandTableMap::VERSION_CREATED_AT);
-            $criteria->addSelectColumn(DealerBrandTableMap::VERSION_CREATED_BY);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
             $criteria->addSelectColumn($alias . '.DEALER_ID');
             $criteria->addSelectColumn($alias . '.BRAND_ID');
             $criteria->addSelectColumn($alias . '.CREATED_AT');
             $criteria->addSelectColumn($alias . '.UPDATED_AT');
-            $criteria->addSelectColumn($alias . '.VERSION');
-            $criteria->addSelectColumn($alias . '.VERSION_CREATED_AT');
-            $criteria->addSelectColumn($alias . '.VERSION_CREATED_BY');
         }
     }
 
