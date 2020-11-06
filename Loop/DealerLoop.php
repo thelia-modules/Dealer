@@ -112,6 +112,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 'date-reverse',
                 'title',
                 'title-reverse',
+                'city'
             ], 'id')
         );
     }
@@ -219,6 +220,9 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                     break;
                 case 'title-reverse' :
                     $query->useDealerI18nQuery()->orderByTitle(Criteria::DESC)->endUse();
+                    break;
+                case 'city' :
+                    $query->orderByCity(Criteria::ASC);
                     break;
                 default:
                     break;

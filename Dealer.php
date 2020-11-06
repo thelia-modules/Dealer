@@ -42,16 +42,10 @@ class Dealer extends BaseModule
 
     public function postActivation(ConnectionInterface $con = null)
     {
-        try {
-            DealerQuery::create()->findOne();
-            DealerContactInfoQuery::create()->findOne();
-            DealerContactQuery::create()->findOne();
-            DealerShedulesQuery::create()->findOne();
-            DealerContentQuery::create()->findOne();
-            DealerFolderQuery::create()->findOne();
-        } catch (\Exception $e) {
+        if (!$this->getConfigValue('is_initialized', false)) {
             $database = new Database($con);
             $database->insertSql(null, [__DIR__ . "/Config/thelia.sql"]);
+            $this->setConfigValue('is_initialized', true);
         }
 
         $this->addResource(self::RESOURCES_DEALER);
@@ -71,6 +65,8 @@ class Dealer extends BaseModule
      */
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
     {
+        $this->setConfigValue('is_initialized', true);
+
         $finder = (new Finder)
             ->files()
             ->name('#.*?\.sql#')
