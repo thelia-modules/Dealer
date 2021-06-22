@@ -1,0 +1,89 @@
+{form name="dealer.image.header"}
+    <form method="POST" action="{url path="/admin/module/dealer/image/header/update"}" enctype="multipart/form-data">
+        <div class="panel-body {if $error}has-error{/if}">
+            {form_hidden_fields form=$form}
+            {form_field form=$form field="parent_id"}
+                <input type="hidden" name="{$name}" value="{$dealer_id}" />
+            {/form_field}
+            {form_field form=$form field='error_url'}
+                <input type="hidden" name="{$name}" value="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$dealer_id current_tab='images'}"/> {* the url the user is redirected to on login success *}
+            {/form_field}
+            {form_field form=$form field='success_url'}
+                <input type="hidden" name="{$name}" value="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$dealer_id current_tab='images'}"/> {* the url the user is redirected to on login success *}
+            {/form_field}
+            {if $form_error}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+            {if $error}<div class="error-field">$message</div>{/if}
+            <div class="row">
+                <div class="col-lg-3">
+                    <label for="{$label_attr.for}" class="control-label">{intl l='Header Image (banner)' d='dealer.bo.default'}</label>
+                </div>
+                <div class="col-lg-3">
+                    {form_field form=$form field="file"}<input type="file" name="{$name}" {$attr}  />{/form_field}
+                </div>
+                <div class="col-lg-1" >
+                    <input type="submit" class="btn btn-info btn-upload" value="{intl l='Validate' d='dealer.bo.default' }" >
+                </div>
+                <div class="col-lg-2" >
+                    {loop type="custom_images"  name="image.header" image_type="imageHeader" product={$dealer_id} width="120" resize_mode="borders"}
+                    <div class="container-btn-right btn-group" >
+                        <a href="{$ORIGINAL_IMAGE_URL}" class="image-update-btn btn btn-default btn-xs js-sorted-position" target="_blank">
+                            <img src="{$IMAGE_URL}" alt="{$ALT}">
+                        </a>
+                        <a class="image-update-btn btn btn-default btn-xs" href="{url path="/admin/module/dealer/image/%type/edit/%parentId/%id"  parentId=$dealer_id id=$ID type='imageHeader'}" data-error-message="{intl l='Please retry' d='dealer.bo.default'}">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="image-delete-btn btn btn-default btn-xs" id="image-{$ID}" href="{url path="/admin/module/dealer/image/%type/delete/%parentId/%id" parentId=$dealer_id type='imageHeader' id=$ID}" data-error-message="{intl l='Please retry' d='dealer.bo.default'}">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    </div>
+                </div>
+                {/loop}
+            </div>
+        </div>
+    </form>
+{/form}
+
+{form name="dealer.image.box"}
+    <form method="POST" action="{url path="/admin/module/dealer/image/box/update"}" enctype="multipart/form-data">
+        <div class="panel-body {if $error}has-error{/if}">
+            {form_hidden_fields form=$form}
+            {form_field form=$form field="parent_id"}
+                <input type="hidden" name="{$name}" value="{$dealer_id}" />
+            {/form_field}
+
+            {form_field form=$form field='error_url'}
+                <input type="hidden" name="{$name}" value="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$dealer_id current_tab='images' }"/>
+            {/form_field}
+
+            {form_field form=$form field='success_url'}
+                <input type="hidden" name="{$name}" value="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$dealer_id current_tab='images' }"/>
+            {/form_field}
+            {if $form_error}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+            {if $error}<div class="error-field">$message</div>{/if}
+            <div class="row">
+                <div class="col-lg-3">
+                    <label for="{$label_attr.for}" class="control-label">{intl l='Box image' d='dealer.bo.default'}</label>
+                </div>
+                <div class="col-lg-3">
+                    {form_field form=$form field="file"}<input type="file" name="{$name}" {$attr}  />{/form_field}
+                </div>
+                <div class="col-lg-1" >
+                    <input type="submit" class="btn btn-info btn-upload" value="{intl l='Validate' d='dealer.bo.default' }" >
+                </div>
+                <div class="col-lg-2">
+                    {loop type="custom_images"  name="image.box" image_type="imageBox" product={$dealer_id} width="120" resize_mode="borders"}
+                        <a href="{$ORIGINAL_IMAGE_URL}" class="image-update-btn btn btn-default btn-xs js-sorted-position" target="_blank">
+                            <img src="{$IMAGE_URL}" alt="{$ALT}">
+                        </a>
+                        <a class="image-update-btn btn btn-default btn-xs" href="{url path="/admin/module/dealer/image/%type/edit/%parentId/%id"  parentId=$dealer_id id=$ID type='imageBox'}" data-error-message="{intl l='Please retry' d='dealer.bo.default'}">
+                            <i class="glyphicon glyphicon-edit"></i>
+                        </a>
+                        <a class="image-delete-btn btn btn-default btn-xs" id="image-{$ID}" href="{url path="/admin/module/dealer/image/%type/delete/%parentId/%id" parentId=$dealer_id type='imageBox' id=$ID}" data-error-message="{intl l='Please retry' d='dealer.bo.default'}">
+                            <i class="glyphicon glyphicon-trash"></i>
+                        </a>
+                    {/loop}
+                </div>
+            </div>
+        </div>
+    </form>
+{/form}

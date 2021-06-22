@@ -118,6 +118,35 @@
                   placeholder="{intl l='The Dealer description' d="dealer.bo.default"}">{$DESCRIPTION}</textarea>
     </div>
 {/form_field}
+
+{form_field form=$form field="big_description"}
+    <div class="form-group">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l=$label d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+
+        {form_error form=$form field="big_description"}{$message}{/form_error}
+
+        <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
+                  placeholder="{intl l='The Dealer complex description' d="dealer.bo.default"}">{$BIG_DESCRIPTION}</textarea>
+    </div>
+{/form_field}
+
+{form_field form=$form field="hard_open_hour"}
+    <div class="form-group">
+        <label class="control-label" for="{$label_attr.for}">
+            {intl l="Horraires d'ouverture" d="dealer.bo.default"}
+            {if $required}<span class="required">*</span>{/if}
+        </label>
+
+        {form_error form=$form field="hard_open_hour"}{$message}{/form_error}
+
+        <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
+                  placeholder="{intl l='The Dealer complex description' d="dealer.bo.default"}">{$HARD_OPEN_HOUR}</textarea>
+    </div>
+{/form_field}
+
 {form_field form=$form field="access"}
     <div class="form-group">
         <label class="control-label" for="{$label_attr.for}">

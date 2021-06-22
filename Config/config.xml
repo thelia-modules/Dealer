@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns="http://thelia.net/schema/dic/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
-    <commands>
-        <command class="Dealer\Commands\UpdateDealerTables" />
-    </commands>
-
     <services>
-        <service id="dealer.command.update_tables" class="Dealer\Service\UpdateTablesService">
-        </service>
         <service id="dealer_listener" class="Dealer\EventListener\DealerListener">
             <tag name="kernel.event_subscriber"/>
         </service>
@@ -105,6 +99,10 @@
         <form name="dealer_brand_link_create" class="Dealer\Form\BrandLinkForm"/>
         <form name="dealer_product_link_create" class="Dealer\Form\ProductLinkForm"/>
         <form name="dealer_admin_link_create" class="Dealer\Form\AdminLinkForm"/>
+        <form name="dealer.image.header" class="Dealer\Form\DealerImageHeaderForm"/>
+        <form name="dealer.image.box" class="Dealer\Form\DealerImageBoxForm"/>
+        <form name="dealer.image.modification" class="Dealer\Form\DealerImageModificationForm"/>
+        <form name="dealer.meta.seo" class="Dealer\Form\DealerMetaSEOForm"/>
     </forms>
 
 
@@ -120,15 +118,7 @@
         <loop name="dealer_brand" class="Dealer\Loop\BrandLoop"/>
         <loop name="dealer_product" class="Dealer\Loop\ProductLoop"/>
         <loop name="dealer_admin" class="Dealer\Loop\AdminLoop"/>
+        <loop name="custom_images" class="Dealer\Loop\DealerCustomImagesLoop" />
+        <loop name="dealer_meta_seo" class="Dealer\Loop\DealerMetaSeoLoop" />
     </loops>
-    <!--
-      <exports>
-
-      </exports>
-      -->
-    <!--
-      <imports>
-
-      </imports>
-   -->
 </config>

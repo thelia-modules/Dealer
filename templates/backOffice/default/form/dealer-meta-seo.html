@@ -1,0 +1,37 @@
+{form name="dealer.meta.seo"}
+<div class="form-container">
+    {if $form_error}
+        <div class="alert alert-danger">{$form_error_message}</div>
+    {/if}
+    <form method="POST" action="{url path="/admin/module/dealer/seo/update"}" {form_enctype form=$form} class="clearfix">
+        {form_field form=$form field="dealer_id"}
+            <input type="hidden" name="{$name}" value="{$dealer_id}"/>
+        {/form_field}
+        {form_hidden_fields form=$form}
+
+            <div class="row">
+                <div class="col-md-12">
+                    {loop type="dealer_meta_seo" name="meat-seo-loop" id=$dealer_id}
+                        {$slug=$SLUG}
+                        {$title=$META_TITLE}
+                        {$desc=$META_DESC}
+                        {$keywords=$META_KEYWORDS}
+                        {$json=$META_JSON}
+                    {/loop}
+
+                    {render_form_field field="slug" value="{$slug}"}
+                    <hr>
+                    {render_form_field field="meta_title" value="{$title}"}
+                    {render_form_field field="meta_description" value="{$desc}"}
+                    {render_form_field field="meta_keywords" value="{$keywords}"}
+                    {render_form_field field="meta_json" value="{$json}"}
+                </div>
+            </div>
+
+            {include "includes/inner-form-toolbar.html"
+            hide_flags = true
+            close_url = {url path="/admin/module/Dealer/dealer"}
+            }
+    </form>
+</div>
+{/form}

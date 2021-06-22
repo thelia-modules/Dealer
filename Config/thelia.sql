@@ -240,6 +240,51 @@ CREATE TABLE `dealer_admin`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- dealer_image
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `dealer_image`;
+
+CREATE TABLE `dealer_image`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `dealer_id` INTEGER NOT NULL,
+    `file` VARCHAR(255) NOT NULL,
+    `type` SMALLINT NOT NULL,
+    `created_at` DATETIME,
+    `updated_at` DATETIME,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `dealer_image_u_e6ded6` (`dealer_id`, `type`),
+    INDEX `dealer_image_i_c5c15b` (`dealer_id`),
+    CONSTRAINT `dealer_image_fk_94fb32`
+        FOREIGN KEY (`dealer_id`)
+        REFERENCES `dealer` (`id`)
+        ON UPDATE RESTRICT
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- dealer_meta_seo
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `dealer_meta_seo`;
+
+CREATE TABLE `dealer_meta_seo`
+(
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `dealer_id` INTEGER NOT NULL,
+    `slug` VARCHAR(255),
+    `json` TEXT,
+    PRIMARY KEY (`id`),
+    INDEX `dealer_meta_seo_fi_94fb32` (`dealer_id`),
+    CONSTRAINT `dealer_meta_seo_fk_94fb32`
+        FOREIGN KEY (`dealer_id`)
+        REFERENCES `dealer` (`id`)
+        ON UPDATE RESTRICT
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- dealer_i18n
 -- ---------------------------------------------------------------------
 
@@ -252,6 +297,8 @@ CREATE TABLE `dealer_i18n`
     `title` VARCHAR(255) NOT NULL,
     `description` TEXT,
     `access` TEXT,
+    `big_description` TEXT,
+    `hard_open_hour` TEXT,
     PRIMARY KEY (`id`,`locale`),
     CONSTRAINT `dealer_i18n_fk_de5aa8`
         FOREIGN KEY (`id`)
@@ -292,6 +339,47 @@ CREATE TABLE `dealer_contact_info_i18n`
     CONSTRAINT `dealer_contact_info_i18n_fk_58a41a`
         FOREIGN KEY (`id`)
         REFERENCES `dealer_contact_info` (`id`)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- dealer_image_i18n
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `dealer_image_i18n`;
+
+CREATE TABLE `dealer_image_i18n`
+(
+    `id` INTEGER NOT NULL,
+    `locale` VARCHAR(5) DEFAULT 'en_US' NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` LONGTEXT,
+    `chapo` TEXT,
+    `postscriptum` TEXT,
+    PRIMARY KEY (`id`,`locale`),
+    CONSTRAINT `dealer_image_i18n_fk_6c2846`
+        FOREIGN KEY (`id`)
+        REFERENCES `dealer_image` (`id`)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
+-- dealer_meta_seo_i18n
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `dealer_meta_seo_i18n`;
+
+CREATE TABLE `dealer_meta_seo_i18n`
+(
+    `id` INTEGER NOT NULL,
+    `locale` VARCHAR(5) DEFAULT 'en_US' NOT NULL,
+    `meta_title` VARCHAR(255),
+    `meta_description` VARCHAR(255),
+    `meta_keywords` VARCHAR(255),
+    PRIMARY KEY (`id`,`locale`),
+    CONSTRAINT `dealer_meta_seo_i18n_fk_d1ed39`
+        FOREIGN KEY (`id`)
+        REFERENCES `dealer_meta_seo` (`id`)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 

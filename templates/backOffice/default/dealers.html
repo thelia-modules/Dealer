@@ -12,7 +12,6 @@
 
 {block name="main-content"}
     <div id="wrapper" class="container">
-
         {if $general_error}
             <div class="alert alert-danger">
                 {$general_error}
@@ -228,6 +227,7 @@
     {/javascripts}
 
     <script>
+        console.log('plop');
         $(function() {
             $('a.dealer-delete').click(function(ev) {
                 $('#dealer_delete_id').val($(this).data('id'));

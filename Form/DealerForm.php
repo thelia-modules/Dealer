@@ -62,6 +62,18 @@ class DealerForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ))
+            ->add("big_description", "text", array(
+                "label" => $this->translator->trans("Complex Description", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.big_description"],
+                "required" => false,
+                "attr" => array()
+            ))
+            ->add("hard_open_hour", "text", array(
+                "label" => $this->translator->trans("Open hour text", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "dealer.hard_open_hour"],
+                "required" => false,
+                "attr" => array()
+            ))
             ->add("access", "text", array(
                 "label" => $this->translator->trans("Access", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.access"],
