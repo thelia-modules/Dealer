@@ -74,6 +74,14 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 $loopResultRow->set("DESCRIPTION", $dealer->getVirtualColumn('i18n_DESCRIPTION'));
             }
 
+            if ($dealer->hasVirtualColumn('i18n_BIG_DESCRIPTION')) {
+                $loopResultRow->set("BIG_DESCRIPTION", $dealer->getVirtualColumn('i18n_BIG_DESCRIPTION'));
+            }
+
+            if ($dealer->hasVirtualColumn('i18n_HARD_OPEN_HOUR')) {
+                $loopResultRow->set("HARD_OPEN_HOUR", $dealer->getVirtualColumn('i18n_HARD_OPEN_HOUR'));
+            }
+
             if ($this->getWithPrevNextInfo()) {
                 $previous = $this->getPrevious($dealer);
                 $next = $this->getNext($dealer);
@@ -112,7 +120,6 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 'date-reverse',
                 'title',
                 'title-reverse',
-                'city'
             ], 'id')
         );
     }
@@ -130,7 +137,9 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             [
                 'TITLE',
                 'DESCRIPTION',
-                'ACCESS'
+                'ACCESS',
+                'BIG_DESCRIPTION',
+                'HARD_OPEN_HOUR'
             ],
             null,
             'ID',
@@ -220,9 +229,6 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                     break;
                 case 'title-reverse' :
                     $query->useDealerI18nQuery()->orderByTitle(Criteria::DESC)->endUse();
-                    break;
-                case 'city' :
-                    $query->orderByCity(Criteria::ASC);
                     break;
                 default:
                     break;

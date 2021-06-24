@@ -144,6 +144,20 @@ class DealerService extends AbstractBaseService implements BaseServiceInterface
             $model->setDescription(null);
         }
 
+        //  Optionnal Field
+        if (isset($data['big_description'])) {
+            $model->setBigDescription($data['big_description']);
+        } else {
+            $model->setBigDescription(null);
+        }
+
+        //  Optionnal Field
+        if (isset($data['hard_open_hour'])) {
+            $model->setHardOpenHour($data['hard_open_hour']);
+        } else {
+            $model->setHardOpenHour(null);
+        }
+
         if (isset($data['access'])) {
             $model->setAccess($data['access']);
         } else {

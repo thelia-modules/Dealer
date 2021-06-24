@@ -8,6 +8,8 @@
 
         <column name="title" size="255" type="VARCHAR" required="true"/>
         <column name="description" type="LONGVARCHAR"/>
+        <column name="big_description" type="LONGVARCHAR"/>
+        <column name="hard_open_hour" type="LONGVARCHAR"/>
         <column name="access" type="LONGVARCHAR"/>
 
         <column defaultValue="0" name="visible" required="true" type="TINYINT"/>
@@ -29,7 +31,7 @@
 
         <behavior name="timestampable"/>
         <behavior name="i18n">
-            <parameter name="i18n_columns" value="title, description, access"/>
+            <parameter name="i18n_columns" value="title, description, access, big_description, hard_open_hour"/>
         </behavior>
     </table>
 
@@ -171,8 +173,46 @@
         <behavior name="timestampable" />
     </table>
 
+    <table name="dealer_image" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+        <column name="dealer_id" required="true" type="INTEGER"/>
+        <column name="file" size="255" required="true" type="VARCHAR"/>
+        <column name="type" required="true" type="SMALLINT"  />
+        <column name="title" size="255" required="true" type="VARCHAR" />
+        <column name="chapo" type="LONGVARCHAR" />
+        <column name="description" type="CLOB" />
+        <column name="postscriptum" type="LONGVARCHAR" />
+        <foreign-key foreignTable="dealer" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="dealer_id"/>
+        </foreign-key>
+        <index>
+            <index-column name="dealer_id" />
+        </index>
+        <behavior name="timestampable" />
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="title, description, chapo, postscriptum" />
+        </behavior>
+        <unique>
+            <unique-column name="dealer_id"/>
+            <unique-column name="type"/>
+        </unique>
+    </table>
 
-
+    <table name="dealer_meta_seo" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+        <column name="dealer_id" required="true" type="INTEGER"/>
+        <column name="meta_title" size="255" type="VARCHAR" />
+        <column name="meta_description" size="255" type="VARCHAR"  />
+        <column name="meta_keywords" size="255" type="VARCHAR"  />
+        <column name="slug" size="255" type="VARCHAR"  />
+        <column name="json" type="LONGVARCHAR"  />
+        <foreign-key foreignTable="dealer" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="dealer_id"/>
+        </foreign-key>
+        <behavior name="i18n">
+            <parameter name="i18n_columns" value="meta_title, meta_description, meta_keywords" />
+        </behavior>
+    </table>
 
     <external-schema filename="local/config/schema.xml" referenceOnly="true"/>
 </database>

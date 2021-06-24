@@ -55,6 +55,8 @@ class DealerController extends BaseController
             "city" => $object->getCity(),
             "country_id" => $object->getCountryId(),
             "description" => $object->getDescription(),
+            "big_description" => $object->getBigDescription(),
+            "hard_open_hour" => $object->getHardOpenHour(),
             "latitude" => $object->getLatitude(),
             "longitude" => $object->getLongitude(),
         );

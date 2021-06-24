@@ -52,6 +52,8 @@
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="VIEW" module="Dealer"}
                         <li class="active"><a href="#general" data-toggle="tab">{intl l="General" d="dealer.bo.default"}</a></li>
                     {/loop}
+                        <li><a href="#metaseo" data-toggle="tab">{intl l="Meta SEO"}</a></li>
+                        <li><a href="#image" data-toggle="tab">{intl l="Images"}</a></li>
                     {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer.geo" access="VIEW" module="Dealer"}
                         <li><a href="#location" data-toggle="tab">{intl l="Location" d="dealer.bo.default"}</a></li>
                     {/loop}
@@ -81,6 +83,16 @@
                             {include file="form/dealer-update.html"}
                         </div>
                     {/loop}
+                    <div class="tab-pane fade" id="image">
+                        {include file="form/dealer-image.html"
+                        dealer_id=$dealer_id
+                        }
+                    </div>
+                    <div class="tab-pane fade" id="metaseo">
+                        {include file="form/dealer-meta-seo.html"
+                        dealer_id=$dealer_id
+                        }
+                    </div>
                     {loop name="auth-create-tab" type="auth" role="ADMIN" resource="admin.dealer.geo" access="VIEW" module="Dealer"}
                         <div class="tab-pane fade" id="location">
                             {include file="includes/dealer-location.html"}
@@ -167,4 +179,5 @@
         })(jQuery);
     </script>
     {hook name="dealer.edit.js"}
+    {hook name="wysiwyg.js" location="wysiwyg-module-edit-js" }
 {/block}

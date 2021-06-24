@@ -112,4 +112,36 @@
     <route id="dealer.api.default" path="/api/3/dealer" methods="get">
         <default key="_controller">Dealer:Api:default</default>
     </route>
+
+    <!-- Image & SEO -->
+    <route id="admin.products.dealer.image.edit" path="/admin/module/dealer/image/{type}/edit/{parentId}/{id}">
+        <default key="_controller">Dealer\Controller\Image\CustomImagesAdminController::editCustomImageAction</default>
+        <requirement key="type">imageHeader|imageBox</requirement>
+        <requirement key="parentId">\d+</requirement>
+        <requirement key="id">\d+</requirement>
+    </route>
+    <route id="admin.products.dealer.image.update" path="/admin/module/dealer/image/{type}/update/{parentId}/{id}">
+        <default key="_controller">Dealer\Controller\Image\CustomImagesAdminController::updateCustomImageAction</default>
+        <requirement key="type">imageHeader|imageBox</requirement>
+        <requirement key="parentId">\d+</requirement>
+        <requirement key="id">\d+</requirement>
+    </route>
+    <route id="admin.dealer.image.delete" path="/admin/module/dealer/image/{type}/delete/{parentId}/{id}">
+        <default key="_controller">Dealer\Controller\Image\CustomImagesAdminController::deleteCustomImageAction</default>
+        <requirement key="type">imageHeader|imageBox</requirement>
+        <requirement key="parentId">\d+</requirement>
+        <requirement key="id">\d+</requirement>
+    </route>
+    <route id="admin.dealer.update.image.box" path="/admin/module/dealer/image/box/update">
+        <default key="_controller">Dealer\Controller\Image\CustomImagesAdminController::updateProductImageBox</default>
+    </route>
+    <route id="admin.dealer.update.image.header" path="/admin/module/dealer/image/header/update">
+        <default key="_controller">Dealer\Controller\Image\CustomImagesAdminController::updateProductImageHeader</default>
+    </route>
+    <route id="admin.dealer.update.seo" path="/admin/module/dealer/seo/update">
+        <default key="_controller">Dealer\Controller\MetaSeoController::updateSeo</default>
+    </route>
+    <route id="dealer.front.slug" path="/magasin/{slug}">
+        <default key="_controller">Dealer\Controller\DealerFrontController::show</default>
+    </route>
 </routes>

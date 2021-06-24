@@ -28,7 +28,7 @@ class Dealer extends BaseModule
 {
     const MESSAGE_DOMAIN = "dealer";
     const ROUTER = "router.dealer";
-
+    const DOMAIN_NAME = "dealer";
     const RESOURCES_DEALER = "admin.dealer";
     const RESOURCES_CONTACT = "admin.dealer.contact";
     const RESOURCES_SCHEDULES = "admin.dealer.schedules";
@@ -42,10 +42,16 @@ class Dealer extends BaseModule
 
     public function postActivation(ConnectionInterface $con = null)
     {
-        if (!$this->getConfigValue('is_initialized', false)) {
+        try {
+            DealerQuery::create()->findOne();
+            DealerContactInfoQuery::create()->findOne();
+            DealerContactQuery::create()->findOne();
+            DealerShedulesQuery::create()->findOne();
+            DealerContentQuery::create()->findOne();
+            DealerFolderQuery::create()->findOne();
+        } catch (\Exception $e) {
             $database = new Database($con);
             $database->insertSql(null, [__DIR__ . "/Config/thelia.sql"]);
-            $this->setConfigValue('is_initialized', true);
         }
 
         $this->addResource(self::RESOURCES_DEALER);
@@ -60,29 +66,20 @@ class Dealer extends BaseModule
         self::setConfigValue(self::CONFIG_ALLOW_PROFILE_ID, '');
     }
 
-    /**
-     * @inheritDoc
-     */
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
     {
-        $this->setConfigValue('is_initialized', true);
-
-        $finder = (new Finder)
-            ->files()
-            ->name('#.*?\.sql#')
-            ->in(__DIR__ . DS . 'Setup' . DS . 'sql');
+        $finder = Finder::create()
+            ->name('*.sql')
+            ->depth(0)
+            ->sortByName()
+            ->in(__DIR__ . DS . 'Config' . DS . 'update');
 
         $database = new Database($con);
 
-        /** @var \Symfony\Component\Finder\SplFileInfo $updateSQLFile */
-        foreach ($finder as $updateSQLFile) {
-            if (version_compare($currentVersion, str_replace('.sql', '', $updateSQLFile->getFilename()), '<')) {
-                $database->insertSql(
-                    null,
-                    [
-                        $updateSQLFile->getPathname()
-                    ]
-                );
+        /** @var \SplFileInfo $file */
+        foreach ($finder as $file) {
+            if (version_compare($currentVersion, $file->getBasename('.sql'), '<')) {
+                $database->insertSql(null, [$file->getPathname()]);
             }
         }
     }
