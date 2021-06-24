@@ -1,0 +1,116 @@
+{extends file="layout.tpl"}
+
+{block name='init'}
+
+{/block}
+
+{* Body Class *}
+{block name="body-class"}page-dealer{/block}
+
+{* Page Title *}
+{block name='no-return-functions' append}
+    {if $dealer_id}
+        {loop type="dealer_meta_seo" name="dealer_meta_loop_name" id=$dealer_id}
+            {$page_title = $META_TITLE}
+            {$page_description = $META_DESC}
+            {$page_keywords = $META_KEYWORDS}
+        {/loop}
+    {/if}
+{/block}
+
+{* Breadcrumb *}
+{block name='no-return-functions' append}
+    {if $dealer_id}
+        {$breadcrumbs = []}
+        {loop type="folder" name="store.link" id=3}
+            {$breadcrumbs[] = ['title' => {$TITLE}, 'url'=> $URL]}
+          {/loop}
+        {loop name="dealer.content" type="dealer" id=$dealer_id limit="1"}
+            {$breadcrumbs[] = ['title' => {$TITLE}, 'url'=> {navigate to="current"}]}
+        {/loop}
+    {/if}
+{/block}
+
+{block name="ld-json"}
+  {if $dealer_id}
+    {loop type="dealer_meta_seo" name="dealer_meta_loop_name" id=$dealer_id}
+    {if $META_JSON}<script type="application/ld+json">{$META_JSON nofilter}</script>{/if}
+    {/loop}
+  {/if}
+{/block}
+
+
+{block name="main-content"}
+
+{if $dealer_id}
+
+      {loop name="dealer.content" type="dealer" id=$dealer_id limit="1"}
+        {$dealerTitle = $TITLE}
+        {loop type="custom_images"  name="image.header.header" image_type="imageHeader" product=$dealer_id width=1920 height=375 resize_mode="crop"}
+        <div class="Carousel-Banner">
+          <img src="{$IMAGE_URL}" alt="{$dealerTitle}" class="Banner-img w-100">
+        </div>
+        {/loop}
+        <div class="container-sm">
+          <h1 class="Title Title--big-60 text-center">{$TITLE}</h1>
+
+          <div class="row my-5 text-center">
+            <div class="col-md-6">
+              <div class="DealerPreview-opening">
+                <div class="text-primary text-uppercase"><i class="icon-horaires"></i> {intl l="Heures d'ouvertures"}</div>
+                <div>
+                    {loop name="dealer_info" type="dealer" id=$ID}
+                      {$HARD_OPEN_HOUR nofilter}
+                    {/loop}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="DealerPreview-phone">
+                {ifloop rel="drive-preview.contact"}
+                <div class="text-primary mb-2 text-uppercase">
+                  <i class="icon-telephone"></i>
+                  {intl l="Contact"}
+                </div>
+                <div>
+                  {loop type="dealer_contact" name="drive-preview.contact" dealer_id=$ID}
+                  {loop type="dealer_contact_info" name="drive-preview.contact.infos" contact_id=$ID}
+                  {$VALUE}
+                  {/loop}
+                  {/loop}
+                </div>
+                {/ifloop}
+              </div>
+            </div>
+          </div>
+
+          {if $BIG_DESCRIPTION}
+          <div class="wysiwyg my-5">
+            {$BIG_DESCRIPTION nofilter}
+          </div>
+          {/if}
+        </div>
+
+      {/loop}
+
+
+{else}
+    <div class="main">
+        <article id="content-main" class="col-main" role="main" aria-labelledby="main-label">
+            {include file="includes/empty.html"}
+        </article>
+    </div><!-- /.layout -->
+{/if}
+{/block}
+
+{block name="stylesheet"}
+{hook name="content.stylesheet"}
+{/block}
+
+{block name="after-javascript-include"}
+{hook name="content.after-javascript-include"}
+{/block}
+
+{block name="javascript-initialization"}
+{hook name="content.javascript-initialization"}
+{/block}

@@ -146,7 +146,7 @@ class CustomImagesAdminController extends FileController
 
     private function uploadProductFile($formName)
     {
-        if (null !== $response = $this->checkAuth([AdminResources::PRODUCT], ['LaPelerine'], AccessManager::UPDATE)) {
+        if (null !== $response = $this->checkAuth(AdminResources::PRODUCT, [], AccessManager::UPDATE)) {
             return $response;
         }
         return self::uploadFile($formName, true);
@@ -165,7 +165,7 @@ class CustomImagesAdminController extends FileController
             $imageFile = $form->get('file')->getData();
             if (is_null($imageFile)) {
                 /** @noinspection PhpTranslationKeyInspection */
-                throw new \Exception($this->getTranslator()->trans('No files uploaded', [], LaPelerine::DOMAIN_NAME));
+                throw new \Exception($this->getTranslator()->trans('No files uploaded', [], Dealer::DOMAIN_NAME));
             }
             $parentId = $form->get('parent_id')->getData();
 
@@ -225,7 +225,7 @@ class CustomImagesAdminController extends FileController
     {
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpUnhandledExceptionInspection */
-        $this->getAdminResources()->addModuleResources([strtoupper(self::PRODUCT_IMAGE_PARENT_TYPE) => "admin.Lapelerine"], ucfirst(static::MODULE_RIGHT));
+        $this->getAdminResources()->addModuleResources([strtoupper(self::PRODUCT_IMAGE_PARENT_TYPE) => "admin.Dealer"], ucfirst(static::MODULE_RIGHT));
         $this->getFileManager()->addFileModel(
             $type,
             self::PRODUCT_IMAGE_PARENT_TYPE,
