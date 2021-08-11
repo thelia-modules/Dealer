@@ -12,7 +12,7 @@
 
 {block name="main-content"}
     <div id="wrapper" class="container">
-        {if $general_error}
+        {if $general_error|default:null}
             <div class="alert alert-danger">
                 {$general_error}
             </div>
@@ -38,7 +38,7 @@
                     <tr>
                         <th>
                             {admin_sortable_header
-                                current_order=$order
+                                current_order=$order|default:null
                                 order='company'
                                 reverse_order='company-reverse'
                                 path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
@@ -50,7 +50,7 @@
                         </th>
                         <th>
                             {admin_sortable_header
-                                current_order=$order
+                                current_order=$order|default:null
                                 order='address1'
                                 reverse_order='address1-reverse'
                                 path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
@@ -59,7 +59,7 @@
                         </th>
                         <th>
                             {admin_sortable_header
-                                current_order=$order
+                                current_order=$order|default:null
                                 order='zipcode'
                                 reverse_order='zipcode-reverse'
                                 path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
@@ -68,7 +68,7 @@
                         </th>
                         <th>
                             {admin_sortable_header
-                                current_order=$order
+                                current_order=$order|default:null
                                 order='city'
                                 reverse_order='city-reverse'
                                 path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
@@ -77,7 +77,7 @@
                         </th>
                         <th>
                             {admin_sortable_header
-                            current_order=$order
+                            current_order=$order|default:null
                             order='country'
                             reverse_order='city-reverse'
                             path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
@@ -91,7 +91,7 @@
                     </thead>
 
                     <tbody>
-                    {loop name="dealer-list" type="dealer" backend_context="yes" order=$order force_return=true}
+                    {loop name="dealer-list" type="dealer" backend_context="yes" order=$order|default:null force_return=true}
                         <tr>
                             <td>
                                 <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$TITLE}</a>
@@ -165,7 +165,7 @@
 
                                 loop_ref       = "dealer-list"
                                 max_page_count = 20
-                                page_url       = "{url path="/admin/module/Dealer/dealer" order=$order target='dealer-table'}"
+                                page_url       = "{url path="/admin/module/Dealer/dealer" order=$order|default:null target='dealer-table'}"
                                 }
                             </td>
                         </tr>
@@ -213,6 +213,7 @@
         dialog_id       = "dealer-delete"
         dialog_title    = {intl l="Delete an entry of Dealer" d="dealer.bo.default"}
         dialog_message  = {$smarty.capture.dealer_delete nofilter}
+        form_content    = null
 
         dialog_ok_label     = {intl l="Delete"}
         dialog_cancel_label = {intl l="Cancel"}

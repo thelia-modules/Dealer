@@ -14,7 +14,7 @@ use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Image;
 use Thelia\Log\Tlog;
 
-class DealerCustomImagesLoop extends Image implements PropelSearchLoopInterface
+class DealerCustomImagesLoop extends Image
 {
     const ARG_IMAGE_TYPE = "image_type";
 
@@ -147,7 +147,7 @@ class DealerCustomImagesLoop extends Image implements PropelSearchLoopInterface
 
             try {
                 // Dispatch image processing event
-                $this->dispatcher->dispatch(TheliaEvents::IMAGE_PROCESS, $event);
+                $this->dispatcher->dispatch($event, TheliaEvents::IMAGE_PROCESS);
 
                 $loopResultRow
                     ->set("IMAGE_URL", $event->getFileUrl())

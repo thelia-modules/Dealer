@@ -14,6 +14,9 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -48,7 +51,7 @@ class SchedulesUpdateForm extends SchedulesForm
         parent::buildForm();
 
         $this->formBuilder
-            ->add('id', 'integer', array(
+            ->add('id', IntegerType::class, array(
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-id"],
                 "required" => true,
@@ -60,14 +63,14 @@ class SchedulesUpdateForm extends SchedulesForm
             ->remove("beginAM")
             ->remove("endAM")
             ->remove("day")
-            ->add("day", "choice", [
+            ->add("day", ChoiceType::class, [
                 "choices" => $this->getDay(),
                 "label" => $this->translator->trans("Day", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-day"],
                 "required" => true,
                 "attr" => array()
             ])
-            ->add("begin", "time", [
+            ->add("begin", TimeType::class, [
                 "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-begin"],
                 "input" => "string",
@@ -75,7 +78,7 @@ class SchedulesUpdateForm extends SchedulesForm
                 "required" => false,
                 "attr" => array()
             ])
-            ->add("end", "time", [
+            ->add("end", TimeType::class, [
                 "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-end"],
                 "input" => "string",
@@ -86,7 +89,7 @@ class SchedulesUpdateForm extends SchedulesForm
         ;
     }
 
-    public function getName()
+    public static function getName()
     {
         return "schedules_update";
     }

@@ -22,6 +22,7 @@ use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class SchedulesService
@@ -41,17 +42,17 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
     const EVENT_UPDATE_BEFORE = DealerEvents::DEALER_SCHEDULES_UPDATE_BEFORE;
     const EVENT_UPDATE_AFTER = DealerEvents::DEALER_SCHEDULES_UPDATE_AFTER;
 
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         $event->getDealerSchedules()->save();
     }
 
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         $event->getDealerSchedules()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         $event->getDealerSchedules()->delete();
     }

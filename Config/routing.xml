@@ -3,7 +3,7 @@
         xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <!-- DEALER -->
-    <route id="dealer.list" path="/admin/module/Dealer/dealer" methods="get">
+    <!--<route id="dealer.list" path="/admin/module/Dealer/dealer" methods="get">
         <default key="_controller">Dealer:Dealer:default</default>
     </route>
     <route id="dealer.create" path="/admin/module/Dealer/dealer" methods="post">
@@ -21,10 +21,10 @@
     <route id="dealer.dealer.toggle.visible" path="/admin/module/Dealer/dealer/toggle-online/{id}" methods="post">
         <default key="_controller">Dealer:Dealer:toggleVisible</default>
         <requirement key="id">\d+</requirement>
-    </route>
+    </route>-->
 
     <!-- Contact -->
-    <route id="dealer.dealer.contact.create" path="/admin/module/Dealer/contact" methods="post">
+    <!--<route id="dealer.dealer.contact.create" path="/admin/module/Dealer/contact" methods="post">
         <default key="_controller">Dealer:Contact:create</default>
     </route>
     <route id="dealer.dealer.contact.delete" path="/admin/module/Dealer/contact/delete" methods="post">
@@ -35,10 +35,10 @@
     </route>
     <route id="dealer.dealer.contact.toogle.default" path="/admin/module/Dealer/contact/toggledefault" methods="post">
         <default key="_controller">Dealer:Contact:toggleDefault</default>
-    </route>
+    </route>-->
 
     <!-- Contact Info -->
-    <route id="dealer.dealer.contact-info.create" path="/admin/module/Dealer/contact-info" methods="post">
+    <!--<route id="dealer.dealer.contact-info.create" path="/admin/module/Dealer/contact-info" methods="post">
         <default key="_controller">Dealer:ContactInfo:create</default>
     </route>
     <route id="dealer.dealer.contact-info.delete" path="/admin/module/Dealer/contact-info/delete" methods="post">
@@ -46,10 +46,10 @@
     </route>
     <route id="dealer.dealer.contact-info.update" path="/admin/module/Dealer/contact-info/update" methods="post">
         <default key="_controller">Dealer:ContactInfo:processUpdate</default>
-    </route>
+    </route>-->
 
     <!-- Schedules -->
-    <route id="dealer.dealer.schedules.create" path="/admin/module/Dealer/schedules" methods="post">
+    <!--<route id="dealer.dealer.schedules.create" path="/admin/module/Dealer/schedules" methods="post">
         <default key="_controller">Dealer:Schedules:create</default>
     </route>
     <route id="dealer.dealer.schedules.delete" path="/admin/module/Dealer/schedules/delete" methods="post">
@@ -60,61 +60,61 @@
     </route>
     <route id="dealer.dealer.schedules.clone" path="/admin/module/Dealer/schedules/clone" methods="post">
         <default key="_controller">Dealer:Schedules:clone</default>
-    </route>
+    </route>-->
 
     <!-- Geo -->
-    <route id="dealer.geo.update" path="/admin/module/Dealer/location/update" methods="post">
+    <!--<route id="dealer.geo.update" path="/admin/module/Dealer/location/update" methods="post">
         <default key="_controller">Dealer:GeoDealer:processUpdate</default>
-    </route>
+    </route>-->
 
     <!-- Content Link -->
-    <route id="dealer.content.link" path="/admin/module/Dealer/content" methods="post">
+    <!--<route id="dealer.content.link" path="/admin/module/Dealer/content" methods="post">
         <default key="_controller">Dealer:Content:create</default>
     </route>
     <route id="dealer.content.unlink" path="/admin/module/Dealer/content/delete" methods="post">
         <default key="_controller">Dealer:Content:delete</default>
-    </route>
+    </route>-->
 
     <!-- Folder Link -->
-    <route id="dealer.folder.link" path="/admin/module/Dealer/folder" methods="post">
+    <!--<route id="dealer.folder.link" path="/admin/module/Dealer/folder" methods="post">
         <default key="_controller">Dealer:FolderLink:create</default>
     </route>
     <route id="dealer.folder.unlink" path="/admin/module/Dealer/folder/delete" methods="post">
         <default key="_controller">Dealer:FolderLink:delete</default>
-    </route>
+    </route>-->
 
     <!-- Brand Link -->
-    <route id="dealer.brand.link" path="/admin/module/Dealer/brand" methods="post">
+    <!--<route id="dealer.brand.link" path="/admin/module/Dealer/brand" methods="post">
         <default key="_controller">Dealer:BrandLink:create</default>
     </route>
     <route id="dealer.brand.unlink" path="/admin/module/Dealer/brand/delete" methods="post">
         <default key="_controller">Dealer:BrandLink:delete</default>
-    </route>
+    </route>-->
 
 
     <!-- Admin Link -->
-    <route id="dealer.admin.link" path="/admin/module/Dealer/admin" methods="post">
+    <!--<route id="dealer.admin.link" path="/admin/module/Dealer/admin" methods="post">
         <default key="_controller">Dealer:AdminLink:create</default>
     </route>
     <route id="dealer.admin.unlink" path="/admin/module/Dealer/admin/delete" methods="post">
         <default key="_controller">Dealer:AdminLink:delete</default>
-    </route>
+    </route>-->
 
     <!-- Product Link -->
-    <route id="dealer.product.link" path="/admin/module/Dealer/product" methods="post">
+    <!--<route id="dealer.product.link" path="/admin/module/Dealer/product" methods="post">
         <default key="_controller">Dealer:ProductLink:create</default>
     </route>
     <route id="dealer.product.unlink" path="/admin/module/Dealer/product/delete" methods="post">
         <default key="_controller">Dealer:ProductLink:delete</default>
-    </route>
+    </route>-->
 
     <!-- API -->
-    <route id="dealer.api.default" path="/api/3/dealer" methods="get">
+    <!--<route id="dealer.api.default" path="/api/3/dealer" methods="get">
         <default key="_controller">Dealer:Api:default</default>
-    </route>
+    </route>-->
 
     <!-- Image & SEO -->
-    <route id="admin.products.dealer.image.edit" path="/admin/module/dealer/image/{type}/edit/{parentId}/{id}">
+    <!--<route id="admin.products.dealer.image.edit" path="/admin/module/dealer/image/{type}/edit/{parentId}/{id}">
         <default key="_controller">Dealer\Controller\Image\CustomImagesAdminController::editCustomImageAction</default>
         <requirement key="type">imageHeader|imageBox</requirement>
         <requirement key="parentId">\d+</requirement>
@@ -137,11 +137,11 @@
     </route>
     <route id="admin.dealer.update.image.header" path="/admin/module/dealer/image/header/update">
         <default key="_controller">Dealer\Controller\Image\CustomImagesAdminController::updateProductImageHeader</default>
-    </route>
-    <route id="admin.dealer.update.seo" path="/admin/module/dealer/seo/update">
+    </route>-->
+    <!--<route id="admin.dealer.update.seo" path="/admin/module/dealer/seo/update">
         <default key="_controller">Dealer\Controller\MetaSeoController::updateSeo</default>
-    </route>
-    <route id="dealer.front.slug" path="/magasin/{slug}">
+    </route>-->
+    <!--<route id="dealer.front.slug" path="/magasin/{slug}">
         <default key="_controller">Dealer\Controller\DealerFrontController::show</default>
-    </route>
+    </route>-->
 </routes>

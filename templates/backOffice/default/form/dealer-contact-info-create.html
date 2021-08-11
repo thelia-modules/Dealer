@@ -14,7 +14,7 @@
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
-        {form_error form=$form field="type"}{$message}{/form_error}
+        {form_error form=$form field="type"}{$message|default:null}{/form_error}
         <select class="form-control" name="{$name}" id="{$label_attr.for}">
             {foreach $choices as $choice}
                 <option value="{$choice->value}"
@@ -30,15 +30,15 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="value"}{$message}{/form_error}
+        {form_error form=$form field="value"}{$message|default:null}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$VALUE}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$value}"
                placeholder="{intl l='The Contact Value' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
 {form_field form=$form field="contact_id"}
     <div class="form-group hidden">
-        <input type="hidden" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CONTACT_ID}"/>
+        <input type="hidden" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$value}"/>
     </div>
 {/form_field}
 {/form}

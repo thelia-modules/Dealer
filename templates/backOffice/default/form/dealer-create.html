@@ -17,7 +17,7 @@
                 {if $required}<span class="required">*</span>{/if}
             </label>
 
-            {form_error form=$form field="title"}{$message}{/form_error}
+            {form_error form=$form field="title"}{$message|default:null}{/form_error}
 
             <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$TITLE}"
                    placeholder="{intl l='The Dealer title' d="dealer.bo.default"}"/>
@@ -31,9 +31,9 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="address1"}{$message}{/form_error}
+        {form_error form=$form field="address1"}{$message|default:null}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS1}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS1|default:null}"
                placeholder="{intl l='The Dealer address1' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
@@ -44,9 +44,9 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="address2"}{$message}{/form_error}
+        {form_error form=$form field="address2"}{$message|default:null}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS2|default:null}"
                placeholder="{intl l='The Dealer address2' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
@@ -57,9 +57,9 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="address3"}{$message}{/form_error}
+        {form_error form=$form field="address3"}{$message|default:null}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS3}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ADDRESS3|default:null}"
                placeholder="{intl l='The Dealer address3' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
@@ -70,9 +70,9 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="zipcode"}{$message}{/form_error}
+        {form_error form=$form field="zipcode"}{$message|default:null}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ZIPCODE}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$ZIPCODE|default:null}"
                placeholder="{intl l='The Dealer zipcode' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
@@ -83,9 +83,9 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="city"}{$message}{/form_error}
+        {form_error form=$form field="city"}{$message|default:null}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CITY}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$CITY|default:null}"
                placeholder="{intl l='The Dealer city' d="dealer.bo.default"}"/>
     </div>
 {/form_field}
@@ -96,11 +96,11 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="country_id"}{$message}{/form_error}
+        {form_error form=$form field="country_id"}{$message|default:null}{/form_error}
 
         <select class="form-control" name="{$name}" id="{$label_attr.for}">
             {foreach $choices as $choice}
-                <option value="{$choice->value}" {if {$COUNTRY_ID|default:$country_id} == $choice->value}selected{/if} >{$choice->label}</option>
+                <option value="{$choice->value}" {if {$COUNTRY_ID|default:$country_id|default:null} == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}
         </select>
     </div>
@@ -112,10 +112,10 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="description"}{$message}{/form_error}
+        {form_error form=$form field="description"}{$message|default:null}{/form_error}
 
         <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
-                  placeholder="{intl l='The Dealer description' d="dealer.bo.default"}">{$DESCRIPTION}</textarea>
+                  placeholder="{intl l='The Dealer description' d="dealer.bo.default"}">{$DESCRIPTION|default:null}</textarea>
     </div>
 {/form_field}
 
@@ -126,10 +126,10 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="big_description"}{$message}{/form_error}
+        {form_error form=$form field="big_description"}{$message|default:null}{/form_error}
 
         <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
-                  placeholder="{intl l='The Dealer complex description' d="dealer.bo.default"}">{$BIG_DESCRIPTION}</textarea>
+                  placeholder="{intl l='The Dealer complex description' d="dealer.bo.default"}">{$BIG_DESCRIPTION|default:null}</textarea>
     </div>
 {/form_field}
 
@@ -140,10 +140,10 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="hard_open_hour"}{$message}{/form_error}
+        {form_error form=$form field="hard_open_hour"}{$message|default:null}{/form_error}
 
         <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
-                  placeholder="{intl l='The Dealer complex description' d="dealer.bo.default"}">{$HARD_OPEN_HOUR}</textarea>
+                  placeholder="{intl l='The Dealer complex description' d="dealer.bo.default"}">{$HARD_OPEN_HOUR|default:null}</textarea>
     </div>
 {/form_field}
 
@@ -154,10 +154,10 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="access"}{$message}{/form_error}
+        {form_error form=$form field="access"}{$message|default:null}{/form_error}
 
         <textarea class="form-control" name="{$name}" id="{$label_attr.for}"
-                  placeholder="{intl l='The Dealer access' d="dealer.bo.default"}">{$ACCESS}</textarea>
+                  placeholder="{intl l='The Dealer access' d="dealer.bo.default"}">{$ACCESS|default:null}</textarea>
     </div>
 {/form_field}
 {/form}

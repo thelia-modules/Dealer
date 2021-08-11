@@ -14,6 +14,7 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -48,7 +49,7 @@ class ContactUpdateForm extends ContactForm
         parent::buildForm();
 
         $this->formBuilder
-            ->add('id', 'integer', array(
+            ->add('id', IntegerType::class, array(
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-id"],
                 "required" => true,
@@ -58,7 +59,7 @@ class ContactUpdateForm extends ContactForm
         ;
     }
 
-    public function getName()
+    public static function getName()
     {
         return "contact_update";
     }

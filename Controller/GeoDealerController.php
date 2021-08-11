@@ -14,14 +14,19 @@
 namespace Dealer\Controller;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @Route("/admin/module/Dealer/location", name="dealer_location")
  * Class GeoDealerController
  * @package Dealer\Controller
  */
@@ -33,8 +38,9 @@ class GeoDealerController extends BaseAdminController
      * Save changes on a modified object, and either go back to the object list, or stay on the edition page.
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
+     * @Route("/update", name="_update", methods="POST")
      */
-    public function processUpdateAction()
+    public function processUpdateAction(RequestStack $requestStack)
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
@@ -45,9 +51,9 @@ class GeoDealerController extends BaseAdminController
 
         // Error (Default: false)
         $error_msg = false;
-
+        $request = $requestStack->getCurrentRequest();
         // Create the Form from the request
-        $changeForm = $this->getForm($this->getRequest());
+        $changeForm = $this->getForm($request);
 
         try {
             // Check the form against constraints violations
@@ -61,13 +67,13 @@ class GeoDealerController extends BaseAdminController
             // Check if object exist
             if (!$updatedObject) {
                 throw new \LogicException(
-                    $this->getTranslator()->trans("No %obj was updated.", ['%obj' => 'Dealer'])
+                    Translator::getInstance()->trans("No %obj was updated.", ['%obj' => 'Dealer'])
                 );
             }
             // If we have to stay on the same page, do not redirect to the successUrl,
             // just redirect to the edit page again.
-            if ($this->getRequest()->get('save_mode') == 'stay') {
-                $id = $this->getRequest()->query->get("dealer_id");
+            if ($request->get('save_mode') === 'stay') {
+                $id = $request->query->get("dealer_id");
 
                 return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
                     ["dealer_id" => $id, ]));
@@ -86,7 +92,7 @@ class GeoDealerController extends BaseAdminController
         if (false !== $error_msg) {
             // At this point, the form has errors, and should be redisplayed.
             $this->setupFormErrorContext(
-                $this->getTranslator()->trans("%obj modification", ['%obj' => 'Dealer']),
+                Translator::getInstance()->trans("%obj modification", ['%obj' => 'Dealer']),
                 $error_msg,
                 $changeForm,
                 $ex
@@ -105,7 +111,7 @@ class GeoDealerController extends BaseAdminController
             $data = [];
         }
 
-        return $this->createForm("dealer-geo", "form", $data);
+        return $this->createForm("dealer-geo", FormType::class, $data);
     }
 
     protected function getService()

@@ -16,12 +16,12 @@
         <language>en_US</language>
         <language>fr_FR</language>
     </languages>
-    <version>2.8.0</version>
+    <version>3.0.0</version>
     <author>
         <name>Penalver Antony</name>
         <email>apenalver@openstudio.fr</email>
     </author>
     <type>classic</type>
-    <thelia>2.4.0</thelia>
+    <thelia>2.5.0</thelia>
     <stability>other</stability>
 </module>

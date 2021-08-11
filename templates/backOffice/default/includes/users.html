@@ -18,7 +18,7 @@
             <tr>
                 <th class="object-title">
                     {admin_sortable_header
-                    current_order=$admin_order
+                    current_order=$admin_order|default:null
                     order='id'
                     reverse_order='id_reverse'
                     path={url path='/admin/Dealer/dealer/edit' dealer_id=$dealer_id target='admins'}
@@ -29,7 +29,7 @@
 
                 <th class="object-title">
                     {admin_sortable_header
-                    current_order=$admin_order
+                    current_order=$admin_order|default:null
                     order='alpha'
                     reverse_order='alpha_reverse'
                     path={url path='/admin/Dealer/dealer/edit' dealer_id=$dealer_id target='admins'}
@@ -44,7 +44,7 @@
             </thead>
 
             <tbody>
-            {loop name="admin_list" type="dealer_admin" visible="*" dealer_id=$dealer_id order=$admin_order}
+            {loop name="admin_list" type="dealer_admin" visible="*" dealer_id=$dealer_id order=$admin_order|default:null}
                 <tr>
                     <td>{$ID}</td>
 

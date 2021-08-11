@@ -21,6 +21,7 @@ use Dealer\Model\Map\DealerContactInfoTableMap;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class ContactInfoService
@@ -39,17 +40,17 @@ class ContactInfoService extends AbstractBaseService implements BaseServiceInter
     const EVENT_UPDATE_BEFORE = DealerEvents::DEALER_CONTACT_INFO_UPDATE_BEFORE;
     const EVENT_UPDATE_AFTER = DealerEvents::DEALER_CONTACT_INFO_UPDATE_AFTER;
 
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         $event->getDealerContactInfo()->save();
     }
 
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         $event->getDealerContactInfo()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         $event->getDealerContactInfo()->delete();
     }

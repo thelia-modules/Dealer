@@ -2,62 +2,22 @@
 <config xmlns="http://thelia.net/schema/dic/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
     <services>
-        <service id="dealer_listener" class="Dealer\EventListener\DealerListener">
-            <tag name="kernel.event_subscriber"/>
-        </service>
-        <service id="dealer_service" class="Dealer\Service\DealerService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_contact_service" class="Dealer\Service\ContactService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_contact_info_service" class="Dealer\Service\ContactInfoService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_schedules_service" class="Dealer\Service\SchedulesService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_content_link_service" class="Dealer\Service\ContentLinkService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_folder_link_service" class="Dealer\Service\FolderLinkService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_brand_link_service" class="Dealer\Service\BrandLinkService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_admin_link_service" class="Dealer\Service\AdminLinkService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_product_link_service" class="Dealer\Service\ProductLinkService">
-            <call method="setDispatcher">
-                <argument type="service" id="event_dispatcher"/>
-            </call>
-        </service>
-        <service id="dealer_geo_service" class="Dealer\Service\GeoDealerService">
-        </service>
+        <service id="dealer_service" alias="Dealer\Service\DealerService" public="true"/>
+        <service id="dealer_contact_service" alias="Dealer\Service\ContactService" public="true"/>
+        <service id="dealer_contact_info_service" alias="Dealer\Service\ContactInfoService" public="true"/>
+        <service id="dealer_schedules_service" alias="Dealer\Service\SchedulesService" public="true"/>
+        <service id="dealer_content_link_service" alias="Dealer\Service\ContentLinkService" public="true"/>
+        <service id="dealer_folder_link_service" alias="Dealer\Service\FolderLinkService" public="true"/>
+        <service id="dealer_brand_link_service" alias="Dealer\Service\BrandLinkService" public="true"/>
+        <service id="dealer_admin_link_service" alias="Dealer\Service\AdminLinkService" public="true"/>
+        <service id="dealer_product_link_service" alias="Dealer\Service\ProductLinkService" public="true"/>
+        <service id="dealer_geo_service" alias="Dealer\Service\GeoDealerService" public="true"/>
     </services>
 
     <hooks>
         <hook id="dealer.admin.hook" class="Dealer\Hook\AdminInterfaceHook" scope="request">
             <tag name="hook.event_listener" event="main.in-top-menu-items" type="back" method="onMainTopMenuTools"/>
-            <argument type="service" id="router.dealer"/>
+            <argument type="service" id="router.Dealer"/>
             <argument type="service" id="thelia.securityContext"/>
         </hook>
         <hook id="dealer.internal.hook" class="Dealer\Hook\InternalHook" scope="request">
@@ -79,7 +39,7 @@
             <tag name="hook.event_listener" event="brand.edit-js" type="back" method="onBrandEditJs"/>
             <tag name="hook.event_listener" event="product.tab-content" type="back" method="onProductModuleTab"/>
             <tag name="hook.event_listener" event="product.edit-js" type="back" method="onProductEditJs"/>
-            <argument type="service" id="router.dealer"/>
+            <argument type="service" id="router.Dealer"/>
         </hook>
     </hooks>
 

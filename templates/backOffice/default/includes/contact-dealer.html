@@ -1,10 +1,10 @@
 <div class="row inner-toolbar">
     <div class="col-md-3 inner-actions">
-        {if $hide_flags != true}
+        {if $hide_flags|default:null != true}
             <ul class="nav nav-pills">
                 {loop name="lang_list" type="lang"}
                     <li {if $ID == $edit_language_id}class="active"{/if}>
-                        {if $current_tab}
+                        {if $current_tab|default:null}
                             {$lang_url = {url path={$page_url|default:$current_url nofilter} edit_language_id=$ID current_tab=$current_tab}}
                         {else}
                             {$lang_url = {url path={$page_url|default:$current_url nofilter} edit_language_id=$ID}}

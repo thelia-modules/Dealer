@@ -18,11 +18,17 @@ use Dealer\Dealer;
 use Dealer\Model\DealerFolder;
 use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Template\ParserContext;
+use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @Route("/admin/module/Dealer/folder", name="dealer_folder")
  * Class FolderLinkController
  * @package Dealer\Controller
  */
@@ -81,7 +87,7 @@ class FolderLinkController extends BaseController
     /**
      * @inheritDoc
      */
-    protected function getExistingObject()
+    protected function getExistingObject(Request $request)
     {
         // TODO: Implement getExistingObject() method.
     }
@@ -117,11 +123,20 @@ class FolderLinkController extends BaseController
     }
 
     /**
+     * @Route("", name="_link", methods="POST")
+     */
+    public function createAction()
+    {
+        return parent::createAction();
+    }
+
+    /**
      * Delete an object
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
+     * @Route("/delete", name="_unlink", methods="POST")
      */
-    public function deleteAction()
+    public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
@@ -134,25 +149,25 @@ class FolderLinkController extends BaseController
         $con->beginTransaction();
         try {
             // Check token
-            $this->getTokenProvider()->checkToken(
-                $this->getRequest()->query->get("_token")
+            $tokenProvider->checkToken(
+                $requestStack->getCurrentRequest()->query->get("_token")
             );
             $data = [
-                "folder_id" => $this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME . "_id"),
-                "dealer_id" => $this->getRequest()->request->get("dealer_id"),
+                "folder_id" => $requestStack->getCurrentRequest()->request->get(static::CONTROLLER_ENTITY_NAME . "_id"),
+                "dealer_id" => $requestStack->getCurrentRequest()->request->get("dealer_id"),
             ];
             $this->getService()->deleteFromArray($data);
             $con->commit();
 
-            if ($this->getRequest()->request->get("success_url") == null) {
+            if ($requestStack->getCurrentRequest()->request->get("success_url") == null) {
                 return $this->redirectToListTemplate();
             } else {
-                return new RedirectResponse(URL::getInstance()->absoluteUrl($this->getRequest()->request->get("success_url")));
+                return new RedirectResponse(URL::getInstance()->absoluteUrl($requestStack->getCurrentRequest()->request->get("success_url")));
             }
         } catch (\Exception $e) {
             $con->rollBack();
 
-            return $this->renderAfterDeleteError($e);
+            return $this->renderAfterDeleteError($e, $parserContext);
         }
     }
 }

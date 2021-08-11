@@ -15,6 +15,7 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Dealer\Model\DealerQuery;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Thelia\Form\BaseForm;
 use Thelia\Model\ContentQuery;
 use Thelia\Model\Content;
@@ -31,14 +32,14 @@ class ContentLinkForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("content_id", "choice", array(
+            ->add("content_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableContent(),
                 "label" => $this->translator->trans("Content", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-content-link-content"],
                 "required" => true,
                 "attr" => array()
             ))
-            ->add("dealer_id", "choice", array(
+            ->add("dealer_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableDealer(),
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-content-link-dealer"],
@@ -47,7 +48,7 @@ class ContentLinkForm extends BaseForm
             ));
     }
 
-    public function getName()
+    public static function getName()
     {
         return "dealer_content_link_create";
     }
@@ -59,7 +60,7 @@ class ContentLinkForm extends BaseForm
 
         /** @var Content $content */
         foreach ($contents as $content) {
-            $choices[$content->getId()] = $content->getTitle();
+            $choices[$content->getTitle()] = $content->getId();
         }
         return $choices;
     }
@@ -69,7 +70,7 @@ class ContentLinkForm extends BaseForm
         $dealers = DealerQuery::create()->find();
         $choices = [];
         foreach ($dealers as $dealer) {
-            $choices[$dealer->getId()] = $dealer->getTitle();
+            $choices[$dealer->getTitle()] = $dealer->getId();
         }
 
         return $choices;

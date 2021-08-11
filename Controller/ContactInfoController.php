@@ -16,9 +16,15 @@ namespace Dealer\Controller;
 use Dealer\Controller\Base\BaseController;
 use Dealer\Dealer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Thelia\Core\Template\ParserContext;
+use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @Route("/admin/module/Dealer/contact-info", name="dealer_contact-info")
  * Class ContactInfoController
  * @package Dealer\Controller
  */
@@ -73,13 +79,13 @@ class ContactInfoController extends BaseController
      */
     protected function getObjectId($object)
     {
-        $object->getId();
+        return $object->getId();
     }
 
     /**
      * Load an existing object from the database
      */
-    protected function getExistingObject()
+    protected function getExistingObject(Request $request)
     {
         // TODO: Implement getExistingObject() method.
     }
@@ -105,5 +111,27 @@ class ContactInfoController extends BaseController
         }
 
         return $this->service;
+    }
+
+    /**
+     * @Route("", name="_create", methods="POST")
+     */
+    public function createAction()
+    {
+        return parent::createAction();
+    }
+    /**
+     * @Route("/delete", name="_delete", methods="POST")
+     */
+    public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
+    {
+        return parent::deleteAction($tokenProvider, $requestStack, $parserContext);
+    }
+    /**
+     * @Route("/update", name="_update", methods="POST")
+     */
+    public function processUpdateAction(RequestStack $requestStack)
+    {
+        return parent::processUpdateAction($requestStack);
     }
 }

@@ -20,6 +20,7 @@ use Dealer\Model\DealerContentQuery;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class ContentLinkService
@@ -40,7 +41,7 @@ class ContentLinkService extends AbstractBaseService implements BaseServiceInter
     /**
      * @inheritDoc
      */
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         /** @var DealerContentLinkEvent $event */
         $event->getDealerContentLink()->save();
@@ -49,13 +50,13 @@ class ContentLinkService extends AbstractBaseService implements BaseServiceInter
     /**
      * @inheritDoc
      */
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         /** @var DealerContentLinkEvent $event */
         $event->getDealerContentLink()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         /** @var DealerContentLinkEvent $event */
         $event->getDealerContentLink()->delete();

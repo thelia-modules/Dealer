@@ -15,50 +15,59 @@ use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Thelia\Controller\Api\BaseApiController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Thelia\Controller\Front\BaseFrontController;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @Route("/api/3/dealer", name="dealer_api")
  * Class ApiController
  * @package Dealer\Controller
  */
-class ApiController extends BaseApiController
+class ApiController extends BaseFrontController
 {
 
     const DEFAULT_LIMIT = 10;
 
     /**
      * @return JsonResponse
+     * @Route("", name="_default", methods="GET")
      */
-    public function defaultAction()
+    public function defaultAction(RequestStack $requestStack)
     {
         $return = [];
         $code = 200;
+        $request = $requestStack->getCurrentRequest();
 
         try {
+            if ($request === null){
+                throw new \Exception("Request null");
+            }
             $query = DealerQuery::create()
-                ->joinWithI18n($this->getLocale())
+                ->joinWithI18n($this->getLocale($request))
                 ->filterByVisible(1);
 
-            if (null != $id = $this->getRequest()->get("dealer_id")) {
+            if (null != $id = $request->get("dealer_id")) {
                 $query->filterById($id);
             }
 
             $return["total"] = $query->count();
 
-            $query->limit($this->getLimit());
-            $return["limit"] = $this->getLimit();
+            $query->limit($this->getLimit($request));
+            $return["limit"] = $this->getLimit($request);
 
 
-            if ($this->getPageOffset() != 0) {
-                $query->offset($this->getPageOffset());
-                $return["offset"] = $this->getPageOffset();
+            if ($this->getPageOffset($request) != 0) {
+                $query->offset($this->getPageOffset($request));
+                $return["offset"] = $this->getPageOffset($request);
             }
-            if ($this->getOffset() != 0) {
-                $query->offset($this->getOffset());
-                $return["offset"] = $this->getOffset();
+            if ($this->getOffset($request) != 0) {
+                $query->offset($this->getOffset($request));
+                $return["offset"] = $this->getOffset($request);
             }
 
-            $query = $this->addOrder($query);
+            $query = $this->addOrder($query, $request);
 
             $dealers = $query->find();
 
@@ -72,7 +81,7 @@ class ApiController extends BaseApiController
                 $dataRow["default_schedules"] = $this->getDefaultSchedules($dealer);
                 $dataRow["extra_schedules"] = $this->getExtraSchedules($dealer);
 
-                $dataRow = $this->afterProcessDealer($dataRow, $dealer);
+                $dataRow = $this->afterProcessDealer($dataRow);
 
                 $return["data"][] = $dataRow;
             }
@@ -145,36 +154,36 @@ class ApiController extends BaseApiController
     /**
      * @return int|mixed
      */
-    protected function getLimit()
+    protected function getLimit(Request $request)
     {
-        $limit = $this->getRequest()->get("limit");
+        $limit = $request->get("limit");
         return ($limit) ? $limit : static::DEFAULT_LIMIT;
     }
 
     /**
      * @return int|mixed
      */
-    protected function getOffset()
+    protected function getOffset(Request $request)
     {
-        $offset = $this->getRequest()->get("offset");
+        $offset = $request->get("offset");
         return ($offset) ? $offset : 0;
     }
 
     /**
      * @return int|mixed
      */
-    protected function getPageOffset()
+    protected function getPageOffset(Request $request)
     {
-        $page = $this->getRequest()->get("page");
-        return ($page) ? ($page - 1) * $this->getLimit() : 0;
+        $page = $request->get("page");
+        return ($page) ? ($page - 1) * $this->getLimit($request) : 0;
     }
 
     /**
      * @return mixed|string
      */
-    protected function getLocale()
+    protected function getLocale(Request $request)
     {
-        $locale = $this->getRequest()->get("locale");
+        $locale = $request->get("locale");
         return ($locale) ? $locale : 'fr_FR';
     }
 
@@ -182,9 +191,9 @@ class ApiController extends BaseApiController
      * @param DealerQuery $query
      * @return DealerQuery
      */
-    protected function addOrder(DealerQuery $query)
+    protected function addOrder(DealerQuery $query, Request $request)
     {
-        $order = $this->getRequest()->get("order");
+        $order = $request->get("order");
         switch ($order) {
             case "id" :
                 $query->orderById();
@@ -207,10 +216,9 @@ class ApiController extends BaseApiController
 
     /**
      * @param $dataRow
-     * @param Dealer $dealer
      * @return mixed
      */
-    protected function afterProcessDealer($dataRow, Dealer $dealer)
+    protected function afterProcessDealer($dataRow)
     {
         return $dataRow;
     }

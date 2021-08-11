@@ -20,6 +20,7 @@ use Dealer\Model\DealerFolderQuery;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class FolderLinkService
@@ -41,7 +42,7 @@ class FolderLinkService extends AbstractBaseService implements BaseServiceInterf
     /**
      * @inheritDoc
      */
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         /** @var DealerFolderLinkEvent $event */
         $event->getDealerFolderLink()->save();
@@ -50,13 +51,13 @@ class FolderLinkService extends AbstractBaseService implements BaseServiceInterf
     /**
      * @inheritDoc
      */
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         /** @var DealerFolderLinkEvent $event */
         $event->getDealerFolderLink()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         /** @var DealerFolderLinkEvent $event */
         $event->getDealerFolderLink()->delete();

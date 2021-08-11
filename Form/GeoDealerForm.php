@@ -14,6 +14,8 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 
@@ -30,21 +32,21 @@ class GeoDealerForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add('id', 'integer', array(
+            ->add('id', IntegerType::class, array(
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.geo.id"],
                 "required" => true,
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add("latitude", "number", array(
+            ->add("latitude", NumberType::class, array(
                 "label" => $this->translator->trans("Latitude", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-geo-lat"],
                 "required" => false,
                 "constraints" => array(),
                 "attr" => array("step" => "0.01", )
             ))
-            ->add("longitude", "number", array(
+            ->add("longitude", NumberType::class, array(
                 "label" => $this->translator->trans("Longitude", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-geo-lon"],
                 "required" => false,
@@ -54,7 +56,7 @@ class GeoDealerForm extends BaseForm
     }
 
 
-    public function getName()
+    public static function getName()
     {
         return "dealer_geo";
     }

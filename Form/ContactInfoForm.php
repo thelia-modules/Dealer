@@ -15,6 +15,9 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Dealer\Model\Map\DealerContactInfoTableMap;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 
@@ -48,28 +51,28 @@ class ContactInfoForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("type", 'choice', array(
-                "choices" => DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE),
+            ->add("type", ChoiceType::class, array(
+                "choices" => array_flip(DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE)),
                 "label" => $this->translator->trans("Contact Type", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-type"],
                 "required" => true,
                 "attr" => array()
             ))
-            ->add("value", "text", array(
+            ->add("value", TextType::class, array(
                 "label" => $this->translator->trans("Value", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-value"],
                 "required" => true,
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add('contact_id', 'integer', array(
+            ->add('contact_id', IntegerType::class, array(
                 "label" => $this->translator->trans("Contact", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-contact_id"],
                 "required" => true,
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add("locale", "text", array(
+            ->add("locale", TextType::class, array(
                 "constraints" => array(
                     new NotBlank(),
                 ),
@@ -79,7 +82,7 @@ class ContactInfoForm extends BaseForm
     }
 
 
-    public function getName()
+    public static function getName()
     {
         return "contact_info__create";
     }

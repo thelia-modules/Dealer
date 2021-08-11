@@ -1,8 +1,8 @@
 {form name=$form_name}
 {form_hidden_fields form=$form}
-{render_form_field form=$form field="success_url" value={$success_url|default:{url path="/admin/module/Dealer/dealer/edit#associated" dealer_id=$dealer_id}}}
+{render_form_field form=$form field="success_url" value={$success_url|default:{url path="/admin/module/Dealer/dealer/edit#associated" dealer_id=$dealer_id|default:null}}}
 {form_field form=$form field="content_id"}
-{if $content_id}
+{if $content_id|default:null}
     <div class="form-group hidden">
         <input type="number" class="form-control" name="{$name}" id="{$label_attr.for}"
                value="{$content_id|default:$DEALER_ID}"/>
@@ -14,7 +14,7 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="content_id"}{$message}{/form_error}
+        {form_error form=$form field="content_id"}{$message|default:null}{/form_error}
 
 
         <select class="form-control" name="{$name}">
@@ -26,7 +26,7 @@
 {/if}
 {/form_field}
 {form_field form=$form field="dealer_id"}
-{if $dealer_id}
+{if $dealer_id|default:null}
     <div class="form-group hidden">
         <input type="number" class="form-control" name="{$name}" id="{$label_attr.for}"
                value="{$dealer_id|default:$DEALER_ID}"/>
@@ -38,7 +38,7 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="dealer_id"}{$message}{/form_error}
+        {form_error form=$form field="dealer_id"}{$message|default:null}{/form_error}
 
 
         <select class="form-control" name="{$name}">

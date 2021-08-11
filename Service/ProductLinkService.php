@@ -20,6 +20,7 @@ use Dealer\Model\DealerProductQuery;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class ProductLinkService
@@ -41,7 +42,7 @@ class ProductLinkService extends AbstractBaseService implements BaseServiceInter
     /**
      * @inheritDoc
      */
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         /** @var DealerProductLinkEvent $event */
         $event->getDealerProductLink()->save();
@@ -50,13 +51,13 @@ class ProductLinkService extends AbstractBaseService implements BaseServiceInter
     /**
      * @inheritDoc
      */
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         /** @var DealerProductLinkEvent $event */
         $event->getDealerProductLink()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         /** @var DealerProductLinkEvent $event */
         $event->getDealerProductLink()->delete();

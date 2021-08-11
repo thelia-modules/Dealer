@@ -14,6 +14,10 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 
@@ -47,7 +51,7 @@ class SchedulesForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("day", "choice", [
+            ->add("day", ChoiceType::class, [
                 "choices" => $this->getDay(),
                 "label" => $this->translator->trans("Day", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-day"],
@@ -55,7 +59,7 @@ class SchedulesForm extends BaseForm
                 "multiple" => true,
                 "attr" => array()
             ])
-            ->add("beginAM", "time", [
+            ->add("beginAM", TimeType::class, [
                 "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-begin"],
                 "input" => "string",
@@ -63,7 +67,7 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
-            ->add("endAM", "time", [
+            ->add("endAM", TimeType::class, [
                 "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-end"],
                 "input" => "string",
@@ -71,7 +75,7 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
-            ->add("beginPM", "time", [
+            ->add("beginPM", TimeType::class, [
                 "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-beginPM"],
                 "input" => "string",
@@ -79,7 +83,7 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
-            ->add("endPM", "time", [
+            ->add("endPM", TimeType::class, [
                 "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-endPM"],
                 "input" => "string",
@@ -87,7 +91,7 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
-            ->add("period_begin", "date", [
+            ->add("period_begin", DateType::class, [
                 "label" => $this->translator->trans("Period Begin", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-period-begin"],
                 "input" => "string",
@@ -95,7 +99,7 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
-            ->add("period_end", "date", [
+            ->add("period_end", DateType::class, [
                 "label" => $this->translator->trans("Period End", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-period-end"],
                 "input" => "string",
@@ -103,13 +107,13 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
-            ->add("closed", "integer", [
+            ->add("closed", IntegerType::class, [
                 "label" => $this->translator->trans("Closed", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-closed"],
                 "required" => true,
                 "attr" => array()
             ])
-            ->add('dealer_id', 'integer', array(
+            ->add('dealer_id', IntegerType::class, array(
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-dealer_id"],
                 "required" => true,
@@ -121,17 +125,17 @@ class SchedulesForm extends BaseForm
     protected function getDay()
     {
         return [
-            $this->translator->trans("Monday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Tuesday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Wednesday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Thursday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Friday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Saturday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Sunday", [], Dealer::MESSAGE_DOMAIN)
+            $this->translator->trans("Monday", [], Dealer::MESSAGE_DOMAIN) => 0,
+            $this->translator->trans("Tuesday", [], Dealer::MESSAGE_DOMAIN) => 1,
+            $this->translator->trans("Wednesday", [], Dealer::MESSAGE_DOMAIN) => 2,
+            $this->translator->trans("Thursday", [], Dealer::MESSAGE_DOMAIN) => 3,
+            $this->translator->trans("Friday", [], Dealer::MESSAGE_DOMAIN) => 4,
+            $this->translator->trans("Saturday", [], Dealer::MESSAGE_DOMAIN) => 5,
+            $this->translator->trans("Sunday", [], Dealer::MESSAGE_DOMAIN) => 6
         ];
     }
 
-    public function getName()
+    public static function getName()
     {
         return "schedules_create";
     }

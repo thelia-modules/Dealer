@@ -9,13 +9,13 @@
 namespace Dealer\Event;
 
 use Dealer\Model\DealerAdmin;
-use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class DealerAdminLinkEvent
  * @package Dealer\Event
  */
-class DealerAdminLinkEvent extends Event
+class DealerAdminLinkEvent extends ActionEvent
 {
     /**
      * @var DealerAdmin $dealerAdminLink
