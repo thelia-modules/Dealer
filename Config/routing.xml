@@ -144,4 +144,10 @@
     <route id="dealer.front.slug" path="/magasin/{slug}">
         <default key="_controller">Dealer\Controller\DealerFrontController::show</default>
     </route>
+    <route id="dealer.dealer.add.favorite" path="/dealer/favorite/{dealerId}">
+        <default key="_controller">Dealer\Controller\DealerFrontController::addToFavorite</default>
+    </route>
+    <route id="dealer.dealer.remove.favorite" path="/dealer/unfavorite">
+        <default key="_controller">Dealer\Controller\DealerFrontController::removeFavorite</default>
+    </route>
 </routes>

@@ -13,6 +13,7 @@
 
 namespace Dealer\Loop;
 
+use Dealer\Model\CustomerFavoriteDealerQuery;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\Map\DealerBrandTableMap;
@@ -43,9 +44,22 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      */
     public function parseResults(LoopResult $loopResult)
     {
+        $favoriteDealerId = null;
+        $customer = $this->getCurrentRequest()->getSession()->getCustomerUser();
+        if ($customer !== null) {
+            $favorite = CustomerFavoriteDealerQuery::create()->filterByCustomerId($customer->getId())->findOne();
+            if ($favorite !== null) {
+                $favoriteDealerId = $favorite->getDealerId();
+            }
+        }
         /** @var Dealer $dealer */
         foreach ($loopResult->getResultDataCollection() as $dealer) {
             $loopResultRow = new LoopResultRow($dealer);
+
+            $isFavorite = false;
+            if ($favoriteDealerId !== null && $favoriteDealerId === $dealer->getId()) {
+                $isFavorite = true;
+            }
 
             $loopResultRow
                 ->set('ID', $dealer->getId())
@@ -60,6 +74,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 ->set("CREATE_DATE", $dealer->getCreatedAt())
                 ->set("UPDATE_DATE", $dealer->getUpdatedAt())
                 ->set("VISIBLE", $dealer->getVisible())
+                ->set("FAVORITE", $isFavorite)
             ;
 
             if ($dealer->hasVirtualColumn('i18n_TITLE')) {

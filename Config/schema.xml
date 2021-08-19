@@ -214,5 +214,20 @@
         </behavior>
     </table>
 
+    <table name="customer_favorite_dealer" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER" />
+
+        <column name="dealer_id" required="true" type="INTEGER"/>
+        <column name="customer_id" required="true" type="INTEGER" />
+
+        <foreign-key foreignTable="dealer" name="fk_customer_favorite_dealer_dealer_id" onDelete="CASCADE" onUpdate="RESTRICT">
+            <reference foreign="id" local="dealer_id" />
+        </foreign-key>
+
+        <foreign-key foreignTable="customer" onDelete="CASCADE">
+            <reference local="customer_id" foreign="id" />
+        </foreign-key>
+    </table>
+
     <external-schema filename="local/config/schema.xml" referenceOnly="true"/>
 </database>
