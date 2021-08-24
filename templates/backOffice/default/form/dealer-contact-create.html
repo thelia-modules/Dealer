@@ -14,9 +14,9 @@
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="label"}{$message}{/form_error}
+        {form_error form=$form field="label"}{$message|default:null}{/form_error}
 
-        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$LABEL}"
+        <input type="text" class="form-control" name="{$name}" id="{$label_attr.for}" value="{$label}"
                placeholder="{intl l='The Contact Label' d="dealer.bo.default"}"/>
     </div>
 {/form_field}

@@ -15,7 +15,9 @@ namespace Dealer\Service\Base;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\ActionEvent;
+use Thelia\Core\Event\DefaultActionEvent;
 
 /**
  * Class BaseService
@@ -33,15 +35,24 @@ abstract class AbstractBaseService
     const EVENT_DELETE_BEFORE = null;
     const EVENT_DELETE_AFTER = null;
 
-    protected $dispatcher;
+    protected EventDispatcherInterface $dispatcher;
+
+    /**
+     * AbstractBaseService constructor.
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(EventDispatcherInterface $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
 
     //CREATION
 
     /**
      * Allow to proccess Creation Even Sender
-     * @param Event $event
+     * @param ActionEvent $event
      */
-    protected function create(Event $event)
+    protected function create(ActionEvent $event)
     {
         $this->dispatch(static::EVENT_CREATE_BEFORE, $event);
         if (!$event->isPropagationStopped()) {
@@ -54,9 +65,9 @@ abstract class AbstractBaseService
 
     /**
      * Allow to create an object from an Event
-     * @param Event $event
+     * @param ActionEvent $event
      */
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         $this->dispatch(static::EVENT_CREATE, $event);
     }
@@ -65,9 +76,9 @@ abstract class AbstractBaseService
 
     /**
      * Allow to send Update Events
-     * @param Event $event
+     * @param ActionEvent $event
      */
-    protected function update(Event $event)
+    protected function update(ActionEvent $event)
     {
         $this->dispatch(static::EVENT_UPDATE_BEFORE, $event);
         if (!$event->isPropagationStopped()) {
@@ -81,16 +92,16 @@ abstract class AbstractBaseService
 
     /**
      * Allow to update an object from an event
-     * @param Event $event
+     * @param ActionEvent $event
      */
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         $this->dispatch(static::EVENT_UPDATE, $event);
     }
 
     // DELETE
 
-    protected function delete(Event $event)
+    protected function delete(ActionEvent $event)
     {
         $this->dispatch(static::EVENT_DELETE_BEFORE, $event);
         if (!$event->isPropagationStopped()) {
@@ -101,7 +112,7 @@ abstract class AbstractBaseService
         }
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         $this->dispatch(static::EVENT_DELETE, $event);
     }
@@ -115,26 +126,26 @@ abstract class AbstractBaseService
      * @param string $eventName a TheliaEvent name, as defined in TheliaEvents class
      * @param ActionEvent $event the action event, or null (a DefaultActionEvent will be dispatched)
      */
-    protected function dispatch($eventName, Event $event = null)
+    protected function dispatch($eventName, ActionEvent $event = null)
     {
         if ($event == null) {
             $event = new DefaultActionEvent();
         }
 
-        $this->getDispatcher()->dispatch($eventName, $event);
+        $this->getDispatcher()->dispatch($event, $eventName);
     }
 
     /**
      * Return the event dispatcher,
      *
-     * @return \Symfony\Component\EventDispatcher\EventDispatcher
+     * @return EventDispatcherInterface
      */
     public function getDispatcher()
     {
         return $this->dispatcher;
     }
 
-    public function setDispatcher(EventDispatcher $dispatcher)
+    public function setDispatcher(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }

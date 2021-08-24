@@ -18,7 +18,7 @@
 {block name="main-content"}
     <div id="wrapper" class="container">
         {assign "dealer_id" $smarty.get.dealer_id}
-        {if $form_error}
+        {if $form_error|default:null}
             <div class="alert alert-danger">{$form_error_message}</div>
         {/if}
 

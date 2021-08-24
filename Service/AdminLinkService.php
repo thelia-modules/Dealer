@@ -20,6 +20,7 @@ use Dealer\Model\DealerAdminQuery;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class AdminLinkService
@@ -41,7 +42,7 @@ class AdminLinkService extends AbstractBaseService implements BaseServiceInterfa
     /**
      * @inheritDoc
      */
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         /** @var DealerAdminLinkEvent $event */
         $event->getDealerAdminLink()->save();
@@ -50,13 +51,13 @@ class AdminLinkService extends AbstractBaseService implements BaseServiceInterfa
     /**
      * @inheritDoc
      */
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         /** @var DealerAdminLinkEvent $event */
         $event->getDealerAdminLink()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         /** @var DealerAdminLinkEvent $event */
         $event->getDealerAdminLink()->delete();

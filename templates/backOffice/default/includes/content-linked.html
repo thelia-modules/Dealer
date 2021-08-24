@@ -17,7 +17,7 @@
         <tr>
             <th class="object-title">
                 {admin_sortable_header
-                current_order=$content_order
+                current_order=$content_order|default:null
                 order='id'
                 reverse_order='id_reverse'
                 path={url path='/admin/Dealer/dealer/edit' dealer_id=$dealer_id target='contents'}
@@ -28,7 +28,7 @@
 
             <th class="object-title">
                 {admin_sortable_header
-                current_order=$content_order
+                current_order=$content_order|default:null
                 order='alpha'
                 reverse_order='alpha_reverse'
                 path={url path='/admin/Dealer/dealer/edit' dealer_id=$dealer_id target='contents'}
@@ -43,7 +43,7 @@
         </thead>
 
         <tbody>
-        {loop name="content_list" type="dealer_content" visible="*" dealer_id=$dealer_id order=$content_order}
+        {loop name="content_list" type="dealer_content" visible="*" dealer_id=$dealer_id order=$content_order|default:null}
             <tr>
                 <td>{$ID}</td>
 

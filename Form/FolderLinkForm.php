@@ -15,6 +15,7 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Dealer\Model\DealerQuery;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Thelia\Form\BaseForm;
 use Thelia\Model\Folder;
 use Thelia\Model\FolderQuery;
@@ -31,14 +32,14 @@ class FolderLinkForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("folder_id", "choice", array(
+            ->add("folder_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableFolder(),
                 "label" => $this->translator->trans("Folder", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-folder-link-folder"],
                 "required" => true,
                 "attr" => array()
             ))
-            ->add("dealer_id", "choice", array(
+            ->add("dealer_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableDealer(),
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-folder-link-dealer"],
@@ -47,7 +48,7 @@ class FolderLinkForm extends BaseForm
             ));
     }
 
-    public function getName()
+    public static function getName()
     {
         return "dealer_folder_link_create";
     }
@@ -59,7 +60,7 @@ class FolderLinkForm extends BaseForm
 
         /** @var Folder $folder */
         foreach ($folders as $folder) {
-            $choices[$folder->getId()] = $folder->getTitle();
+            $choices[$folder->getTitle()] = $folder->getId();
         }
 
         return $choices;
@@ -70,7 +71,7 @@ class FolderLinkForm extends BaseForm
         $dealers = DealerQuery::create()->find();
         $choices = [];
         foreach ($dealers as $dealer) {
-            $choices[$dealer->getId()] = $dealer->getTitle();
+            $choices[$dealer->getTitle()] = $dealer->getId();
         }
 
         return $choices;

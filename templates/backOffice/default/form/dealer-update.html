@@ -1,6 +1,6 @@
 {form name="dealer.update"}
 <div class="form-container">
-    {if $form_error}
+    {if $form_error|default:null}
         <div class="alert alert-danger">{$form_error_message}</div>
     {/if}
     <form method="POST" action="{$current_url}" {form_enctype form=$form} class="clearfix">

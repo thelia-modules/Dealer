@@ -13,7 +13,7 @@ class DealerImageBoxForm extends CustomImageForm
 {
     const DEALER_IMAGE_BOX_FORM_ID = "dealer.image.box";
 
-    public function getName()
+    public static function getName()
     {
         return "dealer_image_box";
     }

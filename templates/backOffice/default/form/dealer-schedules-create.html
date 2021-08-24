@@ -7,19 +7,19 @@
     <input type="hidden" id="{$label_attr.for}" name="{$name}" value="{$closed|default:0}"/>
 {/form_field}
 {form_field form=$form field="day"}
-    <div class="form-group {if $error}has-error{/if}">
+    <div class="form-group {if $error|default:null}has-error{/if}">
         <label class="control-label" for="{$label_attr.for}">
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
-        {form_error form=$form field="day"}{$message}{/form_error}
+        {form_error form=$form field="day"}{$message|default:null}{/form_error}
 
         <select class="form-control" name="{$name}" id="{$label_attr.for}" {if {$update|default:false} == false}multiple{/if}>
             {if {$update|default:false} == true}
                 <option value="" selected></option>
             {/if}
             {foreach $choices as $choice}
-                <option value="{$choice->value}" {if $DAY == $choice->value}selected{/if} >{$choice->label}</option>
+                <option value="{$choice->value}" {if $DAY|default:null == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}
         </select>
     </div>
@@ -29,13 +29,13 @@
         <div class="col-sm-6">
             <h3>{intl l="AM" d="dealer.bo.default"}</h3>
             {form_field form=$form field="beginAM"}
-                <div class="form-group {if $error}has-error{/if}">
+                <div class="form-group {if $error|default:null}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
                     </label>
 
-                    {form_error form=$form field="beginAM"}{$message}{/form_error}
+                    {form_error form=$form field="beginAM"}{$message|default:null}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
                         <input type='text' class="form-control" name="{$name}" value="{$BEGIN|default:"9:00"}"/>
                     <span class="input-group-addon">
@@ -45,13 +45,13 @@
                 </div>
             {/form_field}
             {form_field form=$form field="endAM"}
-                <div class="form-group {if $error}has-error{/if}">
+                <div class="form-group {if $error|default:null}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
                     </label>
 
-                    {form_error form=$form field="endAM"}{$message}{/form_error}
+                    {form_error form=$form field="endAM"}{$message|default:null}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
                         <input type='text' class="form-control" name="{$name}" value="{$END|default:"12:00"}"/>
                     <span class="input-group-addon">
@@ -64,13 +64,13 @@
         <div class="col-sm-6">
             <h3>{intl l="PM" d="dealer.bo.default"}</h3>
             {form_field form=$form field="beginPM"}
-                <div class="form-group {if $error}has-error{/if}">
+                <div class="form-group {if $error|default:null}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
                     </label>
 
-                    {form_error form=$form field="beginPM"}{$message}{/form_error}
+                    {form_error form=$form field="beginPM"}{$message|default:null}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
                         <input type='text' class="form-control" name="{$name}" value="{$BEGIN|default:"14:00"}"/>
                     <span class="input-group-addon">
@@ -80,13 +80,13 @@
                 </div>
             {/form_field}
             {form_field form=$form field="endPM"}
-                <div class="form-group {if $error}has-error{/if}">
+                <div class="form-group {if $error|default:null}has-error{/if}">
                     <label class="control-label" for="{$label_attr.for}">
                         {intl l=$label d="dealer.bo.default"}
                         {if $required}<span class="required">*</span>{/if}
                     </label>
 
-                    {form_error form=$form field="endPM"}{$message}{/form_error}
+                    {form_error form=$form field="endPM"}{$message|default:null}{/form_error}
                     <div class='input-group time' id="{$label_attr.for}">
                         <input type='text' class="form-control" name="{$name}" value="{$END|default:"19:00"}"/>
                     <span class="input-group-addon">
@@ -99,15 +99,15 @@
     </div>
 {else}
     {form_field form=$form field="begin"}
-        <div class="form-group {if $error}has-error{/if}">
+        <div class="form-group {if $error|default:null}has-error{/if}">
             <label class="control-label" for="{$label_attr.for}">
                 {intl l=$label d="dealer.bo.default"}
                 {if $required}<span class="required">*</span>{/if}
             </label>
 
-            {form_error form=$form field="begin"}{$message}{/form_error}
+            {form_error form=$form field="begin"}{$message|default:null}{/form_error}
             <div class='input-group time' id="{$label_attr.for}">
-                <input type='text' class="form-control" name="{$name}" value="{$BEGIN}"/>
+                <input type='text' class="form-control" name="{$name}" value="{$BEGIN|default:"00:00"}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>
@@ -115,15 +115,15 @@
         </div>
     {/form_field}
     {form_field form=$form field="end"}
-        <div class="form-group {if $error}has-error{/if}">
+        <div class="form-group {if $error|default:null}has-error{/if}">
             <label class="control-label" for="{$label_attr.for}">
                 {intl l=$label d="dealer.bo.default"}
                 {if $required}<span class="required">*</span>{/if}
             </label>
 
-            {form_error form=$form field="end"}{$message}{/form_error}
+            {form_error form=$form field="end"}{$message|default:null}{/form_error}
             <div class='input-group time' id="{$label_attr.for}">
-                <input type='text' class="form-control" name="{$name}" value="{$END}"/>
+                <input type='text' class="form-control" name="{$name}" value="{$END|default:"23:59"}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-time"></span>
                     </span>
@@ -133,15 +133,15 @@
 {/if}
     <h3 class="period">{intl l="Period" d="dealer.bo.default"}</h3>
 {form_field form=$form field="period_begin"}
-    <div class="form-group {if $error}has-error{/if} period">
+    <div class="form-group {if $error|default:null}has-error{/if} period">
         <label class="control-label" for="{$label_attr.for}">
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="period_begin"}{$message}{/form_error}
+        {form_error form=$form field="period_begin"}{$message|default:null}{/form_error}
         <div class='input-group date' id="{$label_attr.for}">
-            <input type='text' class="form-control" name="{$name}" value="{$PERIOD_BEGIN}"/>
+            <input type='text' class="form-control" name="{$name}" value="{$PERIOD_BEGIN|default:null}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -149,15 +149,15 @@
     </div>
 {/form_field}
 {form_field form=$form field="period_end"}
-    <div class="form-group {if $error}has-error{/if} period">
+    <div class="form-group {if $error|default:null}has-error{/if} period">
         <label class="control-label" for="{$label_attr.for}">
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
 
-        {form_error form=$form field="period_end"}{$message}{/form_error}
+        {form_error form=$form field="period_end"}{$message|default:null}{/form_error}
         <div class='input-group date' id="{$label_attr.for}">
-            <input type='text' class="form-control" name="{$name}" value="{$PERIOD_END}"/>
+            <input type='text' class="form-control" name="{$name}" value="{$PERIOD_END|default:null}"/>
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>

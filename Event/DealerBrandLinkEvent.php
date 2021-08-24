@@ -14,13 +14,13 @@
 namespace Dealer\Event;
 
 use Dealer\Model\DealerBrand;
-use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class DealerBrandLinkEvent
  * @package Dealer\Event
  */
-class DealerBrandLinkEvent extends Event
+class DealerBrandLinkEvent extends ActionEvent
 {
 
     /**

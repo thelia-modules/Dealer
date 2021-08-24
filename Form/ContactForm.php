@@ -14,6 +14,8 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 
@@ -47,21 +49,21 @@ class ContactForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("label", "text", array(
+            ->add("label", TextType::class, array(
                 "label" => $this->translator->trans("Label", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-label"],
                 "required" => true,
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add('dealer_id', 'integer', array(
+            ->add('dealer_id', IntegerType::class, array(
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-dealer_id"],
                 "required" => true,
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add("locale", "text", array(
+            ->add("locale", TextType::class, array(
                 "constraints" => array(
                     new NotBlank(),
                 ),
@@ -70,7 +72,7 @@ class ContactForm extends BaseForm
         ;
     }
 
-    public function getName()
+    public static function getName()
     {
         return "contact_create";
     }

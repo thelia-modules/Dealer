@@ -10,11 +10,11 @@
             {intl l=$label d="dealer.bo.default"}
             {if $required}<span class="required">*</span>{/if}
         </label>
-        {form_error form=$form field="day"}{$message}{/form_error}
+        {form_error form=$form field="day"}{$message|default:null}{/form_error}
 
         <select class="form-control" name="{$name}" id="{$label_attr.for}">
             {foreach $choices as $choice}
-                <option value="{$choice->value}" {if $DAY == $choice->value}selected{/if} >{$choice->label}</option>
+                <option value="{$choice->value}" {if $DAY|default:null == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}
         </select>
     </div>

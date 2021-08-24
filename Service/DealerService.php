@@ -20,6 +20,7 @@ use Dealer\Model\DealerQuery;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class DealerService
@@ -37,17 +38,17 @@ class DealerService extends AbstractBaseService implements BaseServiceInterface
     const EVENT_UPDATE_BEFORE = DealerEvents::DEALER_UPDATE_BEFORE;
     const EVENT_UPDATE_AFTER = DealerEvents::DEALER_UPDATE_AFTER;
 
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         $event->getDealer()->save();
     }
 
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         $event->getDealer()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         $event->getDealer()->delete();
     }

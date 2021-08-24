@@ -14,15 +14,23 @@
 namespace Dealer\Controller\Base;
 
 use Dealer\Dealer;
+use Dealer\Form\DealerForm;
 use Dealer\Model\DealerQuery;
 use Propel\Generator\Model\Database;
 use Propel\Runtime\Propel;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Security\SecurityContext;
+use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Thelia;
+use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
+use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
 
 /**
@@ -81,7 +89,7 @@ abstract class BaseController extends BaseAdminController
     /**
      * Load an existing object from the database
      */
-    abstract protected function getExistingObject();
+    abstract protected function getExistingObject(Request $request);
 
     /**
      * Hydrate the update form for this object, before passing it to the update template
@@ -124,7 +132,7 @@ abstract class BaseController extends BaseAdminController
         }
 
         // Create the Creation Form
-        $creationForm = $this->getCreationForm($this->getRequest());
+        $creationForm = $this->getCreationForm();
 
         $con = Propel::getConnection();
         $con->beginTransaction();
@@ -156,7 +164,7 @@ abstract class BaseController extends BaseAdminController
         }
         if (false !== $error_msg) {
             $this->setupFormErrorContext(
-                $this->getTranslator()->trans("%obj creation", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
+                Translator::getInstance()->trans("%obj creation", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
                 $error_msg,
                 $creationForm,
                 $ex
@@ -172,7 +180,7 @@ abstract class BaseController extends BaseAdminController
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
      */
-    public function updateAction()
+    public function updateAction(ParserContext $parserContext, RequestStack $requestStack)
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
@@ -182,12 +190,12 @@ abstract class BaseController extends BaseAdminController
         }
 
         // Load object if exist
-        if (null !== $object = $this->getExistingObject()) {
+        if (null !== $object = $this->getExistingObject($requestStack->getCurrentRequest())) {
             // Hydrate the form abd pass it to the parser
             $changeForm = $this->hydrateObjectForm($object);
 
             // Pass it to the parser
-            $this->getParserContext()->addForm($changeForm);
+            $parserContext->addForm($changeForm);
         }
 
         // Render the edition template.
@@ -199,7 +207,7 @@ abstract class BaseController extends BaseAdminController
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
      */
-    public function processUpdateAction()
+    public function processUpdateAction(RequestStack $requestStack)
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
@@ -230,15 +238,15 @@ abstract class BaseController extends BaseAdminController
             // Check if object exist
             if (!$updatedObject) {
                 throw new \LogicException(
-                    $this->getTranslator()->trans("No %obj was updated.", ['%obj' => static::CONTROLLER_ENTITY_NAME])
+                    Translator::getInstance()->trans("No %obj was updated.", ['%obj' => static::CONTROLLER_ENTITY_NAME])
                 );
             }
 
             $con->commit();
             // If we have to stay on the same page, do not redirect to the successUrl,
             // just redirect to the edit page again.
-            if ($this->getRequest()->get('save_mode') == 'stay') {
-                return $this->redirectToEditionTemplate($this->getRequest());
+            if ($requestStack->getCurrentRequest()->get('save_mode') === 'stay') {
+                return $this->redirectToEditionTemplate($requestStack->getCurrentRequest());
             }
 
             // Redirect to the success URL
@@ -256,7 +264,7 @@ abstract class BaseController extends BaseAdminController
         if (false !== $error_msg) {
             // At this point, the form has errors, and should be redisplayed.
             $this->setupFormErrorContext(
-                $this->getTranslator()->trans("%obj modification", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
+                Translator::getInstance()->trans("%obj modification", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
                 $error_msg,
                 $changeForm,
                 $ex
@@ -271,7 +279,7 @@ abstract class BaseController extends BaseAdminController
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
      */
-    public function deleteAction()
+    public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(static::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(),
@@ -284,13 +292,13 @@ abstract class BaseController extends BaseAdminController
         $con->beginTransaction();
         try {
             // Check token
-            $this->getTokenProvider()->checkToken(
-                $this->getRequest()->query->get("_token")
+            $tokenProvider->checkToken(
+                $requestStack->getCurrentRequest()->query->get("_token")
             );
 
-            $this->getService()->deleteFromId($this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME . "_id"));
+            $this->getService()->deleteFromId($requestStack->getCurrentRequest()->request->get(static::CONTROLLER_ENTITY_NAME . "_id"));
             $con->commit();
-            if ($this->getRequest()->request->get("success_url") == null) {
+            if ($requestStack->getCurrentRequest()->request->get("success_url") == null) {
                 return $this->redirectToListTemplate();
             } else {
                 return new RedirectResponse(URL::getInstance()->absoluteUrl($this->getRequest()->request->get("success_url")));
@@ -298,7 +306,7 @@ abstract class BaseController extends BaseAdminController
         } catch (\Exception $e) {
             $con->rollBack();
 
-            return $this->renderAfterDeleteError($e);
+            return $this->renderAfterDeleteError($e, $parserContext);
         }
     }
 
@@ -336,14 +344,14 @@ abstract class BaseController extends BaseAdminController
             $data = [];
         }
 
-        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update", "form", $data);
+        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update", FormType::class, $data);
     }
 
     /**
      * @param \Exception $e
      * @return \Thelia\Core\HttpFoundation\Response
      */
-    protected function renderAfterDeleteError(\Exception $e)
+    protected function renderAfterDeleteError(\Exception $e, ParserContext $parserContext)
     {
         $errorMessage = sprintf(
             "Unable to delete '%s'. Error message: %s",
@@ -351,15 +359,15 @@ abstract class BaseController extends BaseAdminController
             $e->getMessage()
         );
 
-        $this->getParserContext()
+        $parserContext
             ->setGeneralError($errorMessage);
 
         return $this->defaultAction();
     }
 
-    protected function checkUserAccessDealer($id = null)
+    protected function checkUserAccessDealer(SecurityContext $securityContext, $id = null)
     {
-        $admin = $this->getSecurityContext()->getAdminUser();
+        $admin = $securityContext->getAdminUser();
         if (in_array("SUPERADMIN", $admin->getRoles())) {
             return null;
         }
@@ -370,12 +378,12 @@ abstract class BaseController extends BaseAdminController
             return null;
         }
 
-        return $this->errorPage($this->getTranslator()->trans("Sorry, you're not allowed to perform this action"), 403);
+        return $this->errorPage(Translator::getInstance()->trans("Sorry, you're not allowed to perform this action"), 403);
     }
 
-    protected function getAdminDealer()
+    protected function getAdminDealer(SecurityContext $securityContext)
     {
-        $admin = $this->getSecurityContext()->getAdminUser();
+        $admin = $securityContext->getAdminUser();
 
         if ($admin === null) {
             return null;

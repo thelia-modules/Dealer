@@ -18,13 +18,21 @@ use Dealer\Dealer as DealerModule;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\Propel;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Template\ParserContext;
+use Thelia\Core\Translation\Translator;
+use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @Route("/admin/module/Dealer/dealer", name="dealer")
  * Class DealerController
  * @package Dealer\Controller
  */
@@ -33,9 +41,9 @@ class DealerController extends BaseController
     /**
      * Load an existing object from the database
      */
-    protected function getExistingObject()
+    protected function getExistingObject(Request $request)
     {
-        return DealerQuery::create()->findPk($this->getRequest()->query->get("dealer_id"));
+        return DealerQuery::create()->findPk($request->query->get("dealer_id"));
     }
 
     /**
@@ -107,14 +115,17 @@ class DealerController extends BaseController
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer"));
     }
 
-    protected function redirectToEditionTemplate()
+    protected function redirectToEditionTemplate(Request $request)
     {
-        $id = $this->getRequest()->query->get("dealer_id");
+        $id = $request->query->get("dealer_id");
 
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
             ["dealer_id" => $id, ]));
     }
 
+    /**
+     * @Route("/toggle-online/{id}", name="_toggle_visible", methods="POST")
+     */
     public function toggleVisibleAction($id)
     {
         // Check current user authorization
@@ -140,7 +151,7 @@ class DealerController extends BaseController
             // Check if object exist
             if (!$updatedObject) {
                 throw new \LogicException(
-                    $this->getTranslator()->trans("No %obj was updated.", ['%obj' => static::CONTROLLER_ENTITY_NAME])
+                    Translator::getInstance()->trans("No %obj was updated.", ['%obj' => static::CONTROLLER_ENTITY_NAME])
                 );
             }
 
@@ -156,5 +167,45 @@ class DealerController extends BaseController
         }
 
         return JsonResponse::create($retour, $code);
+    }
+
+    /**
+     * @Route("", name="_list", methods="GET")
+     */
+    public function defaultAction()
+    {
+        return parent::defaultAction();
+    }
+
+    /**
+     * @Route("", name="_create", methods="POST")
+     */
+    public function createAction()
+    {
+        return parent::createAction();
+    }
+
+    /**
+     * @Route("/edit", name="_tab.view", methods="GET")
+     */
+    public function updateAction(ParserContext $parserContext, RequestStack $requestStack)
+    {
+        return parent::updateAction($parserContext, $requestStack);
+    }
+
+    /**
+     * @Route("/edit", name="_tab.edit", methods="POST")
+     */
+    public function processUpdateAction(RequestStack $requestStack)
+    {
+        return parent::processUpdateAction($requestStack);
+    }
+
+    /**
+     * @Route("/delete", name="_delete", methods="POST")
+     */
+    public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
+    {
+        return parent::deleteAction($tokenProvider, $requestStack, $parserContext);
     }
 }

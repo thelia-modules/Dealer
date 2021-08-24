@@ -10,7 +10,7 @@
         <div id="wrapper" class="container">
             {loop type="custom_images"  name="custom_images" image_type="{$imageType}" product={$parentId} width="120" resize_mode="borders" backend_context="1" lang="$edit_language_id"}
                 <ul class="breadcrumb">
-                    {foreach $breadcrumb as $label=>$link}
+                    {foreach $breadcrumb|default:null as $label=>$link}
                         <li><a href="{$link}">{$label}</a></li>
                     {/foreach}
                     <li>{intl l='Editing image'  d='dealer.bo.default'}</li>
@@ -45,7 +45,7 @@
                                             {render_form_field field="success_url" value="{url path="/admin/module/dealer/image/{$imageType}/edit/{$parentId}/{$ID}"}"}
                                             {render_form_field field="locale" value="$edit_language_locale"}
 
-                                            {if $form_error}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+                                            {if $form_error|default:null}<div class="alert alert-danger">{$form_error_message}</div>{/if}
 
                                             <p class="title title-without-tabs">{intl l="Image information" d='dealer.bo.default'}</p>
 

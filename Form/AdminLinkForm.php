@@ -15,6 +15,7 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Dealer\Model\DealerQuery;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Thelia\Form\BaseForm;
 use Thelia\Model\Admin;
 use Thelia\Model\AdminQuery;
@@ -31,14 +32,14 @@ class AdminLinkForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("admin_id", "choice", array(
+            ->add("admin_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableAdmin(),
                 "label" => $this->translator->trans("Admin", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-admin-link-admin"],
                 "required" => true,
                 "attr" => array()
             ))
-            ->add("dealer_id", "choice", array(
+            ->add("dealer_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableDealer(),
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-admin-link-dealer"],
@@ -47,7 +48,7 @@ class AdminLinkForm extends BaseForm
             ));
     }
 
-    public function getName()
+    public static function getName()
     {
         return "dealer_admin_link_create";
     }
@@ -59,7 +60,7 @@ class AdminLinkForm extends BaseForm
 
         /** @var Admin $admin */
         foreach ($admins as $admin) {
-            $choices[$admin->getId()] = $admin->getUsername();
+            $choices[$admin->getUsername()] = $admin->getId();
         }
 
         return $choices;
@@ -70,7 +71,7 @@ class AdminLinkForm extends BaseForm
         $dealers = DealerQuery::create()->find();
         $choices = [];
         foreach ($dealers as $dealer) {
-            $choices[$dealer->getId()] = $dealer->getTitle();
+            $choices[$dealer->getTitle()] = $dealer->getId();
         }
 
         return $choices;

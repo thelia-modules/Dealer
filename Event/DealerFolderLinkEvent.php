@@ -14,13 +14,13 @@
 namespace Dealer\Event;
 
 use Dealer\Model\DealerFolder;
-use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class DealerFolderLinkEvent
  * @package Dealer\Event
  */
-class DealerFolderLinkEvent extends Event
+class DealerFolderLinkEvent extends ActionEvent
 {
     /**
      * @var DealerFolder $dealerFolderLink

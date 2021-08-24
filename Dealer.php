@@ -12,6 +12,7 @@ use Dealer\Model\DealerContentQuery;
 use Dealer\Model\DealerFolderQuery;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\DealerShedulesQuery;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\Finder\Finder;
 use Thelia\Core\Template\TemplateDefinition;
 use Thelia\Model\Resource;
@@ -27,7 +28,7 @@ use Thelia\Install\Database;
 class Dealer extends BaseModule
 {
     const MESSAGE_DOMAIN = "dealer";
-    const ROUTER = "router.dealer";
+    const ROUTER = "router.Dealer";
     const DOMAIN_NAME = "dealer";
     const RESOURCES_DEALER = "admin.dealer";
     const RESOURCES_CONTACT = "admin.dealer.contact";
@@ -40,7 +41,7 @@ class Dealer extends BaseModule
     // List of admin profile_id allowed to see ALL the dealers (separated by coma)
     const CONFIG_ALLOW_PROFILE_ID = 'admin_profile_id';
 
-    public function postActivation(ConnectionInterface $con = null)
+    public function postActivation(ConnectionInterface $con = null): void
     {
         try {
             DealerQuery::create()->findOne();
@@ -66,7 +67,7 @@ class Dealer extends BaseModule
         self::setConfigValue(self::CONFIG_ALLOW_PROFILE_ID, '');
     }
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
         $finder = Finder::create()
             ->name('*.sql')
@@ -159,5 +160,13 @@ class Dealer extends BaseModule
             $resource->setTitle($code);
             $resource->save();
         }
+    }
+
+    public static function configureServices(ServicesConfigurator $servicesConfigurator): void
+    {
+        $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
+            ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"])
+            ->autowire(true)
+            ->autoconfigure(true);
     }
 }

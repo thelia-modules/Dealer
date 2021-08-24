@@ -4,7 +4,6 @@
 namespace Dealer\Service;
 
 
-use ColissimoLabel\Exception\Exception;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\ActiveQuery\Criteria;

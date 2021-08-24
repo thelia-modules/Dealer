@@ -1,6 +1,6 @@
 {form name="dealer.meta.seo"}
 <div class="form-container">
-    {if $form_error}
+    {if $form_error|default:null}
         <div class="alert alert-danger">{$form_error_message}</div>
     {/if}
     <form method="POST" action="{url path="/admin/module/dealer/seo/update"}" {form_enctype form=$form} class="clearfix">
@@ -19,12 +19,12 @@
                         {$json=$META_JSON}
                     {/loop}
 
-                    {render_form_field field="slug" value="{$slug}"}
+                    {render_form_field field="slug" value="{$slug|default:null}"}
                     <hr>
-                    {render_form_field field="meta_title" value="{$title}"}
-                    {render_form_field field="meta_description" value="{$desc}"}
-                    {render_form_field field="meta_keywords" value="{$keywords}"}
-                    {render_form_field field="meta_json" value="{$json}"}
+                    {render_form_field field="meta_title" value="{$title|default:null}"}
+                    {render_form_field field="meta_description" value="{$desc|default:null}"}
+                    {render_form_field field="meta_keywords" value="{$keywords|default:null}"}
+                    {render_form_field field="meta_json" value="{$json|default:null}"}
                 </div>
             </div>
 

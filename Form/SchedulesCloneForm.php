@@ -14,6 +14,8 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 
@@ -30,14 +32,14 @@ class SchedulesCloneForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add('id', 'integer', array(
+            ->add('id', IntegerType::class, array(
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-clone-id"],
                 "required" => true,
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add("day", "choice", [
+            ->add("day", ChoiceType::class, [
                 "choices" => $this->getDay(),
                 "label" => $this->translator->trans("Day", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-clone-day"],
@@ -49,17 +51,17 @@ class SchedulesCloneForm extends BaseForm
     protected function getDay()
     {
         return [
-            $this->translator->trans("Monday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Tuesday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Wednesday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Thursday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Friday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Saturday", [], Dealer::MESSAGE_DOMAIN),
-            $this->translator->trans("Sunday", [], Dealer::MESSAGE_DOMAIN)
+            $this->translator->trans("Monday", [], Dealer::MESSAGE_DOMAIN) => 0,
+            $this->translator->trans("Tuesday", [], Dealer::MESSAGE_DOMAIN) => 1,
+            $this->translator->trans("Wednesday", [], Dealer::MESSAGE_DOMAIN) => 2,
+            $this->translator->trans("Thursday", [], Dealer::MESSAGE_DOMAIN) => 3,
+            $this->translator->trans("Friday", [], Dealer::MESSAGE_DOMAIN) => 4,
+            $this->translator->trans("Saturday", [], Dealer::MESSAGE_DOMAIN) => 5,
+            $this->translator->trans("Sunday", [], Dealer::MESSAGE_DOMAIN) => 6
         ];
     }
 
-    public function getName()
+    public static function getName()
     {
         return "schedules_clone";
     }

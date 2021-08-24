@@ -14,7 +14,7 @@ class DealerImageHeaderForm extends CustomImageForm
 {
     const DEALER_IMAGE_HEADER_FORM_ID = "dealer.image.header";
 
-    public function getName()
+    public static function getName()
     {
         return "dealer_image_header";
     }

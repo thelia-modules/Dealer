@@ -20,6 +20,7 @@ use Dealer\Model\DealerBrandQuery;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class BrandLinkService
@@ -41,7 +42,7 @@ class BrandLinkService extends AbstractBaseService implements BaseServiceInterfa
     /**
      * @inheritDoc
      */
-    protected function createProcess(Event $event)
+    protected function createProcess(ActionEvent $event)
     {
         /** @var DealerBrandLinkEvent $event */
         $event->getDealerBrandLink()->save();
@@ -50,13 +51,13 @@ class BrandLinkService extends AbstractBaseService implements BaseServiceInterfa
     /**
      * @inheritDoc
      */
-    protected function updateProcess(Event $event)
+    protected function updateProcess(ActionEvent $event)
     {
         /** @var DealerBrandLinkEvent $event */
         $event->getDealerBrandLink()->save();
     }
 
-    protected function deleteProcess(Event $event)
+    protected function deleteProcess(ActionEvent $event)
     {
         /** @var DealerBrandLinkEvent $event */
         $event->getDealerBrandLink()->delete();

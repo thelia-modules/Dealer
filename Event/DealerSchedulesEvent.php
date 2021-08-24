@@ -14,13 +14,13 @@
 namespace Dealer\Event;
 
 use Dealer\Model\DealerShedules;
-use Symfony\Component\EventDispatcher\Event;
+use Thelia\Core\Event\ActionEvent;
 
 /**
  * Class DealerSchedulesEvent
  * @package Dealer\Event
  */
-class DealerSchedulesEvent extends Event
+class DealerSchedulesEvent extends ActionEvent
 {
     /**
      * @var DealerShedules

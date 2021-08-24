@@ -3,17 +3,25 @@
 namespace Dealer\Controller;
 
 use Dealer\Dealer;
+use Dealer\Form\DealerMetaSEOForm;
 use Dealer\Model\DealerMetaSeoQuery;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
+use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/admin/module/dealer/seo", name="dealer_seo")
+ */
 class MetaSeoController extends BaseAdminController
 {
+    /**
+     * @Route("/update", name="_update", methods="POST")
+     */
     public function updateSeo()
     {
-        $form = $this->createForm('dealer.meta.seo');
+        $form = $this->createForm(DealerMetaSEOForm::getName());
         try {
             $this->validateForm($form);
 

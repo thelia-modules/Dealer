@@ -15,6 +15,7 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Dealer\Model\DealerQuery;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Thelia\Form\BaseForm;
 use Thelia\Model\Brand;
 use Thelia\Model\BrandQuery;
@@ -31,14 +32,14 @@ class BrandLinkForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("brand_id", "choice", array(
+            ->add("brand_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableBrand(),
                 "label" => $this->translator->trans("Brand", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-brand-link-brand"],
                 "required" => true,
                 "attr" => array()
             ))
-            ->add("dealer_id", "choice", array(
+            ->add("dealer_id", ChoiceType::class, array(
                 "choices" => $this->getAvailableDealer(),
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-brand-link-dealer"],
@@ -47,7 +48,7 @@ class BrandLinkForm extends BaseForm
             ));
     }
 
-    public function getName()
+    public static function getName()
     {
         return "dealer_brand_link_create";
     }
@@ -59,7 +60,7 @@ class BrandLinkForm extends BaseForm
 
         /** @var Brand $brand */
         foreach ($brands as $brand) {
-            $choices[$brand->getId()] = $brand->getTitle();
+            $choices[$brand->getTitle()] = $brand->getId();
         }
 
         return $choices;
@@ -70,7 +71,7 @@ class BrandLinkForm extends BaseForm
         $dealers = DealerQuery::create()->find();
         $choices = [];
         foreach ($dealers as $dealer) {
-            $choices[$dealer->getId()] = $dealer->getTitle();
+            $choices[$dealer->getTitle()] = $dealer->getId();
         }
 
         return $choices;

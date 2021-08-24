@@ -10,6 +10,7 @@ namespace Dealer\Form;
 
 
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Thelia\Form\BaseForm;
 use Symfony\Component\Validator\Constraints;
 
@@ -19,7 +20,7 @@ class CustomImageForm extends BaseForm
     {
         $this->formBuilder
             ->add("file", FileType::class)
-            ->add("parent_id", "hidden", array("constraints" => array(new Constraints\NotBlank())))
+            ->add("parent_id", HiddenType::class, array("constraints" => array(new Constraints\NotBlank())))
         ;
     }
 }
