@@ -52,6 +52,10 @@
         </service>
         <service id="dealer_geo_service" class="Dealer\Service\GeoDealerService">
         </service>
+        <service id="dealer.smarty.plugin.favorite.dealer" class="Dealer\Plugin\FavoriteDealerSmartyPlugin">
+            <tag name="thelia.parser.register_plugin"/>
+            <argument type="service" id="thelia.securityContext" />
+        </service>
     </services>
 
     <hooks>
