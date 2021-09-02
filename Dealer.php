@@ -6,12 +6,6 @@
 
 namespace Dealer;
 
-use Dealer\Model\DealerContactInfoQuery;
-use Dealer\Model\DealerContactQuery;
-use Dealer\Model\DealerContentQuery;
-use Dealer\Model\DealerFolderQuery;
-use Dealer\Model\DealerQuery;
-use Dealer\Model\DealerShedulesQuery;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\Finder\Finder;
 use Thelia\Core\Template\TemplateDefinition;
@@ -43,16 +37,12 @@ class Dealer extends BaseModule
 
     public function postActivation(ConnectionInterface $con = null): void
     {
-        try {
-            DealerQuery::create()->findOne();
-            DealerContactInfoQuery::create()->findOne();
-            DealerContactQuery::create()->findOne();
-            DealerShedulesQuery::create()->findOne();
-            DealerContentQuery::create()->findOne();
-            DealerFolderQuery::create()->findOne();
-        } catch (\Exception $e) {
+        if (!$this->getConfigValue('is_initialized', false)) {
             $database = new Database($con);
-            $database->insertSql(null, [__DIR__ . "/Config/thelia.sql"]);
+
+            $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
+
+            $this->setConfigValue('is_initialized', true);
         }
 
         $this->addResource(self::RESOURCES_DEALER);
