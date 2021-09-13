@@ -122,7 +122,7 @@
         <loop name="dealer_brand" class="Dealer\Loop\BrandLoop"/>
         <loop name="dealer_product" class="Dealer\Loop\ProductLoop"/>
         <loop name="dealer_admin" class="Dealer\Loop\AdminLoop"/>
-        <loop name="custom_images" class="Dealer\Loop\DealerCustomImagesLoop" />
+        <loop name="dealer_custom_images" class="Dealer\Loop\DealerCustomImagesLoop" />
         <loop name="dealer_meta_seo" class="Dealer\Loop\DealerMetaSeoLoop" />
     </loops>
 </config>

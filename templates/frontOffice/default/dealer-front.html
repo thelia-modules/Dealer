@@ -46,7 +46,7 @@
 
       {loop name="dealer.content" type="dealer" id=$dealer_id limit="1"}
         {$dealerTitle = $TITLE}
-        {loop type="custom_images"  name="image.header.header" image_type="imageHeader" product=$dealer_id width=1920 height=375 resize_mode="crop"}
+        {loop type="dealer_custom_images"  name="image.header.header" image_type="imageHeader" product=$dealer_id width=1920 height=375 resize_mode="crop"}
         <div class="Carousel-Banner">
           <img src="{$IMAGE_URL}" alt="{$dealerTitle}" class="Banner-img w-100">
         </div>

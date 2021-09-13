@@ -8,7 +8,7 @@
     <div class="documents edit-image">
 
         <div id="wrapper" class="container">
-            {loop type="custom_images"  name="custom_images" image_type="{$imageType}" product={$parentId} width="120" resize_mode="borders" backend_context="1" lang="$edit_language_id"}
+            {loop type="dealer_custom_images"  name="dealer_custom_images" image_type="{$imageType}" product={$parentId} width="120" resize_mode="borders" backend_context="1" lang="$edit_language_id"}
                 <ul class="breadcrumb">
                     {foreach $breadcrumb as $label=>$link}
                         <li><a href="{$link}">{$label}</a></li>
@@ -101,7 +101,7 @@
 
             {/loop}
 
-            {elseloop rel="custom_images"}
+            {elseloop rel="dealer_custom_images"}
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row inner-toolbar clearfix">
