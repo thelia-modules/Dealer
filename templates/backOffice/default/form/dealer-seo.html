@@ -24,7 +24,7 @@
                     <input type="submit" class="btn btn-info btn-upload" value="{intl l='Validate' d='dealer.bo.default' }" >
                 </div>
                 <div class="col-lg-2" >
-                    {loop type="custom_images"  name="image.header" image_type="imageHeader" product={$dealer_id} width="120" resize_mode="borders"}
+                    {loop type="dealer_custom_images"  name="image.header" image_type="imageHeader" product={$dealer_id} width="120" resize_mode="borders"}
                     <div class="container-btn-right btn-group" >
                         <a href="{$ORIGINAL_IMAGE_URL}" class="image-update-btn btn btn-default btn-xs js-sorted-position" target="_blank">
                             <img src="{$IMAGE_URL}" alt="{$ALT}">
@@ -71,7 +71,7 @@
                     <input type="submit" class="btn btn-info btn-upload" value="{intl l='Validate' d='dealer.bo.default' }" >
                 </div>
                 <div class="col-lg-2">
-                    {loop type="custom_images"  name="image.box" image_type="imageBox" product={$dealer_id} width="120" resize_mode="borders"}
+                    {loop type="dealer_custom_images"  name="image.box" image_type="imageBox" product={$dealer_id} width="120" resize_mode="borders"}
                         <a href="{$ORIGINAL_IMAGE_URL}" class="image-update-btn btn btn-default btn-xs js-sorted-position" target="_blank">
                             <img src="{$IMAGE_URL}" alt="{$ALT}">
                         </a>
