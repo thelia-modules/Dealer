@@ -5,6 +5,7 @@ return array(
     "Dealer" => "Magasin",
     "Dealers" => "Magasins",
     "Company" => "Nom",
+    "Address" => "Adresse",
     "Address1" => "Adresse 1",
     "Address2" => "Adresse 2",
     "Address3" => "Adresse 3",

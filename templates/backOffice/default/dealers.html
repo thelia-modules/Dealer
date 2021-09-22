@@ -1,6 +1,5 @@
 {extends file="admin-layout.tpl"}
 {default_translation_domain domain='dealer.bo.default'}
-
 {block name="no-return-functions"}
     {$admin_current_location = 'dealer'}
 {/block}
@@ -11,6 +10,9 @@
 {block name="check-module"}Dealer{/block}
 
 {block name="main-content"}
+
+    {$dealer_page = {$smarty.get.page|default:1}}
+
     <div id="wrapper" class="container">
         {if $general_error}
             <div class="alert alert-danger">
@@ -54,7 +56,9 @@
                                 order='address1'
                                 reverse_order='address1-reverse'
                                 path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
-                                label="{intl l='Address1' d='dealer.bo.default'}"
+
+                                label="{intl l='Address' d='dealer.bo.default'}"
+
                             }
                         </th>
                         <th>
@@ -91,10 +95,12 @@
                     </thead>
 
                     <tbody>
-                    {loop name="dealer-list" type="dealer" backend_context="yes" order=$order force_return=true}
+
+                    {loop name="dealer-list" type="dealer" backend_context="yes" order=$order page={$dealer_page} limit=50 force_return=true }
                         <tr>
                             <td>
-                                <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$TITLE}</a>
+                                <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$ADDRESS1}</a>
+
                             </td>
                             <td>
                                 {loop type="auth" name="can_change" role="ADMIN" resource="admin.dealer" module="Dealer" access="UPDATE"}
@@ -115,7 +121,7 @@
                                 {/elseloop}
                             </td>
                             <td>
-                                {$ADDRESS1}
+                                {$ADDRESS2}
                             </td>
                             <td>
                                 {$ZIPCODE}
@@ -165,7 +171,9 @@
 
                                 loop_ref       = "dealer-list"
                                 max_page_count = 20
-                                page_url       = "{url path="/admin/module/Dealer/dealer" order=$order target='dealer-table'}"
+
+                                page_url       = {url path="/admin/module/Dealer/dealer" order=$order}
+
                                 }
                             </td>
                         </tr>
