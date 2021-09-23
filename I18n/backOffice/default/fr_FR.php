@@ -105,6 +105,7 @@ return array(
     "PM" => "Après-midi",
     "Period" => "Période",
     "Clone this Schedule" => "Cloner cet horaire",
+    "Search" => "Recherche",
 
     /* Associated */
     "Associated" => "Associations",
