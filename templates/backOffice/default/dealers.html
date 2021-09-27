@@ -22,71 +22,39 @@
 
         <!-- Dealer list -->
         <div class="general-block-decorator">
+            <div class="title title-without-tabs">{intl l="Dealer" d='dealer.bo.default'}</div>
+
+            {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
+                <div class="pull-right">
+                    <a class="btn btn-default btn-primary" title="{intl l='Create a new Dealer entry' d='dealer.bo.default'}" data-target="#dealer-create" data-toggle="modal">
+                        <i class="glyphicon glyphicon-plus-sign"></i>
+                    </a>
+                </div>
+            {/loop}
+            <div class="col-md-3">
+                <label for="dealer-search">{intl l="Search" d="dealer.bo.default"}</label><input type="text" id="dealer-search" class="form-control"/>
+            </div>
             <div class="table-responsive">
                 <table class="table table-striped table-condensed" id="dealer-table">
-                    <caption class="clearfix">
-                        {intl l="Dealer" d='dealer.bo.default'}
-
-                        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
-                            <div class="pull-right">
-                                <a class="btn btn-default btn-primary" title="{intl l='Create a new Dealer entry' d='dealer.bo.default'}" data-target="#dealer-create" data-toggle="modal">
-                                    <i class="glyphicon glyphicon-plus-sign"></i>
-                                </a>
-                            </div>
-                        {/loop}
-                    </caption>
-
                     <thead>
                     <tr>
                         <th>
-                            {admin_sortable_header
-                                current_order=$order
-                                order='company'
-                                reverse_order='company-reverse'
-                                path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
-                                label="{intl l='Company' d='dealer.bo.default'}"
-                            }
+                            {intl l='Company' d='dealer.bo.default'}
                         </th>
                         <th>
                             {intl l="Visible"}
                         </th>
                         <th>
-                            {admin_sortable_header
-                                current_order=$order
-                                order='address1'
-                                reverse_order='address1-reverse'
-                                path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
-
-                                label="{intl l='Address' d='dealer.bo.default'}"
-
-                            }
+                            {intl l='Address' d='dealer.bo.default'}
                         </th>
                         <th>
-                            {admin_sortable_header
-                                current_order=$order
-                                order='zipcode'
-                                reverse_order='zipcode-reverse'
-                                path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
-                                label="{intl l='Zipcode' d='dealer.bo.default'}"
-                            }
+                            {intl l='Zipcode' d='dealer.bo.default'}
                         </th>
                         <th>
-                            {admin_sortable_header
-                                current_order=$order
-                                order='city'
-                                reverse_order='city-reverse'
-                                path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
-                                label="{intl l='City' d='dealer.bo.default'}"
-                            }
+                            {intl l='City' d='dealer.bo.default'}
                         </th>
                         <th>
-                            {admin_sortable_header
-                            current_order=$order
-                            order='country'
-                            reverse_order='city-reverse'
-                            path={url path='/admin/module/Dealer/dealer' target='dealer-table'}
-                            label="{intl l='Country' d='dealer.bo.default'}"
-                            }
+                            {intl l='Country' d='dealer.bo.default'}
                         </th>
                         <th>
                             {intl l="Actions"}
@@ -96,7 +64,7 @@
 
                     <tbody>
 
-                    {loop name="dealer-list" type="dealer" backend_context="yes" order=$order page={$dealer_page} limit=50 force_return=true }
+                    {loop name="dealer-list" type="dealer" backend_context="yes" order=$order force_return=true }
                         <tr>
                             <td>
                                 <a href="{url path='/admin/module/Dealer/dealer/edit' dealer_id=$ID}">{$ADDRESS1}</a>
@@ -131,7 +99,7 @@
                             </td>
                             <td>
                                 {loop type="country" name="country" id=$COUNTRY_ID limit=1}
-                                    {$TITLE}
+                                {$TITLE}
                                 {/loop}
                             </td>
                             {* Actions *}
@@ -161,24 +129,6 @@
                         </tr>
                     {/elseloop}
                     </tbody>
-
-                    {ifloop rel="dealer-list"}
-                    <tfoot>
-                        <tr>
-                            <td colspan="7">
-                                {include
-                                file           = "includes/pagination.html"
-
-                                loop_ref       = "dealer-list"
-                                max_page_count = 20
-
-                                page_url       = {url path="/admin/module/Dealer/dealer" order=$order}
-
-                                }
-                            </td>
-                        </tr>
-                    </tfoot>
-                    {/ifloop}
 
                 </table>
             </div>
@@ -233,6 +183,9 @@
     {javascripts file='assets/js/bootstrap-switch/bootstrap-switch.js'}
         <script src="{$asset_url}"></script>
     {/javascripts}
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
 
     <script>
         console.log('plop');
@@ -248,6 +201,16 @@
                     method: "POST",
                     url: "{url path='admin/module/Dealer/dealer/toggle-online/'}" + $(this).data('id')
                 });
+            });
+
+            dt = $("#dealer-table").DataTable({
+                "lengthChange": false,
+                "pageLength": 50,
+            });
+            $('.dataTables_filter').hide();
+
+            $("#dealer-search").keyup(function() {
+                dt.search($(this).val()).draw();
             });
         });
     </script>
