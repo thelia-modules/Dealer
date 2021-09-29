@@ -43,6 +43,8 @@ class DealerFrontController extends BaseFrontController
         $customerFavoriteDealer->setDealerId($dealerId);
         $customerFavoriteDealer->save();
 
+        $this->getSession()->set("favoriteDealer", $dealerId);
+
         return new JsonResponse([], 200);
     }
 
@@ -55,6 +57,8 @@ class DealerFrontController extends BaseFrontController
         if ($customerFavoriteDealer !== null) {
             $customerFavoriteDealer->delete();
         }
+
+        $this->getSession()->remove("favoriteDealer");
 
         return new JsonResponse([], 200);
     }
