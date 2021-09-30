@@ -3,6 +3,7 @@
 namespace Dealer\Plugin;
 
 use Dealer\Model\CustomerFavoriteDealerQuery;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Core\Security\SecurityContext;
 use TheliaSmarty\Template\AbstractSmartyPlugin;
 use TheliaSmarty\Template\SmartyPluginDescriptor;
@@ -12,9 +13,13 @@ class FavoriteDealerSmartyPlugin extends AbstractSmartyPlugin
     /** @var SecurityContext */
     protected $securityContext;
 
-    public function __construct(SecurityContext $securityContext)
+    /** @var RequestStack */
+    protected $requestStack;
+
+    public function __construct(SecurityContext $securityContext, RequestStack $requestStack)
     {
         $this->securityContext = $securityContext;
+        $this->requestStack = $requestStack;
     }
 
     public function getFavoriteDealer(array $params, \Smarty_Internal_Template &$smarty)
@@ -23,10 +28,7 @@ class FavoriteDealerSmartyPlugin extends AbstractSmartyPlugin
 
         $favoriteDealerId = null;
         if ($customer !== null) {
-            $favorite = CustomerFavoriteDealerQuery::create()->filterByCustomerId($customer->getId())->findOne();
-            if ($favorite !== null) {
-                $favoriteDealerId = $favorite->getDealerId();
-            }
+            $favoriteDealerId = (int) $this->requestStack->getCurrentRequest()->getSession()->get("favoriteDealer");
         }
         return $favoriteDealerId;
     }

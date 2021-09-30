@@ -47,10 +47,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
         $favoriteDealerId = null;
         $customer = $this->getCurrentRequest()->getSession()->getCustomerUser();
         if ($customer !== null) {
-            $favorite = CustomerFavoriteDealerQuery::create()->filterByCustomerId($customer->getId())->findOne();
-            if ($favorite !== null) {
-                $favoriteDealerId = $favorite->getDealerId();
-            }
+            $favoriteDealerId = (int) $this->getCurrentRequest()->getSession()->get("favoriteDealer");
         }
         /** @var Dealer $dealer */
         foreach ($loopResult->getResultDataCollection() as $dealer) {
