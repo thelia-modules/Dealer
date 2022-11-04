@@ -27,13 +27,10 @@ use Thelia\Core\Translation\Translator;
  */
 class AdminInterfaceHook extends BaseHook
 {
-    protected $router;
-
     protected $securityContext;
 
-    public function __construct(Router $router, SecurityContext $securityContext)
+    public function __construct(SecurityContext $securityContext)
     {
-        $this->router = $router;
         $this->securityContext = $securityContext;
     }
 
