@@ -1,4 +1,5 @@
 <?php
+
 /*************************************************************************************/
 /*      This file is part of the Thelia package.                                     */
 /*                                                                                   */
@@ -14,8 +15,6 @@
 namespace Dealer\Hook;
 
 use Dealer\Dealer;
-use Symfony\Component\Routing\Router;
-use Thelia\Core\Event\Hook\HookRenderBlockEvent;
 use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
 use Thelia\Core\Security\AccessManager;
@@ -27,6 +26,7 @@ use Thelia\Core\Translation\Translator;
  */
 class AdminInterfaceHook extends BaseHook
 {
+    /** @var  SecurityContext */
     protected $securityContext;
 
     public function __construct(SecurityContext $securityContext)
