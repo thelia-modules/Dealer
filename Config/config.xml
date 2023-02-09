@@ -38,7 +38,6 @@
             <tag name="hook.event_listener" event="brand.edit-js" type="back" method="onBrandEditJs"/>
             <tag name="hook.event_listener" event="product.tab-content" type="back" method="onProductModuleTab"/>
             <tag name="hook.event_listener" event="product.edit-js" type="back" method="onProductEditJs"/>
-            <argument type="service" id="router.Dealer"/>
         </hook>
     </hooks>
 
