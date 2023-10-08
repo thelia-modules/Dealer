@@ -37,13 +37,13 @@ class GeoDealerService
     {
         $model = new Dealer();
 
-        if (isset($data['id'])) {
-            $dealer = DealerQuery::create()->findOneById($data['id']);
-            if ($dealer) {
-                $model = $dealer;
-            }
-        } else {
+        if (!isset($data['id'])) {
             return null;
+        }
+        
+        $dealer = DealerQuery::create()->findOneById($data['id']);
+        if ($dealer) {
+            $model = $dealer;
         }
 
         if (isset($data['latitude'])) {
@@ -53,7 +53,6 @@ class GeoDealerService
         if (isset($data['longitude'])) {
             $model->setLongitude($data['longitude']);
         }
-
 
         return $model;
     }
