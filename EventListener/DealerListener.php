@@ -76,21 +76,25 @@ class DealerListener implements EventSubscriberInterface
      */
     public function generateCoordinate(DealerEvent $event)
     {
-        if ($url = $this->generateGoogleRequest($event)) {
-            try {
-                $response = file_get_contents($url);
-                if ($response) {
-                    $jsonEncoder = new JsonEncoder();
-                    $data = $jsonEncoder->decode($response, JsonEncoder::FORMAT);
-                    if(isset($data["status"]) && strcmp($data["status"],"OK") == 0){
-                        $loc = $data["results"][0]["geometry"]["location"];
-                        $event->getDealer()->setLatitude($loc["lat"]);
-                        $event->getDealer()->setLongitude($loc["lng"]);
-                    }
-                }
-            } catch (\ErrorException $ex) {
-                Tlog::getInstance()->error("DEALER GOOGLE MAP : " . $ex->getMessage());
+        $url = $this->generateGoogleRequest($event)
+        if (!$url) {
+            return;
+        }
+        try {
+            $response = file_get_contents($url);
+            if (!$response) {
+                return;
             }
+            $jsonEncoder = new JsonEncoder();
+            $data = $jsonEncoder->decode($response, JsonEncoder::FORMAT);
+            if(!isset($data["status"]) || strcmp($data["status"],"OK") != 0){
+                return;
+            }
+            $loc = $data["results"][0]["geometry"]["location"];
+            $event->getDealer()->setLatitude($loc["lat"]);
+            $event->getDealer()->setLongitude($loc["lng"]);
+        } catch (\ErrorException $ex) {
+            Tlog::getInstance()->error("DEALER GOOGLE MAP : " . $ex->getMessage());
         }
     }
 
