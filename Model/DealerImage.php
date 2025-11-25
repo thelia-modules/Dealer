@@ -6,11 +6,12 @@ use Dealer\Dealer;
 use Dealer\Form\DealerImageBoxForm;
 use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Model\Base\DealerImage as BaseDealerImage;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\Router;
-use Thelia\Files\FileModelInterface;
-use Thelia\Files\FileModelParentInterface;
+use Thelia\Core\File\FileModelInterface;
+use Thelia\Core\File\FileModelParentInterface;
 use Thelia\Model\Breadcrumb\CatalogBreadcrumbTrait;
 use Thelia\Model\ConfigQuery;
 
@@ -33,7 +34,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
      *
      * @return $this
      */
-    public function setParentId($parentId)
+    public function setParentId($parentId): static
     {
         $this->setDealerId($parentId);
         return $this;
@@ -44,7 +45,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
      *
      * @return int parent id
      */
-    public function getParentId()
+    public function getParentId(): int
     {
         return $this->getDealerId();
     }
@@ -52,7 +53,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
     /**
      * @return FileModelParentInterface the parent file model
      */
-    public function getParentFileModel()
+    public function getParentFileModel(): FileModelParentInterface
     {
         return new Dealer();
     }
@@ -69,12 +70,12 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
     /**
      * @return string the URL to redirect to after update from the back-office
      */
-    public function getRedirectionUrl()
+    public function getRedirectionUrl(): string
     {
         return '/admin/module/Dealer/dealer/edit?dealer_id='.$this->getDealerId();
     }
 
-    public function getUploadDir()
+    public function getUploadDir(): string
     {
         $uploadDir = ConfigQuery::read('images_library_path');
         if ($uploadDir === null) {
@@ -90,7 +91,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
      *
      * @return DealerImageQuery
      */
-    public function getQueryInstance()
+    public function getQueryInstance(): ModelCriteria
     {
         return DealerImageQuery::create();
     }
@@ -106,7 +107,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
         return $this;
     }
 
-    public function preDelete(ConnectionInterface $con = null)
+    public function preDelete(ConnectionInterface $con = null): bool
     {
         $fs = new Filesystem();
         try {
@@ -121,7 +122,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
      * Get the ID of the form used to change this object information
      * @return int type
      */
-    public function getUpdateFormId()
+    public function getUpdateFormId(): string
     {
         return 'dealer.image.modification';
     }
@@ -165,5 +166,10 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
             $fileModel->setDealerId($parentId);
         }
         return $fileModel;
+    }
+
+    public function getFile(): string
+    {
+        return $this->file;
     }
 }

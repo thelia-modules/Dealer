@@ -13,11 +13,11 @@
 
 namespace Dealer\Loop;
 
-use Dealer\Model\DealerContact;
-use Dealer\Model\DealerContactQuery;
+use Dealer\Dealer;
+use Dealer\Model\DealerShedules;
+use Dealer\Model\DealerShedulesQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Propel\Runtime\ActiveQuery\ModelCriteria;
-use Thelia\Core\Template\Element\BaseI18nLoop;
+use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Element\PropelSearchLoopInterface;
@@ -25,10 +25,10 @@ use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 
 /**
- * Class ContactLoop
+ * Class ShedulesLoop
  * @package Dealer\Loop
  */
-class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
+class DealerSchedules extends BaseLoop implements PropelSearchLoopInterface
 {
 
     /**
@@ -38,18 +38,20 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      */
     public function parseResults(LoopResult $loopResult): LoopResult
     {
-        /** @var DealerContact $contact */
-        foreach ($loopResult->getResultDataCollection() as $contact) {
-            $loopResultRow = new LoopResultRow($contact);
+        /** @var DealerShedules $schedules */
+        foreach ($loopResult->getResultDataCollection() as $schedules) {
+            $loopResultRow = new LoopResultRow($schedules);
 
             $loopResultRow
-                ->set('ID', $contact->getId())
-                ->set('DEALER_ID', $contact->getDealerId())
-                ->set('IS_DEFAULT', $contact->getIsDefault());
+                ->set('ID', $schedules->getId())
+                ->set('DEALER_ID', $schedules->getDealerId())
+                ->set('DAY', $schedules->getDay())
+                ->set('DAY_LABEL', $this->getDayLabel($schedules->getDay()))
+                ->set('BEGIN', $schedules->getBegin())
+                ->set('END', $schedules->getEnd())
+                ->set('PERIOD_BEGIN', $schedules->getPeriodBegin())
+                ->set('PERIOD_END', $schedules->getPeriodEnd());
 
-            if ($contact->hasVirtualColumn('i18n_LABEL')) {
-                $loopResultRow->set("LABEL", $contact->getVirtualColumn('i18n_LABEL'));
-            }
 
             $loopResult->addRow($loopResultRow);
         }
@@ -87,13 +89,19 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('dealer_id'),
-            Argument::createBooleanTypeArgument("default", null),
+            Argument::createBooleanTypeArgument('default_period'),
+            Argument::createBooleanTypeArgument('hide_past', false),
+            Argument::createBooleanTypeArgument('closed', false),
+            Argument::createIntListTypeArgument('day'),
             Argument::createEnumListTypeArgument('order', [
                 'id',
                 'id-reverse',
-                'label',
-                'label-reverse',
-                'default-first'
+                'day',
+                'day-reverse',
+                'begin',
+                'begin-reverse',
+                'period-begin',
+                'period-begin-reverse'
             ], 'id')
 
         );
@@ -102,34 +110,34 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     /**
      * this method returns a Propel ModelCriteria
      *
-     * @return ModelCriteria
+     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
      */
-    public function buildModelCriteria(): ModelCriteria
+    public function buildModelCriteria(): \Propel\Runtime\ActiveQuery\ModelCriteria
     {
-        $query = DealerContactQuery::create();
-
-        // manage translations
-        $this->configureI18nProcessing(
-            $query,
-            [
-                'LABEL',
-            ],
-            null,
-            'ID',
-            $this->getForceReturn()
-        );
-
-        if (null != $default = $this->getDefault()) {
-            $query->filterByIsDefault($default);
-        }
+        $query = DealerShedulesQuery::create();
 
         if ($id = $this->getId()) {
             $query->filterById($id);
         }
 
+        if ($day = $this->getDay()) {
+            $query->filterByDay($day);
+        }
+
         if ($dealer_id = $this->getDealerId()) {
             $query->filterByDealerId($dealer_id);
         }
+
+        if ($this->getDefaultPeriod()) {
+            $query->filterByPeriodNull();
+        } else {
+            $query->filterByPeriodNotNull();
+            if ($this->getHidePast()) {
+                $query->filterByPeriodEnd(new \DateTime(), Criteria::GREATER_THAN);
+            }
+        }
+
+        $query->filterByClosed($this->getClosed());
 
         foreach ($this->getOrder() as $order) {
             switch ($order) {
@@ -139,14 +147,23 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
                 case 'id-reverse':
                     $query->orderById(Criteria::DESC);
                     break;
-                case 'label':
-                    $query->orderByLabel();
+                case 'day':
+                    $query->orderByDay();
                     break;
-                case 'label-reverse':
-                    $query->orderByLabel(Criteria::DESC);
+                case 'day-reverse':
+                    $query->orderByDay(Criteria::DESC);
                     break;
-                case 'default-first':
-                    $query->orderByIsDefault(Criteria::DESC);
+                case 'begin':
+                    $query->orderByBegin();
+                    break;
+                case 'begin-reverse':
+                    $query->orderByBegin(Criteria::DESC);
+                    break;
+                case 'period-begin':
+                    $query->orderByPeriodBegin();
+                    break;
+                case 'period-begin-reverse':
+                    $query->orderByPeriodBegin(Criteria::DESC);
                     break;
                 default:
                     break;
@@ -154,5 +171,18 @@ class ContactLoop extends BaseI18nLoop implements PropelSearchLoopInterface
         }
 
         return $query;
+    }
+
+    protected function getDayLabel($int = 0)
+    {
+        return [
+            $this->translator->trans("Monday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Tuesday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Wednesday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Thursday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Friday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Saturday", [], Dealer::MESSAGE_DOMAIN),
+            $this->translator->trans("Sunday", [], Dealer::MESSAGE_DOMAIN)
+        ][$int];
     }
 }

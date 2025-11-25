@@ -19,7 +19,7 @@ use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 
-class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
+class DealerExtraSchedules extends BaseLoop implements ArraySearchLoopInterface
 {
 
     public function parseResults(LoopResult $loopResult): LoopResult
@@ -28,14 +28,17 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
             $loopResultRow = new LoopResultRow($schedules);
 
             $loopResultRow
-                ->set('ID', $schedules['ID'])
                 ->set('DEALER_ID', $schedules['DEALER_ID'])
                 ->set('DAY', $schedules['DAY'])
                 ->set('DAY_LABEL', $schedules['DAY_LABEL'])
+                ->set('FORMATTED_HOURS', $schedules['FORMATTED_HOURS'])
+                ->set('PERIOD_BEGIN', $schedules['PERIOD_BEGIN'])
+                ->set('PERIOD_END', $schedules['PERIOD_END'])
                 ->set('BEGIN', $schedules['BEGIN'])
                 ->set('END', $schedules['END'])
-                ->set('FORMATTED_HOURS', $schedules['FORMATTED_HOURS'])
+                ->set('ID', $schedules['ID'])
             ;
+
 
             $loopResult->addRow($loopResultRow);
         }
@@ -49,10 +52,12 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
 
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('dealer_id'),
-            Argument::createIntListTypeArgument('day'),
+            Argument::createBooleanTypeArgument('hide_past', false),
+            Argument::createBooleanTypeArgument('closed', false),
             Argument::createAnyTypeArgument('hour_separator', ' - '),
             Argument::createAnyTypeArgument('half_day_separator', ' / '),
             Argument::createBooleanTypeArgument('merge_day', true),
+            Argument::createIntListTypeArgument('day'),
             Argument::createEnumListTypeArgument('order', [
                 'id',
                 'id-reverse',
@@ -60,7 +65,9 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
                 'day-reverse',
                 'begin',
                 'begin-reverse',
-            ], 'day')
+                'period-begin',
+                'period-begin-reverse'
+            ], 'id')
 
         );
     }
@@ -71,9 +78,10 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
 
         $query = DealerShedulesQuery::create();
 
-        // this is the sql feature for regular schedule
-        $query->filterByPeriodNull();
-        $query->filterByClosed(false);
+        $query->filterByPeriodNotNull();
+        if ($this->getHidePast()) {
+            $query->filterByPeriodEnd((new \DateTime())->add(\DateInterval::createFromDateString('yesterday')), Criteria::GREATER_THAN);
+        }
 
         if ($id = $this->getId()) {
             $query->filterById($id);
@@ -86,6 +94,8 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
         if ($dealer_id = $this->getDealerId()) {
             $query->filterByDealerId($dealer_id);
         }
+
+        $query->filterByClosed($this->getClosed());
 
         foreach ($this->getOrder() as $order) {
             switch ($order) {
@@ -107,11 +117,17 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
                 case 'begin-reverse':
                     $query->orderByBegin(Criteria::DESC);
                     break;
+                case 'period-begin':
+                    $query->orderByPeriodBegin();
+                    break;
+                case 'period-begin-reverse':
+                    $query->orderByPeriodBegin(Criteria::DESC);
+                    break;
                 default:
                     break;
             }
         }
-
+        
         if ($this->getMergeDay()) {
             $query->orderByBegin();
         }
@@ -125,11 +141,15 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
 
                 if (isset($dealerSchedules[$i])) {
 
+                    $formattedHours = null;
+
                     // if the next result has the same dates, same day, then concat the morning and afternoon hours
                     if (
                         ($dealerSchedules[$i+1] !== null)
                         && ($dealerSchedules[$i]->getDay() == $dealerSchedules[$i+1]->getDay())
                         && ($dealerSchedules[$i]->getDealerId() == $dealerSchedules[$i+1]->getDealerId())
+                        && ($dealerSchedules[$i]->getPeriodBegin() == $dealerSchedules[$i+1]->getPeriodBegin())
+                        && ($dealerSchedules[$i]->getPeriodEnd() == $dealerSchedules[$i+1]->getPeriodEnd())
                     ) {
                         $end = $dealerSchedules[$i+1]->getEnd();
                         if ($dealerSchedules[$i]->getEnd()->format('H\hi') === $dealerSchedules[$i+1]->getBegin()->format('H\hi')) {
@@ -140,17 +160,21 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
                         unset($dealerSchedules[$i+1]);
                     } else {
                         $end = $dealerSchedules[$i]->getEnd();
-                        $formattedHours = date_format($dealerSchedules[$i]->getBegin(), 'H\hi') . $this->getHourSeparator() . date_format($dealerSchedules[$i]->getEnd(), 'H\hi');
+                        if ($dealerSchedules[$i]->getBegin() && $dealerSchedules[$i]->getEnd()) {
+                            $formattedHours = date_format($dealerSchedules[$i]->getBegin(), 'H\hi') . $this->getHourSeparator() . date_format($dealerSchedules[$i]->getEnd(), 'H\hi');
+                        }
                     }
 
                     $results[] = array(
                         'ID' => $dealerSchedules[$i]->getId(),
                         'DEALER_ID' => $dealerSchedules[$i]->getDealerId(),
                         'DAY' => $dealerSchedules[$i]->getDay(),
-                        'DAY_LABEL' => $this->getDayLabel($dealerSchedules[$i]->getDay()),
+                        'DAY_LABEL' => ($dealerSchedules[$i]->getDay() === null) ? null : $this->getDayLabel($dealerSchedules[$i]->getDay()),
+                        'PERIOD_BEGIN' => $dealerSchedules[$i]->getPeriodBegin(),
+                        'PERIOD_END' => $dealerSchedules[$i]->getPeriodEnd(),
                         'BEGIN' => $dealerSchedules[$i]->getBegin(),
                         'END' => $end,
-                        'FORMATTED_HOURS' => $formattedHours,
+                        'FORMATTED_HOURS' => $formattedHours
                     );
                 }
             }
@@ -160,9 +184,11 @@ class RegularSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
                     'DEALER_ID' => $dealerSchedule->getDealerId(),
                     'ID' => $dealerSchedule->getId(),
                     'DAY' => $dealerSchedule->getDay(),
-                    'DAY_LABEL' => $this->getDayLabel($dealerSchedule->getDay()),
+                    'DAY_LABEL' => ($dealerSchedule->getDay() === null) ? null : $this->getDayLabel($dealerSchedule->getDay()),
                     'BEGIN' => $dealerSchedule->getBegin(),
                     'END' => $dealerSchedule->getEnd(),
+                    'PERIOD_BEGIN' => $dealerSchedule->getPeriodBegin(),
+                    'PERIOD_END' => $dealerSchedule->getPeriodEnd(),
                     'FORMATTED_HOURS' => date_format($dealerSchedule->getBegin(), 'H\hi') . $this->getHourSeparator() . date_format($dealerSchedule->getEnd(), 'H\hi')
                 );
             }

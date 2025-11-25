@@ -26,7 +26,7 @@ use Thelia\Model\Map\BrandTableMap;
  * Class BrandLoop
  * @package Dealer\Loop
  */
-class BrandLoop extends Brand
+class DealerBrand extends Brand
 {
     /**
      * @inheritDoc

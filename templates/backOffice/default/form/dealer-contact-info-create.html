@@ -18,7 +18,7 @@
         <select class="form-control" name="{$name}" id="{$label_attr.for}">
             {foreach $choices as $choice}
                 <option value="{$choice->value}"
-                        {if $COUNTRY_ID == $choice->value}selected{/if} >{$choice->label}</option>
+                        {if $COUNTRY_ID|default:null == $choice->value}selected{/if} >{$choice->label}</option>
             {/foreach}
         </select>
     </div>

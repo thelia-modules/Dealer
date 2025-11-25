@@ -2,7 +2,7 @@
 
 namespace Dealer\Loop;
 
-use Dealer\Model\DealerMetaSeo;
+use Dealer\Model\DealerMetaSeo as DealerMetaSeoModel;
 use Dealer\Model\DealerMetaSeoQuery;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
@@ -16,11 +16,11 @@ use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
  * Class DealerLoop
  * @package Dealer\Loop
  */
-class DealerMetaSeoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
+class DealerMetaSeo extends BaseI18nLoop implements PropelSearchLoopInterface
 {
     public function parseResults(LoopResult $loopResult): LoopResult
     {
-        /** @var DealerMetaSeo $dealerSeo */
+        /** @var DealerMetaSeoModel $dealerSeo */
         foreach ($loopResult->getResultDataCollection() as $dealerSeo) {
             $loopResultRow = new LoopResultRow($dealerSeo);
 

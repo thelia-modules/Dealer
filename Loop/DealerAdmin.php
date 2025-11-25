@@ -26,7 +26,7 @@ use Thelia\Model\Map\AdminTableMap;
  * Class AdminLoop
  * @package Dealer\Loop
  */
-class AdminLoop extends Admin
+class DealerAdmin extends Admin
 {
     /**
      * @inheritDoc

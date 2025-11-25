@@ -15,7 +15,7 @@ use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Image;
 use Thelia\Log\Tlog;
 
-class DealerCustomImagesLoop extends Image
+class CustomImages extends Image
 {
     const ARG_IMAGE_TYPE = "image_type";
 

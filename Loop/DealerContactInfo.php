@@ -14,7 +14,7 @@
 namespace Dealer\Loop;
 
 use Dealer\Model\Base\DealerContactInfoQuery;
-use Dealer\Model\DealerContactInfo;
+use Dealer\Model\DealerContactInfo as DealerContactInfoModel;
 use Dealer\Model\Map\DealerContactInfoTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
@@ -29,7 +29,7 @@ use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
  * Class ContactInfoLoop
  * @package Dealer\Loop
  */
-class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
+class DealerContactInfo extends BaseI18nLoop implements PropelSearchLoopInterface
 {
 
     /**
@@ -39,7 +39,7 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      */
     public function parseResults(LoopResult $loopResult): LoopResult
     {
-        /** @var DealerContactInfo $contact */
+        /** @var DealerContactInfoModel $contact */
         foreach ($loopResult->getResultDataCollection() as $contact) {
             $loopResultRow = new LoopResultRow($contact);
 

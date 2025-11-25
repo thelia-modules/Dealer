@@ -13,7 +13,7 @@
 
 namespace Dealer\Loop;
 
-use Dealer\Model\Dealer;
+use Dealer\Model\Dealer as DealerModel;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\Map\DealerBrandTableMap;
 use Dealer\Model\Map\DealerContentTableMap;
@@ -34,7 +34,7 @@ use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
  * Class DealerLoop
  * @package Dealer\Loop
  */
-class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
+class Dealer extends BaseI18nLoop implements PropelSearchLoopInterface
 {
 
     /**
@@ -44,7 +44,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      */
     public function parseResults(LoopResult $loopResult): LoopResult
     {
-        /** @var Dealer $dealer */
+        /** @var DealerModel $dealer */
         foreach ($loopResult->getResultDataCollection() as $dealer) {
             $loopResultRow = new LoopResultRow($dealer);
 
@@ -240,8 +240,8 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     }
 
     /**
-     * @param Dealer $dealer
-     * @return Dealer
+     * @param DealerModel $dealer
+     * @return DealerModel
      */
     protected function getPrevious($dealer)
     {
@@ -268,8 +268,8 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     }
 
     /**
-     * @param Dealer $dealer
-     * @return Dealer
+     * @param DealerModel $dealer
+     * @return DealerModel
      */
     protected function getNext($dealer)
     {

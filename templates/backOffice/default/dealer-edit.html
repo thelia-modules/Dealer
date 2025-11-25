@@ -27,7 +27,8 @@
                 <div class="pull-right">
                     {loop type="dealer" name="dealer-page" backend_context="yes" id=$dealer_id with_prev_next_info=true limit=1}
                         {assign "dealer_title" $TITLE}
-                        {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
+
+                    {loop name="auth-create" type="auth" role="ADMIN" resource="admin.dealer" access="CREATE" module="Dealer"}
                             {if $HAS_PREVIOUS}
                                 <a href="{url path="/admin/module/Dealer/dealer/edit" dealer_id=$PREVIOUS}"
                                    class="btn btn-default" title="{intl l='Edit previous dealer' d="dealer.bo.default"}"><span class="glyphicon glyphicon-arrow-left"></span></a>

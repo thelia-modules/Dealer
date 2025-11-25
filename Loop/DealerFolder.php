@@ -26,7 +26,7 @@ use Thelia\Model\Map\FolderTableMap;
  * Class FolderLoop
  * @package Dealer\Loop
  */
-class FolderLoop extends Folder
+class DealerFolder extends Folder
 {
     /**
      * @inheritDoc
