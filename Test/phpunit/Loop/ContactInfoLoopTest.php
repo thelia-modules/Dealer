@@ -15,9 +15,9 @@ namespace Dealer\Test\Loop;
 
 
 use Dealer\Loop\ContactInfoLoop;
-use Dealer\Model\DealerContactInfo;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerContact;
+use Dealer\Model\DealerContactInfo;
 use Dealer\Service\ContactInfoService;
 use Dealer\Service\ContactService;
 use Dealer\Service\DealerService;

@@ -5,10 +5,8 @@ namespace Dealer\Service;
 
 
 use Dealer\Model\Dealer;
-use Dealer\Model\DealerQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Propel;
-use Propel\Runtime\ServiceContainer\ServiceContainerInterface;
 use Thelia\Install\Database;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\Lang;

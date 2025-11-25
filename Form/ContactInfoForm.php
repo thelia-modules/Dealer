@@ -52,7 +52,7 @@ class ContactInfoForm extends BaseForm
     {
         $this->formBuilder
             ->add("type", ChoiceType::class, array(
-                "choices" => array_flip(DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE)),
+                "choices" => array_flip(DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::COL_CONTACT_TYPE)),
                 "label" => $this->translator->trans("Contact Type", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-type"],
                 "required" => true,
@@ -82,7 +82,7 @@ class ContactInfoForm extends BaseForm
     }
 
 
-    public static function getName()
+    public static function getName(): string
     {
         return "contact_info__create";
     }

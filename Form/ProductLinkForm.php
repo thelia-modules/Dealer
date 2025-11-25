@@ -48,7 +48,7 @@ class ProductLinkForm extends BaseForm
             ));
     }
 
-    public static function getName()
+    public static function getName(): string
     {
         return "dealer_product_link_create";
     }

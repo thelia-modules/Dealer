@@ -22,7 +22,7 @@ use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 class ExtraSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
 {
 
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         foreach ($loopResult->getResultDataCollection() as $schedules) {
             $loopResultRow = new LoopResultRow($schedules);
@@ -46,7 +46,7 @@ class ExtraSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
         return $loopResult;
     }
 
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
 
@@ -72,7 +72,7 @@ class ExtraSchedulesLoop extends BaseLoop implements ArraySearchLoopInterface
         );
     }
 
-    public function buildArray()
+    public function buildArray(): array
     {
         $results = array();
 

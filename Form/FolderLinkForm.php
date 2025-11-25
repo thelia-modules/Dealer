@@ -48,7 +48,7 @@ class FolderLinkForm extends BaseForm
             ));
     }
 
-    public static function getName()
+    public static function getName(): string
     {
         return "dealer_folder_link_create";
     }

@@ -18,10 +18,10 @@ use Dealer\Dealer as DealerModule;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\Propel;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
@@ -29,7 +29,6 @@ use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/admin/module/Dealer/dealer", name="dealer")

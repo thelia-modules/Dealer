@@ -4,8 +4,8 @@ namespace Dealer\Controller;
 
 use Dealer\Model\DealerMetaSeoQuery;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Thelia\Controller\Front\BaseFrontController;
 use Symfony\Component\Routing\Annotation\Route;
+use Thelia\Controller\Front\BaseFrontController;
 
 /**
  * @Route("/magasin/{slug}", name="dealer_front")

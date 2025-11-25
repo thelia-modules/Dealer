@@ -8,6 +8,7 @@ use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Model\DealerImage;
 use Dealer\Model\DealerImageQuery;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Thelia\Controller\Admin\FileController;
 use Thelia\Core\Event\File\FileCreateOrUpdateEvent;
 use Thelia\Core\Event\File\FileDeleteEvent;
@@ -21,7 +22,6 @@ use Thelia\Log\Tlog;
 use Thelia\Model\Lang;
 use Thelia\Model\LangQuery;
 use Thelia\Tools\URL;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/admin/module/dealer/image", name="dealer_image")

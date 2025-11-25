@@ -17,8 +17,8 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Thelia\Controller\Front\BaseFrontController;
 use Symfony\Component\Routing\Annotation\Route;
+use Thelia\Controller\Front\BaseFrontController;
 
 /**
  * @Route("/api/3/dealer", name="dealer_api")

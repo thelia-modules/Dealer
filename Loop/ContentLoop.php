@@ -16,6 +16,7 @@ namespace Dealer\Loop;
 use Dealer\Model\Map\DealerContentTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Content;
@@ -30,7 +31,7 @@ class ContentLoop extends Content
     /**
      * @inheritDoc
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         /** @var ArgumentCollection $arguments */
         $arguments = parent::getArgDefinitions();
@@ -42,7 +43,7 @@ class ContentLoop extends Content
         return $arguments;
     }
 
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $query = parent::buildModelCriteria();
 
@@ -51,10 +52,10 @@ class ContentLoop extends Content
                 $id = implode(",", $id);
             }
 
-            $dealerJoin = new Join(ContentTableMap::ID, DealerContentTableMap::CONTENT_ID, Criteria::LEFT_JOIN);
+            $dealerJoin = new Join(ContentTableMap::COL_ID, DealerContentTableMap::COL_CONTENT_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
-                ->where(DealerContentTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
+                ->where(DealerContentTableMap::COL_DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
         }
 
         return $query;

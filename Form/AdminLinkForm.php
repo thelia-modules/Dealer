@@ -48,7 +48,7 @@ class AdminLinkForm extends BaseForm
             ));
     }
 
-    public static function getName()
+    public static function getName(): string
     {
         return "dealer_admin_link_create";
     }

@@ -21,12 +21,12 @@ class DealerShedulesQuery extends BaseDealerShedulesQuery
 {
     public function filterByPeriodNotNull()
     {
-        return $this->where(DealerShedulesTableMap::PERIOD_BEGIN . " " . Criteria::ISNOTNULL . " " . Criteria::LOGICAL_AND . " " . DealerShedulesTableMap::PERIOD_END . " " . Criteria::ISNOTNULL);
+        return $this->where(DealerShedulesTableMap::COL_PERIOD_BEGIN . " " . Criteria::ISNOTNULL . " " . Criteria::LOGICAL_AND . " " . DealerShedulesTableMap::COL_PERIOD_END . " " . Criteria::ISNOTNULL);
 
     }
     public function filterByPeriodNull()
     {
-        return $this->where(DealerShedulesTableMap::PERIOD_BEGIN . " " . Criteria::ISNULL . " " . Criteria::LOGICAL_AND . " " . DealerShedulesTableMap::PERIOD_END . " " . Criteria::ISNULL);
+        return $this->where(DealerShedulesTableMap::COL_PERIOD_BEGIN . " " . Criteria::ISNULL . " " . Criteria::LOGICAL_AND . " " . DealerShedulesTableMap::COL_PERIOD_END . " " . Criteria::ISNULL);
 
     }
 } // DealerShedulesQuery

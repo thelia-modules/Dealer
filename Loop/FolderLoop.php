@@ -16,6 +16,7 @@ namespace Dealer\Loop;
 use Dealer\Model\Map\DealerFolderTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Folder;
@@ -30,7 +31,7 @@ class FolderLoop extends Folder
     /**
      * @inheritDoc
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         /** @var ArgumentCollection $arguments */
         $arguments = parent::getArgDefinitions();
@@ -42,7 +43,7 @@ class FolderLoop extends Folder
         return $arguments;
     }
 
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $query = parent::buildModelCriteria();
 
@@ -51,10 +52,10 @@ class FolderLoop extends Folder
                 $id = implode(",", $id);
             }
 
-            $dealerJoin = new Join(FolderTableMap::ID, DealerFolderTableMap::FOLDER_ID, Criteria::LEFT_JOIN);
+            $dealerJoin = new Join(FolderTableMap::COL_ID, DealerFolderTableMap::COL_FOLDER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
-                ->where(DealerFolderTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
+                ->where(DealerFolderTableMap::COL_DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
         }
 
         return $query;

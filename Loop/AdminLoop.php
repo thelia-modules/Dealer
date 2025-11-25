@@ -16,6 +16,7 @@ namespace Dealer\Loop;
 use Dealer\Model\Map\DealerAdminTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Admin;
@@ -30,7 +31,7 @@ class AdminLoop extends Admin
     /**
      * @inheritDoc
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         /** @var ArgumentCollection $arguments */
         $arguments = parent::getArgDefinitions();
@@ -42,7 +43,7 @@ class AdminLoop extends Admin
         return $arguments;
     }
 
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $query = parent::buildModelCriteria();
 
@@ -51,10 +52,10 @@ class AdminLoop extends Admin
                 $id = implode(",", $id);
             }
 
-            $dealerJoin = new Join(AdminTableMap::ID, DealerAdminTableMap::ADMIN_ID, Criteria::LEFT_JOIN);
+            $dealerJoin = new Join(AdminTableMap::COL_ID, DealerAdminTableMap::COL_ADMIN_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
-                ->where(DealerAdminTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
+                ->where(DealerAdminTableMap::COL_DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
         }
 
         return $query;

@@ -50,7 +50,7 @@ class DealerMetaSEOForm extends BaseForm
                 "label_attr" => array("for" => "meta_json"),
             ));
     }
-    public static function getName()
+    public static function getName(): string
     {
         return "dealer_meta_seo";
     }

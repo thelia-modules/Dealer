@@ -17,8 +17,8 @@ use Dealer\Dealer;
 use Dealer\Model\DealerQuery;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Thelia\Form\BaseForm;
-use Thelia\Model\ContentQuery;
 use Thelia\Model\Content;
+use Thelia\Model\ContentQuery;
 
 /**
  * Class ContentLinkForm
@@ -48,7 +48,7 @@ class ContentLinkForm extends BaseForm
             ));
     }
 
-    public static function getName()
+    public static function getName(): string
     {
         return "dealer_content_link_create";
     }

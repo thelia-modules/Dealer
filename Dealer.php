@@ -13,7 +13,7 @@ use Thelia\Model\Resource;
 use Thelia\Model\ResourceQuery;
 use Thelia\Module\BaseModule;
 use Propel\Runtime\Connection\ConnectionInterface;
-use Thelia\Install\Database;
+use Thelia\Core\Install\Database;
 
 /**
  * Class Dealer
@@ -40,7 +40,7 @@ class Dealer extends BaseModule
         if (!$this->getConfigValue('is_initialized', false)) {
             $database = new Database($con);
 
-            $database->insertSql(null, array(__DIR__ . '/Config/thelia.sql'));
+            $database->insertSql(null, array(__DIR__ . '/Config/TheliaMain.sql'));
 
             $this->setConfigValue('is_initialized', true);
         }
@@ -75,13 +75,16 @@ class Dealer extends BaseModule
         }
     }
 
-    public function getHooks()
+    public function getHooks(): array
     {
         return [
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.extra.content.edit",
-                "title" => "Dealer Extra Content",
+                "title" => [
+                    "en_US" => "Dealer Extra Content",
+                    "fr_FR" => "Dealer Extra Content",
+                ],
                 "description" => [
                     "en_US" => "Allow you to insert element in modules tab on Dealer edit page",
                     "fr_FR" => "Permet l'ajout de contenu sur la partie module de l'edition",
@@ -91,7 +94,10 @@ class Dealer extends BaseModule
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.edit.js",
-                "title" => "Dealer Edit Extra Js",
+                "title" => [
+                    "en_US" => "Dealer Extra Js",
+                    "fr_FR" => "Dealer Extra Js",
+                ],
                 "description" => [
                     "en_US" => "Allow you to insert js on Dealer edit page",
                     "fr_FR" => "Permet l'ajout de js sur l'edition",
@@ -101,7 +107,10 @@ class Dealer extends BaseModule
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.js",
-                "title" => "Dealer Extra Js",
+                "title" => [
+                    "en_US" => "Dealer Extra Js",
+                    "fr_FR" => "Dealer Extra Js",
+                ],
                 "description" => [
                     "en_US" => "Allow you to insert js on Dealer list",
                     "fr_FR" => "Permet l'ajout de js sur la liste",
@@ -111,7 +120,10 @@ class Dealer extends BaseModule
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.additional",
-                "title" => "Dealer Extra Tab",
+                "title" => [
+                    "en_US" => "Dealer Extra Tab",
+                    "fr_FR" => "Dealer Extra Tab",
+                ],
                 "description" => [
                     "en_US" => "Allow you to insert a tab on Dealer edit page",
                     "fr_FR" => "Permet l'ajout d'une page sur l'edition d'un point de vente",
@@ -122,7 +134,10 @@ class Dealer extends BaseModule
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.edit.nav.bar",
-                "title" => "Dealer Edition NavBar Link",
+                "title" => [
+                    "en_US" => "Dealer Edition NavBar Link",
+                    "fr_FR" => "Dealer Edition NavBar Link",
+                ],
                 "description" => [
                     "en_US" => "Allow you to insert link between arrow previous and next on edtion view",
                     "fr_FR" => "Permet l'ajout d'un lien sur la page d'édition entre les liens suivant et précedent",
@@ -132,7 +147,10 @@ class Dealer extends BaseModule
             array(
                 "type" => TemplateDefinition::BACK_OFFICE,
                 "code" => "dealer.associated.tabcontent",
-                "title" => "Dealer Associated Nav Tab",
+                "title" => [
+                    "en_US" => "Dealer Associated Nav Tab",
+                    "fr_FR" => "Dealer Associated Nav Tab",
+                ],
                 "description" => [
                     "en_US" => "Allow you to insert association content",
                     "fr_FR" => "Permet l'ajout de contenu dans la table d'association",

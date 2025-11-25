@@ -16,6 +16,7 @@ namespace Dealer\Loop;
 use Dealer\Model\Map\DealerBrandTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Brand;
@@ -30,7 +31,7 @@ class BrandLoop extends Brand
     /**
      * @inheritDoc
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         /** @var ArgumentCollection $arguments */
         $arguments = parent::getArgDefinitions();
@@ -42,7 +43,7 @@ class BrandLoop extends Brand
         return $arguments;
     }
 
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $query = parent::buildModelCriteria();
 
@@ -51,10 +52,10 @@ class BrandLoop extends Brand
                 $id = implode(",", $id);
             }
 
-            $dealerJoin = new Join(BrandTableMap::ID, DealerBrandTableMap::BRAND_ID, Criteria::LEFT_JOIN);
+            $dealerJoin = new Join(BrandTableMap::COL_ID, DealerBrandTableMap::COL_BRAND_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
-                ->where(DealerBrandTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
+                ->where(DealerBrandTableMap::COL_DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
         }
 
         return $query;

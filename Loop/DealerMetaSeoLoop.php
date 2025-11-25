@@ -4,7 +4,7 @@ namespace Dealer\Loop;
 
 use Dealer\Model\DealerMetaSeo;
 use Dealer\Model\DealerMetaSeoQuery;
-use Dealer\Model\DealerQuery;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
@@ -18,7 +18,7 @@ use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
  */
 class DealerMetaSeoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
 {
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         /** @var DealerMetaSeo $dealerSeo */
         foreach ($loopResult->getResultDataCollection() as $dealerSeo) {
@@ -41,7 +41,7 @@ class DealerMetaSeoLoop extends BaseI18nLoop implements PropelSearchLoopInterfac
     /**
      * @inheritdoc
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id', null)
@@ -51,7 +51,7 @@ class DealerMetaSeoLoop extends BaseI18nLoop implements PropelSearchLoopInterfac
     /**
      * @inheritdoc
      */
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $query = DealerMetaSeoQuery::create();
 

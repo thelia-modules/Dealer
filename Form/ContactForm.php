@@ -72,7 +72,7 @@ class ContactForm extends BaseForm
         ;
     }
 
-    public static function getName()
+    public static function getName(): string
     {
         return "contact_create";
     }

@@ -14,9 +14,7 @@
 namespace Dealer\Controller\Base;
 
 use Dealer\Dealer;
-use Dealer\Form\DealerForm;
 use Dealer\Model\DealerQuery;
-use Propel\Generator\Model\Database;
 use Propel\Runtime\Propel;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,7 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
-use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Security\SecurityContext;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Thelia;
@@ -39,7 +36,7 @@ use Thelia\Tools\URL;
  */
 abstract class BaseController extends BaseAdminController
 {
-    protected $useFallbackTemplate = true;
+    protected bool $useFallbackTemplate = true;
     /**
      * Name of entity associated with controller
      */

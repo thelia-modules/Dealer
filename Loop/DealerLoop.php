@@ -22,6 +22,7 @@ use Dealer\Model\Map\DealerProductTableMap;
 use Dealer\Model\Map\DealerTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
@@ -41,7 +42,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      *
      * @return LoopResult
      */
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         /** @var Dealer $dealer */
         foreach ($loopResult->getResultDataCollection() as $dealer) {
@@ -101,7 +102,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     /**
      * @inheritdoc
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id'),
@@ -127,7 +128,7 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     /**
      * @inheritdoc
      */
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $query = DealerQuery::create();
 
@@ -166,10 +167,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             if (is_array($content)) {
                 $content = implode(",", $content);
             }
-            $contentJoin = new Join(DealerTableMap::ID, DealerContentTableMap::DEALER_ID, Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::COL_ID, DealerContentTableMap::COL_DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
-                ->where(DealerContentTableMap::CONTENT_ID." ".Criteria::IN." (".$content.")");
+                ->where(DealerContentTableMap::COL_CONTENT_ID." ".Criteria::IN." (".$content.")");
             ;
         }
 
@@ -177,10 +178,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             if (is_array($folder)) {
                 $folder = implode(",", $folder);
             }
-            $contentJoin = new Join(DealerTableMap::ID, DealerFolderTableMap::DEALER_ID, Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::COL_ID, DealerFolderTableMap::COL_DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
-                ->where(DealerFolderTableMap::FOLDER_ID." ".Criteria::IN." (".$folder.")");
+                ->where(DealerFolderTableMap::COL_FOLDER_ID." ".Criteria::IN." (".$folder.")");
             ;
         }
 
@@ -188,10 +189,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             if (is_array($brand)) {
                 $brand = implode(",", $brand);
             }
-            $contentJoin = new Join(DealerTableMap::ID, DealerBrandTableMap::DEALER_ID, Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::COL_ID, DealerBrandTableMap::COL_DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
-                ->where(DealerBrandTableMap::BRAND_ID." ".Criteria::IN." (".$brand.")");
+                ->where(DealerBrandTableMap::COL_BRAND_ID." ".Criteria::IN." (".$brand.")");
             ;
         }
 
@@ -199,10 +200,10 @@ class DealerLoop extends BaseI18nLoop implements PropelSearchLoopInterface
             if (is_array($product)) {
                 $product = implode(",", $product);
             }
-            $contentJoin = new Join(DealerTableMap::ID, DealerProductTableMap::DEALER_ID, Criteria::LEFT_JOIN);
+            $contentJoin = new Join(DealerTableMap::COL_ID, DealerProductTableMap::COL_DEALER_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($contentJoin)
-                ->where(DealerProductTableMap::PRODUCT_ID." ".Criteria::IN." (".$product.")");
+                ->where(DealerProductTableMap::COL_PRODUCT_ID." ".Criteria::IN." (".$product.")");
             ;
         }
 

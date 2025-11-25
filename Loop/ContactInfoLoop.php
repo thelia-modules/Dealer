@@ -17,6 +17,7 @@ use Dealer\Model\Base\DealerContactInfoQuery;
 use Dealer\Model\DealerContactInfo;
 use Dealer\Model\Map\DealerContactInfoTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Element\BaseI18nLoop;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
@@ -36,7 +37,7 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      *
      * @return LoopResult
      */
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         /** @var DealerContactInfo $contact */
         foreach ($loopResult->getResultDataCollection() as $contact) {
@@ -82,12 +83,12 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
      *
      * @return \Thelia\Core\Template\Loop\Argument\ArgumentCollection
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createIntListTypeArgument('id'),
             Argument::createIntListTypeArgument('contact_id'),
-            Argument::createEnumListTypeArgument('contact_type', DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE), null),
+            Argument::createEnumListTypeArgument('contact_type', DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::COL_CONTACT_TYPE), null),
             Argument::createEnumListTypeArgument('order', [
                 'id',
                 'id-reverse',
@@ -101,9 +102,9 @@ class ContactInfoLoop extends BaseI18nLoop implements PropelSearchLoopInterface
     /**
      * this method returns a Propel ModelCriteria
      *
-     * @return \Propel\Runtime\ActiveQuery\ModelCriteria
+     * @return ModelCriteria
      */
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $query = DealerContactInfoQuery::create();
 

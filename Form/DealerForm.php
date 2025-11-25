@@ -142,7 +142,7 @@ class DealerForm extends BaseForm
         return $retour;
     }
 
-    public static function getName()
+    public static function getName(): string
     {
         return "dealer_create";
     }

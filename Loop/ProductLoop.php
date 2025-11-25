@@ -16,6 +16,7 @@ namespace Dealer\Loop;
 use Dealer\Model\Map\DealerProductTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\Join;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Product;
@@ -30,7 +31,7 @@ class ProductLoop extends Product
     /**
      * @inheritDoc
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         /** @var ArgumentCollection $arguments */
         $arguments = parent::getArgDefinitions();
@@ -42,7 +43,7 @@ class ProductLoop extends Product
         return $arguments;
     }
 
-    public function buildModelCriteria()
+    public function buildModelCriteria(): \Thelia\Model\ProductQuery|ModelCriteria
     {
         $query = parent::buildModelCriteria();
 
@@ -51,10 +52,10 @@ class ProductLoop extends Product
                 $id = implode(",", $id);
             }
 
-            $dealerJoin = new Join(ProductTableMap::ID, DealerProductTableMap::PRODUCT_ID, Criteria::LEFT_JOIN);
+            $dealerJoin = new Join(ProductTableMap::COL_ID, DealerProductTableMap::COL_PRODUCT_ID, Criteria::LEFT_JOIN);
             $query
                 ->addJoinObject($dealerJoin, "dealerJoin")
-                ->where(DealerProductTableMap::DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
+                ->where(DealerProductTableMap::COL_DEALER_ID . " " . Criteria::IN . " (" . $id . ")");
         }
 
         return $query;

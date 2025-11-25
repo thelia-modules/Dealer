@@ -13,8 +13,8 @@
 
 namespace Dealer\Service;
 
-use Dealer\Event\DealerProductLinkEvent;
 use Dealer\Event\DealerEvents;
+use Dealer\Event\DealerProductLinkEvent;
 use Dealer\Model\DealerProduct;
 use Dealer\Model\DealerProductQuery;
 use Dealer\Service\Base\AbstractBaseService;

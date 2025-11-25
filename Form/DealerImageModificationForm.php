@@ -13,7 +13,7 @@ use Thelia\Form\Image\ImageModification;
 
 class DealerImageModificationForm extends ImageModification
 {
-    public static function getName()
+    public static function getName(): string
     {
         return 'dealer_image_modification';
     }

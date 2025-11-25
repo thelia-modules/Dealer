@@ -59,7 +59,7 @@ class ContactUpdateForm extends ContactForm
         ;
     }
 
-    public static function getName()
+    public static function getName(): string
     {
         return "contact_update";
     }

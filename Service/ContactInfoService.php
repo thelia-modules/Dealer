@@ -111,7 +111,7 @@ class ContactInfoService extends AbstractBaseService implements BaseServiceInter
             $model->setValue($data['value']);
         }
         if (isset($data['type'])) {
-            $model->setContactType(DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::CONTACT_TYPE)[$data['type']]);
+            $model->setContactType(DealerContactInfoTableMap::getValueSet(DealerContactInfoTableMap::COL_CONTACT_TYPE)[$data['type']]);
         }
         if (isset($data['contact_id'])) {
             $model->setContactId($data['contact_id']);

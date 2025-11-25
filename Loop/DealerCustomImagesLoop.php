@@ -5,12 +5,13 @@ namespace Dealer\Loop;
 
 use Dealer\Model\DealerImage;
 use Dealer\Model\DealerImageQuery;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Thelia\Core\Event\Image\ImageEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Template\Element\LoopResult;
 use Thelia\Core\Template\Element\LoopResultRow;
-use Thelia\Core\Template\Element\PropelSearchLoopInterface;
 use Thelia\Core\Template\Loop\Argument\Argument;
+use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 use Thelia\Core\Template\Loop\Image;
 use Thelia\Log\Tlog;
 
@@ -21,12 +22,12 @@ class DealerCustomImagesLoop extends Image
     /**
      * @var array Possible standard image sources
      */
-    protected $possible_sources = array('product', 'category');
+    protected array $possible_sources = array('product', 'category');
 
     /**
-     * @return DealerImageQuery|\Propel\Runtime\ActiveQuery\ModelCriteria|\Thelia\Model\ProductDocumentQuery
+     * @return DealerImageQuery|ModelCriteria|\Thelia\Model\ProductDocumentQuery
      */
-    public function buildModelCriteria()
+    public function buildModelCriteria(): ModelCriteria
     {
         $this->objectType = null;
         if (!empty($this->getProduct())) {
@@ -49,7 +50,7 @@ class DealerCustomImagesLoop extends Image
         return $search;
     }
 
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         $args = parent::getArgDefinitions();
         $args->addArgument(Argument::createAlphaNumStringTypeArgument(self::ARG_IMAGE_TYPE));
@@ -60,7 +61,7 @@ class DealerCustomImagesLoop extends Image
      * @param LoopResult $loopResult
      * @return LoopResult
      */
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         // Create image processing event
         $event = new ImageEvent();
