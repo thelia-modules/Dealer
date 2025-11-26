@@ -7,7 +7,7 @@ use Propel\Runtime\Map\TableMap;
 
 class DealerShedules extends BaseDealerShedules
 {
-    protected $days = [
+    public const DAYS = [
         "Monday",
         "Tuesday",
         "Wednesday",
@@ -34,6 +34,6 @@ class DealerShedules extends BaseDealerShedules
 
     public function getDayFormated()
     {
-        return isset($this->days[$this->getDay()]) ? $this->days[$this->getDay()] : null;
+        return self::DAYS[$this->getDay()] ?? null;
     }
 }
