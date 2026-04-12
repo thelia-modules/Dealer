@@ -23,10 +23,9 @@ use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * @Route("/admin/module/Dealer/location", name="dealer_location")
  * Class GeoDealerController
  * @package Dealer\Controller
  */
@@ -40,6 +39,7 @@ class GeoDealerController extends BaseAdminController
      * @return \Thelia\Core\HttpFoundation\Response the response
      * @Route("/update", name="_update", methods="POST")
      */
+    #[Route('/admin/module/Dealer/location', name: 'dealer_location')]
     public function processUpdateAction(RequestStack $requestStack)
     {
         // Check current user authorization

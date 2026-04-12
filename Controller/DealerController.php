@@ -21,7 +21,7 @@ use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
@@ -31,7 +31,6 @@ use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
 
 /**
- * @Route("/admin/module/Dealer/dealer", name="dealer")
  * Class DealerController
  * @package Dealer\Controller
  */
@@ -40,6 +39,7 @@ class DealerController extends BaseController
     /**
      * Load an existing object from the database
      */
+    #[Route('/admin/module/Dealer/dealer', name: 'dealer')]
     protected function getExistingObject(Request $request)
     {
         return DealerQuery::create()->findPk($request->query->get("dealer_id"));
@@ -123,8 +123,8 @@ class DealerController extends BaseController
     }
 
     /**
-     * @Route("/toggle-online/{id}", name="_toggle_visible", methods="POST")
      */
+    #[Route('/toggle-online/{id}', name: '_toggle_visible', methods: ['POST'])]
     public function toggleVisibleAction($id)
     {
         // Check current user authorization
@@ -169,40 +169,40 @@ class DealerController extends BaseController
     }
 
     /**
-     * @Route("", name="_list", methods="GET")
      */
+    #[Route(', name=', name: '_list', methods: ['GET'])]
     public function defaultAction()
     {
         return parent::defaultAction();
     }
 
     /**
-     * @Route("", name="_create", methods="POST")
      */
+    #[Route(', name=', name: '_create', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();
     }
 
     /**
-     * @Route("/edit", name="_tab.view", methods="GET")
      */
+    #[Route('/edit', name: '_tab.view', methods: ['GET'])]
     public function updateAction(ParserContext $parserContext, RequestStack $requestStack)
     {
         return parent::updateAction($parserContext, $requestStack);
     }
 
     /**
-     * @Route("/edit", name="_tab.edit", methods="POST")
      */
+    #[Route('/edit', name: '_tab.edit', methods: ['POST'])]
     public function processUpdateAction(RequestStack $requestStack)
     {
         return parent::processUpdateAction($requestStack);
     }
 
     /**
-     * @Route("/delete", name="_delete", methods="POST")
      */
+    #[Route('/delete', name: '_delete', methods: ['POST'])]
     public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
     {
         return parent::deleteAction($tokenProvider, $requestStack, $parserContext);

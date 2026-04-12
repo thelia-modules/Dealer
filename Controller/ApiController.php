@@ -17,11 +17,10 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Front\BaseFrontController;
 
 /**
- * @Route("/api/3/dealer", name="dealer_api")
  * Class ApiController
  * @package Dealer\Controller
  */
@@ -34,6 +33,7 @@ class ApiController extends BaseFrontController
      * @return JsonResponse
      * @Route("", name="_default", methods="GET")
      */
+    #[Route('/api/3/dealer', name: 'dealer_api')]
     public function defaultAction(RequestStack $requestStack)
     {
         $return = [];

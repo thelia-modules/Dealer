@@ -4,17 +4,17 @@ namespace Dealer\Controller;
 
 use Dealer\Model\DealerMetaSeoQuery;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Front\BaseFrontController;
 
 /**
- * @Route("/magasin/{slug}", name="dealer_front")
  */
 class DealerFrontController extends BaseFrontController
 {
     /**
      * @Route("", name="_slug", methods="GET")
      */
+    #[Route('/magasin/{slug}', name: 'dealer_front')]
     public function show($slug)
     {
         $dealerMetaSeo = DealerMetaSeoQuery::create()

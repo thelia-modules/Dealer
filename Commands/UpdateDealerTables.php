@@ -27,7 +27,7 @@ class UpdateDealerTables extends ContainerAwareCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var UpdateTablesService $service */
         $service = $this->getContainer()->get(UpdateTablesService::SERVICE_ID);

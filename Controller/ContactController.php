@@ -23,10 +23,9 @@ use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * @Route("/admin/module/Dealer/contact", name="dealer_contact")
  * Class ContactController
  * @package Dealer\Controller
  */
@@ -39,6 +38,7 @@ class ContactController extends BaseController
      * Use to get render of list
      * @return mixed
      */
+    #[Route('/admin/module/Dealer/contact', name: 'dealer_contact')]
     protected function getListRenderTemplate()
     {
         $id = $this->getRequest()->query->get("dealer_id");
@@ -117,32 +117,32 @@ class ContactController extends BaseController
     }
 
     /**
-     * @Route("", name="_create", methods="POST")
      */
+    #[Route(', name=', name: '_create', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();
     }
 
     /**
-     * @Route("/delete", name="_delete", methods="POST")
      */
+    #[Route('/delete', name: '_delete', methods: ['POST'])]
     public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
     {
         return parent::deleteAction($tokenProvider, $requestStack, $parserContext);
     }
 
     /**
-     * @Route("/update", name="_update", methods="POST")
      */
+    #[Route('/update', name: '_update', methods: ['POST'])]
     public function processUpdateAction(RequestStack $requestStack)
     {
         return parent::processUpdateAction($requestStack);
     }
 
     /**
-     * @Route("/toggledefault", name="_toogle_default", methods="POST")
      */
+    #[Route('/toggledefault', name: '_toogle_default', methods: ['POST'])]
     public function toggleDefaultAction(ParserContext $parserContext, RequestStack $requestStack)
     {
         // Check current user authorization

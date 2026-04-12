@@ -8,7 +8,7 @@ use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Model\DealerImage;
 use Dealer\Model\DealerImageQuery;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\FileController;
 use Thelia\Core\Event\File\FileCreateOrUpdateEvent;
 use Thelia\Core\Event\File\FileDeleteEvent;
@@ -24,7 +24,6 @@ use Thelia\Model\LangQuery;
 use Thelia\Tools\URL;
 
 /**
- * @Route("/admin/module/dealer/image", name="dealer_image")
  */
 class CustomImagesAdminController extends FileController
 {
@@ -34,22 +33,23 @@ class CustomImagesAdminController extends FileController
     /**
      * @Route("/header/update", name="_header", methods="POST")
      */
+    #[Route('/admin/module/dealer/image', name: 'dealer_image')]
     public function updateProductImageHeader(ParserContext $parserContext, EventDispatcherInterface $eventDispatcher)
     {
         return $this->uploadProductFile(DealerImageHeaderForm::DEALER_IMAGE_HEADER_FORM_ID, $parserContext, $eventDispatcher);
     }
 
     /**
-     * @Route("/box/update", name="_box", methods="POST")
      */
+    #[Route('/box/update', name: '_box', methods: ['POST'])]
     public function updateProductImageBox(ParserContext $parserContext, EventDispatcherInterface $eventDispatcher)
     {
         return $this->uploadProductFile(DealerImageBoxForm::DEALER_IMAGE_BOX_FORM_ID, $parserContext, $eventDispatcher);
     }
 
     /**
-     * @Route("/{type}/update/{parentId}/{id}", name="_update", methods="POST")
      */
+    #[Route('/{type}/update/{parentId}/{id}', name: '_update', methods: ['POST'])]
     public function updateCustomImageAction($id, $parentId, $type, EventDispatcherInterface $eventDispatcher, FileManager $fileManager)
     {
         try {
@@ -73,8 +73,8 @@ class CustomImagesAdminController extends FileController
      * @param $id
      * @return mixed|\Thelia\Core\HttpFoundation\Response
      * @throws \Exception
-     * @Route("/{type}/edit/{parentId}/{id}", name="_edit", methods="GET")
      */
+    #[Route('/{type}/edit/{parentId}/{id}', name: '_edit', methods: ['GET'])]
     public function editCustomImageAction($type, $parentId, $id, FileManager $fileManager)
     {
         $this->registerDealerCustomProductImageType($type, $fileManager);
@@ -104,8 +104,8 @@ class CustomImagesAdminController extends FileController
     }
 
     /**
-     * @Route("/{type}/delete/{parentId}/{id}", name="_delete", methods="GET")
      */
+    #[Route('/{type}/delete/{parentId}/{id}', name: '_delete', methods: ['GET'])]
     public function deleteCustomImageAction($type, $parentId, $id, EventDispatcherInterface $eventDispatcher, FileManager $fileManager)
     {
         $message = null;

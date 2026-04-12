@@ -20,7 +20,7 @@ use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\ParserContext;
@@ -28,7 +28,6 @@ use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
 
 /**
- * @Route("/admin/module/Dealer/folder", name="dealer_folder")
  * Class FolderLinkController
  * @package Dealer\Controller
  */
@@ -40,6 +39,7 @@ class FolderLinkController extends BaseController
     /**
      * @inheritDoc
      */
+    #[Route('/admin/module/Dealer/folder', name: 'dealer_folder')]
     protected function getListRenderTemplate()
     {
         $id = $this->getRequest()->query->get("dealer_id");
@@ -123,8 +123,8 @@ class FolderLinkController extends BaseController
     }
 
     /**
-     * @Route("", name="_link", methods="POST")
      */
+    #[Route(', name=', name: '_link', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();
@@ -134,8 +134,8 @@ class FolderLinkController extends BaseController
      * Delete an object
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
-     * @Route("/delete", name="_unlink", methods="POST")
      */
+    #[Route('/delete', name: '_unlink', methods: ['POST'])]
     public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
     {
         // Check current user authorization

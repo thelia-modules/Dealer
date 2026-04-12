@@ -21,10 +21,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * @Route("/admin/module/Dealer/contact-info", name="dealer_contact-info")
  * Class ContactInfoController
  * @package Dealer\Controller
  */
@@ -36,6 +35,7 @@ class ContactInfoController extends BaseController
      * Use to get render of list
      * @return mixed
      */
+    #[Route('/admin/module/Dealer/contact-info', name: 'dealer_contact-info')]
     protected function getListRenderTemplate()
     {
         $id = $this->getRequest()->request->get("dealer_id");
@@ -114,22 +114,22 @@ class ContactInfoController extends BaseController
     }
 
     /**
-     * @Route("", name="_create", methods="POST")
      */
+    #[Route(', name=', name: '_create', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();
     }
     /**
-     * @Route("/delete", name="_delete", methods="POST")
      */
+    #[Route('/delete', name: '_delete', methods: ['POST'])]
     public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
     {
         return parent::deleteAction($tokenProvider, $requestStack, $parserContext);
     }
     /**
-     * @Route("/update", name="_update", methods="POST")
      */
+    #[Route('/update', name: '_update', methods: ['POST'])]
     public function processUpdateAction(RequestStack $requestStack)
     {
         return parent::processUpdateAction($requestStack);
