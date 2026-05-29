@@ -96,13 +96,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
         return DealerImageQuery::create();
     }
 
-    /**
-     * Set the current locale
-     *
-     * @param  bool $visible true if the file is visible, false otherwise
-     * @return FileModelInterface
-     */
-    public function setVisible($visible)
+    public function setVisible(?int $visible = null): static
     {
         return $this;
     }
