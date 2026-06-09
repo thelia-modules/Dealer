@@ -144,6 +144,6 @@ class DealerForm extends BaseForm
 
     public static function getName(): string
     {
-        return "dealer.create";
+        return "dealer_create";
     }
 }

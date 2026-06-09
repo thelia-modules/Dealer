@@ -79,6 +79,11 @@ class DealerController extends BaseController
 
     const CONTROLLER_ENTITY_NAME = "dealer";
 
+    protected function getCreationForm()
+    {
+        return $this->createForm(DealerForm::getName());
+    }
+
     private ?Environment $dealerTwig = null;
 
     #[Route('/admin/module/Dealer/dealer', name: 'dealer', methods: ['GET'])]
