@@ -31,7 +31,6 @@ use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Thelia\Core\Template\TemplateHelperInterface;
-use Thelia\Form\TheliaFormFactory;
 use Thelia\Model\CountryQuery;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
@@ -80,20 +79,16 @@ class DealerController extends BaseController
 
     const CONTROLLER_ENTITY_NAME = "dealer";
 
-    private ?Environment $twig = null;
-
-    private ?TheliaFormFactory $theliaFormFactory = null;
+    private ?Environment $dealerTwig = null;
 
     #[Route('/admin/module/Dealer/dealer', name: 'dealer', methods: ['GET'])]
     public function listAction(
         Environment $twig,
-        TheliaFormFactory $theliaFormFactory,
         TemplateHelperInterface $templateHelper,
         #[Autowire(service: 'twig.loader.native_filesystem')]
         FilesystemLoader $loader,
     ): Response {
-        $this->twig = $twig;
-        $this->theliaFormFactory = $theliaFormFactory;
+        $this->dealerTwig = $twig;
 
         // Make both the active admin theme (for base.html.twig) and this module's
         // default-twig directory resolvable by the shared Twig loader, so the page
@@ -157,10 +152,10 @@ class DealerController extends BaseController
             ];
         }
 
-        $createForm = $this->theliaFormFactory->createForm(DealerForm::getName(), data: ['locale' => $locale]);
+        $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: ['locale' => $locale]);
 
         return new Response(
-            $this->twig->render('dealers.html.twig', [
+            $this->dealerTwig->render('dealers.html.twig', [
                 'dealers' => $dealers,
                 'order' => $order,
                 'edit_language_id' => $request->getSession()?->getLang()?->getId(),
