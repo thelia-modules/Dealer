@@ -15,20 +15,28 @@ namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
 use Dealer\Dealer as DealerModule;
+use Dealer\Form\DealerForm;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\HttpFoundation\JsonResponse;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Thelia\Core\Template\TemplateHelperInterface;
+use Thelia\Form\TheliaFormFactory;
+use Thelia\Model\CountryQuery;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Class DealerController
@@ -39,7 +47,6 @@ class DealerController extends BaseController
     /**
      * Load an existing object from the database
      */
-    #[Route('/admin/module/Dealer/dealer', name: 'dealer')]
     protected function getExistingObject(Request $request)
     {
         return DealerQuery::create()->findPk($request->query->get("dealer_id"));
@@ -73,13 +80,95 @@ class DealerController extends BaseController
 
     const CONTROLLER_ENTITY_NAME = "dealer";
 
+    private ?Environment $twig = null;
+
+    private ?TheliaFormFactory $theliaFormFactory = null;
+
+    #[Route('/admin/module/Dealer/dealer', name: 'dealer', methods: ['GET'])]
+    public function listAction(
+        Environment $twig,
+        TheliaFormFactory $theliaFormFactory,
+        TemplateHelperInterface $templateHelper,
+        #[Autowire(service: 'twig.loader.native_filesystem')]
+        FilesystemLoader $loader,
+    ): Response {
+        $this->twig = $twig;
+        $this->theliaFormFactory = $theliaFormFactory;
+
+        // Make both the active admin theme (for base.html.twig) and this module's
+        // default-twig directory resolvable by the shared Twig loader, so the page
+        // can be rendered by bare name (the active parser would otherwise pick Smarty).
+        $loader->addPath($templateHelper->getActiveAdminTemplate()->getAbsolutePath());
+        $loader->addPath(__DIR__.'/../templates/backOffice/default-twig');
+
+        return parent::defaultAction();
+    }
+
     /**
      * Use to get render of list
-     * @return mixed
      */
-    protected function getListRenderTemplate()
+    protected function getListRenderTemplate(): Response
     {
-        return $this->render("dealers");
+        $request = $this->getRequest();
+        $order = $request->query->get('order') ?? 'id';
+
+        $locale = $request->getSession()?->getLang()?->getLocale() ?? 'en_US';
+
+        $query = DealerQuery::create();
+
+        switch ($order) {
+            case 'id-reverse':
+                $query->orderById(\Propel\Runtime\ActiveQuery\Criteria::DESC);
+                break;
+            case 'title':
+                $query->useDealerI18nQuery()->orderByTitle()->endUse();
+                break;
+            case 'title-reverse':
+                $query->useDealerI18nQuery()->orderByTitle(\Propel\Runtime\ActiveQuery\Criteria::DESC)->endUse();
+                break;
+            default:
+                $query->orderById();
+                break;
+        }
+
+        $dealers = [];
+        $countries = [];
+
+        /** @var Dealer $dealer */
+        foreach ($query->find() as $dealer) {
+            $countryId = $dealer->getCountryId();
+
+            if ($countryId !== null && !isset($countries[$countryId])) {
+                $country = CountryQuery::create()->findPk($countryId);
+
+                if ($country !== null) {
+                    $countries[$countryId] = $country->setLocale($locale)->getTitle();
+                }
+            }
+
+            $dealers[] = [
+                'id' => $dealer->getId(),
+                'title' => $dealer->setLocale($locale)->getTitle(),
+                'address1' => $dealer->getAddress1(),
+                'zipcode' => $dealer->getZipcode(),
+                'city' => $dealer->getCity(),
+                'country' => $countries[$countryId] ?? '',
+                'visible' => (int) $dealer->getVisible() === 1,
+            ];
+        }
+
+        $createForm = $this->theliaFormFactory->createForm(DealerForm::getName(), data: ['locale' => $locale]);
+
+        return new Response(
+            $this->twig->render('dealers.html.twig', [
+                'dealers' => $dealers,
+                'order' => $order,
+                'edit_language_id' => $request->getSession()?->getLang()?->getId(),
+                'edit_language_locale' => $locale,
+                'create_form' => $createForm->createView(),
+                'general_error' => $this->getParserContext()->get('general_error'),
+            ])
+        );
     }
 
     /**
@@ -170,15 +259,7 @@ class DealerController extends BaseController
 
     /**
      */
-    #[Route(', name=', name: '_list', methods: ['GET'])]
-    public function defaultAction()
-    {
-        return parent::defaultAction();
-    }
-
-    /**
-     */
-    #[Route(', name=', name: '_create', methods: ['POST'])]
+    #[Route('/admin/module/Dealer/dealer', name: 'dealer_create', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();
