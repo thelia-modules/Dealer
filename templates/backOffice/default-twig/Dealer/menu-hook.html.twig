@@ -1,0 +1,5 @@
+<li class="nav-item{{ admin_current_location starts with 'dealer' ? ' active' : '' }}" id="dealer">
+    <a class="nav-link" title="{{ 'Dealers'|trans({}, 'dealer.bo.default') }}" href="{{ path('dealer') }}">
+        <i class="bi bi-shop"></i> {{ 'Dealers'|trans({}, 'dealer.bo.default') }}
+    </a>
+</li>

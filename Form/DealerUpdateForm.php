@@ -61,6 +61,6 @@ class DealerUpdateForm extends DealerForm
 
     public static function getName(): string
     {
-        return "dealer_update";
+        return "dealer.update";
     }
 }

@@ -58,6 +58,6 @@ class GeoDealerForm extends BaseForm
 
     public static function getName(): string
     {
-        return "dealer_geo";
+        return "dealer-geo";
     }
 }

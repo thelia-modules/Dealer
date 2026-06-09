@@ -137,6 +137,6 @@ class SchedulesForm extends BaseForm
 
     public static function getName(): string
     {
-        return "schedules_create";
+        return "dealer-schedules.create";
     }
 }

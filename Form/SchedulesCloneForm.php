@@ -63,6 +63,6 @@ class SchedulesCloneForm extends BaseForm
 
     public static function getName(): string
     {
-        return "schedules_clone";
+        return "dealer-schedules.clone";
     }
 }

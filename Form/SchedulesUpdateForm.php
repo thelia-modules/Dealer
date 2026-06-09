@@ -91,6 +91,6 @@ class SchedulesUpdateForm extends SchedulesForm
 
     public static function getName(): string
     {
-        return "schedules_update";
+        return "dealer-schedules.update";
     }
 }

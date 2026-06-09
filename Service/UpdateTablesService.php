@@ -7,7 +7,7 @@ namespace Dealer\Service;
 use Dealer\Model\Dealer;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Propel;
-use Thelia\Install\Database;
+use Thelia\Core\Install\Database;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\Lang;
 

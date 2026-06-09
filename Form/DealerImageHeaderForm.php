@@ -16,6 +16,6 @@ class DealerImageHeaderForm extends CustomImageForm
 
     public static function getName(): string
     {
-        return "dealer_image_header";
+        return "dealer.image.header";
     }
 }

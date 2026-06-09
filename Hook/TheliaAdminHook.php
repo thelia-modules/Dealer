@@ -22,6 +22,20 @@ use Thelia\Core\Hook\BaseHook;
  */
 class TheliaAdminHook extends BaseHook
 {
+    public static function getSubscribedHooks(): array
+    {
+        return [
+            'content.tab-content' => [['type' => 'back', 'method' => 'onContentModuleTab']],
+            'content.edit-js' => [['type' => 'back', 'method' => 'onContentEditJs']],
+            'folder.tab-content' => [['type' => 'back', 'method' => 'onFolderModuleTab']],
+            'folder.edit-js' => [['type' => 'back', 'method' => 'onFolderEditJs']],
+            'brand.tab-content' => [['type' => 'back', 'method' => 'onBrandModuleTab']],
+            'brand.edit-js' => [['type' => 'back', 'method' => 'onBrandEditJs']],
+            'product.tab-content' => [['type' => 'back', 'method' => 'onProductModuleTab']],
+            'product.edit-js' => [['type' => 'back', 'method' => 'onProductEditJs']],
+        ];
+    }
+
     public function onContentModuleTab(HookRenderEvent $event)
     {
         $event->add($this->render("hook/content.html",$event->getArguments()));

@@ -15,6 +15,6 @@ class DealerImageBoxForm extends CustomImageForm
 
     public static function getName(): string
     {
-        return "dealer_image_box";
+        return "dealer.image.box";
     }
 }

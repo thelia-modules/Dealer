@@ -18,6 +18,24 @@ use Thelia\Core\Hook\BaseHook;
  */
 class InternalHook extends BaseHook
 {
+    public static function getSubscribedHooks(): array
+    {
+        return [
+            'dealer.associated.tabcontent' => [
+                ['type' => 'back', 'method' => 'insertContent'],
+                ['type' => 'back', 'method' => 'insertFolder'],
+                ['type' => 'back', 'method' => 'insertBrand'],
+                ['type' => 'back', 'method' => 'insertProduct'],
+            ],
+            'dealer.edit.js' => [
+                ['type' => 'back', 'method' => 'insertContentJs'],
+                ['type' => 'back', 'method' => 'insertFolderJs'],
+                ['type' => 'back', 'method' => 'insertBrandJs'],
+                ['type' => 'back', 'method' => 'insertProductJs'],
+            ],
+        ];
+    }
+
     public function insertContent(HookRenderEvent $event)
     {
         $event->add($this->render("includes/content-linked.html", $event->getArguments()));

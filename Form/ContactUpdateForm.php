@@ -61,6 +61,6 @@ class ContactUpdateForm extends ContactForm
 
     public static function getName(): string
     {
-        return "contact_update";
+        return "dealer-contact.update";
     }
 }

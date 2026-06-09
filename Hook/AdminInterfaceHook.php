@@ -15,10 +15,12 @@
 namespace Dealer\Hook;
 
 use Dealer\Dealer;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Hook\HookRenderEvent;
 use Thelia\Core\Hook\BaseHook;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\SecurityContext;
+use Thelia\Core\Template\Parser\ParserResolver;
 use Thelia\Core\Translation\Translator;
 
 /**
@@ -26,12 +28,21 @@ use Thelia\Core\Translation\Translator;
  */
 class AdminInterfaceHook extends BaseHook
 {
-    /** @var  SecurityContext */
-    protected $securityContext;
+    public function __construct(
+        private readonly SecurityContext $securityContext,
+        ?EventDispatcherInterface $dispatcher = null,
+        ?ParserResolver $parserResolver = null,
+    ) {
+        parent::__construct($dispatcher, $parserResolver);
+    }
 
-    public function __construct(SecurityContext $securityContext)
+    public static function getSubscribedHooks(): array
     {
-        $this->securityContext = $securityContext;
+        return [
+            'main.in-top-menu-items' => [
+                ['type' => 'back', 'method' => 'onMainTopMenuTools'],
+            ],
+        ];
     }
 
     protected function transQuick($id, $locale, $parameters = [])
@@ -53,7 +64,7 @@ class AdminInterfaceHook extends BaseHook
         );
 
         if ($isGranted) {
-            $event->add($this->render("menu-hook.html", $event->getArguments()));
+            $event->add($this->render("Dealer/menu-hook.html.twig", $event->getArguments()));
         }
     }
 }

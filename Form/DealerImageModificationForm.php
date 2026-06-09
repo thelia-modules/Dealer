@@ -15,6 +15,6 @@ class DealerImageModificationForm extends ImageModification
 {
     public static function getName(): string
     {
-        return 'dealer_image_modification';
+        return 'dealer.image.modification';
     }
 }
