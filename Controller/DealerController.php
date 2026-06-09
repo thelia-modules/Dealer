@@ -165,7 +165,7 @@ class DealerController extends BaseController
                 'order' => $order,
                 'edit_language_id' => $request->getSession()?->getLang()?->getId(),
                 'edit_language_locale' => $locale,
-                'create_form' => $createForm->createView(),
+                'create_form' => $createForm->createView()->getView(),
                 'general_error' => $this->getParserContext()->get('general_error'),
             ])
         );
