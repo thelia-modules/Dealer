@@ -71,7 +71,7 @@ class GeoDealerController extends BaseAdminController
             }
             // If we have to stay on the same page, do not redirect to the successUrl,
             // just redirect to the edit page again.
-            if ($request->get('save_mode') === 'stay') {
+            if (($request->request->get('save_mode') ?? $request->query->get('save_mode')) === 'stay') {
                 $id = $request->query->get("dealer_id");
 
                 return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",

@@ -627,7 +627,7 @@ class DealerController extends BaseController
             $retour["error"] = $ex->getMessage();
         }
 
-        return JsonResponse::create($retour, $code);
+        return new JsonResponse($retour, $code);
     }
 
     /**
