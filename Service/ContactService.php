@@ -127,6 +127,9 @@ class ContactService extends AbstractBaseService implements BaseServiceInterface
         }
         if (isset($data['is_default'])) {
             $model->setIsDefault($data['is_default']);
+        } elseif ($model->isNew()) {
+            // is_default is NOT NULL with no DB default; ensure new contacts persist.
+            $model->setIsDefault(0);
         }
 
         return $model;
