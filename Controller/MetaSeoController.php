@@ -2,7 +2,6 @@
 
 namespace Dealer\Controller;
 
-use Dealer\Dealer;
 use Dealer\Form\DealerMetaSEOForm;
 use Dealer\Model\DealerMetaSeoQuery;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -46,34 +45,29 @@ class MetaSeoController extends BaseAdminController
                 ->setMetaKeywords($databasesConfiguration["meta_keywords"])
                 ->save();
 
-            return RedirectResponse::create(
-                URL::getInstance()->absoluteUrl('admin/module/Dealer/dealer')
-            );
+            return $this->redirectToDealerEdit($databasesConfiguration["dealer_id"]);
 
         } catch (FormValidationException $exception) {
-            if (!$form->getForm()->isValid()) {
-                $this->setupFormErrorContext(
-                    'Dealer meta seo manager',
-                    $this->createStandardFormValidationErrorMessage($exception),
-                    $form
-                );
-                $form->setErrorMessage(null);
-            } else {
-                $this->setupFormErrorContext(
-                    'Dealer meta seo manager',
-                    $exception->getMessage(),
-                    $form
-                );
-            }
+            $message = $form->getForm()->isValid()
+                ? $exception->getMessage()
+                : $this->createStandardFormValidationErrorMessage($exception);
 
-            $response = $this->render(
-                'module-configure',
-                [
-                    'module_code' => Dealer::DOMAIN_NAME
-                ]
+            $this->getRequest()->getSession()->getFlashBag()->add('error', $message);
+
+            return $this->redirectToDealerEdit(
+                $this->getRequest()->request->all(DealerMetaSEOForm::getName())['dealer_id'] ?? null
             );
         }
+    }
 
-        return $response;
+    private function redirectToDealerEdit($dealerId): RedirectResponse
+    {
+        if ($dealerId === null) {
+            return new RedirectResponse(URL::getInstance()->absoluteUrl('/admin/module/Dealer/dealer'));
+        }
+
+        return new RedirectResponse(
+            URL::getInstance()->absoluteUrl('/admin/module/Dealer/dealer/edit', ['dealer_id' => $dealerId])
+        );
     }
 }
