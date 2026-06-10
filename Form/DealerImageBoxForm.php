@@ -11,10 +11,10 @@ namespace Dealer\Form;
 
 class DealerImageBoxForm extends CustomImageForm
 {
-    const DEALER_IMAGE_BOX_FORM_ID = "dealer.image.box";
+    const DEALER_IMAGE_BOX_FORM_ID = "dealer_image_box";
 
     public static function getName(): string
     {
-        return "dealer.image.box";
+        return "dealer_image_box";
     }
 }

@@ -1,0 +1,57 @@
+{% extends '@BackOfficeDefaultTwig/base.html.twig' %}
+
+{% block title %}{{ 'Edit an image'|trans({}, 'dealer.bo.default') }}{% endblock %}
+
+{% block body_testid %}dealer-image-edit{% endblock %}
+
+{% block content %}
+    {% set fp = image_form.vars.full_name %}
+    <div id="wrapper" class="container-fluid">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="card-title mb-0">{{ 'Edit image "%name"'|trans({'%name': image_title}, 'dealer.bo.default') }}</span>
+                <a href="{{ redirect_url }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> {{ 'Back'|trans({}, 'dealer.bo.default') }}
+                </a>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ update_url }}" enctype="multipart/form-data" class="clearfix">
+                    <input type="hidden" name="{{ fp }}[_token]" value="{{ image_form._token.vars.value }}">
+                    <input type="hidden" name="{{ fp }}[id]" value="{{ image_id }}">
+                    <input type="hidden" name="{{ fp }}[locale]" value="{{ edit_language_locale }}">
+                    <input type="hidden" name="{{ fp }}[error_url]" value="{{ edit_url }}">
+                    <input type="hidden" name="{{ fp }}[success_url]" value="{{ edit_url }}">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">{{ 'Preview'|trans({}, 'dealer.bo.default') }}:</label>
+                            <p>
+                                <img src="/{{ image_type }}/{{ image_url }}" alt="{{ image_title }}" class="img-thumbnail"
+                                     onerror="this.src='//placehold.it/300x300&amp;text={{ 'Image file not found'|trans({}, 'dealer.bo.default')|url_encode }}'">
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label" for="dealer-image-file">{{ 'Replace the image file'|trans({}, 'dealer.bo.default') }}</label>
+                                <input type="file" class="form-control" id="dealer-image-file" name="{{ fp }}[file]">
+                            </div>
+                            {{ form_widget(image_form.title, {label: 'Title'|trans}) }}
+                            {{ form_widget(image_form.chapo, {label: 'Summary'|trans}) }}
+                            {{ form_widget(image_form.postscriptum, {label: 'Conclusion'|trans}) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_widget(image_form.description, {label: 'Description'|trans}) }}
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
+                        <a href="{{ redirect_url }}" class="btn btn-secondary">{{ 'Cancel'|trans }}</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

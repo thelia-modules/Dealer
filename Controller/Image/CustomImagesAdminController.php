@@ -7,9 +7,14 @@ use Dealer\Form\DealerImageBoxForm;
 use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Model\DealerImage;
 use Dealer\Model\DealerImageQuery;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\FileController;
+use Thelia\Core\Template\TemplateHelperInterface;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 use Thelia\Core\Event\File\FileCreateOrUpdateEvent;
 use Thelia\Core\Event\File\FileDeleteEvent;
 use Thelia\Core\Event\TheliaEvents;
@@ -25,15 +30,13 @@ use Thelia\Tools\URL;
 
 /**
  */
+#[Route('/admin/module/dealer/image', name: 'dealer_image')]
 class CustomImagesAdminController extends FileController
 {
     const MODULE_RIGHT = Dealer::DOMAIN_NAME;
     const PRODUCT_IMAGE_PARENT_TYPE = 'dealer';
 
-    /**
-     * @Route("/header/update", name="_header", methods="POST")
-     */
-    #[Route('/admin/module/dealer/image', name: 'dealer_image')]
+    #[Route('/header/update', name: '_header', methods: ['POST'])]
     public function updateProductImageHeader(ParserContext $parserContext, EventDispatcherInterface $eventDispatcher)
     {
         return $this->uploadProductFile(DealerImageHeaderForm::DEALER_IMAGE_HEADER_FORM_ID, $parserContext, $eventDispatcher);
@@ -75,8 +78,16 @@ class CustomImagesAdminController extends FileController
      * @throws \Exception
      */
     #[Route('/{type}/edit/{parentId}/{id}', name: '_edit', methods: ['GET'])]
-    public function editCustomImageAction($type, $parentId, $id, FileManager $fileManager)
-    {
+    public function editCustomImageAction(
+        $type,
+        $parentId,
+        $id,
+        FileManager $fileManager,
+        Environment $twig,
+        TemplateHelperInterface $templateHelper,
+        #[Autowire(service: 'twig.loader.native_filesystem')]
+        FilesystemLoader $loader,
+    ) {
         $this->registerDealerCustomProductImageType($type, $fileManager);
         if (null !== $response = $this->checkAccessForParentType(AccessManager::UPDATE)) {
             return $response;
@@ -91,16 +102,43 @@ class CustomImagesAdminController extends FileController
             return $this->pageNotFound();
         }
 
+        $locale = $this->getRequest()->getSession()?->getLang()?->getLocale() ?? 'en_US';
+        $image->setLocale($locale);
+
         $redirectionUrl = '/admin/module/Dealer/dealer/edit?dealer_id=' . $parentId;
         $redirectUrl = URL::getInstance()->absoluteUrl($redirectionUrl, ['current_tab' => 'images']);
+        $updateUrl = URL::getInstance()->absoluteUrl(
+            sprintf('/admin/module/dealer/image/%1$s/update/%2$s/%3$s', $type, $parentId, $id)
+        );
+        $editUrl = URL::getInstance()->absoluteUrl(
+            sprintf('/admin/module/dealer/image/%1$s/edit/%2$s/%3$s', $type, $parentId, $id)
+        );
 
-        return $this->render('custom-dealer-image-edit', array(
-            'imageId' => $id,
-            'imageType' => $type,
-            'redirectUrl' => $redirectUrl,
-            'parentId' => $parentId,
-            'formId' => $imageModel->getUpdateFormId(),
-        ));
+        $form = $this->createForm($imageModel->getUpdateFormId(), data: [
+            'id' => $image->getId(),
+            'locale' => $locale,
+            'title' => $image->getTitle(),
+            'chapo' => $image->getChapo(),
+            'description' => $image->getDescription(),
+            'postscriptum' => $image->getPostscriptum(),
+        ]);
+
+        $loader->addPath($templateHelper->getActiveAdminTemplate()->getAbsolutePath());
+        $loader->addPath(__DIR__.'/../../templates/backOffice/default-twig');
+
+        return new Response(
+            $twig->render('custom-dealer-image-edit.html.twig', [
+                'image_id' => $id,
+                'image_type' => $type,
+                'image_title' => $image->getTitle(),
+                'image_url' => $image->getFile(),
+                'redirect_url' => $redirectUrl,
+                'update_url' => $updateUrl,
+                'edit_url' => $editUrl,
+                'edit_language_locale' => $locale,
+                'image_form' => $form->createView()->getView(),
+            ])
+        );
     }
 
     /**

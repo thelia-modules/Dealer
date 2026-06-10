@@ -118,7 +118,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
      */
     public function getUpdateFormId(): string
     {
-        return 'dealer.image.modification';
+        return 'dealer_image_modification';
     }
 
     /**

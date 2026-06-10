@@ -12,10 +12,10 @@ namespace Dealer\Form;
 
 class DealerImageHeaderForm extends CustomImageForm
 {
-    const DEALER_IMAGE_HEADER_FORM_ID = "dealer.image.header";
+    const DEALER_IMAGE_HEADER_FORM_ID = "dealer_image_header";
 
     public static function getName(): string
     {
-        return "dealer.image.header";
+        return "dealer_image_header";
     }
 }
