@@ -65,7 +65,14 @@ class ContactController extends BaseController
      */
     protected function getEditRenderTemplate()
     {
-        return $this->render("dealer-edit");
+        // The dealer-edit page is owned by DealerController (it supplies all the Twig
+        // form views). Sub-controllers cannot render it, so redirect back to it instead.
+        $id = $this->getRequest()->request->get('dealer_id') ?? $this->getRequest()->query->get('dealer_id');
+
+        return new RedirectResponse(URL::getInstance()->absoluteUrl(
+            '/admin/module/Dealer/dealer/edit',
+            ['dealer_id' => $id]
+        ));
     }
 
     /**
