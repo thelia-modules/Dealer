@@ -37,9 +37,8 @@ class GeoDealerController extends BaseAdminController
      * Save changes on a modified object, and either go back to the object list, or stay on the edition page.
      *
      * @return \Thelia\Core\HttpFoundation\Response the response
-     * @Route("/update", name="_update", methods="POST")
      */
-    #[Route('/admin/module/Dealer/location', name: 'dealer_location')]
+    #[Route('/admin/module/Dealer/location/update', name: 'dealer_location_update', methods: ['POST'])]
     public function processUpdateAction(RequestStack $requestStack)
     {
         // Check current user authorization
