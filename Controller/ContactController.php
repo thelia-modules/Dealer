@@ -29,6 +29,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * Class ContactController
  * @package Dealer\Controller
  */
+#[Route('/admin/module/Dealer/contact', name: 'dealer_contact')]
 class ContactController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer-contact";
@@ -38,7 +39,6 @@ class ContactController extends BaseController
      * Use to get render of list
      * @return mixed
      */
-    #[Route('/admin/module/Dealer/contact', name: 'dealer_contact')]
     protected function getListRenderTemplate()
     {
         $id = $this->getRequest()->query->get("dealer_id");

@@ -31,6 +31,7 @@ use Thelia\Tools\URL;
  * Class FolderLinkController
  * @package Dealer\Controller
  */
+#[Route('/admin/module/Dealer/folder', name: 'dealer_folder')]
 class FolderLinkController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer_folder_link";
@@ -39,7 +40,6 @@ class FolderLinkController extends BaseController
     /**
      * @inheritDoc
      */
-    #[Route('/admin/module/Dealer/folder', name: 'dealer_folder')]
     protected function getListRenderTemplate()
     {
         $id = $this->getRequest()->query->get("dealer_id");

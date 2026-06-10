@@ -32,6 +32,7 @@ use Thelia\Tools\URL;
  * Class SchedulesController
  * @package Dealer\Controller
  */
+#[Route('/admin/module/Dealer/schedules', name: 'dealer_schedules')]
 class SchedulesController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer-schedules";
@@ -41,7 +42,6 @@ class SchedulesController extends BaseController
      * Use to get render of list
      * @return mixed
      */
-    #[Route('/admin/module/Dealer/schedules', name: 'dealer_schedules')]
     protected function getListRenderTemplate()
     {
         $id = $this->getRequest()->request->get("dealer_id");

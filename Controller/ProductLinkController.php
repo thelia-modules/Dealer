@@ -31,6 +31,7 @@ use Thelia\Tools\URL;
  * Class ProductLinkController
  * @package Dealer\Controller
  */
+#[Route('/admin/module/Dealer/product', name: 'dealer_product')]
 class ProductLinkController extends BaseController
 {
     const CONTROLLER_ENTITY_NAME = "dealer_product_link";
@@ -38,7 +39,6 @@ class ProductLinkController extends BaseController
     /**
      * @inheritDoc
      */
-    #[Route('/admin/module/Dealer/product', name: 'dealer_product')]
     protected function getListRenderTemplate()
     {
         $id = $this->getRequest()->query->get("dealer_id");
