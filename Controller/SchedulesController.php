@@ -310,6 +310,6 @@ class SchedulesController extends BaseController
      */
     protected function getCloneForm()
     {
-        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".clone");
+        return $this->createForm(static::CONTROLLER_ENTITY_NAME . "_clone");
     }
 }

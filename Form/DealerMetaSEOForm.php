@@ -52,6 +52,6 @@ class DealerMetaSEOForm extends BaseForm
     }
     public static function getName(): string
     {
-        return "dealer.meta.seo";
+        return "dealer_meta_seo";
     }
 }

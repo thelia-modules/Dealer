@@ -74,6 +74,6 @@ class ContactForm extends BaseForm
 
     public static function getName(): string
     {
-        return "dealer-contact.create";
+        return "dealer-contact_create";
     }
 }

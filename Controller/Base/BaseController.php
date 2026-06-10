@@ -326,7 +326,7 @@ abstract class BaseController extends BaseAdminController
      */
     protected function getCreationForm()
     {
-        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".create");
+        return $this->createForm(static::CONTROLLER_ENTITY_NAME . "_create");
     }
 
     /**
@@ -340,7 +340,7 @@ abstract class BaseController extends BaseAdminController
             $data = [];
         }
 
-        return $this->createForm(static::CONTROLLER_ENTITY_NAME . ".update", FormType::class, $data);
+        return $this->createForm(static::CONTROLLER_ENTITY_NAME . "_update", FormType::class, $data);
     }
 
     /**

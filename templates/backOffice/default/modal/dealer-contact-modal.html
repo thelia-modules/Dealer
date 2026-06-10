@@ -1,9 +1,9 @@
 {assign "dealer_id" value=$smarty.get.dealer_id}
 {* CREATE Modal *}
 
-{form name="dealer-contact.create"}
+{form name="dealer-contact_create"}
 {capture "contact_create"}
-  {include file="form/dealer-contact-create.html" form_name="dealer-contact.create" dealer_id=$dealer_id}
+  {include file="form/dealer-contact-create.html" form_name="dealer-contact_create" dealer_id=$dealer_id}
 {/capture}
 
   {include file="includes/generic-create-dialog.html"
@@ -20,12 +20,12 @@ form_enctype       = {form_enctype form=$form}
 
 {* Update Modal *}
 
-{form name="dealer-contact.update"}
+{form name="dealer-contact_update"}
 {capture "contact_update"}
   {form_field form=$form field="id"}
     <input type="hidden" id="{$label_attr.for}" name="{$name}" value=""/>
   {/form_field}
-  {include file="form/dealer-contact-create.html" form_name="dealer-contact.update" dealer_id=$dealer_id}
+  {include file="form/dealer-contact-create.html" form_name="dealer-contact_update" dealer_id=$dealer_id}
 {/capture}
 
   {include file="includes/generic-create-dialog.html"

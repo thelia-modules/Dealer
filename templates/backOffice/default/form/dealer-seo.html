@@ -1,4 +1,4 @@
-{form name="dealer.image.header"}
+{form name="dealer_image_header"}
     <form method="POST" action="{url path="/admin/module/dealer/image/header/update"}" enctype="multipart/form-data">
         <div class="panel-body {if $error|default:null}has-error{/if}">
             {form_hidden_fields form=$form}
@@ -43,7 +43,7 @@
     </form>
 {/form}
 
-{form name="dealer.image.box"}
+{form name="dealer_image_box"}
     <form method="POST" action="{url path="/admin/module/dealer/image/box/update"}" enctype="multipart/form-data">
         <div class="panel-body {if $error|default:null}has-error{/if}">
             {form_hidden_fields form=$form}
