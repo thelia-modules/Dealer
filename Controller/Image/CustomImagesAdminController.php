@@ -22,7 +22,7 @@ use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
-use Thelia\Files\FileManager;
+use Thelia\Core\File\FileManager;
 use Thelia\Log\Tlog;
 use Thelia\Model\Lang;
 use Thelia\Model\LangQuery;
