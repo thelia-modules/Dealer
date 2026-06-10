@@ -151,4 +151,6 @@ return array(
     "There is no Admin linked to this dealer" => "Aucun administrateur lié à ce magasin",
     "Unlink a admin" => "Retirer un administrateur",
     "Unlink this admin" => "Retirer cet administrateur",
+    "This module has no settings here: dealers are managed from their own section." => "Ce module n'a pas de réglages ici : les magasins sont gérés depuis leur propre section.",
+    "Browse dealers" => "Parcourir les magasins",
 );

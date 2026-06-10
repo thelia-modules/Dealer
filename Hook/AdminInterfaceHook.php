@@ -42,7 +42,15 @@ class AdminInterfaceHook extends BaseHook
             'main.in-top-menu-items' => [
                 ['type' => 'back', 'method' => 'onMainTopMenuTools'],
             ],
+            'module.configuration' => [
+                ['type' => 'back', 'method' => 'onModuleConfiguration'],
+            ],
         ];
+    }
+
+    public function onModuleConfiguration(HookRenderEvent $event): void
+    {
+        $event->add($this->render('Dealer/module-configuration.html.twig'));
     }
 
     protected function transQuick($id, $locale, $parameters = [])

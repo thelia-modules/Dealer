@@ -31,5 +31,7 @@ return array(
     "longitude" => "Longitude",
     /* Delete */
     "Delete an entry of Dealer" => "Delete an entry of Dealer",
-    "Do you really want to delete this Dealer entry ?" => "Do you really want to delete this Dealer entry ?"
+    "Do you really want to delete this Dealer entry ?" => "Do you really want to delete this Dealer entry ?",
+    "This module has no settings here: dealers are managed from their own section." => "This module has no settings here: dealers are managed from their own section.",
+    "Browse dealers" => "Browse dealers",
 );
