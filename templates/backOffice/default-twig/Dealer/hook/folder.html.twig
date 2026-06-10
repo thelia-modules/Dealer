@@ -1,0 +1,86 @@
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="h5 mb-0">{{ 'Link a Folder'|trans({}, 'dealer.bo.default') }}</h3>
+            </div>
+            <div class="card-body">
+                <form action="/admin/module/Dealer/folder" method="POST">
+                    {% set prefix = dealer_folder_link_form.vars.full_name %}
+                    <input type="hidden" name="{{ prefix }}[_token]" value="{{ dealer_folder_link_form._token.vars.value }}">
+                    <input type="hidden" name="{{ prefix }}[success_url]" value="{{ dealer_current_url }}">
+                    <input type="hidden" name="{{ prefix }}[folder_id]" value="{{ dealer_folder_id }}">
+                    <div class="mb-3">
+                        <label class="form-label" for="dealer-folder-link-dealer">
+                            {{ 'Dealer'|trans({}, 'dealer.bo.default') }} <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="dealer-folder-link-dealer" name="{{ prefix }}[dealer_id]" required>
+                            {% for dealer in dealer_all_dealers %}
+                                <option value="{{ dealer.id }}">{{ dealer.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg"></i> {{ 'Yes'|trans }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h3 class="h5 mb-0">{{ 'Folder linked'|trans({}, 'dealer.bo.default') }}</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    {% for dealer in dealer_linked_dealers %}
+                        <li>
+                            {{ dealer.title }}
+                            <button type="button" class="btn btn-link btn-sm p-0 folder-delete"
+                                    data-bs-toggle="modal" data-bs-target="#dealer-folder-unlink" data-id="{{ dealer.id }}">
+                                <i class="bi bi-dash-lg"></i>
+                            </button>
+                        </li>
+                    {% else %}
+                        <li class="text-muted">{{ 'There is no Folder linked to this dealer'|trans({}, 'dealer.bo.default') }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# DELETE modal #}
+<div class="modal fade" id="dealer-folder-unlink" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/admin/module/Dealer/folder/delete?_token={{ assignToken() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'Unlink a folder'|trans({}, 'dealer.bo.default') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
+                </div>
+                <div class="modal-body">
+                    {{ 'Do you really want to unlink this folder ?'|trans({}, 'dealer.bo.default') }}
+                    <input type="hidden" name="dealer_folder_link_id" value="{{ dealer_folder_id }}">
+                    <input type="hidden" id="dealer_folder_link_delete_id" name="dealer_id" value="">
+                    <input type="hidden" name="success_url" value="{{ dealer_current_url }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                    <button type="submit" class="btn btn-danger">{{ 'Delete'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.folder-delete').forEach(function (el) {
+            el.addEventListener('click', function () {
+                document.getElementById('dealer_folder_link_delete_id').value = this.dataset.id;
+            });
+        });
+    });
+</script>
