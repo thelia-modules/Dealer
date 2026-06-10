@@ -41,6 +41,7 @@ use Twig\Loader\FilesystemLoader;
  * Class DealerController
  * @package Dealer\Controller
  */
+#[Route('/admin/module/Dealer/dealer', name: 'dealer')]
 class DealerController extends BaseController
 {
     /**
@@ -86,7 +87,7 @@ class DealerController extends BaseController
 
     private ?Environment $dealerTwig = null;
 
-    #[Route('/admin/module/Dealer/dealer', name: 'dealer', methods: ['GET'])]
+    #[Route('', name: '', methods: ['GET'])]
     public function listAction(
         Environment $twig,
         TemplateHelperInterface $templateHelper,
@@ -259,7 +260,7 @@ class DealerController extends BaseController
 
     /**
      */
-    #[Route('/admin/module/Dealer/dealer', name: 'dealer_create', methods: ['POST'])]
+    #[Route('', name: '_create', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();
