@@ -115,7 +115,7 @@ class ContactInfoController extends BaseController
 
     /**
      */
-    #[Route(', name=', name: '_create', methods: ['POST'])]
+    #[Route('', name: '_create', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();

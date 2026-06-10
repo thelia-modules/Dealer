@@ -124,7 +124,7 @@ class FolderLinkController extends BaseController
 
     /**
      */
-    #[Route(', name=', name: '_link', methods: ['POST'])]
+    #[Route('', name: '_link', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();

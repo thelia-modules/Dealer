@@ -124,7 +124,7 @@ class ContentController extends BaseController
     /**
      * @return mixed|\Symfony\Component\HttpFoundation\Response
      */
-    #[Route(', name=', name: '_create', methods: ['POST'])]
+    #[Route('', name: '_create', methods: ['POST'])]
     public function createAction()
     {
         return parent::createAction();
