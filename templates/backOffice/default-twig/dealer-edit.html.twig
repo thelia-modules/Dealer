@@ -1,0 +1,98 @@
+{% extends '@BackOfficeDefaultTwig/base.html.twig' %}
+
+{% block title %}{{ 'Dealer edit'|trans({}, 'dealer.bo.default') }}{% endblock %}
+
+{% block body_testid %}dealer-edit{% endblock %}
+
+{% block content %}
+    {% set fp = update_form.vars.full_name %}
+    <div id="wrapper" class="container-fluid">
+        {% if general_error is defined and general_error %}
+            <div class="alert alert-danger">{{ general_error }}</div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="card-title mb-0">
+                    {{ 'Dealer edit'|trans({}, 'dealer.bo.default') }}{% if dealer %} - {{ dealer.title }}{% endif %}
+                </span>
+                <a href="{{ path('dealer') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> {{ 'Back to the dealers list'|trans({}, 'dealer.bo.default') }}
+                </a>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs mb-3" id="dealer-edit-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">{{ 'General'|trans({}, 'dealer.bo.default') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#associated" type="button" role="tab">{{ 'Associated'|trans({}, 'dealer.bo.default') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#modules" type="button" role="tab">{{ 'Modules'|trans }}</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    {# GENERAL #}
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <form method="POST" action="/admin/module/Dealer/dealer/edit?dealer_id={{ dealer_id }}" class="clearfix">
+                            <input type="hidden" name="{{ fp }}[_token]" value="{{ update_form._token.vars.value }}">
+                            <input type="hidden" name="{{ fp }}[success_url]" value="{{ path('dealer') }}">
+                            <input type="hidden" name="edit_language_id" value="{{ edit_language_id }}">
+                            <input type="hidden" name="{{ fp }}[locale]" value="{{ edit_language_locale }}">
+                            <input type="hidden" name="{{ fp }}[id]" value="{{ dealer_id }}">
+
+                            {{ form_widget(update_form.title, {label: 'Title'|trans({}, 'dealer.bo.default'), attr: {placeholder: 'The Dealer title'|trans({}, 'dealer.bo.default')}}) }}
+                            {{ form_widget(update_form.address1, {label: 'Address1'|trans({}, 'dealer.bo.default')}) }}
+                            {{ form_widget(update_form.address2, {label: 'Address2'|trans({}, 'dealer.bo.default')}) }}
+                            {{ form_widget(update_form.address3, {label: 'Address3'|trans({}, 'dealer.bo.default')}) }}
+                            <div class="row">
+                                <div class="col-md-6">{{ form_widget(update_form.zipcode, {label: 'Zipcode'|trans({}, 'dealer.bo.default')}) }}</div>
+                                <div class="col-md-6">{{ form_widget(update_form.city, {label: 'City'|trans({}, 'dealer.bo.default')}) }}</div>
+                            </div>
+                            {{ form_widget(update_form.country_id, {label: 'Country'|trans({}, 'dealer.bo.default')}) }}
+                            {{ form_widget(update_form.description, {label: 'Description'|trans({}, 'dealer.bo.default')}) }}
+                            {{ form_widget(update_form.big_description, {label: 'Complex Description'|trans({}, 'dealer.bo.default')}) }}
+                            {{ form_widget(update_form.hard_open_hour, {label: "Horraires d'ouverture"|trans({}, 'dealer.bo.default')}) }}
+                            {{ form_widget(update_form.access, {label: 'Access'|trans({}, 'dealer.bo.default')}) }}
+
+                            <div class="mt-3">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
+                            </div>
+
+                            {% if dealer and dealer.created_at %}
+                                <small class="text-muted d-block mt-2">
+                                    {{ 'Dealer created on %created_at. Last modification: %updated_at'|trans({
+                                        '%created_at': dealer.created_at|date('Y-m-d H:i'),
+                                        '%updated_at': dealer.updated_at ? dealer.updated_at|date('Y-m-d H:i') : ''
+                                    }, 'dealer.bo.default') }}
+                                </small>
+                            {% endif %}
+                        </form>
+                    </div>
+
+                    {# ASSOCIATED — driven by the dealer.associated.tabcontent hook #}
+                    <div class="tab-pane fade" id="associated" role="tabpanel">
+                        {% if has_hook('dealer.associated.tabcontent') %}
+                            <div class="row">{{ hook('dealer.associated.tabcontent', {dealer_id: dealer_id}) }}</div>
+                        {% else %}
+                            <div class="alert alert-info mb-0">{{ 'No associated content for this dealer.'|trans({}, 'dealer.bo.default') }}</div>
+                        {% endif %}
+                    </div>
+
+                    {# MODULES — driven by the dealer.extra.content.edit hook #}
+                    <div class="tab-pane fade" id="modules" role="tabpanel">
+                        {% if has_hook('dealer.extra.content.edit') %}
+                            {{ hook('dealer.extra.content.edit', {dealer_id: dealer_id}) }}
+                        {% else %}
+                            <div class="alert alert-info mb-0">{{ 'There is no additionnal content for this Dealer'|trans({}, 'dealer.bo.default') }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ safe_hook('dealer.edit.js') }}
+{% endblock %}

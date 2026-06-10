@@ -8,9 +8,20 @@
 
 namespace Dealer\Hook;
 
+use Dealer\Form\BrandLinkForm;
+use Dealer\Form\ContentLinkForm;
+use Dealer\Form\FolderLinkForm;
+use Dealer\Model\DealerBrandQuery;
+use Dealer\Model\DealerContentQuery;
+use Dealer\Model\DealerFolderQuery;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Hook\HookRenderEvent;
+use Thelia\Core\Form\TheliaFormFactory;
 use Thelia\Core\Hook\BaseHook;
-
+use Thelia\Core\Template\Parser\ParserResolver;
+use Thelia\Model\BrandQuery;
+use Thelia\Model\ContentQuery;
+use Thelia\Model\FolderQuery;
 
 /**
  * Class InternalHook
@@ -18,6 +29,14 @@ use Thelia\Core\Hook\BaseHook;
  */
 class InternalHook extends BaseHook
 {
+    public function __construct(
+        private readonly TheliaFormFactory $dealerFormFactory,
+        ?EventDispatcherInterface $dispatcher = null,
+        ?ParserResolver $parserResolver = null,
+    ) {
+        parent::__construct($dispatcher, $parserResolver);
+    }
+
     public static function getSubscribedHooks(): array
     {
         return [
@@ -25,58 +44,179 @@ class InternalHook extends BaseHook
                 ['type' => 'back', 'method' => 'insertContent'],
                 ['type' => 'back', 'method' => 'insertFolder'],
                 ['type' => 'back', 'method' => 'insertBrand'],
-                ['type' => 'back', 'method' => 'insertProduct'],
-            ],
-            'dealer.edit.js' => [
-                ['type' => 'back', 'method' => 'insertContentJs'],
-                ['type' => 'back', 'method' => 'insertFolderJs'],
-                ['type' => 'back', 'method' => 'insertBrandJs'],
-                ['type' => 'back', 'method' => 'insertProductJs'],
             ],
         ];
     }
 
-    public function insertContent(HookRenderEvent $event)
+    public function insertContent(HookRenderEvent $event): void
     {
-        $event->add($this->render("includes/content-linked.html", $event->getArguments()));
-        $event->add($this->render("modal/content-link.html", $event->getArguments()));
+        $dealerId = $event->getArgument('dealer_id');
+
+        $event->add($this->render('Dealer/associated/content-linked.html.twig', [
+            'dealer_id' => $dealerId,
+            'dealer_current_url' => $this->getCurrentUrl(),
+            'dealer_linked_content' => $this->getLinkedContent($dealerId),
+            'dealer_all_content' => $this->getAllContent(),
+            'dealer_content_link_form' => $this->dealerFormFactory->createForm(ContentLinkForm::getName())->createView()->getView(),
+        ]));
     }
 
-    public function insertFolder(HookRenderEvent $event)
+    public function insertFolder(HookRenderEvent $event): void
     {
-        $event->add($this->render("includes/folder-linked.html", $event->getArguments()));
-        $event->add($this->render("modal/folder-link.html", $event->getArguments()));
+        $dealerId = $event->getArgument('dealer_id');
+
+        $event->add($this->render('Dealer/associated/folder-linked.html.twig', [
+            'dealer_id' => $dealerId,
+            'dealer_current_url' => $this->getCurrentUrl(),
+            'dealer_linked_folder' => $this->getLinkedFolder($dealerId),
+            'dealer_all_folder' => $this->getAllFolder(),
+            'dealer_folder_link_form' => $this->dealerFormFactory->createForm(FolderLinkForm::getName())->createView()->getView(),
+        ]));
     }
 
-    public function insertBrand(HookRenderEvent $event)
+    public function insertBrand(HookRenderEvent $event): void
     {
-        $event->add($this->render("includes/brand-linked.html", $event->getArguments()));
-        $event->add($this->render("modal/brand-link.html", $event->getArguments()));
+        $dealerId = $event->getArgument('dealer_id');
+
+        $event->add($this->render('Dealer/associated/brand-linked.html.twig', [
+            'dealer_id' => $dealerId,
+            'dealer_current_url' => $this->getCurrentUrl(),
+            'dealer_linked_brand' => $this->getLinkedBrand($dealerId),
+            'dealer_all_brand' => $this->getAllBrand(),
+            'dealer_brand_link_form' => $this->dealerFormFactory->createForm(BrandLinkForm::getName())->createView()->getView(),
+        ]));
     }
 
-    public function insertProduct(HookRenderEvent $event)
+    private function getCurrentUrl(): string
     {
-        /*$event->add($this->render("includes/product-linked.html", $event->getArguments()));
-        $event->add($this->render("modal/product-link.html", $event->getArguments()));*/
+        return $this->getRequest()?->getRequestUri() ?? '';
     }
 
-    public function insertContentJs(HookRenderEvent $event)
+    private function getCurrentLocale(): string
     {
-        $event->add($this->render("script/dealer-content-js.html", $event->getArguments()));
+        return $this->getRequest()?->getSession()?->getLang()?->getLocale() ?? 'en_US';
     }
 
-    public function insertFolderJs(HookRenderEvent $event)
+    /**
+     * @return array<int, array{id: int, title: string}>
+     */
+    private function getLinkedContent(mixed $dealerId): array
     {
-        $event->add($this->render("script/dealer-folder-js.html", $event->getArguments()));
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $ids = [];
+        foreach (DealerContentQuery::create()->filterByDealerId((int) $dealerId)->find() as $link) {
+            $ids[] = $link->getContentId();
+        }
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $locale = $this->getCurrentLocale();
+        $rows = [];
+        foreach (ContentQuery::create()->filterById($ids)->find() as $content) {
+            $rows[] = ['id' => $content->getId(), 'title' => $content->setLocale($locale)->getTitle()];
+        }
+
+        return $rows;
     }
 
-    public function insertBrandJs(HookRenderEvent $event)
+    /**
+     * @return array<int, array{id: int, title: string}>
+     */
+    private function getLinkedFolder(mixed $dealerId): array
     {
-        $event->add($this->render("script/dealer-brand-js.html", $event->getArguments()));
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $ids = [];
+        foreach (DealerFolderQuery::create()->filterByDealerId((int) $dealerId)->find() as $link) {
+            $ids[] = $link->getFolderId();
+        }
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $locale = $this->getCurrentLocale();
+        $rows = [];
+        foreach (FolderQuery::create()->filterById($ids)->find() as $folder) {
+            $rows[] = ['id' => $folder->getId(), 'title' => $folder->setLocale($locale)->getTitle()];
+        }
+
+        return $rows;
     }
 
-    public function insertProductJs(HookRenderEvent $event)
+    /**
+     * @return array<int, array{id: int, title: string}>
+     */
+    private function getLinkedBrand(mixed $dealerId): array
     {
-        //$event->add($this->render("script/dealer-product-js.html", $event->getArguments()));
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $ids = [];
+        foreach (DealerBrandQuery::create()->filterByDealerId((int) $dealerId)->find() as $link) {
+            $ids[] = $link->getBrandId();
+        }
+
+        if ($ids === []) {
+            return [];
+        }
+
+        $locale = $this->getCurrentLocale();
+        $rows = [];
+        foreach (BrandQuery::create()->filterById($ids)->find() as $brand) {
+            $rows[] = ['id' => $brand->getId(), 'title' => $brand->setLocale($locale)->getTitle()];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @return array<int, array{id: int, title: string}>
+     */
+    private function getAllContent(): array
+    {
+        $locale = $this->getCurrentLocale();
+        $rows = [];
+        foreach (ContentQuery::create()->find() as $content) {
+            $rows[] = ['id' => $content->getId(), 'title' => $content->setLocale($locale)->getTitle()];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @return array<int, array{id: int, title: string}>
+     */
+    private function getAllFolder(): array
+    {
+        $locale = $this->getCurrentLocale();
+        $rows = [];
+        foreach (FolderQuery::create()->find() as $folder) {
+            $rows[] = ['id' => $folder->getId(), 'title' => $folder->setLocale($locale)->getTitle()];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @return array<int, array{id: int, title: string}>
+     */
+    private function getAllBrand(): array
+    {
+        $locale = $this->getCurrentLocale();
+        $rows = [];
+        foreach (BrandQuery::create()->find() as $brand) {
+            $rows[] = ['id' => $brand->getId(), 'title' => $brand->setLocale($locale)->getTitle()];
+        }
+
+        return $rows;
     }
 }

@@ -16,6 +16,8 @@ namespace Dealer\Controller;
 use Dealer\Controller\Base\BaseController;
 use Dealer\Dealer as DealerModule;
 use Dealer\Form\DealerForm;
+use Dealer\Form\DealerUpdateForm;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\Propel;
@@ -85,22 +87,40 @@ class DealerController extends BaseController
         return $this->createForm(DealerForm::getName());
     }
 
-    private ?Environment $dealerTwig = null;
+    protected function getUpdateForm($data = [])
+    {
+        if (!is_array($data)) {
+            $data = [];
+        }
+
+        return $this->createForm(DealerUpdateForm::getName(), FormType::class, $data);
+    }
+
+    public function __construct(
+        private readonly Environment $dealerTwigEnv,
+        private readonly TemplateHelperInterface $dealerTemplateHelper,
+        #[Autowire(service: 'twig.loader.native_filesystem')]
+        private readonly FilesystemLoader $dealerTwigLoader,
+    ) {
+    }
+
+    /**
+     * Make both the active admin theme (for base.html.twig) and this module's
+     * default-twig directory resolvable by the shared Twig loader, so the page
+     * can be rendered by bare name (the active parser would otherwise pick Smarty).
+     */
+    private function setupModuleTwig(): Environment
+    {
+        $this->dealerTwigLoader->addPath($this->dealerTemplateHelper->getActiveAdminTemplate()->getAbsolutePath());
+        $this->dealerTwigLoader->addPath(__DIR__.'/../templates/backOffice/default-twig');
+
+        return $this->dealerTwigEnv;
+    }
 
     #[Route('', name: '', methods: ['GET'])]
-    public function listAction(
-        Environment $twig,
-        TemplateHelperInterface $templateHelper,
-        #[Autowire(service: 'twig.loader.native_filesystem')]
-        FilesystemLoader $loader,
-    ): Response {
-        $this->dealerTwig = $twig;
-
-        // Make both the active admin theme (for base.html.twig) and this module's
-        // default-twig directory resolvable by the shared Twig loader, so the page
-        // can be rendered by bare name (the active parser would otherwise pick Smarty).
-        $loader->addPath($templateHelper->getActiveAdminTemplate()->getAbsolutePath());
-        $loader->addPath(__DIR__.'/../templates/backOffice/default-twig');
+    public function listAction(): Response
+    {
+        $this->setupModuleTwig();
 
         return parent::defaultAction();
     }
@@ -161,7 +181,7 @@ class DealerController extends BaseController
         $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: ['locale' => $locale]);
 
         return new Response(
-            $this->dealerTwig->render('dealers.html.twig', [
+            $this->dealerTwigEnv->render('dealers.html.twig', [
                 'dealers' => $dealers,
                 'order' => $order,
                 'edit_language_id' => $request->getSession()?->getLang()?->getId(),
@@ -178,7 +198,58 @@ class DealerController extends BaseController
      */
     protected function getEditRenderTemplate()
     {
-        return $this->render("dealer-edit");
+        $twig = $this->setupModuleTwig();
+
+        $request = $this->getRequest();
+        $dealerId = $request->query->get('dealer_id');
+        $locale = $request->getSession()?->getLang()?->getLocale() ?? 'en_US';
+
+        $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
+
+        $updateForm = $this->getUpdateForm($this->buildDealerFormData($dealer));
+
+        return new Response(
+            $twig->render('dealer-edit.html.twig', [
+                'dealer_id' => $dealerId,
+                'dealer' => $dealer !== null ? [
+                    'id' => $dealer->getId(),
+                    'title' => $dealer->setLocale($locale)->getTitle(),
+                    'created_at' => $dealer->getCreatedAt(),
+                    'updated_at' => $dealer->getUpdatedAt(),
+                ] : null,
+                'edit_language_id' => $request->getSession()?->getLang()?->getId(),
+                'edit_language_locale' => $locale,
+                'update_form' => $updateForm->createView()->getView(),
+                'general_error' => $this->getParserContext()->get('general_error'),
+            ])
+        );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildDealerFormData(?Dealer $dealer): array
+    {
+        if ($dealer === null) {
+            return [];
+        }
+
+        return [
+            'id' => $dealer->getId(),
+            'title' => $dealer->getTitle(),
+            'address1' => $dealer->getAddress1(),
+            'address2' => $dealer->getAddress2(),
+            'address3' => $dealer->getAddress3(),
+            'zipcode' => $dealer->getZipcode(),
+            'city' => $dealer->getCity(),
+            'country_id' => $dealer->getCountryId(),
+            'description' => $dealer->getDescription(),
+            'big_description' => $dealer->getBigDescription(),
+            'hard_open_hour' => $dealer->getHardOpenHour(),
+            'access' => $dealer->getAccess(),
+            'latitude' => $dealer->getLatitude(),
+            'longitude' => $dealer->getLongitude(),
+        ];
     }
 
     /**

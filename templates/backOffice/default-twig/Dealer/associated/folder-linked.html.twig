@@ -1,0 +1,108 @@
+<div class="col-sm-6">
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="h5 mb-0">{{ 'Folder linked'|trans({}, 'dealer.bo.default') }}</h4>
+            {% if is_granted('CREATE', {resource: 'admin.module', module: 'Dealer'}) %}
+                <button type="button" class="btn btn-primary btn-sm" title="{{ 'Link a new folder'|trans({}, 'dealer.bo.default') }}"
+                        data-bs-toggle="modal" data-bs-target="#dealer-folder-link">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            {% endif %}
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-striped mb-0">
+                <thead>
+                <tr>
+                    <th>{{ 'ID'|trans }}</th>
+                    <th>{{ 'Folder title'|trans }}</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for folder in dealer_linked_folder %}
+                    <tr>
+                        <td>{{ folder.id }}</td>
+                        <td><a href="/admin/folders/update/{{ folder.id }}">{{ folder.title }}</a></td>
+                        <td class="text-end">
+                            {% if is_granted('DELETE', {resource: 'admin.module', module: 'Dealer'}) %}
+                                <button type="button" class="btn btn-outline-danger btn-sm folder-unlink"
+                                        data-bs-toggle="modal" data-bs-target="#dealer-folder-unlink" data-id="{{ folder.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3"><div class="alert alert-info mb-0">{{ 'There is no Folder linked to this dealer'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{# LINK modal #}
+<div class="modal fade" id="dealer-folder-link" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/admin/module/Dealer/folder">
+                {% set lf = dealer_folder_link_form.vars.full_name %}
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'Link a Folder'|trans({}, 'dealer.bo.default') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="{{ lf }}[_token]" value="{{ dealer_folder_link_form._token.vars.value }}">
+                    <input type="hidden" name="{{ lf }}[dealer_id]" value="{{ dealer_id }}">
+                    <input type="hidden" name="{{ lf }}[success_url]" value="{{ dealer_current_url }}">
+                    <div class="mb-3">
+                        <label class="form-label" for="folder-link-folder">{{ 'Folder'|trans({}, 'dealer.bo.default') }}</label>
+                        <select class="form-select" id="folder-link-folder" name="{{ lf }}[folder_id]" required>
+                            {% for folder in dealer_all_folder %}
+                                <option value="{{ folder.id }}">{{ folder.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                    <button type="submit" class="btn btn-primary">{{ 'Create'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{# UNLINK modal #}
+<div class="modal fade" id="dealer-folder-unlink" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/admin/module/Dealer/folder/delete?_token={{ assignToken() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ 'Unlink a folder'|trans({}, 'dealer.bo.default') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
+                </div>
+                <div class="modal-body">
+                    {{ 'Do you really want to unlink this folder ?'|trans({}, 'dealer.bo.default') }}
+                    <input type="hidden" id="dealer_folder_unlink_id" name="dealer_folder_link_id" value="">
+                    <input type="hidden" name="dealer_id" value="{{ dealer_id }}">
+                    <input type="hidden" name="success_url" value="{{ dealer_current_url }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                    <button type="submit" class="btn btn-danger">{{ 'Delete'|trans }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.folder-unlink').forEach(function (el) {
+            el.addEventListener('click', function () {
+                document.getElementById('dealer_folder_unlink_id').value = this.dataset.id;
+            });
+        });
+    });
+</script>
