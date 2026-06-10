@@ -15,8 +15,21 @@ namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
 use Dealer\Dealer as DealerModule;
+use Dealer\Form\AdminLinkForm;
+use Dealer\Form\ContactForm;
+use Dealer\Form\ContactInfoForm;
+use Dealer\Form\ContactInfoUpdateForm;
+use Dealer\Form\ContactUpdateForm;
 use Dealer\Form\DealerForm;
+use Dealer\Form\DealerImageBoxForm;
+use Dealer\Form\DealerImageHeaderForm;
+use Dealer\Form\DealerMetaSEOForm;
 use Dealer\Form\DealerUpdateForm;
+use Dealer\Form\GeoDealerForm;
+use Dealer\Form\SchedulesCloneForm;
+use Dealer\Form\SchedulesForm;
+use Dealer\Form\SchedulesUpdateForm;
+use Dealer\Model\DealerImage;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
@@ -32,6 +45,7 @@ use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Template\TemplateHelperInterface;
 use Thelia\Model\CountryQuery;
 use Thelia\Tools\TokenProvider;
@@ -101,6 +115,7 @@ class DealerController extends BaseController
         private readonly TemplateHelperInterface $dealerTemplateHelper,
         #[Autowire(service: 'twig.loader.native_filesystem')]
         private readonly FilesystemLoader $dealerTwigLoader,
+        private readonly EventDispatcherInterface $dealerEventDispatcher,
     ) {
     }
 
@@ -208,6 +223,19 @@ class DealerController extends BaseController
 
         $updateForm = $this->getUpdateForm($this->buildDealerFormData($dealer));
 
+        $contactCreateForm = $this->getTheliaFormFactory()->createForm(ContactForm::getName(), data: ['locale' => $locale]);
+        $contactUpdateForm = $this->getTheliaFormFactory()->createForm(ContactUpdateForm::getName(), data: ['locale' => $locale]);
+        $contactInfoCreateForm = $this->getTheliaFormFactory()->createForm(ContactInfoForm::getName(), data: ['locale' => $locale]);
+        $contactInfoUpdateForm = $this->getTheliaFormFactory()->createForm(ContactInfoUpdateForm::getName(), data: ['locale' => $locale]);
+        $schedulesCreateForm = $this->getTheliaFormFactory()->createForm(SchedulesForm::getName());
+        $schedulesUpdateForm = $this->getTheliaFormFactory()->createForm(SchedulesUpdateForm::getName());
+        $schedulesCloneForm = $this->getTheliaFormFactory()->createForm(SchedulesCloneForm::getName());
+        $adminLinkForm = $this->getTheliaFormFactory()->createForm(AdminLinkForm::getName());
+        $geoForm = $this->getTheliaFormFactory()->createForm(GeoDealerForm::getName(), data: $this->buildGeoFormData($dealer));
+        $seoForm = $this->getTheliaFormFactory()->createForm(DealerMetaSEOForm::getName(), data: $this->buildSeoFormData($dealerId));
+        $imageHeaderForm = $this->getTheliaFormFactory()->createForm(DealerImageHeaderForm::getName());
+        $imageBoxForm = $this->getTheliaFormFactory()->createForm(DealerImageBoxForm::getName());
+
         return new Response(
             $twig->render('dealer-edit.html.twig', [
                 'dealer_id' => $dealerId,
@@ -221,8 +249,281 @@ class DealerController extends BaseController
                 'edit_language_locale' => $locale,
                 'update_form' => $updateForm->createView()->getView(),
                 'general_error' => $this->getParserContext()->get('general_error'),
+                // Tab data
+                'contacts' => $this->buildContacts($dealerId, $locale),
+                'contact_create_form' => $contactCreateForm->createView()->getView(),
+                'contact_update_form' => $contactUpdateForm->createView()->getView(),
+                'contact_info_create_form' => $contactInfoCreateForm->createView()->getView(),
+                'contact_info_update_form' => $contactInfoUpdateForm->createView()->getView(),
+                'contact_info_types' => $this->getContactInfoTypeChoices(),
+                'schedules_default' => $this->buildSchedules($dealerId, $locale, defaultPeriod: true, closed: false),
+                'schedules_extra' => $this->buildSchedules($dealerId, $locale, defaultPeriod: false, closed: false),
+                'schedules_closed' => $this->buildSchedules($dealerId, $locale, defaultPeriod: false, closed: true),
+                'schedules_create_form' => $schedulesCreateForm->createView()->getView(),
+                'schedules_update_form' => $schedulesUpdateForm->createView()->getView(),
+                'schedules_clone_form' => $schedulesCloneForm->createView()->getView(),
+                'day_labels' => $this->getDayLabels($locale),
+                'linked_admins' => $this->buildLinkedAdmins($dealerId),
+                'admin_link_form' => $adminLinkForm->createView()->getView(),
+                'geo_form' => $geoForm->createView()->getView(),
+                'images_header' => $this->buildImages($dealerId, DealerImage::IMAGE_TYPE_HEADER, $locale),
+                'images_box' => $this->buildImages($dealerId, DealerImage::IMAGE_TYPE_BOX, $locale),
+                'image_header_form' => $imageHeaderForm->createView()->getView(),
+                'image_box_form' => $imageBoxForm->createView()->getView(),
+                'seo_form' => $seoForm->createView()->getView(),
             ])
         );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildGeoFormData(?Dealer $dealer): array
+    {
+        if ($dealer === null) {
+            return [];
+        }
+
+        return [
+            'id' => $dealer->getId(),
+            'latitude' => $dealer->getLatitude(),
+            'longitude' => $dealer->getLongitude(),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildSeoFormData($dealerId): array
+    {
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $seo = \Dealer\Model\DealerMetaSeoQuery::create()->findOneByDealerId($dealerId);
+
+        return [
+            'dealer_id' => $dealerId,
+            'slug' => $seo?->getSlug(),
+            'meta_title' => $seo?->getMetaTitle(),
+            'meta_description' => $seo?->getMetaDescription(),
+            'meta_keywords' => $seo?->getMetaKeywords(),
+            'meta_json' => $seo?->getJson(),
+        ];
+    }
+
+    /**
+     * Contacts (with their contact-infos) for the Contacts tab.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function buildContacts($dealerId, string $locale): array
+    {
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $contacts = [];
+
+        $rows = \Dealer\Model\DealerContactQuery::create()
+            ->filterByDealerId($dealerId)
+            ->orderByIsDefault(\Propel\Runtime\ActiveQuery\Criteria::DESC)
+            ->find();
+
+        /** @var \Dealer\Model\DealerContact $contact */
+        foreach ($rows as $contact) {
+            $infos = [];
+
+            $infoRows = \Dealer\Model\DealerContactInfoQuery::create()
+                ->filterByContactId($contact->getId())
+                ->find();
+
+            /** @var \Dealer\Model\DealerContactInfo $info */
+            foreach ($infoRows as $info) {
+                $infos[] = [
+                    'id' => $info->getId(),
+                    'contact_id' => $info->getContactId(),
+                    'type' => $info->getContactType(),
+                    'type_id' => $info->getContactTypeId(),
+                    'value' => $info->setLocale($locale)->getValue(),
+                ];
+            }
+
+            $contacts[] = [
+                'id' => $contact->getId(),
+                'label' => $contact->setLocale($locale)->getLabel(),
+                'is_default' => (int) $contact->getIsDefault() === 1,
+                'infos' => $infos,
+            ];
+        }
+
+        return $contacts;
+    }
+
+    /**
+     * @return array<int|string, string>
+     */
+    private function getContactInfoTypeChoices(): array
+    {
+        return \Dealer\Model\Map\DealerContactInfoTableMap::getValueSet(
+            \Dealer\Model\Map\DealerContactInfoTableMap::COL_CONTACT_TYPE
+        );
+    }
+
+    /**
+     * Schedules for one of the three sections (default / extra / closed).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function buildSchedules($dealerId, string $locale, bool $defaultPeriod, bool $closed): array
+    {
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $query = \Dealer\Model\DealerShedulesQuery::create()
+            ->filterByDealerId($dealerId)
+            ->filterByClosed($closed ? 1 : 0);
+
+        if ($defaultPeriod) {
+            $query->filterByPeriodNull()->orderByDay()->orderByBegin();
+        } else {
+            $query->filterByPeriodNotNull()->orderByPeriodBegin()->orderByDay()->orderByBegin();
+        }
+
+        $days = $this->getDayLabels($locale);
+        $schedules = [];
+
+        /** @var \Dealer\Model\DealerShedules $schedule */
+        foreach ($query->find() as $schedule) {
+            $begin = $schedule->getBegin();
+            $end = $schedule->getEnd();
+            $periodBegin = $schedule->getPeriodBegin();
+            $periodEnd = $schedule->getPeriodEnd();
+
+            $schedules[] = [
+                'id' => $schedule->getId(),
+                'day' => $schedule->getDay(),
+                'day_label' => $days[$schedule->getDay()] ?? '',
+                'begin' => $begin instanceof \DateTimeInterface ? $begin->format('H:i') : null,
+                'end' => $end instanceof \DateTimeInterface ? $end->format('H:i') : null,
+                'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
+                'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
+            ];
+        }
+
+        return $schedules;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function getDayLabels(string $locale): array
+    {
+        $translator = Translator::getInstance();
+
+        return [
+            $translator->trans('Monday', [], DealerModule::MESSAGE_DOMAIN, $locale),
+            $translator->trans('Tuesday', [], DealerModule::MESSAGE_DOMAIN, $locale),
+            $translator->trans('Wednesday', [], DealerModule::MESSAGE_DOMAIN, $locale),
+            $translator->trans('Thursday', [], DealerModule::MESSAGE_DOMAIN, $locale),
+            $translator->trans('Friday', [], DealerModule::MESSAGE_DOMAIN, $locale),
+            $translator->trans('Saturday', [], DealerModule::MESSAGE_DOMAIN, $locale),
+            $translator->trans('Sunday', [], DealerModule::MESSAGE_DOMAIN, $locale),
+        ];
+    }
+
+    /**
+     * Admin users linked to this dealer (Users tab).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function buildLinkedAdmins($dealerId): array
+    {
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $admins = [];
+
+        $links = \Dealer\Model\DealerAdminQuery::create()
+            ->filterByDealerId($dealerId)
+            ->find();
+
+        $adminIds = [];
+        /** @var \Dealer\Model\DealerAdmin $link */
+        foreach ($links as $link) {
+            $adminIds[] = $link->getAdminId();
+        }
+
+        if (empty($adminIds)) {
+            return [];
+        }
+
+        $adminRows = \Thelia\Model\AdminQuery::create()
+            ->filterById($adminIds, \Propel\Runtime\ActiveQuery\Criteria::IN)
+            ->orderById()
+            ->find();
+
+        /** @var \Thelia\Model\Admin $admin */
+        foreach ($adminRows as $admin) {
+            $admins[] = [
+                'id' => $admin->getId(),
+                'firstname' => $admin->getFirstname(),
+                'lastname' => $admin->getLastname(),
+            ];
+        }
+
+        return $admins;
+    }
+
+    /**
+     * Images of a given type (header / box) processed through the image pipeline.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function buildImages($dealerId, string $type, string $locale): array
+    {
+        if ($dealerId === null) {
+            return [];
+        }
+
+        $images = [];
+
+        $rows = \Dealer\Model\DealerImageQuery::create()
+            ->filterByType(DealerImage::getTypeIdFromLabel($type))
+            ->filterByDealerId($dealerId)
+            ->find();
+
+        /** @var DealerImage $image */
+        foreach ($rows as $image) {
+            $imageUrl = '';
+            $originalUrl = '';
+
+            try {
+                $event = new \Thelia\Core\Event\Image\ImageEvent();
+                $event->setSourceFilepath($image->getUploadDir() . '/' . $image->getFile());
+                $event->setCacheSubdirectory(DealerModule::DOMAIN_NAME);
+                $event->setWidth(120);
+                $event->setResizeMode((string) \Thelia\Action\Image::EXACT_RATIO_WITH_BORDERS);
+
+                $this->dealerEventDispatcher->dispatch($event, \Thelia\Core\Event\TheliaEvents::IMAGE_PROCESS);
+
+                $imageUrl = $event->getFileUrl();
+                $originalUrl = $event->getOriginalFileUrl();
+            } catch (\Exception) {
+                // Leave URLs empty; the template shows a placeholder.
+            }
+
+            $images[] = [
+                'id' => $image->getId(),
+                'image_url' => $imageUrl,
+                'original_url' => $originalUrl,
+                'title' => $image->setLocale($locale)->getTitle(),
+            ];
+        }
+
+        return $images;
     }
 
     /**

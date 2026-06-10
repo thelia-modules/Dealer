@@ -1,0 +1,61 @@
+<div class="tab-pane fade" id="images" role="tabpanel">
+    {% set hdr_fp = image_header_form.vars.full_name %}
+    {% set box_fp = image_box_form.vars.full_name %}
+    {% set images_url = '/admin/module/Dealer/dealer/edit?dealer_id=' ~ dealer_id ~ '#images' %}
+
+    <div class="row">
+        {# HEADER (banner) #}
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">{{ 'Header Image (banner)'|trans({}, 'dealer.bo.default') }}</div>
+                <div class="card-body">
+                    <form method="POST" action="/admin/module/dealer/image/header/update" enctype="multipart/form-data">
+                        <input type="hidden" name="{{ hdr_fp }}[_token]" value="{{ image_header_form._token.vars.value }}">
+                        <input type="hidden" name="{{ hdr_fp }}[parent_id]" value="{{ dealer_id }}">
+                        <input type="hidden" name="{{ hdr_fp }}[success_url]" value="{{ images_url }}">
+                        <input type="hidden" name="{{ hdr_fp }}[error_url]" value="{{ images_url }}">
+                        <div class="input-group">
+                            <input type="file" class="form-control" name="{{ hdr_fp }}[file]" required>
+                            <button type="submit" class="btn btn-info"><i class="bi bi-upload"></i> {{ 'Validate'|trans({}, 'dealer.bo.default') }}</button>
+                        </div>
+                    </form>
+
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        {% for image in images_header %}
+                            {% include 'Dealer/edit/_image-thumb.html.twig' with {image: image, type: 'imageHeader', dealer_id: dealer_id} only %}
+                        {% else %}
+                            <span class="text-muted">{{ 'No image yet.'|trans({}, 'dealer.bo.default') }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# BOX #}
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-header">{{ 'Box image'|trans({}, 'dealer.bo.default') }}</div>
+                <div class="card-body">
+                    <form method="POST" action="/admin/module/dealer/image/box/update" enctype="multipart/form-data">
+                        <input type="hidden" name="{{ box_fp }}[_token]" value="{{ image_box_form._token.vars.value }}">
+                        <input type="hidden" name="{{ box_fp }}[parent_id]" value="{{ dealer_id }}">
+                        <input type="hidden" name="{{ box_fp }}[success_url]" value="{{ images_url }}">
+                        <input type="hidden" name="{{ box_fp }}[error_url]" value="{{ images_url }}">
+                        <div class="input-group">
+                            <input type="file" class="form-control" name="{{ box_fp }}[file]" required>
+                            <button type="submit" class="btn btn-info"><i class="bi bi-upload"></i> {{ 'Validate'|trans({}, 'dealer.bo.default') }}</button>
+                        </div>
+                    </form>
+
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        {% for image in images_box %}
+                            {% include 'Dealer/edit/_image-thumb.html.twig' with {image: image, type: 'imageBox', dealer_id: dealer_id} only %}
+                        {% else %}
+                            <span class="text-muted">{{ 'No image yet.'|trans({}, 'dealer.bo.default') }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

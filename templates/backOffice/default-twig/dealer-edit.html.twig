@@ -26,7 +26,25 @@
                         <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">{{ 'General'|trans({}, 'dealer.bo.default') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#metaseo" type="button" role="tab">{{ 'Meta SEO'|trans }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#images" type="button" role="tab">{{ 'Images'|trans }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#location" type="button" role="tab">{{ 'Location'|trans({}, 'dealer.bo.default') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#contacts" type="button" role="tab">{{ 'Contacts'|trans }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#schedules" type="button" role="tab">{{ 'Schedules'|trans({}, 'dealer.bo.default') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#associated" type="button" role="tab">{{ 'Associated'|trans({}, 'dealer.bo.default') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">{{ 'Users'|trans({}, 'dealer.bo.default') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#modules" type="button" role="tab">{{ 'Modules'|trans }}</button>
@@ -72,6 +90,21 @@
                         </form>
                     </div>
 
+                    {# META SEO #}
+                    {% include 'Dealer/edit/tab-metaseo.html.twig' %}
+
+                    {# IMAGES #}
+                    {% include 'Dealer/edit/tab-images.html.twig' %}
+
+                    {# LOCATION #}
+                    {% include 'Dealer/edit/tab-location.html.twig' %}
+
+                    {# CONTACTS #}
+                    {% include 'Dealer/edit/tab-contacts.html.twig' %}
+
+                    {# SCHEDULES #}
+                    {% include 'Dealer/edit/tab-schedules.html.twig' %}
+
                     {# ASSOCIATED — driven by the dealer.associated.tabcontent hook #}
                     <div class="tab-pane fade" id="associated" role="tabpanel">
                         {% if has_hook('dealer.associated.tabcontent') %}
@@ -80,6 +113,9 @@
                             <div class="alert alert-info mb-0">{{ 'No associated content for this dealer.'|trans({}, 'dealer.bo.default') }}</div>
                         {% endif %}
                     </div>
+
+                    {# USERS #}
+                    {% include 'Dealer/edit/tab-users.html.twig' %}
 
                     {# MODULES — driven by the dealer.extra.content.edit hook #}
                     <div class="tab-pane fade" id="modules" role="tabpanel">
@@ -93,6 +129,46 @@
             </div>
         </div>
     </div>
+
+    {# Modals (contact, contact-info, schedules, admin link) #}
+    {% include 'Dealer/edit/modals.html.twig' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Activate the tab referenced by the URL hash, if any.
+            var hash = window.location.hash;
+            if (hash) {
+                var trigger = document.querySelector('#dealer-edit-tabs [data-bs-target="' + hash + '"]');
+                if (trigger) {
+                    bootstrap.Tab.getOrCreateInstance(trigger).show();
+                }
+            }
+
+            // Generic modal prefill: copy data-* attributes from the trigger into the modal inputs.
+            document.querySelectorAll('.dealer-modal').forEach(function (modal) {
+                modal.addEventListener('show.bs.modal', function (event) {
+                    var trigger = event.relatedTarget;
+                    if (!trigger) {
+                        return;
+                    }
+                    modal.querySelectorAll('[data-fill]').forEach(function (input) {
+                        var key = input.getAttribute('data-fill');
+                        var value = trigger.getAttribute('data-' + key);
+                        if (value !== null) {
+                            input.value = value;
+                        }
+                    });
+                    modal.querySelectorAll('[data-fill-select]').forEach(function (select) {
+                        var key = select.getAttribute('data-fill-select');
+                        var value = trigger.getAttribute('data-' + key);
+                        if (value !== null) {
+                            select.value = value;
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 
     {{ safe_hook('dealer.edit.js') }}
 {% endblock %}

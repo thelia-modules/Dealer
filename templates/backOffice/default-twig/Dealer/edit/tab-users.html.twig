@@ -1,0 +1,38 @@
+<div class="tab-pane fade" id="users" role="tabpanel">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">{{ 'Admin linked'|trans({}, 'dealer.bo.default') }}</h5>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#dealer-admin-link">
+            <i class="bi bi-plus-lg"></i> {{ 'Link a new admin'|trans({}, 'dealer.bo.default') }}
+        </button>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>{{ 'ID'|trans }}</th>
+            <th>{{ 'Admin title'|trans({}, 'dealer.bo.default') }}</th>
+            <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for admin in linked_admins %}
+            <tr>
+                <td>{{ admin.id }}</td>
+                <td>{{ admin.firstname }} {{ admin.lastname }}</td>
+                <td class="text-end">
+                    <button type="button" class="btn btn-outline-danger btn-sm dealer-admin-unlink-btn"
+                            data-bs-toggle="modal" data-bs-target="#dealer-admin-unlink" data-id="{{ admin.id }}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">
+                    <div class="alert alert-info mb-0">{{ 'There is no Admin linked to this dealer'|trans({}, 'dealer.bo.default') }}</div>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

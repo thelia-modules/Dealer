@@ -1,0 +1,114 @@
+<div class="tab-pane fade" id="schedules" role="tabpanel">
+    <div class="row">
+        {# DEFAULT SCHEDULES #}
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">{{ 'Default Schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
+                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th>{{ 'Day'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Begin'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in schedules_default %}
+                    <tr>
+                        <td>{{ s.day_label }}</td>
+                        <td>{{ s.begin }}</td>
+                        <td>{{ s.end }}</td>
+                        <td class="text-end">
+                            {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4"><div class="alert alert-info mb-0">{{ 'There is no Default Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            {# EXTRA SCHEDULES #}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">{{ 'Extra Schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
+                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th>{{ 'Day'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Begin'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in schedules_extra %}
+                    <tr>
+                        <td>{{ s.day_label }}</td>
+                        <td>{{ s.begin }}</td>
+                        <td>{{ s.end }}</td>
+                        <td>{{ s.period_begin }}</td>
+                        <td>{{ s.period_end }}</td>
+                        <td class="text-end">
+                            {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Extra Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            {# CLOSED SCHEDULES #}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="mb-0">{{ 'Closed Schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
+                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="1">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+            </div>
+            <table class="table table-sm table-striped">
+                <thead>
+                <tr>
+                    <th>{{ 'Day'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Begin'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in schedules_closed %}
+                    <tr>
+                        <td>{{ s.day_label }}</td>
+                        <td>{{ s.begin }}</td>
+                        <td>{{ s.end }}</td>
+                        <td>{{ s.period_begin }}</td>
+                        <td>{{ s.period_end }}</td>
+                        <td class="text-end">
+                            {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Closed Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

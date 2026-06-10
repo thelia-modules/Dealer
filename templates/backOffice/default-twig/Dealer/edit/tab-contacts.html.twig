@@ -1,0 +1,78 @@
+<div class="tab-pane fade" id="contacts" role="tabpanel">
+    <div class="d-flex justify-content-end mb-2">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#dealer-contact-create">
+            <i class="bi bi-plus-lg"></i> {{ 'Create a new Contact'|trans({}, 'dealer.bo.default') }}
+        </button>
+    </div>
+
+    {% if contacts is empty %}
+        <div class="alert alert-info">{{ 'There is no Contact'|trans({}, 'dealer.bo.default') }}</div>
+    {% else %}
+        <div class="accordion" id="dealer-contacts-accordion">
+            {% for contact in contacts %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header d-flex align-items-center">
+                        <button class="accordion-button {{ loop.first ? '' : 'collapsed' }}" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#contact-collapse-{{ contact.id }}">
+                            {{ contact.label }}{% if contact.is_default %} <span class="badge text-bg-secondary ms-2">{{ 'default'|trans({}, 'dealer.bo.default') }}</span>{% endif %}
+                        </button>
+                        <span class="ms-2 pe-2">
+                            <button type="button" class="btn btn-outline-secondary btn-sm dealer-contact-update-btn"
+                                    data-bs-toggle="modal" data-bs-target="#dealer-contact-update"
+                                    data-id="{{ contact.id }}" data-label="{{ contact.label }}">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm dealer-contact-delete-btn"
+                                    data-bs-toggle="modal" data-bs-target="#dealer-contact-delete" data-id="{{ contact.id }}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </span>
+                    </h2>
+                    <div id="contact-collapse-{{ contact.id }}" class="accordion-collapse collapse {{ loop.first ? 'show' : '' }}"
+                         data-bs-parent="#dealer-contacts-accordion">
+                        <div class="accordion-body">
+                            <div class="d-flex justify-content-end mb-2">
+                                <button type="button" class="btn btn-primary btn-sm dealer-contact-info-create-btn"
+                                        data-bs-toggle="modal" data-bs-target="#dealer-contact-info-create"
+                                        data-contact="{{ contact.id }}">
+                                    <i class="bi bi-plus-lg"></i> {{ 'Create a new Contact Info'|trans({}, 'dealer.bo.default') }}
+                                </button>
+                            </div>
+                            <table class="table table-sm table-striped">
+                                <thead>
+                                <tr>
+                                    <th>{{ 'Type'|trans({}, 'dealer.bo.default') }}</th>
+                                    <th>{{ 'Value'|trans({}, 'dealer.bo.default') }}</th>
+                                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for info in contact.infos %}
+                                    <tr>
+                                        <td>{{ info.type }}</td>
+                                        <td>{{ info.value }}</td>
+                                        <td class="text-end">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm dealer-contact-info-update-btn"
+                                                    data-bs-toggle="modal" data-bs-target="#dealer-contact-info-update"
+                                                    data-id="{{ info.id }}" data-contacttype="{{ info.type_id }}"
+                                                    data-value="{{ info.value }}" data-contact="{{ info.contact_id }}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm dealer-contact-info-delete-btn"
+                                                    data-bs-toggle="modal" data-bs-target="#dealer-contact-info-delete" data-id="{{ info.id }}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr><td colspan="3"><div class="alert alert-info mb-0">{{ 'There is no Contact info'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

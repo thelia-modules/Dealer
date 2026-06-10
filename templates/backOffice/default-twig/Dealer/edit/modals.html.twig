@@ -1,0 +1,394 @@
+{% set contact_create_fp = contact_create_form.vars.full_name %}
+{% set contact_update_fp = contact_update_form.vars.full_name %}
+{% set contact_info_create_fp = contact_info_create_form.vars.full_name %}
+{% set contact_info_update_fp = contact_info_update_form.vars.full_name %}
+{% set schedules_create_fp = schedules_create_form.vars.full_name %}
+{% set schedules_update_fp = schedules_update_form.vars.full_name %}
+{% set schedules_clone_fp = schedules_clone_form.vars.full_name %}
+{% set admin_link_fp = admin_link_form.vars.full_name %}
+{% set contacts_url = '/admin/module/Dealer/dealer/edit?dealer_id=' ~ dealer_id ~ '#contacts' %}
+{% set schedules_url = '/admin/module/Dealer/dealer/edit?dealer_id=' ~ dealer_id ~ '#schedules' %}
+{% set users_url = '/admin/module/Dealer/dealer/edit?dealer_id=' ~ dealer_id ~ '#users' %}
+
+{# ====================== CONTACT CREATE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-contact-create" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/contact" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Create a Contact'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ contact_create_fp }}[_token]" value="{{ contact_create_form._token.vars.value }}">
+                <input type="hidden" name="{{ contact_create_fp }}[locale]" value="{{ edit_language_locale }}">
+                <input type="hidden" name="{{ contact_create_fp }}[dealer_id]" value="{{ dealer_id }}">
+                <input type="hidden" name="{{ contact_create_fp }}[success_url]" value="{{ contacts_url }}">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Label'|trans({}, 'dealer.bo.default') }}</label>
+                    <input type="text" class="form-control" name="{{ contact_create_fp }}[label]" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Create'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== CONTACT UPDATE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-contact-update" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/contact/update" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Modify a Contact'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ contact_update_fp }}[_token]" value="{{ contact_update_form._token.vars.value }}">
+                <input type="hidden" name="{{ contact_update_fp }}[locale]" value="{{ edit_language_locale }}">
+                <input type="hidden" name="{{ contact_update_fp }}[dealer_id]" value="{{ dealer_id }}">
+                <input type="hidden" name="{{ contact_update_fp }}[success_url]" value="{{ contacts_url }}">
+                <input type="hidden" name="{{ contact_update_fp }}[id]" value="" data-fill="id">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Label'|trans({}, 'dealer.bo.default') }}</label>
+                    <input type="text" class="form-control" name="{{ contact_update_fp }}[label]" value="" data-fill="label" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== CONTACT DELETE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-contact-delete" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/contact/delete?_token={{ assignToken() }}" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Delete an entry of Contact'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {{ 'Do you really want to delete this Contact ?'|trans({}, 'dealer.bo.default') }}
+                <input type="hidden" name="dealer-contact_id" value="" data-fill="id">
+                <input type="hidden" name="dealer_id" value="{{ dealer_id }}">
+                <input type="hidden" name="success_url" value="{{ contacts_url }}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-danger">{{ 'Delete'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== CONTACT INFO CREATE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-contact-info-create" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/contact-info" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Create a Contact'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ contact_info_create_fp }}[_token]" value="{{ contact_info_create_form._token.vars.value }}">
+                <input type="hidden" name="{{ contact_info_create_fp }}[locale]" value="{{ edit_language_locale }}">
+                <input type="hidden" name="{{ contact_info_create_fp }}[contact_id]" value="" data-fill="contact">
+                <input type="hidden" name="{{ contact_info_create_fp }}[success_url]" value="{{ contacts_url }}">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Contact Type'|trans({}, 'dealer.bo.default') }}</label>
+                    <select class="form-select" name="{{ contact_info_create_fp }}[type]">
+                        {% for index, label in contact_info_types %}
+                            <option value="{{ index }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Value'|trans({}, 'dealer.bo.default') }}</label>
+                    <input type="text" class="form-control" name="{{ contact_info_create_fp }}[value]" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Create'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== CONTACT INFO UPDATE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-contact-info-update" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/contact-info/update" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Modify a Contact Info'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ contact_info_update_fp }}[_token]" value="{{ contact_info_update_form._token.vars.value }}">
+                <input type="hidden" name="{{ contact_info_update_fp }}[locale]" value="{{ edit_language_locale }}">
+                <input type="hidden" name="{{ contact_info_update_fp }}[contact_id]" value="" data-fill="contact">
+                <input type="hidden" name="{{ contact_info_update_fp }}[success_url]" value="{{ contacts_url }}">
+                <input type="hidden" name="{{ contact_info_update_fp }}[id]" value="" data-fill="id">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Contact Type'|trans({}, 'dealer.bo.default') }}</label>
+                    <select class="form-select" name="{{ contact_info_update_fp }}[type]" data-fill-select="contacttype">
+                        {% for index, label in contact_info_types %}
+                            <option value="{{ index }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Value'|trans({}, 'dealer.bo.default') }}</label>
+                    <input type="text" class="form-control" name="{{ contact_info_update_fp }}[value]" value="" data-fill="value" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== CONTACT INFO DELETE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-contact-info-delete" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/contact-info/delete?_token={{ assignToken() }}" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Delete an entry of Contact Info'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {{ 'Do you really want to delete this Contact Info ?'|trans({}, 'dealer.bo.default') }}
+                <input type="hidden" name="dealer-contact-info_id" value="" data-fill="id">
+                <input type="hidden" name="dealer_id" value="{{ dealer_id }}">
+                <input type="hidden" name="success_url" value="{{ contacts_url }}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-danger">{{ 'Delete'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== SCHEDULES CREATE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-schedules-create" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" action="/admin/module/Dealer/schedules" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Create a schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ schedules_create_fp }}[_token]" value="{{ schedules_create_form._token.vars.value }}">
+                <input type="hidden" name="{{ schedules_create_fp }}[dealer_id]" value="{{ dealer_id }}">
+                <input type="hidden" name="{{ schedules_create_fp }}[success_url]" value="{{ schedules_url }}">
+                <input type="hidden" name="{{ schedules_create_fp }}[error_url]" value="{{ schedules_url }}">
+                <input type="hidden" name="{{ schedules_create_fp }}[closed]" value="0" data-fill="closed">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>
+                    <select class="form-select" name="{{ schedules_create_fp }}[day][]" multiple>
+                        {% for idx, label in day_labels %}
+                            <option value="{{ idx }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h6>{{ 'AM'|trans({}, 'dealer.bo.default') }}</h6>
+                        <div class="mb-3">
+                            <label class="form-label">{{ 'Begin'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[beginAM]" value="09:00">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ 'End'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[endAM]" value="12:00">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <h6>{{ 'PM'|trans({}, 'dealer.bo.default') }}</h6>
+                        <div class="mb-3">
+                            <label class="form-label">{{ 'Begin'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[beginPM]" value="14:00">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ 'End'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[endPM]" value="19:00">
+                        </div>
+                    </div>
+                </div>
+                <h6>{{ 'Period'|trans({}, 'dealer.bo.default') }}</h6>
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]">
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_end]">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Create'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== SCHEDULES UPDATE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-schedules-update" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" action="/admin/module/Dealer/schedules/update" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Modify a schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ schedules_update_fp }}[_token]" value="{{ schedules_update_form._token.vars.value }}">
+                <input type="hidden" name="{{ schedules_update_fp }}[dealer_id]" value="{{ dealer_id }}">
+                <input type="hidden" name="{{ schedules_update_fp }}[success_url]" value="{{ schedules_url }}">
+                <input type="hidden" name="{{ schedules_update_fp }}[error_url]" value="{{ schedules_url }}">
+                <input type="hidden" name="{{ schedules_update_fp }}[id]" value="" data-fill="id">
+                <input type="hidden" name="{{ schedules_update_fp }}[closed]" value="0">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>
+                    <select class="form-select" name="{{ schedules_update_fp }}[day]" data-fill-select="day">
+                        {% for idx, label in day_labels %}
+                            <option value="{{ idx }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">{{ 'Begin'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="time" class="form-control" name="{{ schedules_update_fp }}[begin]" value="" data-fill="begin">
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">{{ 'End'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="time" class="form-control" name="{{ schedules_update_fp }}[end]" value="" data-fill="end">
+                    </div>
+                </div>
+                <h6>{{ 'Period'|trans({}, 'dealer.bo.default') }}</h6>
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_begin]" value="" data-fill="periodbegin">
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                        <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_end]" value="" data-fill="periodend">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== SCHEDULES CLONE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-schedules-clone" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/schedules/clone" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Clone a schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ schedules_clone_fp }}[_token]" value="{{ schedules_clone_form._token.vars.value }}">
+                <input type="hidden" name="{{ schedules_clone_fp }}[success_url]" value="{{ schedules_url }}">
+                <input type="hidden" name="{{ schedules_clone_fp }}[id]" value="" data-fill="id">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>
+                    <select class="form-select" name="{{ schedules_clone_fp }}[day]">
+                        {% for idx, label in day_labels %}
+                            <option value="{{ idx }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Clone'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== SCHEDULES DELETE ====================== #}
+<div class="modal fade dealer-modal" id="dealer-schedules-delete" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/schedules/delete?_token={{ assignToken() }}" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Delete an entry of schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {{ 'Do you really want to delete this schedules ?'|trans({}, 'dealer.bo.default') }}
+                <input type="hidden" name="dealer-schedules_id" value="" data-fill="id">
+                <input type="hidden" name="dealer_id" value="{{ dealer_id }}">
+                <input type="hidden" name="success_url" value="{{ schedules_url }}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-danger">{{ 'Delete'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== ADMIN LINK ====================== #}
+<div class="modal fade dealer-modal" id="dealer-admin-link" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/admin" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Link a Admin'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="{{ admin_link_fp }}[_token]" value="{{ admin_link_form._token.vars.value }}">
+                <input type="hidden" name="{{ admin_link_fp }}[dealer_id]" value="{{ dealer_id }}">
+                <input type="hidden" name="{{ admin_link_fp }}[success_url]" value="{{ users_url }}">
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Admin'|trans({}, 'dealer.bo.default') }}</label>
+                    {{ form_widget(admin_link_form.admin_id, {attr: {class: 'form-select'}}) }}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Create'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ====================== ADMIN UNLINK ====================== #}
+<div class="modal fade dealer-modal" id="dealer-admin-unlink" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="/admin/module/Dealer/admin/delete?_token={{ assignToken() }}" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Unlink a admin'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {{ 'Do you really want to unlink this admin ?'|trans({}, 'dealer.bo.default') }}
+                <input type="hidden" name="dealer_admin_link_id" value="" data-fill="id">
+                <input type="hidden" name="dealer_id" value="{{ dealer_id }}">
+                <input type="hidden" name="success_url" value="{{ users_url }}">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-danger">{{ 'Delete'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>

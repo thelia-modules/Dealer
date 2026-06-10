@@ -1,0 +1,15 @@
+<div class="btn-group" role="group">
+    <a href="{{ image.original_url }}" target="_blank" rel="noopener" class="btn btn-outline-secondary btn-sm p-1">
+        {% if image.image_url %}
+            <img src="{{ image.image_url }}" alt="{{ image.title }}" style="max-height:64px;">
+        {% else %}
+            <i class="bi bi-image"></i>
+        {% endif %}
+    </a>
+    <a class="btn btn-outline-secondary btn-sm" href="/admin/module/dealer/image/{{ type }}/edit/{{ dealer_id }}/{{ image.id }}">
+        <i class="bi bi-pencil"></i>
+    </a>
+    <a class="btn btn-outline-danger btn-sm" href="/admin/module/dealer/image/{{ type }}/delete/{{ dealer_id }}/{{ image.id }}">
+        <i class="bi bi-trash"></i>
+    </a>
+</div>
