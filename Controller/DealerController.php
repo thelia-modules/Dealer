@@ -148,7 +148,9 @@ class DealerController extends BaseController
         $request = $this->getRequest();
         $order = $request->query->get('order') ?? 'id';
 
-        $locale = $request->getSession()?->getLang()?->getLocale() ?? 'en_US';
+        $locale = $request->hasSession()
+            ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
         $query = DealerQuery::create();
 
@@ -199,7 +201,7 @@ class DealerController extends BaseController
             $this->dealerTwigEnv->render('dealers.html.twig', [
                 'dealers' => $dealers,
                 'order' => $order,
-                'edit_language_id' => $request->getSession()?->getLang()?->getId(),
+                'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
                 'edit_language_locale' => $locale,
                 'create_form' => $createForm->createView()->getView(),
                 'general_error' => $this->getParserContext()->get('general_error'),
@@ -217,7 +219,9 @@ class DealerController extends BaseController
 
         $request = $this->getRequest();
         $dealerId = $request->query->get('dealer_id');
-        $locale = $request->getSession()?->getLang()?->getLocale() ?? 'en_US';
+        $locale = $request->hasSession()
+            ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
         $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
 
@@ -245,7 +249,7 @@ class DealerController extends BaseController
                     'created_at' => $dealer->getCreatedAt(),
                     'updated_at' => $dealer->getUpdatedAt(),
                 ] : null,
-                'edit_language_id' => $request->getSession()?->getLang()?->getId(),
+                'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
                 'edit_language_locale' => $locale,
                 'update_form' => $updateForm->createView()->getView(),
                 'general_error' => $this->getParserContext()->get('general_error'),

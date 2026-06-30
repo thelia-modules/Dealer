@@ -94,7 +94,12 @@ class InternalHook extends BaseHook
 
     private function getCurrentLocale(): string
     {
-        return $this->getRequest()?->getSession()?->getLang()?->getLocale() ?? 'en_US';
+        $request = $this->getRequest();
+        if (null === $request || !$request->hasSession()) {
+            return \Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US';
+        }
+
+        return $request->getSession()->getLang()?->getLocale() ?? 'en_US';
     }
 
     /**

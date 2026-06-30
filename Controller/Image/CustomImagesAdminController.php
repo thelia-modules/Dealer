@@ -102,7 +102,10 @@ class CustomImagesAdminController extends FileController
             return $this->pageNotFound();
         }
 
-        $locale = $this->getRequest()->getSession()?->getLang()?->getLocale() ?? 'en_US';
+        $request = $this->getRequest();
+        $locale = (null !== $request && $request->hasSession())
+            ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
         $image->setLocale($locale);
 
         $redirectionUrl = '/admin/module/Dealer/dealer/edit?dealer_id=' . $parentId;

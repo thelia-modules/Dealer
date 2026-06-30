@@ -52,7 +52,10 @@ class MetaSeoController extends BaseAdminController
                 ? $exception->getMessage()
                 : $this->createStandardFormValidationErrorMessage($exception);
 
-            $this->getRequest()->getSession()->getFlashBag()->add('error', $message);
+            $request = $this->getRequest();
+            if (null !== $request && $request->hasSession()) {
+                $request->getSession()->getFlashBag()->add('error', $message);
+            }
 
             return $this->redirectToDealerEdit(
                 $this->getRequest()->request->all(DealerMetaSEOForm::getName())['dealer_id'] ?? null

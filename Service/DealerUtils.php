@@ -14,7 +14,10 @@ class DealerUtils
     public function getDealers(): array
     {
         $dealers = [];
-        $locale = $this->requestStack->getCurrentRequest()->getSession()->getLang()->getLocale();
+        $request = $this->requestStack->getCurrentRequest();
+        $locale = (null !== $request && $request->hasSession())
+            ? $request->getSession()->getLang()->getLocale()
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
         $dealerModels = DealerQuery::create()->find();
         foreach ($dealerModels as $dealer) {
