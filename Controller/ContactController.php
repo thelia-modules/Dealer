@@ -18,6 +18,7 @@ use Dealer\Dealer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\ParserContext;
@@ -150,7 +151,7 @@ class ContactController extends BaseController
     /**
      */
     #[Route('/toggledefault', name: '_toogle_default', methods: ['POST'])]
-    public function toggleDefaultAction(ParserContext $parserContext, RequestStack $requestStack)
+    public function toggleDefaultAction(TokenProvider $tokenProvider, ParserContext $parserContext, RequestStack $requestStack): Response
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
@@ -158,6 +159,12 @@ class ContactController extends BaseController
         ) {
             return $response;
         }
+
+        // Check CSRF token
+        $tokenProvider->checkToken(
+            (string) $requestStack->getCurrentRequest()->query->get('_token')
+        );
+
         try {
             $request = $requestStack->getCurrentRequest()->request;
 

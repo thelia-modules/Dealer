@@ -587,7 +587,7 @@ class DealerController extends BaseController
     /**
      */
     #[Route('/toggle-online/{id}', name: '_toggle_visible', methods: ['POST'])]
-    public function toggleVisibleAction($id)
+    public function toggleVisibleAction(TokenProvider $tokenProvider, RequestStack $requestStack, $id): Response
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, DealerModule::getModuleCode(),
@@ -595,6 +595,11 @@ class DealerController extends BaseController
         ) {
             return $response;
         }
+
+        // Check CSRF token
+        $tokenProvider->checkToken(
+            (string) $requestStack->getCurrentRequest()->query->get('_token')
+        );
 
         // Error (Default: false)
         $error_msg = false;

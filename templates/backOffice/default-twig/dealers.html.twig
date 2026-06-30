@@ -203,7 +203,7 @@
 
             document.querySelectorAll('.dealer-toggle-visible').forEach(function (el) {
                 el.addEventListener('change', function () {
-                    fetch('/admin/module/Dealer/dealer/toggle-online/' + this.dataset.id, {
+                    fetch('/admin/module/Dealer/dealer/toggle-online/' + this.dataset.id + '?_token={{ assignToken() }}', {
                         method: 'POST',
                         headers: {'X-Requested-With': 'XMLHttpRequest'}
                     });
