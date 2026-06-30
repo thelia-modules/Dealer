@@ -241,7 +241,8 @@ abstract class BaseController extends BaseAdminController
             $con->commit();
             // If we have to stay on the same page, do not redirect to the successUrl,
             // just redirect to the edit page again.
-            if ($requestStack->getCurrentRequest()->get('save_mode') === 'stay') {
+            $currentRequest = $requestStack->getCurrentRequest();
+            if ($currentRequest->attributes->get('save_mode', $currentRequest->query->get('save_mode', $currentRequest->request->get('save_mode'))) === 'stay') {
                 return $this->redirectToEditionTemplate($requestStack->getCurrentRequest());
             }
 

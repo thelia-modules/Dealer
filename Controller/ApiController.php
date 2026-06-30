@@ -48,7 +48,7 @@ class ApiController extends BaseFrontController
                 ->joinWithI18n($this->getLocale($request))
                 ->filterByVisible(1);
 
-            if (null != $id = $request->get("dealer_id")) {
+            if (null != $id = $request->attributes->get("dealer_id", $request->query->get("dealer_id", $request->request->get("dealer_id")))) {
                 $query->filterById($id);
             }
 
@@ -156,7 +156,7 @@ class ApiController extends BaseFrontController
      */
     protected function getLimit(Request $request)
     {
-        $limit = $request->get("limit");
+        $limit = $request->attributes->get("limit", $request->query->get("limit", $request->request->get("limit")));
         return ($limit) ? $limit : static::DEFAULT_LIMIT;
     }
 
@@ -165,7 +165,7 @@ class ApiController extends BaseFrontController
      */
     protected function getOffset(Request $request)
     {
-        $offset = $request->get("offset");
+        $offset = $request->attributes->get("offset", $request->query->get("offset", $request->request->get("offset")));
         return ($offset) ? $offset : 0;
     }
 
@@ -174,7 +174,7 @@ class ApiController extends BaseFrontController
      */
     protected function getPageOffset(Request $request)
     {
-        $page = $request->get("page");
+        $page = $request->attributes->get("page", $request->query->get("page", $request->request->get("page")));
         return ($page) ? ($page - 1) * $this->getLimit($request) : 0;
     }
 
@@ -183,7 +183,7 @@ class ApiController extends BaseFrontController
      */
     protected function getLocale(Request $request)
     {
-        $locale = $request->get("locale");
+        $locale = $request->attributes->get("locale", $request->query->get("locale", $request->request->get("locale")));
         return ($locale) ? $locale : 'fr_FR';
     }
 
@@ -193,7 +193,7 @@ class ApiController extends BaseFrontController
      */
     protected function addOrder(DealerQuery $query, Request $request)
     {
-        $order = $request->get("order");
+        $order = $request->attributes->get("order", $request->query->get("order", $request->request->get("order")));
         switch ($order) {
             case "id" :
                 $query->orderById();
