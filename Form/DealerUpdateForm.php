@@ -14,6 +14,7 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -21,7 +22,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  * Class DealerUpdateForm
  * @package Dealer\Form
  */
-class DealerUpdateForm extends DealerForm
+class DealerUpdateForm extends DealerCreateForm
 {
 
     /**
@@ -49,11 +50,11 @@ class DealerUpdateForm extends DealerForm
         parent::buildForm();
 
         $this->formBuilder
-            ->add('id', IntegerType::class, array(
+            ->add('id', HiddenType::class, array(
                 "label" => $this->translator->trans("Title", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.title"],
                 "required" => true,
-                "constraints" => array(new NotBlank(), ),
+                "constraints" => array(new NotBlank()),
                 "attr" => array()
             ))
         ;

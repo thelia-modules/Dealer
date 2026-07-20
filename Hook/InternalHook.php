@@ -30,7 +30,7 @@ use Thelia\Model\FolderQuery;
 class InternalHook extends BaseHook
 {
     public function __construct(
-        private readonly TheliaFormFactory $dealerFormFactory,
+        private readonly TheliaFormFactory $dealerCreateFormFactory,
         ?EventDispatcherInterface $dispatcher = null,
         ?ParserResolver $parserResolver = null,
     ) {
@@ -57,7 +57,7 @@ class InternalHook extends BaseHook
             'dealer_current_url' => $this->getCurrentUrl(),
             'dealer_linked_content' => $this->getLinkedContent($dealerId),
             'dealer_all_content' => $this->getAllContent(),
-            'dealer_content_link_form' => $this->dealerFormFactory->createForm(ContentLinkForm::getName())->createView()->getView(),
+            'dealer_content_link_form' => $this->dealerCreateFormFactory->createForm(ContentLinkForm::getName())->createView()->getView(),
         ]));
     }
 
@@ -70,7 +70,7 @@ class InternalHook extends BaseHook
             'dealer_current_url' => $this->getCurrentUrl(),
             'dealer_linked_folder' => $this->getLinkedFolder($dealerId),
             'dealer_all_folder' => $this->getAllFolder(),
-            'dealer_folder_link_form' => $this->dealerFormFactory->createForm(FolderLinkForm::getName())->createView()->getView(),
+            'dealer_folder_link_form' => $this->dealerCreateFormFactory->createForm(FolderLinkForm::getName())->createView()->getView(),
         ]));
     }
 
@@ -83,7 +83,7 @@ class InternalHook extends BaseHook
             'dealer_current_url' => $this->getCurrentUrl(),
             'dealer_linked_brand' => $this->getLinkedBrand($dealerId),
             'dealer_all_brand' => $this->getAllBrand(),
-            'dealer_brand_link_form' => $this->dealerFormFactory->createForm(BrandLinkForm::getName())->createView()->getView(),
+            'dealer_brand_link_form' => $this->dealerCreateFormFactory->createForm(BrandLinkForm::getName())->createView()->getView(),
         ]));
     }
 

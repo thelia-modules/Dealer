@@ -20,7 +20,7 @@ use Dealer\Form\ContactForm;
 use Dealer\Form\ContactInfoForm;
 use Dealer\Form\ContactInfoUpdateForm;
 use Dealer\Form\ContactUpdateForm;
-use Dealer\Form\DealerForm;
+use Dealer\Form\DealerCreateForm;
 use Dealer\Form\DealerImageBoxForm;
 use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Form\DealerMetaSEOForm;
@@ -30,6 +30,7 @@ use Dealer\Form\SchedulesCloneForm;
 use Dealer\Form\SchedulesForm;
 use Dealer\Form\SchedulesUpdateForm;
 use Dealer\Model\DealerImage;
+use Dealer\Model\DealerMetaSeoQuery;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
@@ -98,7 +99,7 @@ class DealerController extends BaseController
 
     protected function getCreationForm()
     {
-        return $this->createForm(DealerForm::getName());
+        return $this->createForm(DealerCreateForm::getName());
     }
 
     protected function getUpdateForm($data = [])
@@ -195,18 +196,15 @@ class DealerController extends BaseController
             ];
         }
 
-        $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: ['locale' => $locale]);
-
-        return new Response(
-            $this->dealerTwigEnv->render('dealers.html.twig', [
-                'dealers' => $dealers,
-                'order' => $order,
-                'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
-                'edit_language_locale' => $locale,
-                'create_form' => $createForm->createView()->getView(),
-                'general_error' => $this->getParserContext()->get('general_error'),
-            ])
-        );
+        $createForm = $this->getTheliaFormFactory()->createForm(DealerCreateForm::getName(), data: ['locale' => $locale]);
+        return $this->render('dealers', [
+            'dealers' => $dealers,
+            'order' => $order,
+            'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
+            'edit_language_locale' => $locale,
+            'create_form' => $createForm->createView()->getView(),
+            'general_error' => $this->getParserContext()->get('general_error'),
+        ]);
     }
 
     /**
@@ -222,10 +220,9 @@ class DealerController extends BaseController
         $locale = $request->hasSession()
             ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
             : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
+        $dealer = $dealerId ? DealerQuery::create()->findPk($dealerId) : null;
 
-        $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
-
-        $updateForm = $this->getUpdateForm($this->buildDealerFormData($dealer));
+        $updateForm = $this->getUpdateForm($this->buildDealerCreateFormData($dealer, $locale));
 
         $contactCreateForm = $this->getTheliaFormFactory()->createForm(ContactForm::getName(), data: ['locale' => $locale]);
         $contactUpdateForm = $this->getTheliaFormFactory()->createForm(ContactUpdateForm::getName(), data: ['locale' => $locale]);
@@ -236,7 +233,7 @@ class DealerController extends BaseController
         $schedulesCloneForm = $this->getTheliaFormFactory()->createForm(SchedulesCloneForm::getName());
         $adminLinkForm = $this->getTheliaFormFactory()->createForm(AdminLinkForm::getName());
         $geoForm = $this->getTheliaFormFactory()->createForm(GeoDealerForm::getName(), data: $this->buildGeoFormData($dealer));
-        $seoForm = $this->getTheliaFormFactory()->createForm(DealerMetaSEOForm::getName(), data: $this->buildSeoFormData($dealerId));
+        $seoForm = $this->getTheliaFormFactory()->createForm(DealerMetaSEOForm::getName(), data: $this->buildSeoFormData($dealerId,$locale));
         $imageHeaderForm = $this->getTheliaFormFactory()->createForm(DealerImageHeaderForm::getName());
         $imageBoxForm = $this->getTheliaFormFactory()->createForm(DealerImageBoxForm::getName());
 
@@ -304,7 +301,7 @@ class DealerController extends BaseController
             return [];
         }
 
-        $seo = \Dealer\Model\DealerMetaSeoQuery::create()->findOneByDealerId($dealerId);
+        $seo = DealerMetaSeoQuery::create()->findOneByDealerId($dealerId);
 
         return [
             'dealer_id' => $dealerId,
@@ -533,11 +530,13 @@ class DealerController extends BaseController
     /**
      * @return array<string, mixed>
      */
-    private function buildDealerFormData(?Dealer $dealer): array
+    private function buildDealerCreateFormData(?Dealer $dealer, ?string $locale): array
     {
         if ($dealer === null) {
             return [];
         }
+
+        $dealer->setLocale($locale);
 
         return [
             'id' => $dealer->getId(),

@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Thelia\Controller\Admin\FileController;
+use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Template\TemplateHelperInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -31,7 +31,7 @@ use Thelia\Tools\URL;
 /**
  */
 #[Route('/admin/module/dealer/image', name: 'dealer_image')]
-class CustomImagesAdminController extends FileController
+class CustomImagesAdminController extends BaseAdminController
 {
     const MODULE_RIGHT = Dealer::DOMAIN_NAME;
     const PRODUCT_IMAGE_PARENT_TYPE = 'dealer';

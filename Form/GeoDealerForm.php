@@ -14,6 +14,7 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -32,11 +33,11 @@ class GeoDealerForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add('id', IntegerType::class, array(
+            ->add('id', HiddenType::class, array(
                 "label" => $this->translator->trans("Id", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.geo.id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(), ),
+                "constraints" => array(new NotBlank()),
                 "attr" => array()
             ))
             ->add("latitude", NumberType::class, array(
@@ -44,14 +45,14 @@ class GeoDealerForm extends BaseForm
                 "label_attr" => ["for" => "attr-dealer-geo-lat"],
                 "required" => false,
                 "constraints" => array(),
-                "attr" => array("step" => "0.01", )
+                "attr" => array("step" => "0.01")
             ))
             ->add("longitude", NumberType::class, array(
                 "label" => $this->translator->trans("Longitude", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-geo-lon"],
                 "required" => false,
                 "constraints" => array(),
-                "attr" => array("step" => "0.01", )
+                "attr" => array("step" => "0.01")
             ));
     }
 

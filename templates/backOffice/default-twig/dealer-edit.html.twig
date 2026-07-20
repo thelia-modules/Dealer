@@ -1,4 +1,5 @@
 {% extends '@BackOfficeDefaultTwig/base.html.twig' %}
+{% form_theme update_form with bo_form_themes only %}
 
 {% block title %}{{ 'Dealer edit'|trans({}, 'dealer.bo.default') }}{% endblock %}
 
@@ -54,40 +55,24 @@
                 <div class="tab-content">
                     {# GENERAL #}
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
-                        <form method="POST" action="/admin/module/Dealer/dealer/edit?dealer_id={{ dealer_id }}" class="clearfix">
-                            <input type="hidden" name="{{ fp }}[_token]" value="{{ update_form._token.vars.value }}">
-                            <input type="hidden" name="{{ fp }}[success_url]" value="{{ path('dealer') }}">
-                            <input type="hidden" name="edit_language_id" value="{{ edit_language_id }}">
-                            <input type="hidden" name="{{ fp }}[locale]" value="{{ edit_language_locale }}">
-                            <input type="hidden" name="{{ fp }}[id]" value="{{ dealer_id }}">
-
-                            {{ form_widget(update_form.title, {label: 'Title'|trans({}, 'dealer.bo.default'), attr: {placeholder: 'The Dealer title'|trans({}, 'dealer.bo.default')}}) }}
-                            {{ form_widget(update_form.address1, {label: 'Address1'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.address2, {label: 'Address2'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.address3, {label: 'Address3'|trans({}, 'dealer.bo.default')}) }}
-                            <div class="row">
-                                <div class="col-md-6">{{ form_widget(update_form.zipcode, {label: 'Zipcode'|trans({}, 'dealer.bo.default')}) }}</div>
-                                <div class="col-md-6">{{ form_widget(update_form.city, {label: 'City'|trans({}, 'dealer.bo.default')}) }}</div>
-                            </div>
-                            {{ form_widget(update_form.country_id, {label: 'Country'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.description, {label: 'Description'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.big_description, {label: 'Complex Description'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.hard_open_hour, {label: "Horraires d'ouverture"|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.access, {label: 'Access'|trans({}, 'dealer.bo.default')}) }}
-
-                            <div class="mt-3">
-                                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
-                            </div>
-
-                            {% if dealer and dealer.created_at %}
-                                <small class="text-muted d-block mt-2">
-                                    {{ 'Dealer created on %created_at. Last modification: %updated_at'|trans({
-                                        '%created_at': dealer.created_at|date('Y-m-d H:i'),
-                                        '%updated_at': dealer.updated_at ? dealer.updated_at|date('Y-m-d H:i') : ''
-                                    }, 'dealer.bo.default') }}
-                                </small>
-                            {% endif %}
-                        </form>
+                        {{ form_start(update_form) }}
+                        <input type="hidden" name="{{ field_name(update_form.success_url) }}" value="{{ path('dealer_tab.edit', {dealer_id}) }}">
+                        <input type="hidden" name="edit_language_id" value="{{ edit_language_id }}">
+                        <input type="hidden" name="{{ field_name(update_form.locale) }}" value="{{ edit_language_locale }}">
+                        <input type="hidden" name="{{field_name(update_form.id)}}" value="{{ dealer_id }}">
+                        {{ form_rest(update_form) }}
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
+                        </div>
+                        {% if dealer and dealer.created_at %}
+                            <small class="text-muted d-block mt-2">
+                                {{ 'Dealer created on %created_at. Last modification: %updated_at'|trans({
+                                    '%created_at': dealer.created_at|date('Y-m-d H:i'),
+                                    '%updated_at': dealer.updated_at ? dealer.updated_at|date('Y-m-d H:i') : ''
+                                }, 'dealer.bo.default') }}
+                            </small>
+                        {% endif %}
+                        {{ form_end(update_form) }}
                     </div>
 
                     {# META SEO #}
@@ -97,7 +82,7 @@
                     {% include 'Dealer/edit/tab-images.html.twig' %}
 
                     {# LOCATION #}
-                    {% include 'Dealer/edit/tab-location.html.twig' %}
+                    {% include 'Dealer/edit/tab-location.html.twig' with {dealer_id} %}
 
                     {# CONTACTS #}
                     {% include 'Dealer/edit/tab-contacts.html.twig' %}

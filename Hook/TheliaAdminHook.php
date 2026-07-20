@@ -38,7 +38,7 @@ use Thelia\Core\Template\Parser\ParserResolver;
 class TheliaAdminHook extends BaseHook
 {
     public function __construct(
-        private readonly TheliaFormFactory $dealerFormFactory,
+        private readonly TheliaFormFactory $dealerCreateFormFactory,
         ?EventDispatcherInterface $dispatcher = null,
         ?ParserResolver $parserResolver = null,
     ) {
@@ -64,7 +64,7 @@ class TheliaAdminHook extends BaseHook
             'dealer_current_url' => $this->getCurrentUrl(),
             'dealer_all_dealers' => $this->getAllDealers(),
             'dealer_linked_dealers' => $this->getLinkedDealers(DealerContentTableMap::COL_DEALER_ID, DealerContentTableMap::COL_CONTENT_ID, $contentId),
-            'dealer_content_link_form' => $this->dealerFormFactory->createForm(ContentLinkForm::getName())->createView()->getView(),
+            'dealer_content_link_form' => $this->dealerCreateFormFactory->createForm(ContentLinkForm::getName())->createView()->getView(),
         ]));
     }
 
@@ -77,7 +77,7 @@ class TheliaAdminHook extends BaseHook
             'dealer_current_url' => $this->getCurrentUrl(),
             'dealer_all_dealers' => $this->getAllDealers(),
             'dealer_linked_dealers' => $this->getLinkedDealers(DealerFolderTableMap::COL_DEALER_ID, DealerFolderTableMap::COL_FOLDER_ID, $folderId),
-            'dealer_folder_link_form' => $this->dealerFormFactory->createForm(FolderLinkForm::getName())->createView()->getView(),
+            'dealer_folder_link_form' => $this->dealerCreateFormFactory->createForm(FolderLinkForm::getName())->createView()->getView(),
         ]));
     }
 
@@ -90,7 +90,7 @@ class TheliaAdminHook extends BaseHook
             'dealer_current_url' => $this->getCurrentUrl(),
             'dealer_all_dealers' => $this->getAllDealers(),
             'dealer_linked_dealers' => $this->getLinkedDealers(DealerBrandTableMap::COL_DEALER_ID, DealerBrandTableMap::COL_BRAND_ID, $brandId),
-            'dealer_brand_link_form' => $this->dealerFormFactory->createForm(BrandLinkForm::getName())->createView()->getView(),
+            'dealer_brand_link_form' => $this->dealerCreateFormFactory->createForm(BrandLinkForm::getName())->createView()->getView(),
         ]));
     }
 
@@ -103,7 +103,7 @@ class TheliaAdminHook extends BaseHook
             'dealer_current_url' => $this->getCurrentUrl(),
             'dealer_all_dealers' => $this->getAllDealers(),
             'dealer_linked_dealers' => $this->getLinkedDealers(DealerProductTableMap::COL_DEALER_ID, DealerProductTableMap::COL_PRODUCT_ID, $productId),
-            'dealer_product_link_form' => $this->dealerFormFactory->createForm(ProductLinkForm::getName())->createView()->getView(),
+            'dealer_product_link_form' => $this->dealerCreateFormFactory->createForm(ProductLinkForm::getName())->createView()->getView(),
         ]));
     }
 

@@ -1,80 +1,37 @@
 <?php
-/*************************************************************************************/
-/*      This file is part of the Thelia package.                                     */
-/*                                                                                   */
-/*      Copyright (c) OpenStudio                                                     */
-/*      email : dev@thelia.net                                                       */
-/*      web : http://www.thelia.net                                                  */
-/*                                                                                   */
-/*      For the full copyright and license information, please view the LICENSE.txt  */
-/*      file that was distributed with this source code.                             */
-/*************************************************************************************/
-/*************************************************************************************/
 
 namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 use Thelia\Model\Country;
 use Thelia\Model\CountryQuery;
 
-/**
- * Class DealerForm
- * @package Dealer\Form
- */
-class DealerForm extends BaseForm
+class DealerCreateForm extends BaseForm
 {
-
-    /**
-     *
-     * in this function you add all the fields you need for your Form.
-     * Form this you have to call add method on $this->formBuilder attribute :
-     *
-     * $this->formBuilder->add("name", "text")
-     *   ->add("email", "email", array(
-     *           "attr" => array(
-     *               "class" => "field"
-     *           ),
-     *           "label" => "email",
-     *           "constraints" => array(
-     *               new \Symfony\Component\Validator\Constraints\NotBlank()
-     *           )
-     *       )
-     *   )
-     *   ->add('age', 'integer');
-     *
-     * @return null
-     */
     protected function buildForm()
     {
         $this->formBuilder
             ->add("title", TextType::class, array(
                 "label" => $this->translator->trans("Title", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "dealer.title"],
                 "required" => true,
-                "constraints" => array(new NotBlank(), ),
-                "attr" => array()
             ))
             ->add("description", TextType::class, array(
                 "label" => $this->translator->trans("Description", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "dealer.description"],
                 "required" => false,
-                "attr" => array()
             ))
-            ->add("big_description", TextType::class, array(
+            ->add("big_description", TextareaType::class, array(
                 "label" => $this->translator->trans("Complex Description", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "dealer.big_description"],
                 "required" => false,
-                "attr" => array()
             ))
             ->add("hard_open_hour", TextType::class, array(
                 "label" => $this->translator->trans("Open hour text", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "dealer.hard_open_hour"],
                 "required" => false,
-                "attr" => array()
             ))
             ->add("access", TextType::class, array(
                 "label" => $this->translator->trans("Access", [], Dealer::MESSAGE_DOMAIN),
@@ -122,11 +79,10 @@ class DealerForm extends BaseForm
                 "required" => true,
                 "attr" => array()
             ))
-            ->add("locale", TextType::class, array(
+            ->add("locale", HiddenType::class, array(
                 "constraints" => array(
                     new NotBlank(),
                 ),
-                "label_attr" => array("for" => "locale_create"),
             ));
     }
 

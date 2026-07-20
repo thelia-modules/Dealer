@@ -88,81 +88,7 @@
             </div>
         </div>
     </div>
-
-    {# CREATE modal #}
-    <div class="modal fade" id="dealer-create" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                {{ form_start(create_form, {action: '/admin/module/Dealer/dealer', attr: {class: 'modal-form'}}) }}
-                <div class="modal-header">
-                    <h5 class="modal-title">{{ 'Create an entry of Dealer'|trans({}, 'dealer.bo.default') }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="edit_language_id" value="{{ edit_language_id }}">
-                    {{ form_widget(create_form.locale, {value: edit_language_locale}) }}
-                    <input type="hidden" name="success_url" value="/admin/module/Dealer/dealer/edit?dealer_id=_ID_">
-
-                    <div class="mb-3">
-                        {{ form_label(create_form.title, 'Title'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.title, {attr: {class: 'form-control' ~ (create_form.title.vars.errors|length ? ' is-invalid' : ''), placeholder: 'The Dealer title'|trans({}, 'dealer.bo.default')}}) }}
-                        {{ form_errors(create_form.title) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.address1, 'Address1'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.address1, {attr: {class: 'form-control' ~ (create_form.address1.vars.errors|length ? ' is-invalid' : ''), placeholder: 'The Dealer address1'|trans({}, 'dealer.bo.default')}}) }}
-                        {{ form_errors(create_form.address1) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.address2, 'Address2'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.address2, {attr: {class: 'form-control'}}) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.address3, 'Address3'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.address3, {attr: {class: 'form-control'}}) }}
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            {{ form_label(create_form.zipcode, 'Zipcode'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                            {{ form_widget(create_form.zipcode, {attr: {class: 'form-control' ~ (create_form.zipcode.vars.errors|length ? ' is-invalid' : '')}}) }}
-                            {{ form_errors(create_form.zipcode) }}
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            {{ form_label(create_form.city, 'City'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                            {{ form_widget(create_form.city, {attr: {class: 'form-control' ~ (create_form.city.vars.errors|length ? ' is-invalid' : '')}}) }}
-                            {{ form_errors(create_form.city) }}
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.country_id, 'Country'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.country_id, {attr: {class: 'form-select'}}) }}
-                        {{ form_errors(create_form.country_id) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.description, 'Description'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.description, {attr: {class: 'form-control'}}) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.big_description, 'Complex Description'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.big_description, {attr: {class: 'form-control'}}) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.hard_open_hour, "Horraires d'ouverture"|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.hard_open_hour, {attr: {class: 'form-control'}}) }}
-                    </div>
-                    <div class="mb-3">
-                        {{ form_label(create_form.access, 'Access'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
-                        {{ form_widget(create_form.access, {attr: {class: 'form-control'}}) }}
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
-                    <button type="submit" class="btn btn-primary">{{ 'Create'|trans }}</button>
-                </div>
-                {{ form_end(create_form) }}
-            </div>
-        </div>
-    </div>
+    {% include 'dealer-create.html.twig' with  {create_form} %}
 
     {# DELETE modal #}
     <div class="modal fade" id="dealer-delete" tabindex="-1" aria-hidden="true">
@@ -185,7 +111,6 @@
             </div>
         </div>
     </div>
-
     {{ safe_hook('dealer.js') }}
 {% endblock %}
 

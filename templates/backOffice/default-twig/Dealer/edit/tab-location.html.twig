@@ -1,19 +1,15 @@
-{% set geo_fp = geo_form.vars.full_name %}
+{% form_theme geo_form with bo_form_themes only %}
 <div class="tab-pane fade" id="location" role="tabpanel">
     <div class="row">
         <div class="col-md-6">
-            <form method="POST" action="/admin/module/Dealer/location/update?dealer_id={{ dealer_id }}" class="clearfix">
-                <input type="hidden" name="{{ geo_fp }}[_token]" value="{{ geo_form._token.vars.value }}">
-                <input type="hidden" name="{{ geo_fp }}[id]" value="{{ dealer_id }}">
-                <input type="hidden" name="{{ geo_fp }}[success_url]" value="{{ path('dealer') }}">
-
-                {{ form_widget(geo_form.latitude, {label: 'Latitude'|trans({}, 'dealer.bo.default'), attr: {step: 'any', placeholder: 'The Dealer latitude'|trans({}, 'dealer.bo.default')}}) }}
-                {{ form_widget(geo_form.longitude, {label: 'Longitude'|trans({}, 'dealer.bo.default'), attr: {step: 'any', placeholder: 'The Dealer longitude'|trans({}, 'dealer.bo.default')}}) }}
-
+            {{ form_start(geo_form, {action: path('dealer_location_update')}) }}
+                <input type="hidden" name="{{ field_name(geo_form.id) }}" value="{{ dealer_id }}">
+                <input type="hidden" name="{{ field_name(geo_form.success_url) }}" value="{{ path('dealer_tab.edit', {dealer_id}) }}">
+                {{ form_rest(geo_form) }}
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
                 </div>
-            </form>
+            {{ form_end(geo_form) }}
         </div>
         <div class="col-md-6">
             {% set lat = geo_form.latitude.vars.value %}

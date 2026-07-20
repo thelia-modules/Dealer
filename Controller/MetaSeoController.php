@@ -14,9 +14,6 @@ use Thelia\Tools\URL;
  */
 class MetaSeoController extends BaseAdminController
 {
-    /**
-     * @Route("/update", name="_update", methods="POST")
-     */
     #[Route('/admin/module/dealer/seo', name: 'dealer_seo')]
     public function updateSeo()
     {
@@ -51,7 +48,6 @@ class MetaSeoController extends BaseAdminController
             $message = $form->getForm()->isValid()
                 ? $exception->getMessage()
                 : $this->createStandardFormValidationErrorMessage($exception);
-
             $request = $this->getRequest();
             if (null !== $request && $request->hasSession()) {
                 $request->getSession()->getFlashBag()->add('error', $message);

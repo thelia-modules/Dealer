@@ -1,18 +1,12 @@
+{% form_theme seo_form with bo_form_themes only %}
+
 {% set seo_fp = seo_form.vars.full_name %}
 <div class="tab-pane fade" id="metaseo" role="tabpanel">
-    <form method="POST" action="/admin/module/dealer/seo" class="clearfix">
-        <input type="hidden" name="{{ seo_fp }}[_token]" value="{{ seo_form._token.vars.value }}">
-        <input type="hidden" name="{{ seo_fp }}[dealer_id]" value="{{ dealer_id }}">
+    {{ form_start(seo_form, {action : path('dealer_seo')}) }}
+    {{ form_rest(seo_form) }}
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
+    </div>
+    {{ form_end(seo_form) }}
 
-        {{ form_widget(seo_form.slug, {label: 'Slug SEO'|trans({}, 'dealer.bo.default')}) }}
-        <hr>
-        {{ form_widget(seo_form.meta_title, {label: 'Title SEO'|trans({}, 'dealer.bo.default')}) }}
-        {{ form_widget(seo_form.meta_description, {label: 'Description SEO'|trans({}, 'dealer.bo.default')}) }}
-        {{ form_widget(seo_form.meta_keywords, {label: 'Keywords SEO'|trans({}, 'dealer.bo.default')}) }}
-        {{ form_widget(seo_form.meta_json, {label: 'Meta json'|trans({}, 'dealer.bo.default')}) }}
-
-        <div class="mt-3">
-            <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
-        </div>
-    </form>
 </div>
