@@ -14,6 +14,7 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -56,14 +57,14 @@ class ContactForm extends BaseForm
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add('dealer_id', IntegerType::class, array(
+            ->add('dealer_id', HiddenType::class, array(
                 "label" => $this->translator->trans("Dealer", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-dealer_id"],
                 "required" => true,
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add("locale", TextType::class, array(
+            ->add("locale", HiddenType::class, array(
                 "constraints" => array(
                     new NotBlank(),
                 ),

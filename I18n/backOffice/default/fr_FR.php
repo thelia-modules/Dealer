@@ -64,7 +64,7 @@ return array(
     "There is no Contact info" => "Ce groupe de contact n'a pas de contact",
     'Delete this Contact' => "Supprimer ce group de contact",
     'Modify this Contact' => "Modifier ce group de contact",
-    "Value" => "Saisir le contact",
+    "Value" => "Valeur",
     "The Contact Value" => "La valeur du contact",
     "Contact Type" => "Type de Contact",
     "Do you really want to delete this Contact ?" => "Voulez-vous vraiment supprimer ce group de contact ?",

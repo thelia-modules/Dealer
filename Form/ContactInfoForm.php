@@ -16,6 +16,7 @@ namespace Dealer\Form;
 use Dealer\Dealer;
 use Dealer\Model\Map\DealerContactInfoTableMap;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -65,14 +66,14 @@ class ContactInfoForm extends BaseForm
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add('contact_id', IntegerType::class, array(
+            ->add('contact_id', HiddenType::class, array(
                 "label" => $this->translator->trans("Contact", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-contact-info-contact_id"],
                 "required" => true,
-                "constraints" => array(new NotBlank(), ),
+                "constraints" => array(new NotBlank() ),
                 "attr" => array()
             ))
-            ->add("locale", TextType::class, array(
+            ->add("locale", HiddenType::class, array(
                 "constraints" => array(
                     new NotBlank(),
                 ),

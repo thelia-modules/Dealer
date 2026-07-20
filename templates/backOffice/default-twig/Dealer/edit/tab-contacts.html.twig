@@ -16,13 +16,13 @@
                                 data-bs-toggle="collapse" data-bs-target="#contact-collapse-{{ contact.id }}">
                             {{ contact.label }}{% if contact.is_default %} <span class="badge text-bg-secondary ms-2">{{ 'default'|trans({}, 'dealer.bo.default') }}</span>{% endif %}
                         </button>
-                        <span class="ms-2 pe-2">
+                        <span class="d-flex ms-2 pe-2">
                             <button type="button" class="btn btn-outline-secondary btn-sm dealer-contact-update-btn"
                                     data-bs-toggle="modal" data-bs-target="#dealer-contact-update"
                                     data-id="{{ contact.id }}" data-label="{{ contact.label }}">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-sm dealer-contact-delete-btn"
+                            <button type="button" class="btn btn-outline-danger btn-sm dealer-contact-delete-btn ml-2"
                                     data-bs-toggle="modal" data-bs-target="#dealer-contact-delete" data-id="{{ contact.id }}">
                                 <i class="bi bi-trash"></i>
                             </button>
