@@ -19,37 +19,8 @@ use Thelia\Api\Resource\PropelResourceInterface;
 use Thelia\Api\Resource\PropelResourceTrait;
 
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/front/dealer_schedules',
-        ),
-        new Get(
-            uriTemplate: '/front/dealer_schedules/{id}',
-            normalizationContext: ['groups' => [self::GROUP_FRONT_READ, self::GROUP_FRONT_READ_SINGLE]],
-        ),
-    ],
+    operations: [],
     normalizationContext: ['groups' => [self::GROUP_FRONT_READ]],
-)]
-#[ApiFilter(
-    filterClass: SearchFilter::class,
-    properties: [
-        'id',
-        'dealer.id',
-        'day',
-    ],
-)]
-#[ApiFilter(
-    filterClass: BooleanFilter::class,
-    properties: [
-        'closed',
-    ],
-)]
-#[ApiFilter(
-    filterClass: OrderFilter::class,
-    properties: [
-        'id',
-        'day',
-    ],
 )]
 class DealerSchedule implements PropelResourceInterface
 {

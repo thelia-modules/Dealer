@@ -18,35 +18,13 @@ use Thelia\Api\Resource\AbstractTranslatableResource;
 use Thelia\Api\Resource\I18nCollection;
 
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/front/dealer_contact_infos',
-        ),
-        new Get(
-            uriTemplate: '/front/dealer_contact_infos/{id}',
-            normalizationContext: ['groups' => [self::GROUP_FRONT_READ, self::GROUP_FRONT_READ_SINGLE]],
-        ),
-    ],
+    operations: [],
     normalizationContext: ['groups' => [self::GROUP_FRONT_READ]],
-)]
-#[ApiFilter(
-    filterClass: SearchFilter::class,
-    properties: [
-        'id',
-        'contact.id',
-        'contactType',
-    ],
-)]
-#[ApiFilter(
-    filterClass: OrderFilter::class,
-    properties: [
-        'id',
-    ],
 )]
 class DealerContactInfo extends AbstractTranslatableResource
 {
-    public const GROUP_FRONT_READ = 'front:dealer_contact_info:read';
-    public const GROUP_FRONT_READ_SINGLE = 'front:dealer_contact_info:read:single';
+    public const string GROUP_FRONT_READ = 'front:dealer_contact_info:read';
+    public const string GROUP_FRONT_READ_SINGLE = 'front:dealer_contact_info:read:single';
 
     #[Groups([self::GROUP_FRONT_READ])]
     public ?int $id = null;

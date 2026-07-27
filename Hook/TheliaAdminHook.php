@@ -96,7 +96,7 @@ class TheliaAdminHook extends BaseHook
 
     public function onProductModuleTab(HookRenderEvent $event): void
     {
-        $productId = $event->getArgument('product_id');
+        $productId = $event->getArgument('product');
 
         $event->add($this->render('Dealer/hook/product.html.twig', [
             'dealer_product_id' => $productId,

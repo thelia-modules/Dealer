@@ -8,18 +8,24 @@
                 <form action="/admin/module/Dealer/product" method="POST">
                     {% set prefix = dealer_product_link_form.vars.full_name %}
                     <input type="hidden" name="{{ prefix }}[_token]" value="{{ dealer_product_link_form._token.vars.value }}">
-                    <input type="hidden" name="{{ prefix }}[success_url]" value="{{ dealer_current_url }}">
+                    <input type="hidden" name="{{ prefix }}[success_url]" value="{{ dealer_current_url~'#tab-modules' }}">
                     <input type="hidden" name="{{ prefix }}[product_id]" value="{{ dealer_product_id }}">
-                    <div class="mb-3">
-                        <label class="form-label" for="dealer-product-link-dealer">
-                            {{ 'Dealer'|trans({}, 'dealer.bo.default') }} <span class="text-danger">*</span>
-                        </label>
-                        <select class="form-select" id="dealer-product-link-dealer" name="{{ prefix }}[dealer_id]" required>
-                            {% for dealer in dealer_all_dealers %}
-                                <option value="{{ dealer.id }}">{{ dealer.title }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+	                {% if dealer_all_dealers|length == dealer_linked_dealers|length %}
+		                <div class="alert alert-info mb-3">{{ 'There is no dealer'|trans({}, 'dealer.bo.default') }}</div>
+		                {% else %}
+	                    <div class="mb-3">
+	                        <label class="form-label" for="dealer-product-link-dealer">
+	                            {{ 'Dealer'|trans({}, 'dealer.bo.default') }} <span class="text-danger">*</span>
+	                        </label>
+	                        <select class="form-select" id="dealer-product-link-dealer" name="{{ prefix }}[dealer_id]" required>
+	                            {% for dealer in dealer_all_dealers %}
+		                            {% if dealer not in dealer_linked_dealers %}
+			                            <option value="{{ dealer.id }}">{{ dealer.title }}</option>
+		                            {% endif %}
+	                            {% endfor %}
+	                        </select>
+	                    </div>
+	                {% endif %}
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-lg"></i> {{ 'Yes'|trans }}
                     </button>
@@ -39,7 +45,7 @@
                             {{ dealer.title }}
                             <button type="button" class="btn btn-link btn-sm p-0 product-delete"
                                     data-bs-toggle="modal" data-bs-target="#dealer-product-unlink" data-id="{{ dealer.id }}">
-                                <i class="bi bi-dash-lg"></i>
+	                            <i class="bi bi-x-circle-fill"></i>
                             </button>
                         </li>
                     {% else %}

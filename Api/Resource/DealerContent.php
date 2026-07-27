@@ -18,34 +18,15 @@ use Thelia\Api\Resource\PropelResourceInterface;
 use Thelia\Api\Resource\PropelResourceTrait;
 
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/front/dealer_contents',
-        ),
-        new Get(
-            uriTemplate: '/front/dealer_contents/{id}',
-            normalizationContext: ['groups' => [
-                self::GROUP_FRONT_READ,
-                self::GROUP_FRONT_READ_SINGLE,
-                Dealer::GROUP_FRONT_READ,
-            ]],
-        ),
-    ],
+    operations: [],
     normalizationContext: ['groups' => [self::GROUP_FRONT_READ]],
-)]
-#[ApiFilter(
-    filterClass: SearchFilter::class,
-    properties: [
-        'id',
-        'dealer.id',
-    ],
 )]
 class DealerContent implements PropelResourceInterface
 {
     use PropelResourceTrait;
 
-    public const GROUP_FRONT_READ = 'front:dealer_content:read';
-    public const GROUP_FRONT_READ_SINGLE = 'front:dealer_content:read:single';
+    public const string GROUP_FRONT_READ = 'front:dealer_content:read';
+    public const string GROUP_FRONT_READ_SINGLE = 'front:dealer_content:read:single';
 
     #[Groups([self::GROUP_FRONT_READ])]
     public ?int $id = null;
@@ -57,6 +38,9 @@ class DealerContent implements PropelResourceInterface
     #[Relation(targetResource: Dealer::class)]
     #[Groups([self::GROUP_FRONT_READ_SINGLE])]
     public Dealer $dealer;
+
+    #[Groups([self::GROUP_FRONT_READ_SINGLE, Dealer::GROUP_FRONT_READ_SINGLE])]
+    public ?int $contentId = null;
 
     public function getId(): ?int
     {
@@ -93,6 +77,18 @@ class DealerContent implements PropelResourceInterface
 
         return $this;
     }
+
+    public function getContentId(): ?int
+    {
+        return $this->contentId;
+    }
+
+    public function setContentId(?int $contentId): self
+    {
+        $this->contentId = $contentId;
+        return $this;
+    }
+
 
     public static function getPropelRelatedTableMap(): ?TableMap
     {

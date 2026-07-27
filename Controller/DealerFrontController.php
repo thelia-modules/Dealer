@@ -24,7 +24,7 @@ class DealerFrontController extends BaseFrontController
         if(null === $dealerMetaSeo){
             throw new NotFoundHttpException();
         }
-
+        
         return $this->render('dealer-front', ['dealer_id'=>$dealerMetaSeo->getDealerId()]);
     }
 }

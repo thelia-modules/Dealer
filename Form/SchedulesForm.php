@@ -65,6 +65,7 @@ class SchedulesForm extends BaseForm
                 "input" => "string",
                 "widget" => "single_text",
                 "required" => false,
+                "data" => '9:00:00',
                 "attr" => array()
             ])
             ->add("endAM", TimeType::class, [
@@ -72,6 +73,7 @@ class SchedulesForm extends BaseForm
                 "label_attr" => ["for" => "attr-dealer-schedules-end"],
                 "input" => "string",
                 "widget" => "single_text",
+                "data" => '12:00:00',
                 "required" => false,
                 "attr" => array()
             ])
@@ -80,6 +82,7 @@ class SchedulesForm extends BaseForm
                 "label_attr" => ["for" => "attr-dealer-schedules-beginPM"],
                 "input" => "string",
                 "widget" => "single_text",
+                "data" => '14:00:00',
                 "required" => false,
                 "attr" => array()
             ])
@@ -87,6 +90,7 @@ class SchedulesForm extends BaseForm
                 "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-endPM"],
                 "input" => "string",
+                "data" => '19:00:00',
                 "widget" => "single_text",
                 "required" => false,
                 "attr" => array()

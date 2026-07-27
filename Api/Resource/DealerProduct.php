@@ -44,19 +44,19 @@ class DealerProduct implements PropelResourceInterface
 {
     use PropelResourceTrait;
 
-    public const GROUP_FRONT_READ = 'front:dealer_product:read';
-    public const GROUP_FRONT_READ_SINGLE = 'front:dealer_product:read:single';
+    public const string GROUP_FRONT_READ = 'front:dealer_product:read';
+    public const string GROUP_FRONT_READ_SINGLE = 'front:dealer_product:read:single';
 
-    #[Groups([self::GROUP_FRONT_READ])]
+    #[Groups([self::GROUP_FRONT_READ, Dealer::GROUP_FRONT_READ_SINGLE])]
     public ?int $id = null;
 
     #[Relation(targetResource: Product::class)]
     #[Groups([self::GROUP_FRONT_READ, Dealer::GROUP_FRONT_READ_SINGLE])]
-    public Product $product;
+    public ?Product $product = null;
 
-    #[Relation(targetResource: Dealer::class)]
-    #[Groups([self::GROUP_FRONT_READ_SINGLE])]
-    public Dealer $dealer;
+    #[Groups([self::GROUP_FRONT_READ, Dealer::GROUP_FRONT_READ_SINGLE])]
+    public ?int $productId = null;
+
 
     public function getId(): ?int
     {
@@ -82,14 +82,14 @@ class DealerProduct implements PropelResourceInterface
         return $this;
     }
 
-    public function getDealer(): Dealer
+    public function getProductId(): ?int
     {
-        return $this->dealer;
+        return $this->productId;
     }
 
-    public function setDealer(Dealer $dealer): self
+    public function setProductId(?int $productId): self
     {
-        $this->dealer = $dealer;
+        $this->productId = $productId;
 
         return $this;
     }

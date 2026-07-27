@@ -18,27 +18,8 @@ use Thelia\Api\Resource\PropelResourceInterface;
 use Thelia\Api\Resource\PropelResourceTrait;
 
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/front/dealer_folders',
-        ),
-        new Get(
-            uriTemplate: '/front/dealer_folders/{id}',
-            normalizationContext: ['groups' => [
-                self::GROUP_FRONT_READ,
-                self::GROUP_FRONT_READ_SINGLE,
-                Dealer::GROUP_FRONT_READ,
-            ]],
-        ),
-    ],
+    operations: [],
     normalizationContext: ['groups' => [self::GROUP_FRONT_READ]],
-)]
-#[ApiFilter(
-    filterClass: SearchFilter::class,
-    properties: [
-        'id',
-        'dealer.id',
-    ],
 )]
 class DealerFolder implements PropelResourceInterface
 {
@@ -57,6 +38,9 @@ class DealerFolder implements PropelResourceInterface
     #[Relation(targetResource: Dealer::class)]
     #[Groups([self::GROUP_FRONT_READ_SINGLE])]
     public Dealer $dealer;
+
+    #[Groups([self::GROUP_FRONT_READ_SINGLE, Dealer::GROUP_FRONT_READ_SINGLE])]
+    public ?int $folderId = null;
 
     public function getId(): ?int
     {
@@ -91,6 +75,17 @@ class DealerFolder implements PropelResourceInterface
     {
         $this->dealer = $dealer;
 
+        return $this;
+    }
+
+    public function getFolderId(): ?int
+    {
+        return $this->folderId;
+    }
+
+    public function setFolderId(?int $folderId): self
+    {
+        $this->folderId = $folderId;
         return $this;
     }
 

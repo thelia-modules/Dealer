@@ -13,10 +13,8 @@ use Propel\Runtime\Map\TableMap;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Thelia\Api\Bridge\Propel\Attribute\Relation;
 use Thelia\Api\Bridge\Propel\Filter\BooleanFilter;
-use Thelia\Api\Bridge\Propel\Filter\OrderFilter;
 use Thelia\Api\Bridge\Propel\Filter\SearchFilter;
 use Thelia\Api\Resource\AbstractTranslatableResource;
-use Thelia\Api\Resource\Country;
 use Thelia\Api\Resource\I18nCollection;
 
 #[ApiResource(
@@ -29,8 +27,9 @@ use Thelia\Api\Resource\I18nCollection;
             normalizationContext: ['groups' => [
                 self::GROUP_FRONT_READ,
                 self::GROUP_FRONT_READ_SINGLE,
-                Country::GROUP_FRONT_READ,
+                DealerMetaSeo::GROUP_FRONT_READ,
                 DealerContact::GROUP_FRONT_READ,
+                DealerContactInfo::GROUP_FRONT_READ,
                 DealerContent::GROUP_FRONT_READ,
                 DealerFolder::GROUP_FRONT_READ,
                 DealerBrand::GROUP_FRONT_READ,
@@ -47,7 +46,6 @@ use Thelia\Api\Resource\I18nCollection;
     properties: [
         'id',
         'city',
-        'country.id',
     ],
 )]
 #[ApiFilter(
@@ -56,17 +54,10 @@ use Thelia\Api\Resource\I18nCollection;
         'visible',
     ],
 )]
-#[ApiFilter(
-    filterClass: OrderFilter::class,
-    properties: [
-        'id',
-        'createdAt',
-    ],
-)]
 class Dealer extends AbstractTranslatableResource
 {
-    public const GROUP_FRONT_READ = 'front:dealer:read';
-    public const GROUP_FRONT_READ_SINGLE = 'front:dealer:read:single';
+    public const string GROUP_FRONT_READ = 'front:dealer:read';
+    public const string GROUP_FRONT_READ_SINGLE = 'front:dealer:read:single';
 
     #[Groups([self::GROUP_FRONT_READ])]
     public ?int $id = null;
@@ -87,6 +78,9 @@ class Dealer extends AbstractTranslatableResource
     public ?string $zipcode = null;
 
     #[Groups([self::GROUP_FRONT_READ])]
+    public ?int $countryId = null;
+
+    #[Groups([self::GROUP_FRONT_READ])]
     public ?string $city = null;
 
     #[Groups([self::GROUP_FRONT_READ])]
@@ -103,10 +97,6 @@ class Dealer extends AbstractTranslatableResource
 
     #[Groups([self::GROUP_FRONT_READ])]
     public I18nCollection $i18ns;
-
-    #[Relation(targetResource: Country::class)]
-    #[Groups([self::GROUP_FRONT_READ])]
-    public Country $country;
 
     /**
      * Contacts attached to this dealer, through the dealer_contact table.
@@ -170,6 +160,11 @@ class Dealer extends AbstractTranslatableResource
     #[Relation(targetResource: DealerSchedule::class, relationAlias: 'dealerSheduless')]
     #[Groups([self::GROUP_FRONT_READ_SINGLE])]
     public array $dealerSchedules = [];
+
+    #[Relation(targetResource: DealerMetaSeo::class, relationAlias: 'dealerMetaSeos')]
+    #[Groups([self::GROUP_FRONT_READ_SINGLE])]
+    public array $dealerMetaSeos = [];
+
 
     public function getId(): ?int
     {
@@ -303,14 +298,14 @@ class Dealer extends AbstractTranslatableResource
         return $this;
     }
 
-    public function getCountry(): Country
+    public function getCountryId(): int
     {
-        return $this->country;
+        return $this->countryId;
     }
 
-    public function setCountry(Country $country): self
+    public function setCountryId(int $countryId): self
     {
-        $this->country = $country;
+        $this->countryId = $countryId;
 
         return $this;
     }
@@ -440,6 +435,19 @@ class Dealer extends AbstractTranslatableResource
 
         return $this;
     }
+
+
+    public function getDealerMetaSeos(): array
+    {
+        return $this->dealerMetaSeos;
+    }
+
+    public function setDealerMetaSeos(array $dealerMetaSeos): self
+    {
+        $this->dealerMetaSeos = $dealerMetaSeos;
+        return $this;
+    }
+
 
     public static function getPropelRelatedTableMap(): ?TableMap
     {

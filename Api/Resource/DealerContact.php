@@ -19,23 +19,8 @@ use Thelia\Api\Resource\AbstractTranslatableResource;
 use Thelia\Api\Resource\I18nCollection;
 
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/front/dealer_contacts',
-        ),
-        new Get(
-            uriTemplate: '/front/dealer_contacts/{id}',
-            normalizationContext: ['groups' => [self::GROUP_FRONT_READ, self::GROUP_FRONT_READ_SINGLE]],
-        ),
-    ],
+    operations: [],
     normalizationContext: ['groups' => [self::GROUP_FRONT_READ]],
-)]
-#[ApiFilter(
-    filterClass: SearchFilter::class,
-    properties: [
-        'id',
-        'dealer.id',
-    ],
 )]
 #[ApiFilter(
     filterClass: BooleanFilter::class,
@@ -51,8 +36,8 @@ use Thelia\Api\Resource\I18nCollection;
 )]
 class DealerContact extends AbstractTranslatableResource
 {
-    public const GROUP_FRONT_READ = 'front:dealer_contact:read';
-    public const GROUP_FRONT_READ_SINGLE = 'front:dealer_contact:read:single';
+    public const string GROUP_FRONT_READ = 'front:dealer_contact:read';
+    public const string GROUP_FRONT_READ_SINGLE = 'front:dealer_contact:read:single';
 
     #[Groups([self::GROUP_FRONT_READ])]
     public ?int $id = null;
@@ -72,6 +57,10 @@ class DealerContact extends AbstractTranslatableResource
     #[Relation(targetResource: Dealer::class)]
     #[Groups([self::GROUP_FRONT_READ_SINGLE])]
     public Dealer $dealer;
+
+    #[Relation(targetResource: DealerContactInfo::class, relationAlias: 'dealerContactInfos')]
+    #[Groups([self::GROUP_FRONT_READ_SINGLE, Dealer::GROUP_FRONT_READ_SINGLE])]
+    public array $infos = [];
 
     public function getId(): ?int
     {
@@ -129,6 +118,18 @@ class DealerContact extends AbstractTranslatableResource
     public function setDealer(Dealer $dealer): self
     {
         $this->dealer = $dealer;
+
+        return $this;
+    }
+
+    public function getInfos(): array
+    {
+        return $this->infos;
+    }
+
+    public function setInfos(array $infos): self
+    {
+        $this->infos = $infos;
 
         return $this;
     }

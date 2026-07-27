@@ -1,0 +1,164 @@
+{% extends 'base.html.twig' %}
+
+{% set days = getDays() %}
+{% set dealer = getDealer(dealer_id) %}
+
+{% block breadcrumb_json %}{% endblock %}
+{% set linkedModels = ['content','folder','product','brand'] %}
+
+{% block body_class %}page-dealer{% endblock %}
+{% block title %}{{  (dealer.dealerMetaSeos|first).i18ns.metaTitle}}{% endblock %}
+{% block meta_desc %}{{ (dealer.dealerMetaSeos|first).i18ns.metaDescription }}{% endblock %}
+
+{% block body %}
+	{{ theme_hook('dealer.body.top') }}
+	
+	<div class="container">
+		{% if dealer.dealerImages|length %}
+			{% for image in dealer.dealerImages %}
+			<img src="{{ image.fileUrl }}" alt="{{ image.i18ns.title ?? dealer.i18ns.title }}" class="mb-4"/>
+			{% endfor %}
+		{% endif %}
+		<h1>{{ dealer.i18ns.title }}</h1>
+		<div class="my-4">{{ dealer.i18ns.description }}</div>
+		<small>{{ dealer.i18ns.access }} - {{ dealer.i18ns.hardOpenHour  }}</small>
+		
+		<address class="mt-4">
+			{{ dealer.address1 }}<br>
+			{{ dealer.address2 }}<br>
+			{{ dealer.address3 }}<br>
+			{{ dealer.zipcode }}, {{ dealer.city }}
+		</address>
+
+		<table class="my-4 table-auto">
+			<colgroup>
+				<col/>
+				<col/>
+			</colgroup>
+			<tbody>
+			{% for contact in dealer.dealerContacts %}
+				<tr>
+					<td colspan="2"><strong>{{ contact.i18ns.label }} {{ contact.isDefault ? '(contact par défault)' : '' }}</strong></td>
+				</tr>
+					{% for info in contact.infos  %}
+						<tr>
+							<td>{{ info.contactType  }}</td>
+							<td>{{ info.i18ns.value  }}</td>
+						</tr>
+					{% endfor %}
+			{% endfor %}
+			</tbody>
+		</table>
+		<div class="tab-pane fade" id="schedules" role="tabpanel">
+			<div class="row">
+				<div class="col-md-6">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h5 class="mb-0">{{ 'Default Schedules'|trans({}, 'dealer.fo.default') }}</h5>
+						<button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
+						        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0">
+							<i class="bi bi-plus-lg"></i>
+						</button>
+					</div>
+					<table class="table table-sm table-striped">
+						<thead>
+						<tr>
+							<th>{{ 'Day'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'Begin'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'End'|trans({}, 'dealer.fo.default') }}</th>
+						</tr>
+						</thead>
+						<tbody>
+						{% for s in dealer.dealerSchedules|filter(s => s.periodBegin == null and s.periodEnd == null and not s.closed) %}
+							<tr>
+								<td>{{ days[s.day] }}</td>
+								<td>{{ s.begin|date('H:i') }}</td>
+								<td>{{ s.end|date('H:i') }}</td>
+							</tr>
+						{% else %}
+							<tr><td colspan="4"><div class="alert alert-info mb-0">{{ 'There is no Default Schedules'|trans({}, 'dealer.fo.default') }}</div></td></tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div class="col-md-6">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h5 class="mb-0">{{ 'Extra Schedules'|trans({}, 'dealer.fo.default') }}</h5>
+					</div>
+					<table class="table table-sm table-striped">
+						<thead>
+						<tr>
+							<th>{{ 'Day'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'Begin'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'End'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'Period Begin'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'Period End'|trans({}, 'dealer.fo.default') }}</th>
+						</tr>
+						</thead>
+						<tbody>
+						{% for s in dealer.dealerSchedules|filter(s => (s.periodBegin != null or s.periodEnd != null) and not s.closed) %}
+							<tr>
+								<td>{{ days[s.day] }}</td>
+								<td>{{ s.begin|date('H:i') }}</td>
+								<td>{{ s.end|date('H:i') }}</td>
+								<td>{{ s.periodBegin|date('d/m/Y') }}</td>
+								<td>{{ s.periodEnd|date('d/m/Y') }}</td>
+							</tr>
+						{% else %}
+							<tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Extra Schedules'|trans({}, 'dealer.fo.default') }}</div></td></tr>
+						{% endfor %}
+						</tbody>
+					</table>
+					
+					{# CLOSED SCHEDULES #}
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<h5 class="mb-0">{{ 'Closed Schedules'|trans({}, 'dealer.fo.default') }}</h5>
+					</div>
+					<table class="table table-sm table-striped">
+						<thead>
+						<tr>
+							<th>{{ 'Day'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'Begin'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'End'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'Period Begin'|trans({}, 'dealer.fo.default') }}</th>
+							<th>{{ 'Period End'|trans({}, 'dealer.fo.default') }}</th>
+						</tr>
+						</thead>
+						<tbody>
+						{% for s in dealer.dealerSchedules|filter(s => s.closed) %}
+							<tr>
+								<td>{{ days[s.day] }}</td>
+								<td>{{ s.begin|date('H:i') }}</td>
+								<td>{{ s.end|date('H:i') }}</td>
+								<td>{{ s.periodBegin|date('d/m/Y') }}</td>
+								<td>{{ s.periodEnd|date('d/m/Y') }}</td>
+							</tr>
+							
+						{% else %}
+							<tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Closed Schedules'|trans({}, 'dealer.fo.default') }}</div></td></tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				{% for model in linkedModels %}
+					{% set modelIds = dealer['dealer'~model|capitalize~'s']|map(m => m[model~'Id']) %}
+					{% if modelIds|length %}
+						{% set resources = resources('/api/front/'~model~'s'~'/', {
+							'id[]' : modelIds
+						}) %}
+						{% if resources|length %}
+							<h3>{{model}} lié à ce magasin</h3>
+							<ul>
+								{% for resource in resources %}
+									<li><a href="{{ resource.publicUrl }}">{{ resource.i18ns.title }}</a></li>
+								{% endfor %}
+							</ul>
+						{% endif %}
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+		
+		<div class="wysiwyg mt-4">{{ dealer.i18ns.bigDescription }}</div>
+	</div>
+	{{ theme_hook('dealer.body.bottom') }}
+{% endblock %}

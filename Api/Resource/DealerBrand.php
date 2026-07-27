@@ -18,34 +18,15 @@ use Thelia\Api\Resource\PropelResourceInterface;
 use Thelia\Api\Resource\PropelResourceTrait;
 
 #[ApiResource(
-    operations: [
-        new GetCollection(
-            uriTemplate: '/front/dealer_brands',
-        ),
-        new Get(
-            uriTemplate: '/front/dealer_brands/{id}',
-            normalizationContext: ['groups' => [
-                self::GROUP_FRONT_READ,
-                self::GROUP_FRONT_READ_SINGLE,
-                Dealer::GROUP_FRONT_READ,
-            ]],
-        ),
-    ],
+    operations: [],
     normalizationContext: ['groups' => [self::GROUP_FRONT_READ]],
-)]
-#[ApiFilter(
-    filterClass: SearchFilter::class,
-    properties: [
-        'id',
-        'dealer.id',
-    ],
 )]
 class DealerBrand implements PropelResourceInterface
 {
     use PropelResourceTrait;
 
-    public const GROUP_FRONT_READ = 'front:dealer_brand:read';
-    public const GROUP_FRONT_READ_SINGLE = 'front:dealer_brand:read:single';
+    public const string GROUP_FRONT_READ = 'front:dealer_brand:read';
+    public const string GROUP_FRONT_READ_SINGLE = 'front:dealer_brand:read:single';
 
     #[Groups([self::GROUP_FRONT_READ])]
     public ?int $id = null;
@@ -58,6 +39,9 @@ class DealerBrand implements PropelResourceInterface
     #[Groups([self::GROUP_FRONT_READ_SINGLE])]
     public Dealer $dealer;
 
+    #[Groups([self::GROUP_FRONT_READ_SINGLE, Dealer::GROUP_FRONT_READ_SINGLE])]
+    public ?int $brandId = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -66,6 +50,18 @@ class DealerBrand implements PropelResourceInterface
     public function setId(?int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getBrandId(): ?int
+    {
+        return $this->brandId;
+    }
+
+    public function setBrandId(?int $brandId): self
+    {
+        $this->brandId = $brandId;
 
         return $this;
     }
