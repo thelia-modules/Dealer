@@ -298,12 +298,12 @@ class Dealer extends AbstractTranslatableResource
         return $this;
     }
 
-    public function getCountryId(): int
+    public function getCountryId(): ?int
     {
         return $this->countryId;
     }
 
-    public function setCountryId(int $countryId): self
+    public function setCountryId(?int $countryId): self
     {
         $this->countryId = $countryId;
 

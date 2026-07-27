@@ -43,7 +43,7 @@ class GeoDealerController extends BaseAdminController
     {
         // Check current user authorization
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(),
-                AccessManager::VIEW)
+                AccessManager::UPDATE)
         ) {
             return $response;
         }

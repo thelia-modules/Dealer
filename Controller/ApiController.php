@@ -13,12 +13,12 @@ use Dealer\Model\DealerContact;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
-use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Front\BaseFrontController;
+use Thelia\Log\Tlog;
 
 /**
  * Class ApiController
@@ -85,9 +85,10 @@ class ApiController extends BaseFrontController
 
                 $return["data"][] = $dataRow;
             }
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            Tlog::getInstance()->error($e->getMessage());
             $code = 500;
-            $return["error"] = $e->getMessage();
+            $return["error"] = "An internal error occurred.";
         }
 
 

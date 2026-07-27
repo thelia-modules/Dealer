@@ -66,6 +66,20 @@ abstract class BaseController extends BaseAdminController
     abstract protected function redirectToListTemplate();
 
     /**
+     * Redirect to the edition page after a "stay on page" save.
+     *
+     * Subclasses that expose an edit page (e.g. DealerController) should override this
+     * to redirect back to that page. The default falls back to the list template so that
+     * "stay" save mode never triggers a fatal error on controllers without an edit page.
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    protected function redirectToEditionTemplate(Request $request)
+    {
+        return $this->redirectToListTemplate();
+    }
+
+    /**
      * Use to get Edit render
      * @return mixed
      */

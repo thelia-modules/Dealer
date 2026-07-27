@@ -159,7 +159,7 @@ class Dealer extends BaseI18nLoop implements PropelSearchLoopInterface
             $query->filterByCity($city);
         }
 
-        if (null != $visible = $this->getVisible()) {
+        if (null !== $visible = $this->getVisible()) {
             $query->filterByVisible($visible);
         }
 

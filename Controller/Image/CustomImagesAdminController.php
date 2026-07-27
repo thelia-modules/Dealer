@@ -151,7 +151,9 @@ class CustomImagesAdminController extends BaseAdminController
     {
         $message = null;
         $this->registerDealerCustomProductImageType($type, $fileManager);
-        $this->checkAccessForParentType(AccessManager::UPDATE);
+        if (null !== $response = $this->checkAccessForParentType(AccessManager::UPDATE)) {
+            return $response;
+        }
 
         $modelInstance = $fileManager->getModelInstance($type, self::PRODUCT_IMAGE_PARENT_TYPE);
         $model = $modelInstance->getQueryInstance()->findPk($id);

@@ -37,7 +37,6 @@ use Thelia\Api\Resource\PropelResourceTrait;
     filterClass: SearchFilter::class,
     properties: [
         'id',
-        'dealer.id',
     ],
 )]
 class DealerProduct implements PropelResourceInterface

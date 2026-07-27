@@ -145,7 +145,7 @@ class Dealer extends BaseDealer
     {
         $partial = $this->collDealerShedulessPartial && !$this->isNew();
         if (null === $this->collDealerExtraSheduless || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collDealerSheduless) {
+            if ($this->isNew() && null === $this->collDealerExtraSheduless) {
                 // return empty collection
                 $this->initDealerExtraSheduless();
             } else {
@@ -172,7 +172,7 @@ class Dealer extends BaseDealer
                     return $collDealerSheduless;
                 }
 
-                if ($partial && $this->collDealerSheduless) {
+                if ($partial && $this->collDealerExtraSheduless) {
                     foreach ($this->collDealerExtraSheduless as $obj) {
                         if ($obj->isNew()) {
                             $collDealerSheduless[] = $obj;

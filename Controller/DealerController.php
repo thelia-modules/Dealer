@@ -295,13 +295,16 @@ class DealerController extends BaseController
     /**
      * @return array<string, mixed>
      */
-    private function buildSeoFormData($dealerId): array
+    private function buildSeoFormData($dealerId, ?string $locale = null): array
     {
         if ($dealerId === null) {
             return [];
         }
 
         $seo = DealerMetaSeoQuery::create()->findOneByDealerId($dealerId);
+        if (null !== $seo && null !== $locale) {
+            $seo->setLocale($locale);
+        }
 
         return [
             'dealer_id' => $dealerId,

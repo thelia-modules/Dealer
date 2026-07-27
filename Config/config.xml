@@ -12,6 +12,7 @@
         <service id="dealer_admin_link_service" alias="Dealer\Service\AdminLinkService" public="true"/>
         <service id="dealer_product_link_service" alias="Dealer\Service\ProductLinkService" public="true"/>
         <service id="dealer_geo_service" alias="Dealer\Service\GeoDealerService" public="true"/>
+        <service id="dealer.command.update_tables" alias="Dealer\Service\UpdateTablesService" public="true"/>
     </services>
 
 </config>

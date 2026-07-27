@@ -127,7 +127,7 @@ class DealerRegularSchedules extends BaseLoop implements ArraySearchLoopInterfac
 
                     // if the next result has the same dates, same day, then concat the morning and afternoon hours
                     if (
-                        ($dealerSchedules[$i+1] !== null)
+                        isset($dealerSchedules[$i+1])
                         && ($dealerSchedules[$i]->getDay() == $dealerSchedules[$i+1]->getDay())
                         && ($dealerSchedules[$i]->getDealerId() == $dealerSchedules[$i+1]->getDealerId())
                     ) {

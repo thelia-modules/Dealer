@@ -13,7 +13,7 @@
 
 namespace Dealer\Service;
 
-use Dealer\Dealer;
+use Dealer\Model\Dealer;
 use Dealer\Model\DealerQuery;
 
 /**

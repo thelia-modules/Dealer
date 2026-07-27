@@ -2,11 +2,14 @@
 
 namespace Dealer\Controller;
 
+use Dealer\Dealer;
 use Dealer\Form\DealerMetaSEOForm;
 use Dealer\Model\DealerMetaSeoQuery;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 
@@ -17,6 +20,10 @@ class MetaSeoController extends BaseAdminController
     #[Route('/admin/module/dealer/seo', name: 'dealer_seo')]
     public function updateSeo()
     {
+        if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(), AccessManager::UPDATE)) {
+            return $response;
+        }
+
         $form = $this->createForm(DealerMetaSEOForm::getName());
         try {
             $this->validateForm($form);
