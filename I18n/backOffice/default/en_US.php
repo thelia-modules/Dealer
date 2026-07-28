@@ -2,7 +2,6 @@
 return array(
      /* List */
     "Dealer" => "Dealer",
-    "Dealer" => "Dealer",
     "Company" => "Name",
     "Address1" => "Address 1",
     "Zipcode" => "Zip Code",
