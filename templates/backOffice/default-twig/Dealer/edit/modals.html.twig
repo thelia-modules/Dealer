@@ -233,6 +233,10 @@
                         <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_end]">
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Label'|trans({}, 'dealer.bo.default') }}</label>
+                    <input type="text" class="form-control" name="{{ schedules_create_fp }}[title]" placeholder="{{ 'e.g. Public holiday, special event…'|trans({}, 'dealer.bo.default') }}">
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
@@ -285,6 +289,10 @@
                         <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_end]" value="" data-fill="periodend">
                     </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ 'Label'|trans({}, 'dealer.bo.default') }}</label>
+                    <input type="text" class="form-control" name="{{ schedules_update_fp }}[title]" value="" data-fill="title">
                 </div>
             </div>
             <div class="modal-footer">

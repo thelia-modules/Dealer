@@ -52,6 +52,7 @@
                     <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
                     <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
                 </tr>
                 </thead>
@@ -63,12 +64,13 @@
                         <td>{{ s.end }}</td>
                         <td>{{ s.period_begin }}</td>
                         <td>{{ s.period_end }}</td>
+                        <td>{{ s.title }}</td>
                         <td class="text-end">
                             {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Extra Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                    <tr><td colspan="7"><div class="alert alert-info mb-0">{{ 'There is no Extra Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
                 {% endfor %}
                 </tbody>
             </table>
@@ -89,6 +91,7 @@
                     <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
                     <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
                 </tr>
                 </thead>
@@ -100,12 +103,13 @@
                         <td>{{ s.end }}</td>
                         <td>{{ s.period_begin }}</td>
                         <td>{{ s.period_end }}</td>
+                        <td>{{ s.title }}</td>
                         <td class="text-end">
                             {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Closed Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                    <tr><td colspan="7"><div class="alert alert-info mb-0">{{ 'There is no Closed Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
                 {% endfor %}
                 </tbody>
             </table>

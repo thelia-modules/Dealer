@@ -24,6 +24,7 @@ use Dealer\Form\DealerForm;
 use Dealer\Form\DealerImageBoxForm;
 use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Form\DealerMetaSEOForm;
+use Dealer\Form\DealerPickupConfigForm;
 use Dealer\Form\DealerUpdateForm;
 use Dealer\Form\GeoDealerForm;
 use Dealer\Form\SchedulesCloneForm;
@@ -32,6 +33,7 @@ use Dealer\Form\SchedulesUpdateForm;
 use Dealer\Model\DealerImage;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Dealer\Model\Dealer;
+use Dealer\Model\DealerPickupConfigQuery;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -234,6 +236,7 @@ class DealerController extends BaseController
         $schedulesCreateForm = $this->getTheliaFormFactory()->createForm(SchedulesForm::getName());
         $schedulesUpdateForm = $this->getTheliaFormFactory()->createForm(SchedulesUpdateForm::getName());
         $schedulesCloneForm = $this->getTheliaFormFactory()->createForm(SchedulesCloneForm::getName());
+        $pickupConfigForm = $this->getTheliaFormFactory()->createForm(DealerPickupConfigForm::getName(), data: $this->buildPickupConfigData($dealerId));
         $adminLinkForm = $this->getTheliaFormFactory()->createForm(AdminLinkForm::getName());
         $geoForm = $this->getTheliaFormFactory()->createForm(GeoDealerForm::getName(), data: $this->buildGeoFormData($dealer));
         $seoForm = $this->getTheliaFormFactory()->createForm(DealerMetaSEOForm::getName(), data: $this->buildSeoFormData($dealerId));
@@ -266,6 +269,7 @@ class DealerController extends BaseController
                 'schedules_create_form' => $schedulesCreateForm->createView()->getView(),
                 'schedules_update_form' => $schedulesUpdateForm->createView()->getView(),
                 'schedules_clone_form' => $schedulesCloneForm->createView()->getView(),
+                'pickup_config_form' => $pickupConfigForm->createView()->getView(),
                 'day_labels' => $this->getDayLabels($locale),
                 'linked_admins' => $this->buildLinkedAdmins($dealerId),
                 'admin_link_form' => $adminLinkForm->createView()->getView(),
@@ -379,6 +383,22 @@ class DealerController extends BaseController
      *
      * @return list<array<string, mixed>>
      */
+    /**
+     * @return array{dealer_id: mixed, prep_delay_minutes: int, orderable_days: int, slot_duration_minutes: int, max_orders_per_slot: int}
+     */
+    private function buildPickupConfigData($dealerId): array
+    {
+        $config = $dealerId !== null ? DealerPickupConfigQuery::create()->findPk($dealerId) : null;
+
+        return [
+            'dealer_id' => $dealerId,
+            'prep_delay_minutes' => $config?->getPrepDelayMinutes() ?? 0,
+            'orderable_days' => $config?->getOrderableDays() ?? 7,
+            'slot_duration_minutes' => $config?->getSlotDurationMinutes() ?? 60,
+            'max_orders_per_slot' => $config?->getMaxOrdersPerSlot() ?? 0,
+        ];
+    }
+
     private function buildSchedules($dealerId, string $locale, bool $defaultPeriod, bool $closed): array
     {
         if ($dealerId === null) {
@@ -413,6 +433,7 @@ class DealerController extends BaseController
                 'end' => $end instanceof \DateTimeInterface ? $end->format('H:i') : null,
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
                 'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
+                'title' => $schedule->getTitle(),
             ];
         }
 

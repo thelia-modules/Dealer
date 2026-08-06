@@ -48,9 +48,48 @@
         <column name="period_begin" type="DATE"/>
         <column name="period_end" type="DATE"/>
 
+        <column name="title" size="255" type="VARCHAR"/>
+
         <foreign-key foreignTable="dealer" name="fk_dealer_shedules_dealer_id" onDelete="CASCADE">
             <reference foreign="id" local="dealer_id"/>
         </foreign-key>
+
+        <behavior name="timestampable"/>
+    </table>
+
+    <table name="dealer_pickup_config" namespace="Dealer\Model">
+        <column name="dealer_id" primaryKey="true" required="true" type="INTEGER"/>
+
+        <column name="prep_delay_minutes" defaultValue="0" required="true" type="INTEGER"/>
+        <column name="orderable_days" defaultValue="7" required="true" type="INTEGER"/>
+        <column name="slot_duration_minutes" defaultValue="60" required="true" type="INTEGER"/>
+        <column name="max_orders_per_slot" defaultValue="0" required="true" type="INTEGER"/>
+
+        <foreign-key foreignTable="dealer" name="fk_dealer_pickup_config_dealer_id" onDelete="CASCADE">
+            <reference foreign="id" local="dealer_id"/>
+        </foreign-key>
+
+        <behavior name="timestampable"/>
+    </table>
+
+    <table name="dealer_order_pickup" namespace="Dealer\Model">
+        <column autoIncrement="true" name="id" primaryKey="true" required="true" type="INTEGER"/>
+        <column name="dealer_id" required="true" type="INTEGER"/>
+        <column name="order_id" required="true" type="INTEGER"/>
+
+        <column name="pickup_datetime" required="true" type="TIMESTAMP"/>
+
+        <foreign-key foreignTable="dealer" name="fk_dealer_order_pickup_dealer_id" onDelete="CASCADE">
+            <reference foreign="id" local="dealer_id"/>
+        </foreign-key>
+        <foreign-key foreignTable="order" name="fk_dealer_order_pickup_order_id" onDelete="CASCADE">
+            <reference foreign="id" local="order_id"/>
+        </foreign-key>
+
+        <index name="idx_dealer_order_pickup_slot">
+            <index-column name="dealer_id"/>
+            <index-column name="pickup_datetime"/>
+        </index>
 
         <behavior name="timestampable"/>
     </table>

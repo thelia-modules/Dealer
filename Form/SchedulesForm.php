@@ -17,6 +17,7 @@ use Dealer\Dealer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
@@ -111,6 +112,12 @@ class SchedulesForm extends BaseForm
                 "label" => $this->translator->trans("Closed", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-closed"],
                 "required" => true,
+                "attr" => array()
+            ])
+            ->add("title", TextType::class, [
+                "label" => $this->translator->trans("Label", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-title"],
+                "required" => false,
                 "attr" => array()
             ])
             ->add('dealer_id', IntegerType::class, array(

@@ -41,6 +41,9 @@
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#schedules" type="button" role="tab">{{ 'Schedules'|trans({}, 'dealer.bo.default') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pickup-config" type="button" role="tab">{{ 'Pickup config'|trans({}, 'dealer.bo.default') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#associated" type="button" role="tab">{{ 'Associated'|trans({}, 'dealer.bo.default') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -104,6 +107,8 @@
 
                     {# SCHEDULES #}
                     {% include 'Dealer/edit/tab-schedules.html.twig' %}
+
+                    {% include 'Dealer/edit/tab-pickup-config.html.twig' %}
 
                     {# ASSOCIATED — driven by the dealer.associated.tabcontent hook #}
                     <div class="tab-pane fade" id="associated" role="tabpanel">
