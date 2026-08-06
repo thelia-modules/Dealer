@@ -4,12 +4,27 @@
         <input type="hidden" name="{{ seo_fp }}[_token]" value="{{ seo_form._token.vars.value }}">
         <input type="hidden" name="{{ seo_fp }}[dealer_id]" value="{{ dealer_id }}">
 
-        {{ form_widget(seo_form.slug, {label: 'Slug SEO'|trans({}, 'dealer.bo.default')}) }}
+        <div class="mb-3">
+            <label class="form-label">{{ 'Slug SEO'|trans({}, 'dealer.bo.default') }}</label>
+            {{ form_widget(seo_form.slug, {attr: {class: 'form-control'}}) }}
+        </div>
         <hr>
-        {{ form_widget(seo_form.meta_title, {label: 'Title SEO'|trans({}, 'dealer.bo.default')}) }}
-        {{ form_widget(seo_form.meta_description, {label: 'Description SEO'|trans({}, 'dealer.bo.default')}) }}
-        {{ form_widget(seo_form.meta_keywords, {label: 'Keywords SEO'|trans({}, 'dealer.bo.default')}) }}
-        {{ form_widget(seo_form.meta_json, {label: 'Meta json'|trans({}, 'dealer.bo.default')}) }}
+        <div class="mb-3">
+            <label class="form-label">{{ 'Title SEO'|trans({}, 'dealer.bo.default') }}</label>
+            {{ form_widget(seo_form.meta_title, {attr: {class: 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">{{ 'Description SEO'|trans({}, 'dealer.bo.default') }}</label>
+            {{ form_widget(seo_form.meta_description, {attr: {class: 'form-control', rows: 3}}) }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">{{ 'Keywords SEO'|trans({}, 'dealer.bo.default') }}</label>
+            {{ form_widget(seo_form.meta_keywords, {attr: {class: 'form-control'}}) }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">{{ 'Meta json'|trans({}, 'dealer.bo.default') }}</label>
+            {{ form_widget(seo_form.meta_json, {attr: {class: 'form-control', rows: 3}}) }}
+        </div>
 
         <div class="mt-3">
             <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
