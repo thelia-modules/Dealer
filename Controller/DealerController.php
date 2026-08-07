@@ -268,9 +268,9 @@ class DealerController extends BaseController
                 'contact_info_create_form' => $contactInfoCreateForm->createView()->getView(),
                 'contact_info_update_form' => $contactInfoUpdateForm->createView()->getView(),
                 'contact_info_types' => $this->getContactInfoTypeChoices(),
-                'schedules_default' => $this->buildSchedules($dealerId, $locale, defaultPeriod: true, closed: false),
-                'schedules_extra' => $this->buildSchedules($dealerId, $locale, defaultPeriod: false, closed: false),
-                'schedules_closed' => $this->buildSchedules($dealerId, $locale, defaultPeriod: false, closed: true),
+                'schedules_default' => $this->buildSchedules($dealerId, $locale, periodNull: true, closed: false),
+                'schedules_extra' => $this->buildSchedules($dealerId, $locale, periodNull: false, closed: false),
+                'schedules_closed' => $this->buildSchedules($dealerId, $locale, periodNull: null, closed: true),
                 'schedules_create_form' => $schedulesCreateForm->createView()->getView(),
                 'schedules_update_form' => $schedulesUpdateForm->createView()->getView(),
                 'schedules_clone_form' => $schedulesCloneForm->createView()->getView(),
@@ -404,7 +404,7 @@ class DealerController extends BaseController
         ];
     }
 
-    private function buildSchedules($dealerId, string $locale, bool $defaultPeriod, bool $closed): array
+    private function buildSchedules($dealerId, string $locale, ?bool $periodNull, bool $closed): array
     {
         if ($dealerId === null) {
             return [];
@@ -414,10 +414,13 @@ class DealerController extends BaseController
             ->filterByDealerId($dealerId)
             ->filterByClosed($closed ? 1 : 0);
 
-        if ($defaultPeriod) {
+        if ($periodNull === true) {
             $query->filterByPeriodNull()->orderByDay()->orderByBegin();
-        } else {
+        } elseif ($periodNull === false) {
             $query->filterByPeriodNotNull()->orderByPeriodBegin()->orderByDay()->orderByBegin();
+        } else {
+            // No period filter (e.g. closures: recurring by weekday AND dated ones).
+            $query->orderByPeriodBegin()->orderByDay()->orderByBegin();
         }
 
         $days = $this->getDayLabels($locale);
