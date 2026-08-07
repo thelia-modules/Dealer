@@ -71,40 +71,34 @@ class PickupSlotService
     {
         $numDay = (int) $date->format('N') - 1;
 
-        // Openings for that weekday: regular hours (period fully null), dated exceptional
-        // openings, and half-open recurrences (one null bound). All matched in PHP so a null
-        // period bound behaves as open-ended (SQL comparators would silently drop null bounds).
-        $applicableOpenings = [];
-        foreach (
-            DealerShedulesQuery::create()
-                ->filterByDealerId($dealerId)
-                ->filterByDay($numDay)
-                ->filterByClosed(false)
-                ->find() as $opening
-        ) {
-            if ($this->periodAppliesOn($opening->getPeriodBegin(), $opening->getPeriodEnd(), $date)) {
-                $applicableOpenings[] = $opening;
+        // A schedule row applies on this date when it targets this weekday, OR targets no
+        // weekday (day = null: a period-only entry) and its period covers the date. Null period
+        // bounds are treated as open-ended, so filtering is done in PHP (SQL comparators would
+        // silently drop null bounds).
+        $openings = [];
+        $closures = [];
+        foreach (DealerShedulesQuery::create()->filterByDealerId($dealerId)->find() as $row) {
+            $day = $row->getDay();
+            if ($day !== null && (int) $day !== $numDay) {
+                continue;
+            }
+            if (!$this->periodAppliesOn($row->getPeriodBegin(), $row->getPeriodEnd(), $date)) {
+                continue;
+            }
+            if ($row->getClosed()) {
+                $closures[] = $row;
+            } else {
+                $openings[] = $row;
             }
         }
 
-        $open = $this->mergeRanges($this->rangesFrom($applicableOpenings));
+        $open = $this->mergeRanges($this->rangesFrom($openings));
 
         if ($open === []) {
             return [];
         }
 
-        // Closures: unbounded weekly (period null) OR period covering this date.
-        $closures = DealerShedulesQuery::create()
-            ->filterByDealerId($dealerId)
-            ->filterByDay($numDay)
-            ->filterByClosed(true)
-            ->find();
-
         foreach ($closures as $closure) {
-            if (!$this->periodAppliesOn($closure->getPeriodBegin(), $closure->getPeriodEnd(), $date)) {
-                continue;
-            }
-
             // A closure with no explicit hours closes the whole day.
             if ($closure->getBegin() === null || $closure->getEnd() === null) {
                 return [];

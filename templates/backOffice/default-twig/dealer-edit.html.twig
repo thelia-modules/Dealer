@@ -206,9 +206,56 @@
                 });
             });
 
-            // Create-schedule modal: reflect which schedule type is being created
-            // (default / exceptional opening / exceptional closure).
+            // Schedule modals: toggle between "by weekday" and "by date period".
+            function setupScheduleMode(modal) {
+                if (!modal) {
+                    return;
+                }
+                var dayField = modal.querySelector('[data-schedule-day-field]');
+                var periodField = modal.querySelector('[data-schedule-period-field]');
+                function apply(mode, clearInactive) {
+                    var isPeriod = (mode === 'period');
+                    if (dayField) {
+                        dayField.style.display = isPeriod ? 'none' : '';
+                    }
+                    if (periodField) {
+                        periodField.style.display = isPeriod ? '' : 'none';
+                    }
+                    if (!clearInactive) {
+                        return;
+                    }
+                    // When the user switches mode, reset the now-hidden side so it isn't submitted.
+                    if (isPeriod && dayField) {
+                        dayField.querySelectorAll('select').forEach(function (select) {
+                            Array.prototype.forEach.call(select.options, function (option) {
+                                option.selected = false;
+                            });
+                        });
+                    }
+                    if (!isPeriod && periodField) {
+                        periodField.querySelectorAll('input').forEach(function (input) {
+                            input.value = '';
+                        });
+                    }
+                }
+                modal.querySelectorAll('[data-schedule-mode]').forEach(function (radio) {
+                    radio.addEventListener('change', function () {
+                        if (radio.checked) {
+                            apply(radio.value, true);
+                        }
+                    });
+                });
+                modal.applyScheduleMode = function (mode, clearInactive) {
+                    modal.querySelectorAll('[data-schedule-mode]').forEach(function (radio) {
+                        radio.checked = (radio.value === mode);
+                    });
+                    apply(mode, clearInactive);
+                };
+            }
+
+            // Create-schedule modal: set the title from the clicked section, default to "by weekday".
             var scheduleCreateModal = document.getElementById('dealer-schedules-create');
+            setupScheduleMode(scheduleCreateModal);
             if (scheduleCreateModal) {
                 scheduleCreateModal.addEventListener('show.bs.modal', function (event) {
                     var trigger = event.relatedTarget;
@@ -220,16 +267,22 @@
                     if (title && titleEl) {
                         titleEl.textContent = title;
                     }
-                    var periodEl = scheduleCreateModal.querySelector('[data-schedule-create-period]');
-                    if (periodEl) {
-                        var showPeriod = trigger.getAttribute('data-schedule-period') === '1';
-                        periodEl.style.display = showPeriod ? '' : 'none';
-                        if (!showPeriod) {
-                            periodEl.querySelectorAll('input').forEach(function (input) {
-                                input.value = '';
-                            });
-                        }
+                    scheduleCreateModal.applyScheduleMode('day', true);
+                });
+            }
+
+            // Update-schedule modal: choose the mode from the edited row (no weekday = period mode).
+            var scheduleUpdateModal = document.getElementById('dealer-schedules-update');
+            setupScheduleMode(scheduleUpdateModal);
+            if (scheduleUpdateModal) {
+                scheduleUpdateModal.addEventListener('show.bs.modal', function (event) {
+                    var trigger = event.relatedTarget;
+                    if (!trigger) {
+                        return;
                     }
+                    var day = trigger.getAttribute('data-day');
+                    var mode = (day === null || day === '') ? 'period' : 'day';
+                    scheduleUpdateModal.applyScheduleMode(mode, false);
                 });
             }
         });

@@ -191,9 +191,14 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
             }
         }
 
-        // Require Field
-        if (array_key_exists('day', $data) && $data['day'] !== array()) {
-            $model->setDay($data['day']);
+        // Weekday is optional: an empty value means a period-only entry (day = null).
+        if (array_key_exists('day', $data)) {
+            $day = $data['day'];
+            if ($day === array() || $day === '' || $day === null) {
+                $model->setDay(null);
+            } elseif (!is_array($day)) {
+                $model->setDay((int) $day);
+            }
         }
         if (isset($data['begin'])) {
             $model->setBegin($data['begin']);
