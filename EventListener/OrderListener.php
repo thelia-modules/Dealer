@@ -7,22 +7,26 @@ namespace Dealer\EventListener;
 use Dealer\Dealer;
 use Dealer\Model\DealerOrderPickup;
 use Dealer\Model\DealerOrderPickupQuery;
+use Dealer\Service\PickupSlotService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
+use Thelia\Log\Tlog;
 
 /**
  * Persists the drive pickup slot chosen during checkout once the order is created.
  *
  * The choice is carried through the session (set by the front-office store-pickup
- * step); on ORDER_AFTER_CREATE it is written to dealer_order_pickup so the per-slot
- * quota can be accounted for.
+ * step); on ORDER_PAY it is re-validated and written to dealer_order_pickup so the
+ * per-slot quota can be accounted for.
  */
 class OrderListener implements EventSubscriberInterface
 {
-    public function __construct(private readonly RequestStack $requestStack)
-    {
+    public function __construct(
+        private readonly RequestStack $requestStack,
+        private readonly PickupSlotService $pickupSlotService,
+    ) {
     }
 
     public function savePickupSlot(OrderEvent $event): void
@@ -52,22 +56,30 @@ class OrderListener implements EventSubscriberInterface
 
         // A pickup-slot persistence issue must never abort the customer's order.
         try {
-            $alreadyStored = DealerOrderPickupQuery::create()
-                ->filterByOrderId($orderId)
-                ->exists();
+            $moment = new \DateTimeImmutable($pickupDatetime);
 
-            if (!$alreadyStored) {
+            // Re-validate at persistence time: reject a forged, stale or now-full slot
+            // rather than saving an invalid/overbooked reservation.
+            if (!$this->pickupSlotService->isSlotAvailable((int) $dealerId, $moment)) {
+                Tlog::getInstance()->warning(sprintf(
+                    'Dealer pickup slot no longer available at order creation (order %d, dealer %s, %s) — not recorded.',
+                    $orderId,
+                    $dealerId,
+                    $pickupDatetime
+                ));
+            } elseif (!DealerOrderPickupQuery::create()->filterByOrderId($orderId)->exists()) {
                 (new DealerOrderPickup())
                     ->setOrderId($orderId)
                     ->setDealerId((int) $dealerId)
-                    ->setPickupDatetime($pickupDatetime)
+                    ->setPickupDatetime($moment->format('Y-m-d H:i:s'))
                     ->save();
             }
 
             $session->remove(Dealer::SESSION_PICKUP_DEALER_ID);
             $session->remove(Dealer::SESSION_PICKUP_DATETIME);
-        } catch (\Throwable) {
-            // Swallow: the order is already placed, the slot reservation is best-effort.
+        } catch (\Throwable $e) {
+            // The order is already placed; the reservation is best-effort — log for diagnosis.
+            Tlog::getInstance()->error('Failed to persist dealer pickup slot for order ' . $orderId . ': ' . $e->getMessage());
         }
     }
 

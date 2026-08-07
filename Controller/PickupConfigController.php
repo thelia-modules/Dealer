@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
-use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 
@@ -56,21 +55,20 @@ class PickupConfigController extends BaseAdminController
         }
 
         if (false !== $error_msg) {
-            $this->setupFormErrorContext(
-                Translator::getInstance()->trans('%obj modification', ['%obj' => 'Dealer pickup config']),
-                $error_msg,
-                $form,
-                $ex
-            );
+            // Flash the error so it survives the redirect and is shown on the dealer edit page.
+            $request->getSession()->getFlashBag()->add('dealer_error', $error_msg);
         }
 
-        return $this->redirectToDealer((int) $request->request->get('dealer_id'));
+        $formData = $request->request->all('dealer-pickup-config');
+        $dealerId = (int) ($formData['dealer_id'] ?? $request->request->get('dealer_id'));
+
+        return $this->redirectToDealer($dealerId);
     }
 
     private function redirectToDealer(int $dealerId): RedirectResponse
     {
         return new RedirectResponse(
-            URL::getInstance()->absoluteUrl('/admin/module/Dealer/dealer/edit', ['dealer_id' => $dealerId])
+            URL::getInstance()->absoluteUrl('/admin/module/Dealer/dealer/edit', ['dealer_id' => $dealerId]) . '#pickup-config'
         );
     }
 }

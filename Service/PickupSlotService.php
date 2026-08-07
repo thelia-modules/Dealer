@@ -9,7 +9,6 @@ use Dealer\Model\DealerPickupConfig;
 use Dealer\Model\DealerPickupConfigQuery;
 use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
-use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * Computes the pickup slots available for a dealer, applying its opening hours,
@@ -72,32 +71,29 @@ class PickupSlotService
     {
         $numDay = (int) $date->format('N') - 1;
 
-        $base = $this->rangesFrom(
+        // Openings for that weekday: regular hours (period fully null), dated exceptional
+        // openings, and half-open recurrences (one null bound). All matched in PHP so a null
+        // period bound behaves as open-ended (SQL comparators would silently drop null bounds).
+        $applicableOpenings = [];
+        foreach (
             DealerShedulesQuery::create()
                 ->filterByDealerId($dealerId)
                 ->filterByDay($numDay)
                 ->filterByClosed(false)
-                ->filterByPeriodNull()
-                ->find()
-        );
+                ->find() as $opening
+        ) {
+            if ($this->periodAppliesOn($opening->getPeriodBegin(), $opening->getPeriodEnd(), $date)) {
+                $applicableOpenings[] = $opening;
+            }
+        }
 
-        $exceptionalOpen = $this->rangesFrom(
-            DealerShedulesQuery::create()
-                ->filterByDealerId($dealerId)
-                ->filterByDay($numDay)
-                ->filterByClosed(false)
-                ->filterByPeriodBegin($date->format('Y-m-d'), Criteria::LESS_EQUAL)
-                ->filterByPeriodEnd($date->format('Y-m-d'), Criteria::GREATER_EQUAL)
-                ->find()
-        );
-
-        $open = $this->mergeRanges([...$base, ...$exceptionalOpen]);
+        $open = $this->mergeRanges($this->rangesFrom($applicableOpenings));
 
         if ($open === []) {
             return [];
         }
 
-        // Closures: unbounded weekly (period null) OR dated period covering this date.
+        // Closures: unbounded weekly (period null) OR period covering this date.
         $closures = DealerShedulesQuery::create()
             ->filterByDealerId($dealerId)
             ->filterByDay($numDay)
@@ -105,7 +101,7 @@ class PickupSlotService
             ->find();
 
         foreach ($closures as $closure) {
-            if (!$this->closureAppliesOn($closure, $date)) {
+            if (!$this->periodAppliesOn($closure->getPeriodBegin(), $closure->getPeriodEnd(), $date)) {
                 continue;
             }
 
@@ -124,17 +120,12 @@ class PickupSlotService
         return $open;
     }
 
-    private function closureAppliesOn(DealerShedules $closure, \DateTimeImmutable $date): bool
+    /**
+     * Whether a schedule row's period covers the given date, treating a null bound as open-ended
+     * (null/null = unbounded weekly recurrence, applies every matching weekday).
+     */
+    private function periodAppliesOn(?\DateTimeInterface $begin, ?\DateTimeInterface $end, \DateTimeImmutable $date): bool
     {
-        $begin = $closure->getPeriodBegin();
-        $end = $closure->getPeriodEnd();
-
-        // Unbounded weekly closure ("every Saturday").
-        if ($begin === null && $end === null) {
-            return true;
-        }
-
-        // Dated recurrence ("every Saturday from X to Y") or one-off dated closure.
         $day = $date->format('Y-m-d');
 
         return (!$begin instanceof \DateTimeInterface || $begin->format('Y-m-d') <= $day)
@@ -222,7 +213,8 @@ class PickupSlotService
         DealerPickupConfig $config,
         \DateTimeImmutable $earliest
     ): array {
-        $step = new \DateInterval('PT' . $config->getSlotDurationMinutes() . 'M');
+        // Guard against a 0/negative duration that would make the loop below never progress.
+        $step = new \DateInterval('PT' . max(1, $config->getSlotDurationMinutes()) . 'M');
         $maxPerSlot = $config->getMaxOrdersPerSlot();
         $slots = [];
 
@@ -285,5 +277,33 @@ class PickupSlotService
         }
 
         return $config;
+    }
+
+    /**
+     * Server-side re-validation of a chosen slot: it must start inside an open range for its day
+     * (with room for a full slot) and still have remaining capacity. Used to reject forged/stale
+     * choices at selection and before persisting the order pickup.
+     */
+    public function isSlotAvailable(int $dealerId, \DateTimeInterface $datetime): bool
+    {
+        $moment = \DateTimeImmutable::createFromInterface($datetime);
+        $config = $this->getConfig($dealerId);
+
+        if ($this->remainingCapacity($dealerId, $moment, $config->getMaxOrdersPerSlot()) === 0) {
+            return false;
+        }
+
+        $ranges = $this->resolveOpenRanges($dealerId, new \DateTimeImmutable($moment->format('Y-m-d')));
+        $duration = max(1, $config->getSlotDurationMinutes());
+        $slotStart = $moment->format('H:i:s');
+        $slotEnd = $moment->add(new \DateInterval('PT' . $duration . 'M'))->format('H:i:s');
+
+        foreach ($ranges as $range) {
+            if ($slotStart >= $range['begin'] && $slotEnd <= $range['end']) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
