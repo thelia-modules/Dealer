@@ -205,6 +205,33 @@
                     });
                 });
             });
+
+            // Create-schedule modal: reflect which schedule type is being created
+            // (default / exceptional opening / exceptional closure).
+            var scheduleCreateModal = document.getElementById('dealer-schedules-create');
+            if (scheduleCreateModal) {
+                scheduleCreateModal.addEventListener('show.bs.modal', function (event) {
+                    var trigger = event.relatedTarget;
+                    if (!trigger) {
+                        return;
+                    }
+                    var title = trigger.getAttribute('data-schedule-title');
+                    var titleEl = scheduleCreateModal.querySelector('[data-schedule-create-title]');
+                    if (title && titleEl) {
+                        titleEl.textContent = title;
+                    }
+                    var periodEl = scheduleCreateModal.querySelector('[data-schedule-create-period]');
+                    if (periodEl) {
+                        var showPeriod = trigger.getAttribute('data-schedule-period') === '1';
+                        periodEl.style.display = showPeriod ? '' : 'none';
+                        if (!showPeriod) {
+                            periodEl.querySelectorAll('input').forEach(function (input) {
+                                input.value = '';
+                            });
+                        }
+                    }
+                });
+            }
         });
     </script>
 

@@ -181,7 +181,7 @@
     <div class="modal-dialog modal-lg">
         <form method="POST" action="/admin/module/Dealer/schedules" class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">{{ 'Create a schedules'|trans({}, 'dealer.bo.default') }}</h5>
+                <h5 class="modal-title" data-schedule-create-title>{{ 'Create a schedules'|trans({}, 'dealer.bo.default') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -222,15 +222,17 @@
                         </div>
                     </div>
                 </div>
-                <h6>{{ 'Period'|trans({}, 'dealer.bo.default') }}</h6>
-                <div class="row">
-                    <div class="col-sm-6 mb-3">
-                        <label class="form-label">{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</label>
-                        <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]">
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                        <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
-                        <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_end]">
+                <div data-schedule-create-period>
+                    <h6>{{ 'Period'|trans({}, 'dealer.bo.default') }}</h6>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]">
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_end]">
+                        </div>
                     </div>
                 </div>
                 <div class="mb-3">
