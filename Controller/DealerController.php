@@ -225,6 +225,11 @@ class DealerController extends BaseController
             ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
             : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
+        // Error flashed by a sub-controller (e.g. schedules) before redirecting here.
+        $flashError = $request->hasSession()
+            ? ($request->getSession()->getFlashBag()->get('dealer_error')[0] ?? null)
+            : null;
+
         $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
 
         $updateForm = $this->getUpdateForm($this->buildDealerFormData($dealer));
@@ -255,7 +260,7 @@ class DealerController extends BaseController
                 'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
                 'edit_language_locale' => $locale,
                 'update_form' => $updateForm->createView()->getView(),
-                'general_error' => $this->getParserContext()->get('general_error'),
+                'general_error' => $flashError ?? $this->getParserContext()->get('general_error'),
                 // Tab data
                 'contacts' => $this->buildContacts($dealerId, $locale),
                 'contact_create_form' => $contactCreateForm->createView()->getView(),
