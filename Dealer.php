@@ -35,6 +35,10 @@ class Dealer extends BaseModule
     // List of admin profile_id allowed to see ALL the dealers (separated by coma)
     const CONFIG_ALLOW_PROFILE_ID = 'admin_profile_id';
 
+    // Session keys carrying the drive pickup choice from the checkout to order creation.
+    const SESSION_PICKUP_DEALER_ID = 'dealer_pickup_dealer_id';
+    const SESSION_PICKUP_DATETIME = 'dealer_pickup_datetime';
+
     public function postActivation(ConnectionInterface $con = null): void
     {
         if (!$this->getConfigValue('is_initialized', false)) {

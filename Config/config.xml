@@ -21,6 +21,7 @@
 
         <service id="Dealer\Twig\DealerPickupExtension" class="Dealer\Twig\DealerPickupExtension">
             <argument type="service" id="Dealer\Service\PickupSlotService"/>
+            <argument type="service" id="request_stack"/>
             <tag name="twig.extension"/>
         </service>
     </services>

@@ -2,6 +2,8 @@
 return array(
     /* Pickup config */
     "Pickup config" => "Config. retrait",
+    "Drive pickup" => "Retrait Drive",
+    "Pickup slot" => "Créneau de retrait",
     "Preparation delay (minutes)" => "Délai de préparation (minutes)",
     "Number of orderable days" => "Nombre de jours de retrait proposés",
     "Slot duration (minutes)" => "Durée d’un créneau (minutes)",
