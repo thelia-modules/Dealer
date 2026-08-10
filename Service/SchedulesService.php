@@ -13,6 +13,7 @@
 
 namespace Dealer\Service;
 
+use Dealer\Dealer;
 use Dealer\Event\DealerEvents;
 use Dealer\Event\DealerSchedulesEvent;
 use Dealer\Model\DealerShedules;
@@ -23,6 +24,7 @@ use Dealer\Service\Base\BaseServiceInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Symfony\Component\EventDispatcher\Event;
 use Thelia\Core\Event\ActionEvent;
+use Thelia\Core\Translation\Translator;
 
 /**
  * Class SchedulesService
@@ -44,12 +46,84 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
 
     protected function createProcess(ActionEvent $event)
     {
+        $this->assertValidSchedule($event->getDealerSchedules());
         $event->getDealerSchedules()->save();
     }
 
     protected function updateProcess(ActionEvent $event)
     {
+        $this->assertValidSchedule($event->getDealerSchedules());
         $event->getDealerSchedules()->save();
+    }
+
+    /**
+     * Ensure a timed slot closes after it opens and does not overlap another slot
+     * of the same day sharing the same period and open/closed nature.
+     *
+     * @throws \RuntimeException when the slot is invalid
+     */
+    protected function assertValidSchedule(DealerShedules $schedule): void
+    {
+        $begin = $schedule->getBegin();
+        $end = $schedule->getEnd();
+
+        // Full-day rows (no explicit hours) carry no time range to validate.
+        if (!$begin instanceof \DateTimeInterface || !$end instanceof \DateTimeInterface) {
+            return;
+        }
+
+        $beginStr = $begin->format('H:i:s');
+        $endStr = $end->format('H:i:s');
+
+        if ($endStr <= $beginStr) {
+            throw new \RuntimeException(
+                Translator::getInstance()->trans(
+                    'The end time (%end) must be after the begin time (%begin).',
+                    ['%begin' => $begin->format('H:i'), '%end' => $end->format('H:i')],
+                    Dealer::MESSAGE_DOMAIN
+                )
+            );
+        }
+
+        $periodBegin = $schedule->getPeriodBegin();
+        $periodEnd = $schedule->getPeriodEnd();
+
+        $query = DealerShedulesQuery::create()
+            ->filterByDealerId($schedule->getDealerId())
+            ->filterByDay($schedule->getDay())
+            ->filterByClosed($schedule->getClosed())
+            ->filterByPeriodBegin($periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null)
+            ->filterByPeriodEnd($periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null);
+
+        if ($schedule->getId()) {
+            $query->filterById($schedule->getId(), Criteria::NOT_EQUAL);
+        }
+
+        /** @var DealerShedules $existing */
+        foreach ($query->find() as $existing) {
+            $existingBegin = $existing->getBegin();
+            $existingEnd = $existing->getEnd();
+
+            if (!$existingBegin instanceof \DateTimeInterface || !$existingEnd instanceof \DateTimeInterface) {
+                continue;
+            }
+
+            // Two ranges overlap when each starts before the other ends.
+            if ($beginStr < $existingEnd->format('H:i:s') && $existingBegin->format('H:i:s') < $endStr) {
+                throw new \RuntimeException(
+                    Translator::getInstance()->trans(
+                        'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd).',
+                        [
+                            '%begin' => $begin->format('H:i'),
+                            '%end' => $end->format('H:i'),
+                            '%exBegin' => $existingBegin->format('H:i'),
+                            '%exEnd' => $existingEnd->format('H:i'),
+                        ],
+                        Dealer::MESSAGE_DOMAIN
+                    )
+                );
+            }
+        }
     }
 
     protected function deleteProcess(ActionEvent $event)
@@ -117,9 +191,14 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
             }
         }
 
-        // Require Field
-        if (array_key_exists('day', $data) && $data['day'] !== array()) {
-            $model->setDay($data['day']);
+        // Weekday is optional: an empty value means a period-only entry (day = null).
+        if (array_key_exists('day', $data)) {
+            $day = $data['day'];
+            if ($day === array() || $day === '' || $day === null) {
+                $model->setDay(null);
+            } elseif (!is_array($day)) {
+                $model->setDay((int) $day);
+            }
         }
         if (isset($data['begin'])) {
             $model->setBegin($data['begin']);
@@ -138,6 +217,9 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         }
         if (isset($data['closed'])) {
             $model->setClosed($data['closed']);
+        }
+        if (array_key_exists('title', $data)) {
+            $model->setTitle($data['title'] !== '' ? $data['title'] : null);
         }
 
 

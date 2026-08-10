@@ -41,6 +41,9 @@
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#schedules" type="button" role="tab">{{ 'Schedules'|trans({}, 'dealer.bo.default') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pickup-config" type="button" role="tab">{{ 'Pickup config'|trans({}, 'dealer.bo.default') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#associated" type="button" role="tab">{{ 'Associated'|trans({}, 'dealer.bo.default') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -61,19 +64,52 @@
                             <input type="hidden" name="{{ fp }}[locale]" value="{{ edit_language_locale }}">
                             <input type="hidden" name="{{ fp }}[id]" value="{{ dealer_id }}">
 
-                            {{ form_widget(update_form.title, {label: 'Title'|trans({}, 'dealer.bo.default'), attr: {placeholder: 'The Dealer title'|trans({}, 'dealer.bo.default')}}) }}
-                            {{ form_widget(update_form.address1, {label: 'Address1'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.address2, {label: 'Address2'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.address3, {label: 'Address3'|trans({}, 'dealer.bo.default')}) }}
-                            <div class="row">
-                                <div class="col-md-6">{{ form_widget(update_form.zipcode, {label: 'Zipcode'|trans({}, 'dealer.bo.default')}) }}</div>
-                                <div class="col-md-6">{{ form_widget(update_form.city, {label: 'City'|trans({}, 'dealer.bo.default')}) }}</div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'Title'|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.title, {attr: {class: 'form-control', placeholder: 'The Dealer title'|trans({}, 'dealer.bo.default')}}) }}
                             </div>
-                            {{ form_widget(update_form.country_id, {label: 'Country'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.description, {label: 'Description'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.big_description, {label: 'Complex Description'|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.hard_open_hour, {label: "Horraires d'ouverture"|trans({}, 'dealer.bo.default')}) }}
-                            {{ form_widget(update_form.access, {label: 'Access'|trans({}, 'dealer.bo.default')}) }}
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'Address1'|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.address1, {attr: {class: 'form-control'}}) }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'Address2'|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.address2, {attr: {class: 'form-control'}}) }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'Address3'|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.address3, {attr: {class: 'form-control'}}) }}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">{{ 'Zipcode'|trans({}, 'dealer.bo.default') }}</label>
+                                    {{ form_widget(update_form.zipcode, {attr: {class: 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-5 mb-3">
+                                    <label class="form-label">{{ 'City'|trans({}, 'dealer.bo.default') }}</label>
+                                    {{ form_widget(update_form.city, {attr: {class: 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">{{ 'Country'|trans({}, 'dealer.bo.default') }}</label>
+                                    {{ form_widget(update_form.country_id, {attr: {class: 'form-select'}}) }}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'Description'|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.description, {attr: {class: 'form-control', rows: 3}}) }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'Complex Description'|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.big_description, {attr: {class: 'form-control', rows: 3}}) }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ "Horraires d'ouverture"|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.hard_open_hour, {attr: {class: 'form-control'}}) }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'Access'|trans({}, 'dealer.bo.default') }}</label>
+                                {{ form_widget(update_form.access, {attr: {class: 'form-control', rows: 3}}) }}
+                            </div>
 
                             <div class="mt-3">
                                 <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> {{ 'Save'|trans }}</button>
@@ -104,6 +140,8 @@
 
                     {# SCHEDULES #}
                     {% include 'Dealer/edit/tab-schedules.html.twig' %}
+
+                    {% include 'Dealer/edit/tab-pickup-config.html.twig' %}
 
                     {# ASSOCIATED — driven by the dealer.associated.tabcontent hook #}
                     <div class="tab-pane fade" id="associated" role="tabpanel">
@@ -167,6 +205,119 @@
                     });
                 });
             });
+
+            // Schedule modals: a default schedule uses a weekday (no date). An exceptional
+            // opening/closure uses either a precise date (period_begin = period_end) or a period
+            // (period_begin < period_end), switched by the Date/Period toggle.
+            function setupScheduleFields(modal) {
+                if (!modal) {
+                    return null;
+                }
+                var dayField = modal.querySelector('[data-schedule-day-field]');
+                var dateField = modal.querySelector('[data-schedule-date-field]');
+                var dateInput = modal.querySelector('[data-schedule-date]');
+                var periodEnd = modal.querySelector('[data-schedule-period-end]');
+                var endWrap = modal.querySelector('[data-schedule-end-wrap]');
+                var beginLabel = modal.querySelector('[data-schedule-begin-label]');
+                var modeRadios = modal.querySelectorAll('[data-schedule-exc-mode]');
+
+                function applyExcMode(mode) {
+                    var isPeriod = mode === 'period';
+                    if (beginLabel) {
+                        beginLabel.textContent = isPeriod
+                            ? beginLabel.getAttribute('data-label-period')
+                            : beginLabel.getAttribute('data-label-date');
+                    }
+                    if (endWrap) {
+                        endWrap.style.display = isPeriod ? '' : 'none';
+                    }
+                    // Single date: mirror period_end onto the chosen date (a one-day range).
+                    if (!isPeriod && dateInput && periodEnd) {
+                        periodEnd.value = dateInput.value;
+                    }
+                }
+
+                // Keep period_end mirrored while in single-date mode.
+                if (dateInput && periodEnd) {
+                    dateInput.addEventListener('change', function () {
+                        var current = modal.querySelector('[data-schedule-exc-mode]:checked');
+                        if (!current || current.value !== 'period') {
+                            periodEnd.value = dateInput.value;
+                        }
+                    });
+                }
+                Array.prototype.forEach.call(modeRadios, function (radio) {
+                    radio.addEventListener('change', function () {
+                        if (radio.checked) {
+                            applyExcMode(radio.value);
+                        }
+                    });
+                });
+
+                return function applyFields(useDate, mode) {
+                    if (dayField) {
+                        dayField.style.display = useDate ? 'none' : '';
+                    }
+                    if (dateField) {
+                        dateField.style.display = useDate ? '' : 'none';
+                    }
+                    if (useDate) {
+                        if (dayField) {
+                            dayField.querySelectorAll('select').forEach(function (select) {
+                                Array.prototype.forEach.call(select.options, function (option) {
+                                    option.selected = false;
+                                });
+                            });
+                        }
+                        var wanted = mode === 'period' ? 'period' : 'date';
+                        Array.prototype.forEach.call(modeRadios, function (radio) {
+                            radio.checked = radio.value === wanted;
+                        });
+                        applyExcMode(wanted);
+                    } else {
+                        if (dateInput) { dateInput.value = ''; }
+                        if (periodEnd) { periodEnd.value = ''; }
+                    }
+                };
+            }
+
+            // Create-schedule modal: title from the clicked section; weekday for default hours,
+            // a precise date (default) for exceptional openings/closures (data-schedule-period = '1').
+            var scheduleCreateModal = document.getElementById('dealer-schedules-create');
+            var applyCreateFields = setupScheduleFields(scheduleCreateModal);
+            if (scheduleCreateModal && applyCreateFields) {
+                scheduleCreateModal.addEventListener('show.bs.modal', function (event) {
+                    var trigger = event.relatedTarget;
+                    if (!trigger) {
+                        return;
+                    }
+                    var title = trigger.getAttribute('data-schedule-title');
+                    var titleEl = scheduleCreateModal.querySelector('[data-schedule-create-title]');
+                    if (title && titleEl) {
+                        titleEl.textContent = title;
+                    }
+                    applyCreateFields(trigger.getAttribute('data-schedule-period') === '1', 'date');
+                });
+            }
+
+            // Update-schedule modal: an entry with a date edits as an exception (precise date when
+            // period_begin = period_end, otherwise a period), else as a weekday. The generic prefill
+            // runs first, so this refreshes the visible fields after.
+            var scheduleUpdateModal = document.getElementById('dealer-schedules-update');
+            var applyUpdateFields = setupScheduleFields(scheduleUpdateModal);
+            if (scheduleUpdateModal && applyUpdateFields) {
+                scheduleUpdateModal.addEventListener('show.bs.modal', function (event) {
+                    var trigger = event.relatedTarget;
+                    if (!trigger) {
+                        return;
+                    }
+                    var periodBegin = trigger.getAttribute('data-periodbegin');
+                    var periodEnd = trigger.getAttribute('data-periodend');
+                    var useDate = periodBegin !== null && periodBegin !== '';
+                    var mode = (useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date';
+                    applyUpdateFields(useDate, mode);
+                });
+            }
         });
     </script>
 

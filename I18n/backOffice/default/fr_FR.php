@@ -1,5 +1,19 @@
 <?php
 return array(
+    /* Pickup config */
+    "Pickup config" => "Config. retrait",
+    "Drive pickup" => "Retrait Drive",
+    "Pickup slot" => "Créneau de retrait",
+    "Add a default schedule" => "Ajouter un horaire par défaut",
+    "Add an exceptional opening" => "Ajouter une ouverture exceptionnelle",
+    "Add an exceptional closure" => "Ajouter une fermeture exceptionnelle",
+    "Date" => "Date",
+    "Precise date" => "Date précise",
+    "Preparation delay (minutes)" => "Délai de préparation (minutes)",
+    "Number of orderable days" => "Nombre de jours de retrait proposés",
+    "Slot duration (minutes)" => "Durée d’un créneau (minutes)",
+    "Max orders per slot (0 = unlimited)" => "Commandes max par créneau (0 = illimité)",
+    "These settings drive the pickup slots offered on the front-office for this store: the preparation delay before the first bookable slot, how many open days to display, the slot granularity, and the maximum number of orders per slot." => "Ces réglages pilotent les créneaux de retrait proposés en front pour ce magasin : le délai de préparation avant le premier créneau réservable, le nombre de jours ouverts affichés, la granularité des créneaux, et le nombre maximum de commandes par créneau.",
     "Users" => "Utilisateurs",
     /* List */
     "Dealer" => "Magasin",

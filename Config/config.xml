@@ -12,6 +12,18 @@
         <service id="dealer_admin_link_service" alias="Dealer\Service\AdminLinkService" public="true"/>
         <service id="dealer_product_link_service" alias="Dealer\Service\ProductLinkService" public="true"/>
         <service id="dealer_geo_service" alias="Dealer\Service\GeoDealerService" public="true"/>
+
+        <service id="Dealer\Service\PickupSlotService" class="Dealer\Service\PickupSlotService" public="true"/>
+        <service id="dealer_pickup_slot_service" alias="Dealer\Service\PickupSlotService" public="true"/>
+
+        <service id="Dealer\Service\DealerPickupConfigService" class="Dealer\Service\DealerPickupConfigService" public="true"/>
+        <service id="dealer_pickup_config_service" alias="Dealer\Service\DealerPickupConfigService" public="true"/>
+
+        <service id="Dealer\Twig\DealerPickupExtension" class="Dealer\Twig\DealerPickupExtension">
+            <argument type="service" id="Dealer\Service\PickupSlotService"/>
+            <argument type="service" id="request_stack"/>
+            <tag name="twig.extension"/>
+        </service>
     </services>
 
 </config>

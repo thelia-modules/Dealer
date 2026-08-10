@@ -5,7 +5,9 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="mb-0">{{ 'Default Schedules'|trans({}, 'dealer.bo.default') }}</h5>
                 <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
-                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0">
+                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0"
+                        data-schedule-type="default" data-schedule-period="0"
+                        data-schedule-title="{{ 'Add a default schedule'|trans({}, 'dealer.bo.default') }}">
                     <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
@@ -40,7 +42,9 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="mb-0">{{ 'Extra Schedules'|trans({}, 'dealer.bo.default') }}</h5>
                 <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
-                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0">
+                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0"
+                        data-schedule-type="opening" data-schedule-period="1"
+                        data-schedule-title="{{ 'Add an exceptional opening'|trans({}, 'dealer.bo.default') }}">
                     <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
@@ -52,6 +56,7 @@
                     <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
                     <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
                 </tr>
                 </thead>
@@ -63,12 +68,13 @@
                         <td>{{ s.end }}</td>
                         <td>{{ s.period_begin }}</td>
                         <td>{{ s.period_end }}</td>
+                        <td>{{ s.title }}</td>
                         <td class="text-end">
                             {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Extra Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                    <tr><td colspan="7"><div class="alert alert-info mb-0">{{ 'There is no Extra Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
                 {% endfor %}
                 </tbody>
             </table>
@@ -77,7 +83,9 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <h5 class="mb-0">{{ 'Closed Schedules'|trans({}, 'dealer.bo.default') }}</h5>
                 <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
-                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="1">
+                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="1"
+                        data-schedule-type="closure" data-schedule-period="1"
+                        data-schedule-title="{{ 'Add an exceptional closure'|trans({}, 'dealer.bo.default') }}">
                     <i class="bi bi-plus-lg"></i>
                 </button>
             </div>
@@ -89,6 +97,7 @@
                     <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
                     <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
+                    <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
                     <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
                 </tr>
                 </thead>
@@ -100,12 +109,13 @@
                         <td>{{ s.end }}</td>
                         <td>{{ s.period_begin }}</td>
                         <td>{{ s.period_end }}</td>
+                        <td>{{ s.title }}</td>
                         <td class="text-end">
                             {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
                         </td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="6"><div class="alert alert-info mb-0">{{ 'There is no Closed Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                    <tr><td colspan="7"><div class="alert alert-info mb-0">{{ 'There is no Closed Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
                 {% endfor %}
                 </tbody>
             </table>

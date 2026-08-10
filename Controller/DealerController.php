@@ -24,6 +24,7 @@ use Dealer\Form\DealerForm;
 use Dealer\Form\DealerImageBoxForm;
 use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Form\DealerMetaSEOForm;
+use Dealer\Form\DealerPickupConfigForm;
 use Dealer\Form\DealerUpdateForm;
 use Dealer\Form\GeoDealerForm;
 use Dealer\Form\SchedulesCloneForm;
@@ -32,6 +33,7 @@ use Dealer\Form\SchedulesUpdateForm;
 use Dealer\Model\DealerImage;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Dealer\Model\Dealer;
+use Dealer\Model\DealerPickupConfigQuery;
 use Dealer\Model\DealerQuery;
 use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -223,6 +225,11 @@ class DealerController extends BaseController
             ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
             : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
+        // Error flashed by a sub-controller (e.g. schedules) before redirecting here.
+        $flashError = $request->hasSession()
+            ? ($request->getSession()->getFlashBag()->get('dealer_error')[0] ?? null)
+            : null;
+
         $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
 
         $updateForm = $this->getUpdateForm($this->buildDealerFormData($dealer));
@@ -234,6 +241,7 @@ class DealerController extends BaseController
         $schedulesCreateForm = $this->getTheliaFormFactory()->createForm(SchedulesForm::getName());
         $schedulesUpdateForm = $this->getTheliaFormFactory()->createForm(SchedulesUpdateForm::getName());
         $schedulesCloneForm = $this->getTheliaFormFactory()->createForm(SchedulesCloneForm::getName());
+        $pickupConfigForm = $this->getTheliaFormFactory()->createForm(DealerPickupConfigForm::getName(), data: $this->buildPickupConfigData($dealerId));
         $adminLinkForm = $this->getTheliaFormFactory()->createForm(AdminLinkForm::getName());
         $geoForm = $this->getTheliaFormFactory()->createForm(GeoDealerForm::getName(), data: $this->buildGeoFormData($dealer));
         $seoForm = $this->getTheliaFormFactory()->createForm(DealerMetaSEOForm::getName(), data: $this->buildSeoFormData($dealerId));
@@ -252,7 +260,7 @@ class DealerController extends BaseController
                 'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
                 'edit_language_locale' => $locale,
                 'update_form' => $updateForm->createView()->getView(),
-                'general_error' => $this->getParserContext()->get('general_error'),
+                'general_error' => $flashError ?? $this->getParserContext()->get('general_error'),
                 // Tab data
                 'contacts' => $this->buildContacts($dealerId, $locale),
                 'contact_create_form' => $contactCreateForm->createView()->getView(),
@@ -260,12 +268,13 @@ class DealerController extends BaseController
                 'contact_info_create_form' => $contactInfoCreateForm->createView()->getView(),
                 'contact_info_update_form' => $contactInfoUpdateForm->createView()->getView(),
                 'contact_info_types' => $this->getContactInfoTypeChoices(),
-                'schedules_default' => $this->buildSchedules($dealerId, $locale, defaultPeriod: true, closed: false),
-                'schedules_extra' => $this->buildSchedules($dealerId, $locale, defaultPeriod: false, closed: false),
-                'schedules_closed' => $this->buildSchedules($dealerId, $locale, defaultPeriod: false, closed: true),
+                'schedules_default' => $this->buildSchedules($dealerId, $locale, periodNull: true, closed: false),
+                'schedules_extra' => $this->buildSchedules($dealerId, $locale, periodNull: false, closed: false),
+                'schedules_closed' => $this->buildSchedules($dealerId, $locale, periodNull: null, closed: true),
                 'schedules_create_form' => $schedulesCreateForm->createView()->getView(),
                 'schedules_update_form' => $schedulesUpdateForm->createView()->getView(),
                 'schedules_clone_form' => $schedulesCloneForm->createView()->getView(),
+                'pickup_config_form' => $pickupConfigForm->createView()->getView(),
                 'day_labels' => $this->getDayLabels($locale),
                 'linked_admins' => $this->buildLinkedAdmins($dealerId),
                 'admin_link_form' => $adminLinkForm->createView()->getView(),
@@ -379,7 +388,23 @@ class DealerController extends BaseController
      *
      * @return list<array<string, mixed>>
      */
-    private function buildSchedules($dealerId, string $locale, bool $defaultPeriod, bool $closed): array
+    /**
+     * @return array{dealer_id: mixed, prep_delay_minutes: int, orderable_days: int, slot_duration_minutes: int, max_orders_per_slot: int}
+     */
+    private function buildPickupConfigData($dealerId): array
+    {
+        $config = $dealerId !== null ? DealerPickupConfigQuery::create()->findPk($dealerId) : null;
+
+        return [
+            'dealer_id' => $dealerId,
+            'prep_delay_minutes' => $config?->getPrepDelayMinutes() ?? 0,
+            'orderable_days' => $config?->getOrderableDays() ?? 7,
+            'slot_duration_minutes' => $config?->getSlotDurationMinutes() ?? 60,
+            'max_orders_per_slot' => $config?->getMaxOrdersPerSlot() ?? 0,
+        ];
+    }
+
+    private function buildSchedules($dealerId, string $locale, ?bool $periodNull, bool $closed): array
     {
         if ($dealerId === null) {
             return [];
@@ -389,10 +414,13 @@ class DealerController extends BaseController
             ->filterByDealerId($dealerId)
             ->filterByClosed($closed ? 1 : 0);
 
-        if ($defaultPeriod) {
+        if ($periodNull === true) {
             $query->filterByPeriodNull()->orderByDay()->orderByBegin();
-        } else {
+        } elseif ($periodNull === false) {
             $query->filterByPeriodNotNull()->orderByPeriodBegin()->orderByDay()->orderByBegin();
+        } else {
+            // No period filter (e.g. closures: recurring by weekday AND dated ones).
+            $query->orderByPeriodBegin()->orderByDay()->orderByBegin();
         }
 
         $days = $this->getDayLabels($locale);
@@ -405,14 +433,26 @@ class DealerController extends BaseController
             $periodBegin = $schedule->getPeriodBegin();
             $periodEnd = $schedule->getPeriodEnd();
 
+            // Exceptional entries carry a date, not a weekday: derive the weekday from a
+            // precise date (begin = end) so the "Day" column is not empty.
+            $dayLabel = $schedule->getDay() !== null ? ($days[$schedule->getDay()] ?? '') : '';
+            if ($dayLabel === ''
+                && $periodBegin instanceof \DateTimeInterface
+                && $periodEnd instanceof \DateTimeInterface
+                && $periodBegin->format('Y-m-d') === $periodEnd->format('Y-m-d')) {
+                $dayLabel = $days[((int) $periodBegin->format('N')) - 1] ?? '';
+            }
+
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'day' => $schedule->getDay(),
-                'day_label' => $days[$schedule->getDay()] ?? '',
+                'day_label' => $dayLabel,
                 'begin' => $begin instanceof \DateTimeInterface ? $begin->format('H:i') : null,
                 'end' => $end instanceof \DateTimeInterface ? $end->format('H:i') : null,
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
                 'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
+                'title' => $schedule->getTitle(),
+                'closed' => $schedule->getClosed() ? 1 : 0,
             ];
         }
 

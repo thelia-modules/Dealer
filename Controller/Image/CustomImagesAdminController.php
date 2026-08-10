@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Thelia\Controller\Admin\FileController;
+use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Template\TemplateHelperInterface;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -30,8 +30,15 @@ use Thelia\Tools\URL;
 
 /**
  */
+/**
+ * TODO(compat): temporary shim. The twig back-office core made FileController
+ * final, so this controller can no longer extend it. It now extends
+ * BaseAdminController just so routes load and the app boots; the image
+ * upload/update actions must be reworked to delegate to the new FileController
+ * (BackOfficeDefaultTwigBundle\Controller\File\FileController) instead.
+ */
 #[Route('/admin/module/dealer/image', name: 'dealer_image')]
-class CustomImagesAdminController extends FileController
+class CustomImagesAdminController extends BaseAdminController
 {
     const MODULE_RIGHT = Dealer::DOMAIN_NAME;
     const PRODUCT_IMAGE_PARENT_TYPE = 'dealer';
