@@ -452,6 +452,7 @@ class DealerController extends BaseController
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
                 'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
                 'title' => $schedule->getTitle(),
+                'closed' => $schedule->getClosed() ? 1 : 0,
             ];
         }
 
