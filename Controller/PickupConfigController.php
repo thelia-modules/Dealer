@@ -22,14 +22,11 @@ use Thelia\Tools\URL;
 class PickupConfigController extends BaseAdminController
 {
     #[Route('/admin/module/Dealer/pickup-config/update', name: 'dealer_pickup_config_update', methods: ['POST'])]
-    public function processUpdateAction(RequestStack $requestStack)
+    public function processUpdateAction(RequestStack $requestStack, DealerPickupConfigService $configService)
     {
         if (null !== $response = $this->checkAuth(AdminResources::MODULE, Dealer::getModuleCode(), AccessManager::UPDATE)) {
             return $response;
         }
-
-        /** @var DealerPickupConfigService $configService */
-        $configService = $this->getContainer()->get('dealer_pickup_config_service');
 
         $request = $requestStack->getCurrentRequest();
         $form = $this->createForm('dealer-pickup-config', FormType::class, []);
