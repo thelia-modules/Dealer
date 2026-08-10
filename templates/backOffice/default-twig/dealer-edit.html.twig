@@ -206,8 +206,9 @@
                 });
             });
 
-            // Schedule modals: a default schedule uses a weekday; an exceptional opening/closure
-            // uses a single precise date (stored as period_begin = period_end).
+            // Schedule modals: a default schedule uses a weekday (no date). An exceptional
+            // opening/closure uses either a precise date (period_begin = period_end) or a period
+            // (period_begin < period_end), switched by the Date/Period toggle.
             function setupScheduleFields(modal) {
                 if (!modal) {
                     return null;
@@ -216,15 +217,44 @@
                 var dateField = modal.querySelector('[data-schedule-date-field]');
                 var dateInput = modal.querySelector('[data-schedule-date]');
                 var periodEnd = modal.querySelector('[data-schedule-period-end]');
+                var endWrap = modal.querySelector('[data-schedule-end-wrap]');
+                var beginLabel = modal.querySelector('[data-schedule-begin-label]');
+                var modeRadios = modal.querySelectorAll('[data-schedule-exc-mode]');
 
-                // Keep period_end mirrored on the chosen date (a single-day range).
-                if (dateInput && periodEnd) {
-                    dateInput.addEventListener('change', function () {
+                function applyExcMode(mode) {
+                    var isPeriod = mode === 'period';
+                    if (beginLabel) {
+                        beginLabel.textContent = isPeriod
+                            ? beginLabel.getAttribute('data-label-period')
+                            : beginLabel.getAttribute('data-label-date');
+                    }
+                    if (endWrap) {
+                        endWrap.style.display = isPeriod ? '' : 'none';
+                    }
+                    // Single date: mirror period_end onto the chosen date (a one-day range).
+                    if (!isPeriod && dateInput && periodEnd) {
                         periodEnd.value = dateInput.value;
-                    });
+                    }
                 }
 
-                return function applyFields(useDate) {
+                // Keep period_end mirrored while in single-date mode.
+                if (dateInput && periodEnd) {
+                    dateInput.addEventListener('change', function () {
+                        var current = modal.querySelector('[data-schedule-exc-mode]:checked');
+                        if (!current || current.value !== 'period') {
+                            periodEnd.value = dateInput.value;
+                        }
+                    });
+                }
+                Array.prototype.forEach.call(modeRadios, function (radio) {
+                    radio.addEventListener('change', function () {
+                        if (radio.checked) {
+                            applyExcMode(radio.value);
+                        }
+                    });
+                });
+
+                return function applyFields(useDate, mode) {
                     if (dayField) {
                         dayField.style.display = useDate ? 'none' : '';
                     }
@@ -239,10 +269,12 @@
                                 });
                             });
                         }
-                        if (dateInput && periodEnd) {
-                            periodEnd.value = dateInput.value;
-                        }
-                    } else if (dateInput || periodEnd) {
+                        var wanted = mode === 'period' ? 'period' : 'date';
+                        Array.prototype.forEach.call(modeRadios, function (radio) {
+                            radio.checked = radio.value === wanted;
+                        });
+                        applyExcMode(wanted);
+                    } else {
                         if (dateInput) { dateInput.value = ''; }
                         if (periodEnd) { periodEnd.value = ''; }
                     }
@@ -250,7 +282,7 @@
             }
 
             // Create-schedule modal: title from the clicked section; weekday for default hours,
-            // a precise date for exceptional openings/closures (data-schedule-period = '1').
+            // a precise date (default) for exceptional openings/closures (data-schedule-period = '1').
             var scheduleCreateModal = document.getElementById('dealer-schedules-create');
             var applyCreateFields = setupScheduleFields(scheduleCreateModal);
             if (scheduleCreateModal && applyCreateFields) {
@@ -264,12 +296,13 @@
                     if (title && titleEl) {
                         titleEl.textContent = title;
                     }
-                    applyCreateFields(trigger.getAttribute('data-schedule-period') === '1');
+                    applyCreateFields(trigger.getAttribute('data-schedule-period') === '1', 'date');
                 });
             }
 
-            // Update-schedule modal: an entry with a date edits as a precise date, otherwise as a
-            // weekday. The generic prefill runs first, so this refreshes the visible fields after.
+            // Update-schedule modal: an entry with a date edits as an exception (precise date when
+            // period_begin = period_end, otherwise a period), else as a weekday. The generic prefill
+            // runs first, so this refreshes the visible fields after.
             var scheduleUpdateModal = document.getElementById('dealer-schedules-update');
             var applyUpdateFields = setupScheduleFields(scheduleUpdateModal);
             if (scheduleUpdateModal && applyUpdateFields) {
@@ -279,7 +312,10 @@
                         return;
                     }
                     var periodBegin = trigger.getAttribute('data-periodbegin');
-                    applyUpdateFields(periodBegin !== null && periodBegin !== '');
+                    var periodEnd = trigger.getAttribute('data-periodend');
+                    var useDate = periodBegin !== null && periodBegin !== '';
+                    var mode = (useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date';
+                    applyUpdateFields(useDate, mode);
                 });
             }
         });

@@ -8,6 +8,7 @@ return array(
     "Add an exceptional opening" => "Ajouter une ouverture exceptionnelle",
     "Add an exceptional closure" => "Ajouter une fermeture exceptionnelle",
     "Date" => "Date",
+    "Precise date" => "Date précise",
     "Preparation delay (minutes)" => "Délai de préparation (minutes)",
     "Number of orderable days" => "Nombre de jours de retrait proposés",
     "Slot duration (minutes)" => "Durée d’un créneau (minutes)",

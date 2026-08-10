@@ -223,9 +223,22 @@
                     </div>
                 </div>
                 <div class="mb-3" data-schedule-date-field>
-                    <label class="form-label">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
-                    <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]" data-schedule-date>
-                    <input type="hidden" name="{{ schedules_create_fp }}[period_end]" data-schedule-period-end>
+                    <div class="btn-group btn-group-sm mb-3" role="group" data-schedule-exc-toggle>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-date-create" value="date" checked autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-date-create">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-period-create" value="period" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-period-create">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label" data-schedule-begin-label data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}" data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]" data-schedule-date>
+                        </div>
+                        <div class="col-sm-6 mb-3" data-schedule-end-wrap>
+                            <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_end]" data-schedule-period-end>
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">{{ 'Label'|trans({}, 'dealer.bo.default') }}</label>
@@ -275,9 +288,22 @@
                     </div>
                 </div>
                 <div class="mb-3" data-schedule-date-field>
-                    <label class="form-label">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
-                    <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_begin]" value="" data-fill="periodbegin" data-schedule-date>
-                    <input type="hidden" name="{{ schedules_update_fp }}[period_end]" value="" data-fill="periodend" data-schedule-period-end>
+                    <div class="btn-group btn-group-sm mb-3" role="group" data-schedule-exc-toggle>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-date-update" value="date" checked autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-date-update">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-period-update" value="period" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-period-update">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label" data-schedule-begin-label data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}" data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_begin]" value="" data-fill="periodbegin" data-schedule-date>
+                        </div>
+                        <div class="col-sm-6 mb-3" data-schedule-end-wrap>
+                            <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
+                            <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_end]" value="" data-fill="periodend" data-schedule-period-end>
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">{{ 'Label'|trans({}, 'dealer.bo.default') }}</label>
