@@ -433,10 +433,20 @@ class DealerController extends BaseController
             $periodBegin = $schedule->getPeriodBegin();
             $periodEnd = $schedule->getPeriodEnd();
 
+            // Exceptional entries carry a date, not a weekday: derive the weekday from a
+            // precise date (begin = end) so the "Day" column is not empty.
+            $dayLabel = $schedule->getDay() !== null ? ($days[$schedule->getDay()] ?? '') : '';
+            if ($dayLabel === ''
+                && $periodBegin instanceof \DateTimeInterface
+                && $periodEnd instanceof \DateTimeInterface
+                && $periodBegin->format('Y-m-d') === $periodEnd->format('Y-m-d')) {
+                $dayLabel = $days[((int) $periodBegin->format('N')) - 1] ?? '';
+            }
+
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'day' => $schedule->getDay(),
-                'day_label' => $days[$schedule->getDay()] ?? '',
+                'day_label' => $dayLabel,
                 'begin' => $begin instanceof \DateTimeInterface ? $begin->format('H:i') : null,
                 'end' => $end instanceof \DateTimeInterface ? $end->format('H:i') : null,
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
