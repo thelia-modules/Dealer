@@ -72,7 +72,14 @@ class AdminInterfaceHook extends BaseHook
         );
 
         if ($isGranted) {
-            $event->add($this->render("Dealer/menu-hook.html.twig", $event->getArguments()));
+            $request = $this->getRequest();
+            $dealerActive = $request !== null
+                && str_starts_with($request->getPathInfo(), '/admin/module/Dealer');
+
+            $event->add($this->render(
+                "Dealer/menu-hook.html.twig",
+                array_merge($event->getArguments(), ['dealer_active' => $dealerActive])
+            ));
         }
     }
 }
