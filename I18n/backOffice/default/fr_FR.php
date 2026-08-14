@@ -116,6 +116,9 @@ return array(
     "Sunday" => "Dimanche",
     "AM" => "Matin",
     "PM" => "Après-midi",
+    "Slots" => "Créneaux",
+    "Add a slot" => "Ajouter un créneau",
+    "Remove this slot" => "Supprimer ce créneau",
     "Period" => "Période",
     "Clone this Schedule" => "Cloner cet horaire",
 

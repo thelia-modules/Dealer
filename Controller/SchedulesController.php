@@ -148,37 +148,29 @@ class SchedulesController extends BaseController
             // Get the form field values
             $data = $form->getData();
 
-            if (empty($data["day"])) {
-                $dataAM = $this->formatData($data);
-                $dataPM = $this->formatData($data, 'PM');
+            $slots = $this->extractSlots($data);
+            // No weekday selected means a single period-only / dated entry (day = null).
+            $days = empty($data["day"]) ? [null] : $data["day"];
+            $locale = $this->getCurrentEditionLocale();
 
-                if ($this->hasNullDate($dataAM) && $this->hasNullDate($dataPM)) {
-                    $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
-                } else {
-                    if (!$this->hasNullDate($dataAM)) {
-                        $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
-                    }
-                    if (!$this->hasNullDate($dataPM)) {
-                        $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
-                    }
+            foreach ($days as $day) {
+                $base = $data;
+                $base["day"] = $day;
+
+                if ($slots === []) {
+                    // No time range: a full-day closure or a period-only entry.
+                    $base["begin"] = null;
+                    $base["end"] = null;
+                    $this->getService()->createFromArray($base, $locale);
+
+                    continue;
                 }
-            } else {
-                foreach ($data["day"] as $day) {
-                    $currentData = $data;
-                    $currentData["day"] = $day;
-                    $dataAM = $this->formatData($currentData);
-                    $dataPM = $this->formatData($currentData, 'PM');
 
-                    if ($this->hasNullDate($dataAM) && $this->hasNullDate($dataPM)) {
-                        $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
-                    } else {
-                        if (!$this->hasNullDate($dataAM)) {
-                            $this->getService()->createFromArray($dataAM, $this->getCurrentEditionLocale());
-                        }
-                        if (!$this->hasNullDate($dataPM)) {
-                            $this->getService()->createFromArray($dataPM, $this->getCurrentEditionLocale());
-                        }
-                    }
+                foreach ($slots as $slot) {
+                    $row = $base;
+                    $row["begin"] = $slot["begin"];
+                    $row["end"] = $slot["end"];
+                    $this->getService()->createFromArray($row, $locale);
                 }
             }
 
@@ -212,26 +204,21 @@ class SchedulesController extends BaseController
         }
     }
 
-    protected function formatData($data, $type = "AM")
+    /**
+     * Keep only the submitted slots that carry both a begin and an end time.
+     *
+     * @return list<array{begin: string, end: string}>
+     */
+    protected function extractSlots($data): array
     {
-        $retour = $data;
-        if (isset($data["begin" . $type]) && $data["begin" . $type] != "") {
-            $retour["begin"] = $data["begin" . $type];
-        } else {
-            $retour["begin"] = null;
-        }
-        if (isset($data["end" . $type]) && $data["end" . $type] != "") {
-            $retour["end"] = $data["end" . $type];
-        } else {
-            $retour["end"] = null;
+        $slots = [];
+        foreach ($data["slots"] ?? [] as $slot) {
+            if (!empty($slot["begin"]) && !empty($slot["end"])) {
+                $slots[] = ["begin" => $slot["begin"], "end" => $slot["end"]];
+            }
         }
 
-        return $retour;
-    }
-
-    protected function hasNullDate($data)
-    {
-        return !($data["begin"] && $data["end"]);
+        return $slots;
     }
 
     /**

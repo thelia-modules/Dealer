@@ -14,11 +14,12 @@
 namespace Dealer\Form;
 
 use Dealer\Dealer;
+use Dealer\Form\Type\ScheduleSlotType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 
@@ -60,37 +61,12 @@ class SchedulesForm extends BaseForm
                 "multiple" => true,
                 "attr" => array()
             ])
-            ->add("beginAM", TimeType::class, [
-                "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "attr-dealer-schedules-begin"],
-                "input" => "string",
-                "widget" => "single_text",
+            ->add("slots", CollectionType::class, [
+                "entry_type" => ScheduleSlotType::class,
+                "label" => $this->translator->trans("Slots", [], Dealer::MESSAGE_DOMAIN),
+                "allow_add" => true,
+                "allow_delete" => true,
                 "required" => false,
-                "attr" => array()
-            ])
-            ->add("endAM", TimeType::class, [
-                "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "attr-dealer-schedules-end"],
-                "input" => "string",
-                "widget" => "single_text",
-                "required" => false,
-                "attr" => array()
-            ])
-            ->add("beginPM", TimeType::class, [
-                "label" => $this->translator->trans("Begin", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "attr-dealer-schedules-beginPM"],
-                "input" => "string",
-                "widget" => "single_text",
-                "required" => false,
-                "attr" => array()
-            ])
-            ->add("endPM", TimeType::class, [
-                "label" => $this->translator->trans("End", [], Dealer::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "attr-dealer-schedules-endPM"],
-                "input" => "string",
-                "widget" => "single_text",
-                "required" => false,
-                "attr" => array()
             ])
             ->add("period_begin", DateType::class, [
                 "label" => $this->translator->trans("Period Begin", [], Dealer::MESSAGE_DOMAIN),

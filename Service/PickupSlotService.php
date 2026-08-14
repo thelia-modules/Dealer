@@ -107,7 +107,7 @@ class PickupSlotService
             $open = $this->subtractRange(
                 $open,
                 $closure->getBegin()->format('H:i:s'),
-                $closure->getEnd()->format('H:i:s')
+                $this->normalizeEndTime($closure->getEnd()->format('H:i:s'))
             );
         }
 
@@ -137,7 +137,10 @@ class PickupSlotService
             $begin = $schedule->getBegin();
             $end = $schedule->getEnd();
             if ($begin instanceof \DateTimeInterface && $end instanceof \DateTimeInterface) {
-                $ranges[] = ['begin' => $begin->format('H:i:s'), 'end' => $end->format('H:i:s')];
+                $ranges[] = [
+                    'begin' => $begin->format('H:i:s'),
+                    'end' => $this->normalizeEndTime($end->format('H:i:s')),
+                ];
             }
         }
 
@@ -255,6 +258,16 @@ class PickupSlotService
             ->count();
 
         return max(0, $maxPerSlot - $taken);
+    }
+
+    /**
+     * A midnight end time (00:00:00) means end-of-day. Expressed as 24:00:00 it keeps the
+     * range non-empty for string comparisons, and \DateTimeImmutable rolls it to the next
+     * day's midnight when building slots.
+     */
+    private function normalizeEndTime(string $end): string
+    {
+        return $end === '00:00:00' ? '24:00:00' : $end;
     }
 
     private function getConfig(int $dealerId): DealerPickupConfig

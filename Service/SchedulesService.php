@@ -73,7 +73,9 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         }
 
         $beginStr = $begin->format('H:i:s');
-        $endStr = $end->format('H:i:s');
+        // Midnight as an end time means end-of-day (24:00), so a slot may legitimately
+        // close at 00:00 (e.g. 20:00 - 00:00) without failing the "end after begin" check.
+        $endStr = $this->normalizeEndTime($end->format('H:i:s'));
 
         if ($endStr <= $beginStr) {
             throw new \RuntimeException(
@@ -109,7 +111,8 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
             }
 
             // Two ranges overlap when each starts before the other ends.
-            if ($beginStr < $existingEnd->format('H:i:s') && $existingBegin->format('H:i:s') < $endStr) {
+            if ($beginStr < $this->normalizeEndTime($existingEnd->format('H:i:s'))
+                && $existingBegin->format('H:i:s') < $endStr) {
                 throw new \RuntimeException(
                     Translator::getInstance()->trans(
                         'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd).',
@@ -129,6 +132,15 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
     protected function deleteProcess(ActionEvent $event)
     {
         $event->getDealerSchedules()->delete();
+    }
+
+    /**
+     * Treat a midnight end time (00:00:00) as end-of-day (24:00:00) so a slot closing
+     * at midnight compares as after its begin time.
+     */
+    private function normalizeEndTime(string $end): string
+    {
+        return $end === '00:00:00' ? '24:00:00' : $end;
     }
 
     public function createFromArray($data, $locale = null)

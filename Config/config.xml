@@ -19,6 +19,10 @@
         <service id="Dealer\Service\DealerPickupConfigService" class="Dealer\Service\DealerPickupConfigService" public="true"/>
         <service id="dealer_pickup_config_service" alias="Dealer\Service\DealerPickupConfigService" public="true"/>
 
+        <service id="Dealer\Form\Type\ScheduleSlotType" class="Dealer\Form\Type\ScheduleSlotType">
+            <tag name="form.type"/>
+        </service>
+
         <service id="Dealer\Twig\DealerPickupExtension" class="Dealer\Twig\DealerPickupExtension">
             <argument type="service" id="Dealer\Service\PickupSlotService"/>
             <argument type="service" id="request_stack"/>
