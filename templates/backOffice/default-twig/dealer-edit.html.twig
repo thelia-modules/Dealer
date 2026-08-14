@@ -220,6 +220,7 @@
                 }
                 var dayField = modal.querySelector('[data-schedule-day-field]');
                 var dateField = modal.querySelector('[data-schedule-date-field]');
+                var labelField = modal.querySelector('[data-schedule-label-field]');
                 var dateInput = modal.querySelector('[data-schedule-date]');
                 var periodEnd = modal.querySelector('[data-schedule-period-end]');
                 var endWrap = modal.querySelector('[data-schedule-end-wrap]');
@@ -276,6 +277,9 @@
                     }
                     if (dateField) {
                         dateField.style.display = useDate ? '' : 'none';
+                    }
+                    if (labelField) {
+                        labelField.style.display = useDate ? '' : 'none';
                     }
                     if (useDate) {
                         if (dayField) {

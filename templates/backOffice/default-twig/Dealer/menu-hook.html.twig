@@ -1,5 +1,5 @@
-<li class="nav-item{{ dealer_active|default(false) ? ' active' : '' }}" id="dealer">
-    <a class="nav-link" title="{{ 'Dealers'|trans({}, 'dealer.bo.default') }}" href="{{ path('dealer') }}">
-        <i class="bi bi-shop"></i> {{ 'Dealers'|trans({}, 'dealer.bo.default') }}
+<li class="nav-item" id="dealer">
+    <a class="nav-link {{ dealer_active|default(false) ? 'active' : '' }}" title="{{ 'Dealers'|trans({}, 'dealer.bo.default') }}" href="{{ path('dealer') }}">
+        <i class="bi bi-shop me-2" aria-hidden="true"></i> {{ 'Dealers'|trans({}, 'dealer.bo.default') }}
     </a>
 </li>
