@@ -108,7 +108,7 @@
                         </select>
                     </div>
                     {{ form_widget(create_form.locale, {type: 'hidden', value: edit_language_locale, id: 'dealer-create-locale'}) }}
-                    {{ form_widget(create_form.success_url, {value: '/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}) }}
+                    {{ form_widget(create_form.success_url, {value: '/admin/module/Dealer/dealer/edit?dealer_id=_ID_', id: 'dealer-create-success-url'}) }}
                     {{ form_widget(create_form.error_url, {value: '/admin/module/Dealer/dealer'}) }}
 
                     <div class="mb-3">
@@ -211,11 +211,21 @@
 
             var createLanguage = document.querySelector('[data-dealer-create-language]');
             var createLocale = document.getElementById('dealer-create-locale');
+            var createSuccessUrl = document.getElementById('dealer-create-success-url');
             if (createLanguage && createLocale) {
-                createLanguage.addEventListener('change', function () {
+                var successUrlBase = createSuccessUrl ? createSuccessUrl.value : null;
+                function syncCreateLanguage() {
                     var option = createLanguage.options[createLanguage.selectedIndex];
-                    createLocale.value = option ? option.getAttribute('data-locale') : createLocale.value;
-                });
+                    if (!option) {
+                        return;
+                    }
+                    createLocale.value = option.getAttribute('data-locale');
+                    if (createSuccessUrl && successUrlBase) {
+                        createSuccessUrl.value = successUrlBase + '&edit_language_id=' + option.value;
+                    }
+                }
+                createLanguage.addEventListener('change', syncCreateLanguage);
+                syncCreateLanguage();
             }
 
             document.querySelectorAll('.dealer-toggle-visible').forEach(function (el) {
