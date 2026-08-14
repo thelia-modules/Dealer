@@ -230,6 +230,9 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         if (isset($data['closed'])) {
             $model->setClosed($data['closed']);
         }
+        if (array_key_exists('recurring', $data)) {
+            $model->setRecurring((bool) $data['recurring']);
+        }
         if (array_key_exists('title', $data)) {
             $model->setTitle($data['title'] !== '' ? $data['title'] : null);
         }

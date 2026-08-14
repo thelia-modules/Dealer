@@ -224,29 +224,43 @@
                 var periodEnd = modal.querySelector('[data-schedule-period-end]');
                 var endWrap = modal.querySelector('[data-schedule-end-wrap]');
                 var beginLabel = modal.querySelector('[data-schedule-begin-label]');
+                var recurringInput = modal.querySelector('[data-schedule-recurring]');
+                var recurringHelp = modal.querySelector('[data-schedule-recurring-help]');
                 var modeRadios = modal.querySelectorAll('[data-schedule-exc-mode]');
 
                 function applyExcMode(mode) {
                     var isPeriod = mode === 'period';
+                    var isRecurring = mode === 'recurring';
                     if (beginLabel) {
-                        beginLabel.textContent = isPeriod
-                            ? beginLabel.getAttribute('data-label-period')
-                            : beginLabel.getAttribute('data-label-date');
+                        beginLabel.textContent = isRecurring
+                            ? beginLabel.getAttribute('data-label-recurring')
+                            : (isPeriod
+                                ? beginLabel.getAttribute('data-label-period')
+                                : beginLabel.getAttribute('data-label-date'));
                     }
                     if (endWrap) {
                         endWrap.style.display = isPeriod ? '' : 'none';
                     }
-                    // Single date: mirror period_end onto the chosen date (a one-day range).
-                    if (!isPeriod && dateInput && periodEnd) {
+                    if (recurringHelp) {
+                        recurringHelp.hidden = !isRecurring;
+                    }
+                    if (recurringInput) {
+                        recurringInput.value = isRecurring ? '1' : '0';
+                    }
+                    // Single precise date mirrors period_end (one-day range); a recurrence has
+                    // no end (only the day/month matters, the year is ignored).
+                    if (isRecurring && periodEnd) {
+                        periodEnd.value = '';
+                    } else if (!isPeriod && dateInput && periodEnd) {
                         periodEnd.value = dateInput.value;
                     }
                 }
 
-                // Keep period_end mirrored while in single-date mode.
+                // Keep period_end mirrored while in single-date mode (not period nor recurrence).
                 if (dateInput && periodEnd) {
                     dateInput.addEventListener('change', function () {
                         var current = modal.querySelector('[data-schedule-exc-mode]:checked');
-                        if (!current || current.value !== 'period') {
+                        if (!current || (current.value !== 'period' && current.value !== 'recurring')) {
                             periodEnd.value = dateInput.value;
                         }
                     });
@@ -282,6 +296,9 @@
                     } else {
                         if (dateInput) { dateInput.value = ''; }
                         if (periodEnd) { periodEnd.value = ''; }
+                        // A default (weekday) schedule is never recurring.
+                        if (recurringInput) { recurringInput.value = '0'; }
+                        if (recurringHelp) { recurringHelp.hidden = true; }
                     }
                 };
             }

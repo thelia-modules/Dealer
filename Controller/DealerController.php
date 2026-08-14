@@ -452,14 +452,21 @@ class DealerController extends BaseController
                 $dayLabel = $days[((int) $periodBegin->format('N')) - 1] ?? '';
             }
 
+            $recurring = (bool) $schedule->getRecurring();
+
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'day' => $schedule->getDay(),
-                'day_label' => $dayLabel,
+                'day_label' => $recurring ? '' : $dayLabel,
                 'begin' => $begin instanceof \DateTimeInterface ? $begin->format('H:i') : null,
                 'end' => $end instanceof \DateTimeInterface ? $end->format('H:i') : null,
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
                 'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
+                'recurring' => $recurring,
+                // Day/month of the yearly recurrence, e.g. "25/12".
+                'recurring_date' => $recurring && $periodBegin instanceof \DateTimeInterface
+                    ? $periodBegin->format('d/m')
+                    : null,
                 'title' => $schedule->getTitle(),
                 'closed' => $schedule->getClosed() ? 1 : 0,
             ];

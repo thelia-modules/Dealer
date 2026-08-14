@@ -90,6 +90,12 @@ class SchedulesForm extends BaseForm
                 "required" => true,
                 "attr" => array()
             ])
+            ->add("recurring", IntegerType::class, [
+                "label" => $this->translator->trans("Recurring", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-recurring"],
+                "required" => false,
+                "attr" => array()
+            ])
             ->add("title", TextType::class, [
                 "label" => $this->translator->trans("Label", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-title"],

@@ -78,12 +78,21 @@ class PickupSlotService
         $openings = [];
         $closures = [];
         foreach (DealerShedulesQuery::create()->filterByDealerId($dealerId)->find() as $row) {
-            $day = $row->getDay();
-            if ($day !== null && (int) $day !== $numDay) {
-                continue;
-            }
-            if (!$this->periodAppliesOn($row->getPeriodBegin(), $row->getPeriodEnd(), $date)) {
-                continue;
+            if ($row->getRecurring()) {
+                // Annual recurrence: applies every year on period_begin's month/day.
+                $recurringDate = $row->getPeriodBegin();
+                if (!$recurringDate instanceof \DateTimeInterface
+                    || $recurringDate->format('m-d') !== $date->format('m-d')) {
+                    continue;
+                }
+            } else {
+                $day = $row->getDay();
+                if ($day !== null && (int) $day !== $numDay) {
+                    continue;
+                }
+                if (!$this->periodAppliesOn($row->getPeriodBegin(), $row->getPeriodEnd(), $date)) {
+                    continue;
+                }
             }
             if ($row->getClosed()) {
                 $closures[] = $row;
