@@ -25,7 +25,6 @@
         <column defaultValue="0" name="latitude" size="16" scale="13" type="DECIMAL"/>
         <column defaultValue="0" name="longitude" size="16" scale="13" type="DECIMAL"/>
 
-        <!-- Shop timezone used to compute pickup slots (naive wall-clock hours are read in it). -->
         <column name="timezone" size="64" type="VARCHAR" defaultValue="Europe/Paris"/>
 
         <foreign-key foreignTable="country" name="fk_dealer_country_id" onDelete="CASCADE">

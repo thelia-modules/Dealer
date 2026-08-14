@@ -23,12 +23,6 @@ class PickupSlotService
     /** Hard limit on the calendar scan, so an over-constrained config cannot loop forever. */
     private const MAX_DAYS_SCAN = 60;
 
-    /**
-     * Fallback timezone when a dealer has none (or an invalid one). Schedule hours are naive
-     * wall-clock times in the shop's timezone: "now" and the generated slot datetimes are
-     * anchored to it, otherwise a server in another timezone (e.g. UTC) computes an offset
-     * "now" and keeps already-past slots.
-     */
     private const DEFAULT_TIMEZONE = 'Europe/Paris';
 
     /**
@@ -294,9 +288,6 @@ class PickupSlotService
         return $end === '00:00:00' ? '24:00:00' : $end;
     }
 
-    /**
-     * The dealer's configured timezone, falling back to the default when unset or invalid.
-     */
     private function timezoneFor(int $dealerId): \DateTimeZone
     {
         $name = DealerQuery::create()->findPk($dealerId)?->getTimezone();
