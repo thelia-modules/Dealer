@@ -197,7 +197,11 @@ class DealerController extends BaseController
             ];
         }
 
-        $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: ['locale' => $locale]);
+        $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: [
+            'locale' => $locale,
+            // Preselect the shop's default country (France on this shop).
+            'country_id' => CountryQuery::create()->findOneByByDefault(true)?->getId(),
+        ]);
 
         return new Response(
             $this->dealerTwigEnv->render('dealers.html.twig', [
@@ -221,9 +225,14 @@ class DealerController extends BaseController
 
         $request = $this->getRequest();
         $dealerId = $request->query->get('dealer_id');
-        $locale = $request->hasSession()
-            ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
-            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
+
+        // Edit language: an explicit switch (edit_language_id, set by BoLanguageSwitcher)
+        // wins, then the admin session language, then the default shop language.
+        $editLanguageId = (int) $request->query->get('edit_language_id', 0);
+        $editLang = $editLanguageId > 0 ? \Thelia\Model\LangQuery::create()->findPk($editLanguageId) : null;
+        $editLang ??= ($request->hasSession() ? $request->getSession()->getLang() : null)
+            ?? \Thelia\Model\LangQuery::create()->findOneByByDefault(true);
+        $locale = $editLang?->getLocale() ?? 'en_US';
 
         // Error flashed by a sub-controller (e.g. schedules) before redirecting here.
         $flashError = $request->hasSession()
@@ -257,7 +266,7 @@ class DealerController extends BaseController
                     'created_at' => $dealer->getCreatedAt(),
                     'updated_at' => $dealer->getUpdatedAt(),
                 ] : null,
-                'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
+                'edit_language_id' => $editLang?->getId(),
                 'edit_language_locale' => $locale,
                 'update_form' => $updateForm->createView()->getView(),
                 'general_error' => $flashError ?? $this->getParserContext()->get('general_error'),

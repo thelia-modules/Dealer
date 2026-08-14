@@ -12,13 +12,18 @@
         {% endif %}
 
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <span class="card-title mb-0">
                     {{ 'Dealer edit'|trans({}, 'dealer.bo.default') }}{% if dealer %} - {{ dealer.title }}{% endif %}
                 </span>
-                <a href="{{ path('dealer') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left"></i> {{ 'Back to the dealers list'|trans({}, 'dealer.bo.default') }}
-                </a>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    {% if edit_language_id %}
+                        {{ component('BoLanguageSwitcher', { currentLanguageId: edit_language_id }) }}
+                    {% endif %}
+                    <a href="{{ path('dealer') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> {{ 'Back to the dealers list'|trans({}, 'dealer.bo.default') }}
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <ul class="nav nav-tabs mb-3" id="dealer-edit-tabs" role="tablist">

@@ -47,6 +47,7 @@ CREATE TABLE `dealer_shedules`
     `closed` TINYINT(1) DEFAULT 0,
     `period_begin` DATE,
     `period_end` DATE,
+    `title` VARCHAR(255),
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),

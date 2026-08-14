@@ -99,9 +99,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="edit_language_id" value="{{ edit_language_id }}">
-                    {{ form_widget(create_form.locale, {value: edit_language_locale}) }}
-                    <input type="hidden" name="success_url" value="/admin/module/Dealer/dealer/edit?dealer_id=_ID_">
+                    {# The dealer is saved in the language chosen here: getCurrentEditionLang()
+                       reads edit_language_id from the POST body. The locale field is kept in
+                       sync so the form data stays consistent. #}
+                    <div class="mb-3">
+                        <label class="form-label" for="dealer-create-language">{{ 'Locale'|trans({}, 'dealer.bo.default') }}</label>
+                        <select name="edit_language_id" id="dealer-create-language" class="form-select" data-dealer-create-language>
+                            {% for lang in bo_languages() %}
+                                <option value="{{ lang.id }}" data-locale="{{ lang.locale }}"{{ lang.id == edit_language_id ? ' selected' : '' }}>{{ lang.title }} ({{ lang.locale }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {{ form_widget(create_form.locale, {type: 'hidden', value: edit_language_locale, id: 'dealer-create-locale'}) }}
+                    {# success_url/error_url are form fields (BaseForm namespace); a bare
+                       success_url input is ignored, which sent creation back to the front. #}
+                    {{ form_widget(create_form.success_url, {value: '/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}) }}
+                    {{ form_widget(create_form.error_url, {value: '/admin/module/Dealer/dealer'}) }}
 
                     <div class="mb-3">
                         {{ form_label(create_form.title, 'Title'|trans({}, 'dealer.bo.default'), {label_attr: {class: 'form-label'}}) }}
@@ -200,6 +213,16 @@
                     }
                 });
             });
+
+            // Keep the hidden locale field aligned with the chosen creation language.
+            var createLanguage = document.querySelector('[data-dealer-create-language]');
+            var createLocale = document.getElementById('dealer-create-locale');
+            if (createLanguage && createLocale) {
+                createLanguage.addEventListener('change', function () {
+                    var option = createLanguage.options[createLanguage.selectedIndex];
+                    createLocale.value = option ? option.getAttribute('data-locale') : createLocale.value;
+                });
+            }
 
             document.querySelectorAll('.dealer-toggle-visible').forEach(function (el) {
                 el.addEventListener('change', function () {
