@@ -23,6 +23,13 @@ class PickupSlotService
     private const MAX_DAYS_SCAN = 60;
 
     /**
+     * Schedule hours are naive wall-clock times in the shop's timezone. "now" and the
+     * generated slot datetimes are anchored to it, otherwise a server running in another
+     * timezone (e.g. UTC) computes a "now" that is offset and keeps already-past slots.
+     */
+    private const SHOP_TIMEZONE = 'Europe/Paris';
+
+    /**
      * @return list<array{
      *     date: string,
      *     day: int,
@@ -32,7 +39,10 @@ class PickupSlotService
     public function getAvailableSlots(int $dealerId, ?\DateTimeInterface $from = null): array
     {
         $config = $this->getConfig($dealerId);
-        $now = $from !== null ? \DateTimeImmutable::createFromInterface($from) : new \DateTimeImmutable();
+        $tz = new \DateTimeZone(self::SHOP_TIMEZONE);
+        $now = $from !== null
+            ? \DateTimeImmutable::createFromInterface($from)->setTimezone($tz)
+            : new \DateTimeImmutable('now', $tz);
         $earliest = $now->add(new \DateInterval('PT' . $config->getPrepDelayMinutes() . 'M'));
 
         $schedules = DealerShedulesQuery::create()->filterByDealerId($dealerId)->find();
@@ -224,11 +234,12 @@ class PickupSlotService
         // Guard against a 0/negative duration that would make the loop below never progress.
         $step = new \DateInterval('PT' . max(1, $config->getSlotDurationMinutes()) . 'M');
         $maxPerSlot = $config->getMaxOrdersPerSlot();
+        $tz = new \DateTimeZone(self::SHOP_TIMEZONE);
         $slots = [];
 
         foreach ($ranges as $range) {
-            $slotStart = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['begin']);
-            $rangeEnd = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['end']);
+            $slotStart = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['begin'], $tz);
+            $rangeEnd = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['end'], $tz);
 
             while ($slotStart < $rangeEnd) {
                 $slotEnd = $slotStart->add($step);
