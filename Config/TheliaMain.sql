@@ -21,6 +21,7 @@ CREATE TABLE `dealer`
     `country_id` INTEGER NOT NULL,
     `latitude` DECIMAL(16,13) DEFAULT 0,
     `longitude` DECIMAL(16,13) DEFAULT 0,
+    `timezone` VARCHAR(64) DEFAULT 'Europe/Paris',
     `created_at` DATETIME,
     `updated_at` DATETIME,
     PRIMARY KEY (`id`),
