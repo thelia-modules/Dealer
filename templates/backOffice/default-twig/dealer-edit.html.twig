@@ -285,7 +285,7 @@
                                 });
                             });
                         }
-                        var wanted = mode === 'period' ? 'period' : 'date';
+                        var wanted = mode === 'period' ? 'period' : (mode === 'recurring' ? 'recurring' : 'date');
                         Array.prototype.forEach.call(modeRadios, function (radio) {
                             radio.checked = radio.value === wanted;
                         });
@@ -374,8 +374,11 @@
                     }
                     var periodBegin = trigger.getAttribute('data-periodbegin');
                     var periodEnd = trigger.getAttribute('data-periodend');
-                    var useDate = periodBegin !== null && periodBegin !== '';
-                    var mode = (useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date';
+                    var recurring = trigger.getAttribute('data-recurring') === '1';
+                    var useDate = recurring || (periodBegin !== null && periodBegin !== '');
+                    var mode = recurring
+                        ? 'recurring'
+                        : ((useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date');
                     applyUpdateFields(useDate, mode);
                 });
             }

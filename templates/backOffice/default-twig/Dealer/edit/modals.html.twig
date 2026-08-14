@@ -276,6 +276,7 @@
                 <input type="hidden" name="{{ schedules_update_fp }}[error_url]" value="{{ schedules_url }}">
                 <input type="hidden" name="{{ schedules_update_fp }}[id]" value="" data-fill="id">
                 <input type="hidden" name="{{ schedules_update_fp }}[closed]" value="0" data-fill="closed">
+                <input type="hidden" name="{{ schedules_update_fp }}[recurring]" value="0" data-fill="recurring" data-schedule-recurring>
                 <div class="mb-3" data-schedule-day-field>
                     <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>
                     <select class="form-select" name="{{ schedules_update_fp }}[day]" data-fill-select="day">
@@ -301,11 +302,17 @@
                         <label class="btn btn-outline-primary" for="exc-mode-date-update">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-period-update" value="period" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-period-update">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-recurring-update" value="recurring" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-recurring-update">{{ 'Recurrence'|trans({}, 'dealer.bo.default') }}</label>
                     </div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
-                            <label class="form-label" data-schedule-begin-label data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}" data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                            <label class="form-label" data-schedule-begin-label
+                                   data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
                             <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_begin]" value="" data-fill="periodbegin" data-schedule-date>
+                            <div class="form-text" data-schedule-recurring-help hidden>{{ 'Only the day and month are used; the year is ignored.'|trans({}, 'dealer.bo.default') }}</div>
                         </div>
                         <div class="col-sm-6 mb-3" data-schedule-end-wrap>
                             <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>

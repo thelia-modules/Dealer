@@ -59,7 +59,6 @@ class SchedulesUpdateForm extends SchedulesForm
                 "attr" => array()
             ))
             ->remove("slots")
-            ->remove("recurring")
             ->remove("day")
             ->add("day", ChoiceType::class, [
                 "choices" => $this->getDay(),

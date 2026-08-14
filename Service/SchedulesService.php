@@ -87,20 +87,39 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
 
         $periodBegin = $schedule->getPeriodBegin();
         $periodEnd = $schedule->getPeriodEnd();
+        $isRecurring = (bool) $schedule->getRecurring();
 
         $query = DealerShedulesQuery::create()
             ->filterByDealerId($schedule->getDealerId())
             ->filterByDay($schedule->getDay())
-            ->filterByClosed($schedule->getClosed())
-            ->filterByPeriodBegin($periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null)
-            ->filterByPeriodEnd($periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null);
+            ->filterByClosed($schedule->getClosed());
+
+        if ($isRecurring) {
+            // Recurring entries collide by month/day, whatever year is stored.
+            $query->filterByRecurring(1);
+        } else {
+            $query
+                ->filterByRecurring(0)
+                ->filterByPeriodBegin($periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null)
+                ->filterByPeriodEnd($periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null);
+        }
 
         if ($schedule->getId()) {
             $query->filterById($schedule->getId(), Criteria::NOT_EQUAL);
         }
 
+        $recurringMonthDay = $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('m-d') : null;
+
         /** @var DealerShedules $existing */
         foreach ($query->find() as $existing) {
+            if ($isRecurring) {
+                $existingBeginDate = $existing->getPeriodBegin();
+                if (!$existingBeginDate instanceof \DateTimeInterface
+                    || $existingBeginDate->format('m-d') !== $recurringMonthDay) {
+                    continue;
+                }
+            }
+
             $existingBegin = $existing->getBegin();
             $existingEnd = $existing->getEnd();
 
