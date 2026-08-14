@@ -197,7 +197,10 @@ class DealerController extends BaseController
             ];
         }
 
-        $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: ['locale' => $locale]);
+        $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: [
+            'locale' => $locale,
+            'country_id' => CountryQuery::create()->findOneByByDefault(true)?->getId(),
+        ]);
 
         return new Response(
             $this->dealerTwigEnv->render('dealers.html.twig', [
@@ -221,9 +224,12 @@ class DealerController extends BaseController
 
         $request = $this->getRequest();
         $dealerId = $request->query->get('dealer_id');
-        $locale = $request->hasSession()
-            ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
-            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
+
+        $editLanguageId = (int) $request->query->get('edit_language_id', 0);
+        $editLang = $editLanguageId > 0 ? \Thelia\Model\LangQuery::create()->findPk($editLanguageId) : null;
+        $editLang ??= ($request->hasSession() ? $request->getSession()->getLang() : null)
+            ?? \Thelia\Model\LangQuery::create()->findOneByByDefault(true);
+        $locale = $editLang?->getLocale() ?? 'en_US';
 
         // Error flashed by a sub-controller (e.g. schedules) before redirecting here.
         $flashError = $request->hasSession()
@@ -257,7 +263,7 @@ class DealerController extends BaseController
                     'created_at' => $dealer->getCreatedAt(),
                     'updated_at' => $dealer->getUpdatedAt(),
                 ] : null,
-                'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
+                'edit_language_id' => $editLang?->getId(),
                 'edit_language_locale' => $locale,
                 'update_form' => $updateForm->createView()->getView(),
                 'general_error' => $flashError ?? $this->getParserContext()->get('general_error'),
@@ -443,14 +449,17 @@ class DealerController extends BaseController
                 $dayLabel = $days[((int) $periodBegin->format('N')) - 1] ?? '';
             }
 
+            $recurring = (bool) $schedule->getRecurring();
+
             $schedules[] = [
                 'id' => $schedule->getId(),
                 'day' => $schedule->getDay(),
-                'day_label' => $dayLabel,
+                'day_label' => $recurring ? '' : $dayLabel,
                 'begin' => $begin instanceof \DateTimeInterface ? $begin->format('H:i') : null,
                 'end' => $end instanceof \DateTimeInterface ? $end->format('H:i') : null,
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
                 'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
+                'recurring' => $recurring,
                 'title' => $schedule->getTitle(),
                 'closed' => $schedule->getClosed() ? 1 : 0,
             ];

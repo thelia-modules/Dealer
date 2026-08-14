@@ -58,10 +58,7 @@ class SchedulesUpdateForm extends SchedulesForm
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->remove("beginPM")
-            ->remove("endPM")
-            ->remove("beginAM")
-            ->remove("endAM")
+            ->remove("slots")
             ->remove("day")
             ->add("day", ChoiceType::class, [
                 "choices" => $this->getDay(),

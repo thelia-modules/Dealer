@@ -198,41 +198,49 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <h6>{{ 'AM'|trans({}, 'dealer.bo.default') }}</h6>
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'Begin'|trans({}, 'dealer.bo.default') }}</label>
-                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[beginAM]" value="09:00">
+                <div class="mb-3" data-schedule-slots-field>
+                    <label class="form-label d-block">{{ 'Slots'|trans({}, 'dealer.bo.default') }}</label>
+                    <div data-slots-container data-slots-name="{{ schedules_create_fp }}[slots]"></div>
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-slot-add>
+                        <i class="bi bi-plus-lg"></i> {{ 'Add a slot'|trans({}, 'dealer.bo.default') }}
+                    </button>
+                    <template data-slot-template>
+                        <div class="row g-2 align-items-end mb-2" data-slot-row>
+                            <div class="col">
+                                <label class="form-label small mb-1">{{ 'Begin'|trans({}, 'dealer.bo.default') }}</label>
+                                <input type="time" class="form-control" data-slot-begin>
+                            </div>
+                            <div class="col">
+                                <label class="form-label small mb-1">{{ 'End'|trans({}, 'dealer.bo.default') }}</label>
+                                <input type="time" class="form-control" data-slot-end>
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-outline-danger" data-slot-remove
+                                        title="{{ 'Remove this slot'|trans({}, 'dealer.bo.default') }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'End'|trans({}, 'dealer.bo.default') }}</label>
-                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[endAM]" value="12:00">
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <h6>{{ 'PM'|trans({}, 'dealer.bo.default') }}</h6>
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'Begin'|trans({}, 'dealer.bo.default') }}</label>
-                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[beginPM]" value="14:00">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">{{ 'End'|trans({}, 'dealer.bo.default') }}</label>
-                            <input type="time" class="form-control" name="{{ schedules_create_fp }}[endPM]" value="19:00">
-                        </div>
-                    </div>
+                    </template>
                 </div>
                 <div class="mb-3" data-schedule-date-field>
+                    <input type="hidden" name="{{ schedules_create_fp }}[recurring]" value="0" data-schedule-recurring>
                     <div class="btn-group btn-group-sm mb-3" role="group" data-schedule-exc-toggle>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-date-create" value="date" checked autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-date-create">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-period-create" value="period" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-period-create">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-recurring-create" value="recurring" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-recurring-create">{{ 'Recurrence'|trans({}, 'dealer.bo.default') }}</label>
                     </div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
-                            <label class="form-label" data-schedule-begin-label data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}" data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                            <label class="form-label" data-schedule-begin-label
+                                   data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
                             <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]" data-schedule-date>
+                            <div class="form-text" data-schedule-recurring-help hidden>{{ 'Only the day and month are used; the year is ignored.'|trans({}, 'dealer.bo.default') }}</div>
                         </div>
                         <div class="col-sm-6 mb-3" data-schedule-end-wrap>
                             <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>
@@ -268,6 +276,7 @@
                 <input type="hidden" name="{{ schedules_update_fp }}[error_url]" value="{{ schedules_url }}">
                 <input type="hidden" name="{{ schedules_update_fp }}[id]" value="" data-fill="id">
                 <input type="hidden" name="{{ schedules_update_fp }}[closed]" value="0" data-fill="closed">
+                <input type="hidden" name="{{ schedules_update_fp }}[recurring]" value="0" data-fill="recurring" data-schedule-recurring>
                 <div class="mb-3" data-schedule-day-field>
                     <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>
                     <select class="form-select" name="{{ schedules_update_fp }}[day]" data-fill-select="day">
@@ -293,11 +302,17 @@
                         <label class="btn btn-outline-primary" for="exc-mode-date-update">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-period-update" value="period" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-period-update">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-recurring-update" value="recurring" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-recurring-update">{{ 'Recurrence'|trans({}, 'dealer.bo.default') }}</label>
                     </div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
-                            <label class="form-label" data-schedule-begin-label data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}" data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                            <label class="form-label" data-schedule-begin-label
+                                   data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
                             <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_begin]" value="" data-fill="periodbegin" data-schedule-date>
+                            <div class="form-text" data-schedule-recurring-help hidden>{{ 'Only the day and month are used; the year is ignored.'|trans({}, 'dealer.bo.default') }}</div>
                         </div>
                         <div class="col-sm-6 mb-3" data-schedule-end-wrap>
                             <label class="form-label">{{ 'Period End'|trans({}, 'dealer.bo.default') }}</label>

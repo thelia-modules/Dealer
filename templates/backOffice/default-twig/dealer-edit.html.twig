@@ -12,13 +12,18 @@
         {% endif %}
 
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <span class="card-title mb-0">
                     {{ 'Dealer edit'|trans({}, 'dealer.bo.default') }}{% if dealer %} - {{ dealer.title }}{% endif %}
                 </span>
-                <a href="{{ path('dealer') }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left"></i> {{ 'Back to the dealers list'|trans({}, 'dealer.bo.default') }}
-                </a>
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    {% if edit_language_id %}
+                        {{ component('BoLanguageSwitcher', { currentLanguageId: edit_language_id }) }}
+                    {% endif %}
+                    <a href="{{ path('dealer') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> {{ 'Back to the dealers list'|trans({}, 'dealer.bo.default') }}
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <ul class="nav nav-tabs mb-3" id="dealer-edit-tabs" role="tablist">
@@ -219,29 +224,40 @@
                 var periodEnd = modal.querySelector('[data-schedule-period-end]');
                 var endWrap = modal.querySelector('[data-schedule-end-wrap]');
                 var beginLabel = modal.querySelector('[data-schedule-begin-label]');
+                var recurringInput = modal.querySelector('[data-schedule-recurring]');
+                var recurringHelp = modal.querySelector('[data-schedule-recurring-help]');
                 var modeRadios = modal.querySelectorAll('[data-schedule-exc-mode]');
 
                 function applyExcMode(mode) {
                     var isPeriod = mode === 'period';
+                    var isRecurring = mode === 'recurring';
                     if (beginLabel) {
-                        beginLabel.textContent = isPeriod
-                            ? beginLabel.getAttribute('data-label-period')
-                            : beginLabel.getAttribute('data-label-date');
+                        beginLabel.textContent = isRecurring
+                            ? beginLabel.getAttribute('data-label-recurring')
+                            : (isPeriod
+                                ? beginLabel.getAttribute('data-label-period')
+                                : beginLabel.getAttribute('data-label-date'));
                     }
                     if (endWrap) {
                         endWrap.style.display = isPeriod ? '' : 'none';
                     }
-                    // Single date: mirror period_end onto the chosen date (a one-day range).
-                    if (!isPeriod && dateInput && periodEnd) {
+                    if (recurringHelp) {
+                        recurringHelp.hidden = !isRecurring;
+                    }
+                    if (recurringInput) {
+                        recurringInput.value = isRecurring ? '1' : '0';
+                    }
+                    if (isRecurring && periodEnd) {
+                        periodEnd.value = '';
+                    } else if (!isPeriod && dateInput && periodEnd) {
                         periodEnd.value = dateInput.value;
                     }
                 }
 
-                // Keep period_end mirrored while in single-date mode.
                 if (dateInput && periodEnd) {
                     dateInput.addEventListener('change', function () {
                         var current = modal.querySelector('[data-schedule-exc-mode]:checked');
-                        if (!current || current.value !== 'period') {
+                        if (!current || (current.value !== 'period' && current.value !== 'recurring')) {
                             periodEnd.value = dateInput.value;
                         }
                     });
@@ -269,7 +285,7 @@
                                 });
                             });
                         }
-                        var wanted = mode === 'period' ? 'period' : 'date';
+                        var wanted = mode === 'period' ? 'period' : (mode === 'recurring' ? 'recurring' : 'date');
                         Array.prototype.forEach.call(modeRadios, function (radio) {
                             radio.checked = radio.value === wanted;
                         });
@@ -277,7 +293,47 @@
                     } else {
                         if (dateInput) { dateInput.value = ''; }
                         if (periodEnd) { periodEnd.value = ''; }
+                        if (recurringInput) { recurringInput.value = '0'; }
+                        if (recurringHelp) { recurringHelp.hidden = true; }
                     }
+                };
+            }
+
+            function setupScheduleSlots(modal) {
+                if (!modal) {
+                    return null;
+                }
+                var container = modal.querySelector('[data-slots-container]');
+                var template = modal.querySelector('[data-slot-template]');
+                var addButton = modal.querySelector('[data-slot-add]');
+                if (!container || !template || !addButton) {
+                    return null;
+                }
+                var baseName = container.getAttribute('data-slots-name');
+                var index = 0;
+
+                function addRow(begin, end) {
+                    var row = template.content.firstElementChild.cloneNode(true);
+                    var beginInput = row.querySelector('[data-slot-begin]');
+                    var endInput = row.querySelector('[data-slot-end]');
+                    beginInput.name = baseName + '[' + index + '][begin]';
+                    endInput.name = baseName + '[' + index + '][end]';
+                    beginInput.value = begin || '';
+                    endInput.value = end || '';
+                    index++;
+                    row.querySelector('[data-slot-remove]').addEventListener('click', function () {
+                        row.remove();
+                    });
+                    container.appendChild(row);
+                }
+
+                addButton.addEventListener('click', function () {
+                    addRow('09:00', '18:00');
+                });
+
+                return function resetSlots() {
+                    container.innerHTML = '';
+                    index = 0;
                 };
             }
 
@@ -285,6 +341,7 @@
             // a precise date (default) for exceptional openings/closures (data-schedule-period = '1').
             var scheduleCreateModal = document.getElementById('dealer-schedules-create');
             var applyCreateFields = setupScheduleFields(scheduleCreateModal);
+            var resetCreateSlots = setupScheduleSlots(scheduleCreateModal);
             if (scheduleCreateModal && applyCreateFields) {
                 scheduleCreateModal.addEventListener('show.bs.modal', function (event) {
                     var trigger = event.relatedTarget;
@@ -297,6 +354,9 @@
                         titleEl.textContent = title;
                     }
                     applyCreateFields(trigger.getAttribute('data-schedule-period') === '1', 'date');
+                    if (resetCreateSlots) {
+                        resetCreateSlots();
+                    }
                 });
             }
 
@@ -313,8 +373,11 @@
                     }
                     var periodBegin = trigger.getAttribute('data-periodbegin');
                     var periodEnd = trigger.getAttribute('data-periodend');
-                    var useDate = periodBegin !== null && periodBegin !== '';
-                    var mode = (useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date';
+                    var recurring = trigger.getAttribute('data-recurring') === '1';
+                    var useDate = recurring || (periodBegin !== null && periodBegin !== '');
+                    var mode = recurring
+                        ? 'recurring'
+                        : ((useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date');
                     applyUpdateFields(useDate, mode);
                 });
             }

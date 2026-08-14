@@ -35,12 +35,14 @@ class PickupSlotService
         $now = $from !== null ? \DateTimeImmutable::createFromInterface($from) : new \DateTimeImmutable();
         $earliest = $now->add(new \DateInterval('PT' . $config->getPrepDelayMinutes() . 'M'));
 
+        $schedules = DealerShedulesQuery::create()->filterByDealerId($dealerId)->find();
+
         $days = [];
         $cursor = new \DateTimeImmutable($now->format('Y-m-d'));
         $scanned = 0;
 
         while (count($days) < $config->getOrderableDays() && $scanned < self::MAX_DAYS_SCAN) {
-            $ranges = $this->resolveOpenRanges($dealerId, $cursor);
+            $ranges = $this->resolveOpenRanges($schedules, $cursor);
 
             if ($ranges !== []) {
                 $slots = $this->buildSlots($dealerId, $cursor, $ranges, $config, $earliest);
@@ -65,9 +67,10 @@ class PickupSlotService
      * Resolve the effective open time ranges for a given date:
      * base weekly hours, minus closures (dated or unbounded weekly), plus exceptional openings.
      *
+     * @param iterable<DealerShedules> $schedules all the dealer's schedule rows, fetched once
      * @return list<array{begin: string, end: string}> sorted, non-overlapping H:i:s ranges
      */
-    private function resolveOpenRanges(int $dealerId, \DateTimeImmutable $date): array
+    private function resolveOpenRanges(iterable $schedules, \DateTimeImmutable $date): array
     {
         $numDay = (int) $date->format('N') - 1;
 
@@ -77,13 +80,21 @@ class PickupSlotService
         // silently drop null bounds).
         $openings = [];
         $closures = [];
-        foreach (DealerShedulesQuery::create()->filterByDealerId($dealerId)->find() as $row) {
-            $day = $row->getDay();
-            if ($day !== null && (int) $day !== $numDay) {
-                continue;
-            }
-            if (!$this->periodAppliesOn($row->getPeriodBegin(), $row->getPeriodEnd(), $date)) {
-                continue;
+        foreach ($schedules as $row) {
+            if ($row->getRecurring()) {
+                $recurringDate = $row->getPeriodBegin();
+                if (!$recurringDate instanceof \DateTimeInterface
+                    || $recurringDate->format('m-d') !== $date->format('m-d')) {
+                    continue;
+                }
+            } else {
+                $day = $row->getDay();
+                if ($day !== null && (int) $day !== $numDay) {
+                    continue;
+                }
+                if (!$this->periodAppliesOn($row->getPeriodBegin(), $row->getPeriodEnd(), $date)) {
+                    continue;
+                }
             }
             if ($row->getClosed()) {
                 $closures[] = $row;
@@ -107,7 +118,7 @@ class PickupSlotService
             $open = $this->subtractRange(
                 $open,
                 $closure->getBegin()->format('H:i:s'),
-                $closure->getEnd()->format('H:i:s')
+                $this->normalizeEndTime($closure->getEnd()->format('H:i:s'))
             );
         }
 
@@ -137,7 +148,10 @@ class PickupSlotService
             $begin = $schedule->getBegin();
             $end = $schedule->getEnd();
             if ($begin instanceof \DateTimeInterface && $end instanceof \DateTimeInterface) {
-                $ranges[] = ['begin' => $begin->format('H:i:s'), 'end' => $end->format('H:i:s')];
+                $ranges[] = [
+                    'begin' => $begin->format('H:i:s'),
+                    'end' => $this->normalizeEndTime($end->format('H:i:s')),
+                ];
             }
         }
 
@@ -257,6 +271,16 @@ class PickupSlotService
         return max(0, $maxPerSlot - $taken);
     }
 
+    /**
+     * A midnight end time (00:00:00) means end-of-day. Expressed as 24:00:00 it keeps the
+     * range non-empty for string comparisons, and \DateTimeImmutable rolls it to the next
+     * day's midnight when building slots.
+     */
+    private function normalizeEndTime(string $end): string
+    {
+        return $end === '00:00:00' ? '24:00:00' : $end;
+    }
+
     private function getConfig(int $dealerId): DealerPickupConfig
     {
         $config = DealerPickupConfigQuery::create()->findPk($dealerId);
@@ -287,7 +311,8 @@ class PickupSlotService
             return false;
         }
 
-        $ranges = $this->resolveOpenRanges($dealerId, new \DateTimeImmutable($moment->format('Y-m-d')));
+        $schedules = DealerShedulesQuery::create()->filterByDealerId($dealerId)->find();
+        $ranges = $this->resolveOpenRanges($schedules, new \DateTimeImmutable($moment->format('Y-m-d')));
         $duration = max(1, $config->getSlotDurationMinutes());
         $slotStart = $moment->format('H:i:s');
         $slotEnd = $moment->add(new \DateInterval('PT' . $duration . 'M'))->format('H:i:s');
