@@ -259,6 +259,11 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
     }
 
     /**
+     * TODO: this legacy day/hour resolution engine is NOT recurring-aware (it ignores the
+     * `recurring` column) and duplicates PickupSlotService. Its only caller is the
+     * GrandPanierBio Smarty plugin, unused by the active flexy front. Migrate that caller to
+     * PickupSlotService (which handles recurrence) and remove these methods.
+     *
      * @param $idDealer
      * @param $dateStart
      * @param $numberMaxDays
