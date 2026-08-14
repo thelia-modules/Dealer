@@ -45,7 +45,19 @@ class AdminInterfaceHook extends BaseHook
             'module.configuration' => [
                 ['type' => 'back', 'method' => 'onModuleConfiguration'],
             ],
+            'order-edit.delivery-module-bottom' => [
+                ['type' => 'back', 'method' => 'onOrderDeliveryModuleBottom'],
+            ],
         ];
+    }
+
+    public function onOrderDeliveryModuleBottom(HookRenderEvent $event): void
+    {
+        $orderId = (int) $event->getArgument('order_id');
+
+        if ($orderId > 0) {
+            $event->add($this->render('Dealer/hook/order-pickup-block.html.twig', ['order_id' => $orderId]));
+        }
     }
 
     public function onModuleConfiguration(HookRenderEvent $event): void
