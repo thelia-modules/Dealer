@@ -199,7 +199,6 @@ class DealerController extends BaseController
 
         $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: [
             'locale' => $locale,
-            // Preselect the shop's default country (France on this shop).
             'country_id' => CountryQuery::create()->findOneByByDefault(true)?->getId(),
         ]);
 
@@ -226,8 +225,6 @@ class DealerController extends BaseController
         $request = $this->getRequest();
         $dealerId = $request->query->get('dealer_id');
 
-        // Edit language: an explicit switch (edit_language_id, set by BoLanguageSwitcher)
-        // wins, then the admin session language, then the default shop language.
         $editLanguageId = (int) $request->query->get('edit_language_id', 0);
         $editLang = $editLanguageId > 0 ? \Thelia\Model\LangQuery::create()->findPk($editLanguageId) : null;
         $editLang ??= ($request->hasSession() ? $request->getSession()->getLang() : null)
@@ -463,10 +460,6 @@ class DealerController extends BaseController
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
                 'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
                 'recurring' => $recurring,
-                // Day/month of the yearly recurrence, e.g. "25/12".
-                'recurring_date' => $recurring && $periodBegin instanceof \DateTimeInterface
-                    ? $periodBegin->format('d/m')
-                    : null,
                 'title' => $schedule->getTitle(),
                 'closed' => $schedule->getClosed() ? 1 : 0,
             ];

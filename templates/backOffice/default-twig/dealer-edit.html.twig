@@ -247,8 +247,6 @@
                     if (recurringInput) {
                         recurringInput.value = isRecurring ? '1' : '0';
                     }
-                    // Single precise date mirrors period_end (one-day range); a recurrence has
-                    // no end (only the day/month matters, the year is ignored).
                     if (isRecurring && periodEnd) {
                         periodEnd.value = '';
                     } else if (!isPeriod && dateInput && periodEnd) {
@@ -256,7 +254,6 @@
                     }
                 }
 
-                // Keep period_end mirrored while in single-date mode (not period nor recurrence).
                 if (dateInput && periodEnd) {
                     dateInput.addEventListener('change', function () {
                         var current = modal.querySelector('[data-schedule-exc-mode]:checked');
@@ -296,16 +293,12 @@
                     } else {
                         if (dateInput) { dateInput.value = ''; }
                         if (periodEnd) { periodEnd.value = ''; }
-                        // A default (weekday) schedule is never recurring.
                         if (recurringInput) { recurringInput.value = '0'; }
                         if (recurringHelp) { recurringHelp.hidden = true; }
                     }
                 };
             }
 
-            // Dynamic slots (créneaux): the create modal builds an arbitrary number of
-            // begin/end time ranges. Field names follow Symfony's collection convention
-            // (name[slots][i][begin]) so allow_add picks them up on submit.
             function setupScheduleSlots(modal) {
                 if (!modal) {
                     return null;
@@ -341,7 +334,6 @@
                 return function resetSlots() {
                     container.innerHTML = '';
                     index = 0;
-                    // Start with one prefilled range; the manager adds/removes as needed.
                     addRow('09:00', '18:00');
                 };
             }

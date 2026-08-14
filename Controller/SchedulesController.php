@@ -149,7 +149,6 @@ class SchedulesController extends BaseController
             $data = $form->getData();
 
             $slots = $this->extractSlots($data);
-            // No weekday selected means a single period-only / dated entry (day = null).
             $days = empty($data["day"]) ? [null] : $data["day"];
             $locale = $this->getCurrentEditionLocale();
 
@@ -158,7 +157,6 @@ class SchedulesController extends BaseController
                 $base["day"] = $day;
 
                 if ($slots === []) {
-                    // No time range: a full-day closure or a period-only entry.
                     $base["begin"] = null;
                     $base["end"] = null;
                     $this->getService()->createFromArray($base, $locale);
@@ -205,8 +203,6 @@ class SchedulesController extends BaseController
     }
 
     /**
-     * Keep only the submitted slots that carry both a begin and an end time.
-     *
      * @return list<array{begin: string, end: string}>
      */
     protected function extractSlots($data): array

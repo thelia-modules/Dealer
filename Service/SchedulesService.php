@@ -73,8 +73,6 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         }
 
         $beginStr = $begin->format('H:i:s');
-        // Midnight as an end time means end-of-day (24:00), so a slot may legitimately
-        // close at 00:00 (e.g. 20:00 - 00:00) without failing the "end after begin" check.
         $endStr = $this->normalizeEndTime($end->format('H:i:s'));
 
         if ($endStr <= $beginStr) {

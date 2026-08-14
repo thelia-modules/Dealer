@@ -66,14 +66,14 @@
                         <td>{{ s.day_label }}</td>
                         <td>{{ s.begin }}</td>
                         <td>{{ s.end }}</td>
+                        <td>{{ s.period_begin }}</td>
                         <td>
                             {% if s.recurring %}
-                                {{ s.recurring_date }} <span class="badge text-bg-info">{{ 'every year'|trans({}, 'dealer.bo.default') }}</span>
+                                <span class="badge text-bg-info">{{ 'every year'|trans({}, 'dealer.bo.default') }}</span>
                             {% else %}
-                                {{ s.period_begin }}
+                                {{ s.period_end }}
                             {% endif %}
                         </td>
-                        <td>{{ s.recurring ? '—' : s.period_end }}</td>
                         <td>{{ s.title }}</td>
                         <td class="text-end">
                             {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
@@ -113,14 +113,14 @@
                         <td>{{ s.day_label }}</td>
                         <td>{{ s.begin }}</td>
                         <td>{{ s.end }}</td>
+                        <td>{{ s.period_begin }}</td>
                         <td>
                             {% if s.recurring %}
-                                {{ s.recurring_date }} <span class="badge text-bg-info">{{ 'every year'|trans({}, 'dealer.bo.default') }}</span>
+                                <span class="badge text-bg-info">{{ 'every year'|trans({}, 'dealer.bo.default') }}</span>
                             {% else %}
-                                {{ s.period_begin }}
+                                {{ s.period_end }}
                             {% endif %}
                         </td>
-                        <td>{{ s.recurring ? '—' : s.period_end }}</td>
                         <td>{{ s.title }}</td>
                         <td class="text-end">
                             {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}

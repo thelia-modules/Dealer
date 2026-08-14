@@ -79,7 +79,6 @@ class PickupSlotService
         $closures = [];
         foreach (DealerShedulesQuery::create()->filterByDealerId($dealerId)->find() as $row) {
             if ($row->getRecurring()) {
-                // Annual recurrence: applies every year on period_begin's month/day.
                 $recurringDate = $row->getPeriodBegin();
                 if (!$recurringDate instanceof \DateTimeInterface
                     || $recurringDate->format('m-d') !== $date->format('m-d')) {

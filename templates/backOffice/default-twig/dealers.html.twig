@@ -99,9 +99,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
                 </div>
                 <div class="modal-body">
-                    {# The dealer is saved in the language chosen here: getCurrentEditionLang()
-                       reads edit_language_id from the POST body. The locale field is kept in
-                       sync so the form data stays consistent. #}
                     <div class="mb-3">
                         <label class="form-label" for="dealer-create-language">{{ 'Locale'|trans({}, 'dealer.bo.default') }}</label>
                         <select name="edit_language_id" id="dealer-create-language" class="form-select" data-dealer-create-language>
@@ -111,8 +108,6 @@
                         </select>
                     </div>
                     {{ form_widget(create_form.locale, {type: 'hidden', value: edit_language_locale, id: 'dealer-create-locale'}) }}
-                    {# success_url/error_url are form fields (BaseForm namespace); a bare
-                       success_url input is ignored, which sent creation back to the front. #}
                     {{ form_widget(create_form.success_url, {value: '/admin/module/Dealer/dealer/edit?dealer_id=_ID_'}) }}
                     {{ form_widget(create_form.error_url, {value: '/admin/module/Dealer/dealer'}) }}
 
@@ -214,7 +209,6 @@
                 });
             });
 
-            // Keep the hidden locale field aligned with the chosen creation language.
             var createLanguage = document.querySelector('[data-dealer-create-language]');
             var createLocale = document.getElementById('dealer-create-locale');
             if (createLanguage && createLocale) {
