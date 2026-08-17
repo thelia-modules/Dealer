@@ -229,15 +229,19 @@
                         <label class="btn btn-outline-primary" for="exc-mode-date-create">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-period-create" value="period" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-period-create">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-weekly-create" value="weekly" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-weekly-create">{{ 'Every week'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-recurring-create" value="recurring" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-recurring-create">{{ 'Recurrence'|trans({}, 'dealer.bo.default') }}</label>
                     </div>
+                    <div class="form-text mb-3" data-schedule-weekly-help hidden>{{ 'Applies to the selected weekdays only, within the period below (e.g. every Monday in August). Leave the period empty to repeat with no end date.'|trans({}, 'dealer.bo.default') }}</div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
                             <label class="form-label" data-schedule-begin-label
                                    data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}"
                                    data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}"
-                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-weekly="{{ 'Period Begin (optional)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
                             <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]" data-schedule-date>
                             <div class="form-text" data-schedule-recurring-help hidden>{{ 'Only the day and month are used; the year is ignored.'|trans({}, 'dealer.bo.default') }}</div>
                         </div>
@@ -301,15 +305,19 @@
                         <label class="btn btn-outline-primary" for="exc-mode-date-update">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-period-update" value="period" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-period-update">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-weekly-update" value="weekly" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-weekly-update">{{ 'Every week'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-recurring-update" value="recurring" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-recurring-update">{{ 'Recurrence'|trans({}, 'dealer.bo.default') }}</label>
                     </div>
+                    <div class="form-text mb-3" data-schedule-weekly-help hidden>{{ 'Applies to the selected weekdays only, within the period below (e.g. every Monday in August). Leave the period empty to repeat with no end date.'|trans({}, 'dealer.bo.default') }}</div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
                             <label class="form-label" data-schedule-begin-label
                                    data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}"
                                    data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}"
-                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-weekly="{{ 'Period Begin (optional)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
                             <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_begin]" value="" data-fill="periodbegin" data-schedule-date>
                             <div class="form-text" data-schedule-recurring-help hidden>{{ 'Only the day and month are used; the year is ignored.'|trans({}, 'dealer.bo.default') }}</div>
                         </div>
