@@ -220,36 +220,49 @@
                 }
                 var dayField = modal.querySelector('[data-schedule-day-field]');
                 var dateField = modal.querySelector('[data-schedule-date-field]');
+                var labelField = modal.querySelector('[data-schedule-label-field]');
                 var dateInput = modal.querySelector('[data-schedule-date]');
                 var periodEnd = modal.querySelector('[data-schedule-period-end]');
                 var endWrap = modal.querySelector('[data-schedule-end-wrap]');
                 var beginLabel = modal.querySelector('[data-schedule-begin-label]');
                 var recurringInput = modal.querySelector('[data-schedule-recurring]');
                 var recurringHelp = modal.querySelector('[data-schedule-recurring-help]');
+                var weeklyHelp = modal.querySelector('[data-schedule-weekly-help]');
                 var modeRadios = modal.querySelectorAll('[data-schedule-exc-mode]');
 
+                // 'weekly' keeps the weekday selector visible next to the period: the entry then
+                // applies to those weekdays only, within the period (e.g. every Monday in August).
                 function applyExcMode(mode) {
                     var isPeriod = mode === 'period';
                     var isRecurring = mode === 'recurring';
+                    var isWeekly = mode === 'weekly';
                     if (beginLabel) {
                         beginLabel.textContent = isRecurring
                             ? beginLabel.getAttribute('data-label-recurring')
-                            : (isPeriod
-                                ? beginLabel.getAttribute('data-label-period')
-                                : beginLabel.getAttribute('data-label-date'));
+                            : (isWeekly
+                                ? beginLabel.getAttribute('data-label-weekly')
+                                : (isPeriod
+                                    ? beginLabel.getAttribute('data-label-period')
+                                    : beginLabel.getAttribute('data-label-date')));
                     }
                     if (endWrap) {
-                        endWrap.style.display = isPeriod ? '' : 'none';
+                        endWrap.style.display = (isPeriod || isWeekly) ? '' : 'none';
+                    }
+                    if (dayField) {
+                        dayField.style.display = isWeekly ? '' : 'none';
                     }
                     if (recurringHelp) {
                         recurringHelp.hidden = !isRecurring;
+                    }
+                    if (weeklyHelp) {
+                        weeklyHelp.hidden = !isWeekly;
                     }
                     if (recurringInput) {
                         recurringInput.value = isRecurring ? '1' : '0';
                     }
                     if (isRecurring && periodEnd) {
                         periodEnd.value = '';
-                    } else if (!isPeriod && dateInput && periodEnd) {
+                    } else if (!isPeriod && !isWeekly && dateInput && periodEnd) {
                         periodEnd.value = dateInput.value;
                     }
                 }
@@ -257,7 +270,7 @@
                 if (dateInput && periodEnd) {
                     dateInput.addEventListener('change', function () {
                         var current = modal.querySelector('[data-schedule-exc-mode]:checked');
-                        if (!current || (current.value !== 'period' && current.value !== 'recurring')) {
+                        if (!current || ['period', 'recurring', 'weekly'].indexOf(current.value) === -1) {
                             periodEnd.value = dateInput.value;
                         }
                     });
@@ -277,15 +290,20 @@
                     if (dateField) {
                         dateField.style.display = useDate ? '' : 'none';
                     }
+                    if (labelField) {
+                        labelField.style.display = useDate ? '' : 'none';
+                    }
                     if (useDate) {
-                        if (dayField) {
+                        // The weekday selection is what a weekly entry is made of: only clear it
+                        // for the modes that ignore it.
+                        if (dayField && mode !== 'weekly') {
                             dayField.querySelectorAll('select').forEach(function (select) {
                                 Array.prototype.forEach.call(select.options, function (option) {
                                     option.selected = false;
                                 });
                             });
                         }
-                        var wanted = mode === 'period' ? 'period' : (mode === 'recurring' ? 'recurring' : 'date');
+                        var wanted = ['period', 'recurring', 'weekly'].indexOf(mode) === -1 ? 'date' : mode;
                         Array.prototype.forEach.call(modeRadios, function (radio) {
                             radio.checked = radio.value === wanted;
                         });
@@ -295,6 +313,7 @@
                         if (periodEnd) { periodEnd.value = ''; }
                         if (recurringInput) { recurringInput.value = '0'; }
                         if (recurringHelp) { recurringHelp.hidden = true; }
+                        if (weeklyHelp) { weeklyHelp.hidden = true; }
                     }
                 };
             }
@@ -374,10 +393,16 @@
                     var periodBegin = trigger.getAttribute('data-periodbegin');
                     var periodEnd = trigger.getAttribute('data-periodend');
                     var recurring = trigger.getAttribute('data-recurring') === '1';
-                    var useDate = recurring || (periodBegin !== null && periodBegin !== '');
+                    var day = trigger.getAttribute('data-day');
+                    var hasDay = day !== null && day !== '';
+                    // A dated entry that also targets a weekday is a weekly recurrence.
+                    var weekly = !recurring && hasDay && periodBegin !== null && periodBegin !== '';
+                    var useDate = recurring || weekly || (periodBegin !== null && periodBegin !== '');
                     var mode = recurring
                         ? 'recurring'
-                        : ((useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date');
+                        : (weekly
+                            ? 'weekly'
+                            : ((useDate && periodEnd && periodEnd !== periodBegin) ? 'period' : 'date'));
                     applyUpdateFields(useDate, mode);
                 });
             }

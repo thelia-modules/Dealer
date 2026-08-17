@@ -7,6 +7,10 @@
                 <input type="hidden" name="{{ pc_fp }}[dealer_id]" value="{{ dealer_id }}">
 
                 <div class="mb-3">
+                    <label class="form-label">{{ 'Store timezone'|trans({}, 'dealer.bo.default') }}</label>
+                    {{ form_widget(pickup_config_form.timezone, {attr: {class: 'form-select'}}) }}
+                </div>
+                <div class="mb-3">
                     <label class="form-label">{{ 'Preparation delay (minutes)'|trans({}, 'dealer.bo.default') }}</label>
                     {{ form_widget(pickup_config_form.prep_delay_minutes, {attr: {min: 0, class: 'form-control'}}) }}
                 </div>

@@ -7,6 +7,7 @@ namespace Dealer\Service;
 use Dealer\Model\DealerOrderPickupQuery;
 use Dealer\Model\DealerPickupConfig;
 use Dealer\Model\DealerPickupConfigQuery;
+use Dealer\Model\DealerQuery;
 use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
 
@@ -22,6 +23,8 @@ class PickupSlotService
     /** Hard limit on the calendar scan, so an over-constrained config cannot loop forever. */
     private const MAX_DAYS_SCAN = 60;
 
+    private const DEFAULT_TIMEZONE = 'Europe/Paris';
+
     /**
      * @return list<array{
      *     date: string,
@@ -32,7 +35,10 @@ class PickupSlotService
     public function getAvailableSlots(int $dealerId, ?\DateTimeInterface $from = null): array
     {
         $config = $this->getConfig($dealerId);
-        $now = $from !== null ? \DateTimeImmutable::createFromInterface($from) : new \DateTimeImmutable();
+        $tz = $this->timezoneFor($dealerId);
+        $now = $from !== null
+            ? \DateTimeImmutable::createFromInterface($from)->setTimezone($tz)
+            : new \DateTimeImmutable('now', $tz);
         $earliest = $now->add(new \DateInterval('PT' . $config->getPrepDelayMinutes() . 'M'));
 
         $schedules = DealerShedulesQuery::create()->filterByDealerId($dealerId)->find();
@@ -45,7 +51,7 @@ class PickupSlotService
             $ranges = $this->resolveOpenRanges($schedules, $cursor);
 
             if ($ranges !== []) {
-                $slots = $this->buildSlots($dealerId, $cursor, $ranges, $config, $earliest);
+                $slots = $this->buildSlots($dealerId, $cursor, $ranges, $config, $earliest, $tz);
 
                 if ($slots !== []) {
                     $days[] = [
@@ -219,7 +225,8 @@ class PickupSlotService
         \DateTimeImmutable $date,
         array $ranges,
         DealerPickupConfig $config,
-        \DateTimeImmutable $earliest
+        \DateTimeImmutable $earliest,
+        \DateTimeZone $tz
     ): array {
         // Guard against a 0/negative duration that would make the loop below never progress.
         $step = new \DateInterval('PT' . max(1, $config->getSlotDurationMinutes()) . 'M');
@@ -227,8 +234,8 @@ class PickupSlotService
         $slots = [];
 
         foreach ($ranges as $range) {
-            $slotStart = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['begin']);
-            $rangeEnd = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['end']);
+            $slotStart = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['begin'], $tz);
+            $rangeEnd = new \DateTimeImmutable($date->format('Y-m-d') . ' ' . $range['end'], $tz);
 
             while ($slotStart < $rangeEnd) {
                 $slotEnd = $slotStart->add($step);
@@ -279,6 +286,17 @@ class PickupSlotService
     private function normalizeEndTime(string $end): string
     {
         return $end === '00:00:00' ? '24:00:00' : $end;
+    }
+
+    private function timezoneFor(int $dealerId): \DateTimeZone
+    {
+        $name = DealerQuery::create()->findPk($dealerId)?->getTimezone();
+
+        try {
+            return new \DateTimeZone($name !== null && $name !== '' ? $name : self::DEFAULT_TIMEZONE);
+        } catch (\Exception) {
+            return new \DateTimeZone(self::DEFAULT_TIMEZONE);
+        }
     }
 
     private function getConfig(int $dealerId): DealerPickupConfig

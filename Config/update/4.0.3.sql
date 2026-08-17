@@ -1,0 +1,5 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+ALTER TABLE `dealer` ADD `timezone` VARCHAR(64) DEFAULT 'Europe/Paris' AFTER `longitude`;
+
+SET FOREIGN_KEY_CHECKS = 1;

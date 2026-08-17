@@ -44,6 +44,8 @@ class PickupConfigController extends BaseAdminController
                 (int) $data['max_orders_per_slot'],
             );
 
+            $configService->saveTimezone((int) $data['dealer_id'], (string) $data['timezone']);
+
             return $this->redirectToDealer((int) $data['dealer_id']);
         } catch (FormValidationException $ex) {
             $error_msg = $this->createStandardFormValidationErrorMessage($ex);

@@ -4,7 +4,6 @@
 {% set contact_info_update_fp = contact_info_update_form.vars.full_name %}
 {% set schedules_create_fp = schedules_create_form.vars.full_name %}
 {% set schedules_update_fp = schedules_update_form.vars.full_name %}
-{% set schedules_clone_fp = schedules_clone_form.vars.full_name %}
 {% set admin_link_fp = admin_link_form.vars.full_name %}
 {% set contacts_url = '/admin/module/Dealer/dealer/edit?dealer_id=' ~ dealer_id ~ '#contacts' %}
 {% set schedules_url = '/admin/module/Dealer/dealer/edit?dealer_id=' ~ dealer_id ~ '#schedules' %}
@@ -230,15 +229,19 @@
                         <label class="btn btn-outline-primary" for="exc-mode-date-create">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-period-create" value="period" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-period-create">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-weekly-create" value="weekly" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-weekly-create">{{ 'Every week'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-create" id="exc-mode-recurring-create" value="recurring" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-recurring-create">{{ 'Recurrence'|trans({}, 'dealer.bo.default') }}</label>
                     </div>
+                    <div class="form-text mb-3" data-schedule-weekly-help hidden>{{ 'Applies to the selected weekdays only, within the period below (e.g. every Monday in August). Leave the period empty to repeat with no end date.'|trans({}, 'dealer.bo.default') }}</div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
                             <label class="form-label" data-schedule-begin-label
                                    data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}"
                                    data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}"
-                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-weekly="{{ 'Period Begin (optional)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
                             <input type="date" class="form-control" name="{{ schedules_create_fp }}[period_begin]" data-schedule-date>
                             <div class="form-text" data-schedule-recurring-help hidden>{{ 'Only the day and month are used; the year is ignored.'|trans({}, 'dealer.bo.default') }}</div>
                         </div>
@@ -248,7 +251,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" data-schedule-label-field>
                     <label class="form-label">{{ 'Label'|trans({}, 'dealer.bo.default') }}</label>
                     <input type="text" class="form-control" name="{{ schedules_create_fp }}[title]" placeholder="{{ 'e.g. Public holiday, special event…'|trans({}, 'dealer.bo.default') }}">
                 </div>
@@ -302,15 +305,19 @@
                         <label class="btn btn-outline-primary" for="exc-mode-date-update">{{ 'Precise date'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-period-update" value="period" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-period-update">{{ 'Period'|trans({}, 'dealer.bo.default') }}</label>
+                        <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-weekly-update" value="weekly" autocomplete="off" data-schedule-exc-mode>
+                        <label class="btn btn-outline-primary" for="exc-mode-weekly-update">{{ 'Every week'|trans({}, 'dealer.bo.default') }}</label>
                         <input type="radio" class="btn-check" name="schedule-exc-mode-update" id="exc-mode-recurring-update" value="recurring" autocomplete="off" data-schedule-exc-mode>
                         <label class="btn btn-outline-primary" for="exc-mode-recurring-update">{{ 'Recurrence'|trans({}, 'dealer.bo.default') }}</label>
                     </div>
+                    <div class="form-text mb-3" data-schedule-weekly-help hidden>{{ 'Applies to the selected weekdays only, within the period below (e.g. every Monday in August). Leave the period empty to repeat with no end date.'|trans({}, 'dealer.bo.default') }}</div>
                     <div class="row">
                         <div class="col-sm-6 mb-3">
                             <label class="form-label" data-schedule-begin-label
                                    data-label-date="{{ 'Date'|trans({}, 'dealer.bo.default') }}"
                                    data-label-period="{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}"
-                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
+                                   data-label-recurring="{{ 'Recurring date (repeated every year)'|trans({}, 'dealer.bo.default') }}"
+                                   data-label-weekly="{{ 'Period Begin (optional)'|trans({}, 'dealer.bo.default') }}">{{ 'Date'|trans({}, 'dealer.bo.default') }}</label>
                             <input type="date" class="form-control" name="{{ schedules_update_fp }}[period_begin]" value="" data-fill="periodbegin" data-schedule-date>
                             <div class="form-text" data-schedule-recurring-help hidden>{{ 'Only the day and month are used; the year is ignored.'|trans({}, 'dealer.bo.default') }}</div>
                         </div>
@@ -328,35 +335,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
                 <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-{# ====================== SCHEDULES CLONE ====================== #}
-<div class="modal fade dealer-modal" id="dealer-schedules-clone" tabindex="-1">
-    <div class="modal-dialog">
-        <form method="POST" action="/admin/module/Dealer/schedules/clone" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{{ 'Clone a schedules'|trans({}, 'dealer.bo.default') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" name="{{ schedules_clone_fp }}[_token]" value="{{ schedules_clone_form._token.vars.value }}">
-                <input type="hidden" name="{{ schedules_clone_fp }}[success_url]" value="{{ schedules_url }}">
-                <input type="hidden" name="{{ schedules_clone_fp }}[id]" value="" data-fill="id">
-                <div class="mb-3">
-                    <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>
-                    <select class="form-select" name="{{ schedules_clone_fp }}[day]">
-                        {% for idx, label in day_labels %}
-                            <option value="{{ idx }}">{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
-                <button type="submit" class="btn btn-primary">{{ 'Clone'|trans }}</button>
             </div>
         </form>
     </div>
