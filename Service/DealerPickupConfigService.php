@@ -6,10 +6,14 @@ namespace Dealer\Service;
 
 use Dealer\Model\DealerPickupConfig;
 use Dealer\Model\DealerPickupConfigQuery;
+use Dealer\Model\DealerQuery;
 
 /**
  * Read/write access to the per-dealer pickup configuration
  * (preparation delay, orderable days, slot duration, per-slot quota).
+ *
+ * The timezone lives on the dealer itself — it qualifies the store, not the slot
+ * settings — but it is edited from the same screen, hence its writer here.
  */
 class DealerPickupConfigService
 {
@@ -42,5 +46,16 @@ class DealerPickupConfigService
             ->save();
 
         return $config;
+    }
+
+    public function saveTimezone(int $dealerId, string $timezone): void
+    {
+        $dealer = DealerQuery::create()->findPk($dealerId);
+
+        if ($dealer === null || !in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
+            return;
+        }
+
+        $dealer->setTimezone($timezone)->save();
     }
 }

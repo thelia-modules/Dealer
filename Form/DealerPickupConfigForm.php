@@ -6,12 +6,13 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
 
 /**
- * Per-dealer pickup configuration: preparation delay, orderable days,
+ * Per-dealer pickup configuration: timezone, preparation delay, orderable days,
  * slot duration and per-slot order quota.
  */
 class DealerPickupConfigForm extends BaseForm
@@ -20,6 +21,12 @@ class DealerPickupConfigForm extends BaseForm
     {
         $this->formBuilder
             ->add('dealer_id', IntegerType::class, [
+                'required' => true,
+                'constraints' => [new NotBlank()],
+            ])
+            ->add('timezone', TimezoneType::class, [
+                'label' => $this->translator->trans('Store timezone', [], Dealer::MESSAGE_DOMAIN),
+                'label_attr' => ['for' => 'attr-dealer-pickup-timezone'],
                 'required' => true,
                 'constraints' => [new NotBlank()],
             ])

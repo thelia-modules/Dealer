@@ -400,9 +400,11 @@ class DealerController extends BaseController
     private function buildPickupConfigData($dealerId): array
     {
         $config = $dealerId !== null ? DealerPickupConfigQuery::create()->findPk($dealerId) : null;
+        $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
 
         return [
             'dealer_id' => $dealerId,
+            'timezone' => $dealer?->getTimezone() ?: 'Europe/Paris',
             'prep_delay_minutes' => $config?->getPrepDelayMinutes() ?? 0,
             'orderable_days' => $config?->getOrderableDays() ?? 7,
             'slot_duration_minutes' => $config?->getSlotDurationMinutes() ?? 60,
