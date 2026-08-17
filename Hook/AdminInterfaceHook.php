@@ -45,15 +45,18 @@ class AdminInterfaceHook extends BaseHook
             'module.configuration' => [
                 ['type' => 'back', 'method' => 'onModuleConfiguration'],
             ],
-            'order-edit.delivery-module-bottom' => [
-                ['type' => 'back', 'method' => 'onOrderDeliveryModuleBottom'],
+            // Not order-edit.delivery-module-bottom: the back-office passes a `module` argument
+            // to that hook, which suffixes the dispatched event with the delivery module id.
+            // Dealer is not the delivery module of the order, so its listener would never run.
+            'order-edit.top' => [
+                ['type' => 'back', 'method' => 'onOrderEditTop'],
             ],
         ];
     }
 
-    public function onOrderDeliveryModuleBottom(HookRenderEvent $event): void
+    public function onOrderEditTop(HookRenderEvent $event): void
     {
-        $orderId = (int) $event->getArgument('order_id');
+        $orderId = (int) ($event->getArgument('order') ?: $event->getArgument('order_id'));
 
         if ($orderId > 0) {
             $event->add($this->render('Dealer/hook/order-pickup-block.html.twig', ['order_id' => $orderId]));
