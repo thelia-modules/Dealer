@@ -27,7 +27,6 @@ use Dealer\Form\DealerMetaSEOForm;
 use Dealer\Form\DealerPickupConfigForm;
 use Dealer\Form\DealerUpdateForm;
 use Dealer\Form\GeoDealerForm;
-use Dealer\Form\SchedulesCloneForm;
 use Dealer\Form\SchedulesForm;
 use Dealer\Form\SchedulesUpdateForm;
 use Dealer\Model\DealerImage;
@@ -246,7 +245,6 @@ class DealerController extends BaseController
         $contactInfoUpdateForm = $this->getTheliaFormFactory()->createForm(ContactInfoUpdateForm::getName(), data: ['locale' => $locale]);
         $schedulesCreateForm = $this->getTheliaFormFactory()->createForm(SchedulesForm::getName());
         $schedulesUpdateForm = $this->getTheliaFormFactory()->createForm(SchedulesUpdateForm::getName());
-        $schedulesCloneForm = $this->getTheliaFormFactory()->createForm(SchedulesCloneForm::getName());
         $pickupConfigForm = $this->getTheliaFormFactory()->createForm(DealerPickupConfigForm::getName(), data: $this->buildPickupConfigData($dealerId));
         $adminLinkForm = $this->getTheliaFormFactory()->createForm(AdminLinkForm::getName());
         $geoForm = $this->getTheliaFormFactory()->createForm(GeoDealerForm::getName(), data: $this->buildGeoFormData($dealer));
@@ -279,7 +277,6 @@ class DealerController extends BaseController
                 'schedules_closed' => $this->buildSchedules($dealerId, $locale, periodNull: null, closed: true),
                 'schedules_create_form' => $schedulesCreateForm->createView()->getView(),
                 'schedules_update_form' => $schedulesUpdateForm->createView()->getView(),
-                'schedules_clone_form' => $schedulesCloneForm->createView()->getView(),
                 'pickup_config_form' => $pickupConfigForm->createView()->getView(),
                 'day_labels' => $this->getDayLabels($locale),
                 'linked_admins' => $this->buildLinkedAdmins($dealerId),
