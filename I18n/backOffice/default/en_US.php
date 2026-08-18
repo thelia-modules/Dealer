@@ -120,7 +120,6 @@ return array(
     "from %begin to %end" => "from %begin to %end",
     "General" => "General",
     "Header Image (banner)" => "Header Image (banner)",
-    "Horraires d'ouverture" => "Horraires d'ouverture",
     "Hours" => "Hours",
     "Image file not found" => "Image file not found",
     "Keywords SEO" => "Keywords SEO",
@@ -207,4 +206,5 @@ return array(
     "What your customers see" => "What your customers see",
     "When" => "When",
     "Whole day" => "Whole day",
+    "Opening hours (free text)" => "Opening hours (free text)",
 );

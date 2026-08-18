@@ -228,7 +228,6 @@ return array(
     "from %begin" => "à partir du %begin",
     "from %begin to %end" => "du %begin au %end",
     "Header Image (banner)" => "Image d'en-tête (bannière)",
-    "Horraires d'ouverture" => "Horaires d'ouverture",
     "Hours" => "Horaires",
     "Image file not found" => "Fichier image introuvable",
     "Keywords SEO" => "Mots-clés SEO",
@@ -272,4 +271,5 @@ return array(
     "What your customers see" => "Ce que voient vos clients",
     "When" => "Quand",
     "Whole day" => "Journée entière",
+    "Opening hours (free text)" => "Horaires d'ouverture (texte libre)",
 );
