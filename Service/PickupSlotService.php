@@ -6,17 +6,19 @@ namespace Dealer\Service;
 
 use Dealer\Model\DealerOrderPickupQuery;
 use Dealer\Model\DealerPickupConfig;
-use Dealer\Model\DealerPickupConfigQuery;
 use Dealer\Model\DealerQuery;
 use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
+use Propel\Runtime\ActiveQuery\Criteria;
+use Thelia\Model\OrderStatus;
 
 /**
  * Computes the pickup slots available for a dealer, applying its opening hours,
  * exceptional closures/openings (including unbounded weekly recurrence), the
  * preparation delay, the number of orderable days and the per-slot order quota.
  *
- * Fully self-contained inside the Dealer module: it reads only dealer_* tables.
+ * Fully self-contained inside the Dealer module: it reads only dealer_* tables
+ * (plus the order status, to free the quota held by cancelled orders).
  */
 class PickupSlotService
 {
@@ -24,6 +26,11 @@ class PickupSlotService
     private const MAX_DAYS_SCAN = 60;
 
     private const DEFAULT_TIMEZONE = 'Europe/Paris';
+
+    public function __construct(
+        private readonly DealerPickupConfigService $configService,
+    ) {
+    }
 
     /**
      * @return list<array{
@@ -34,7 +41,7 @@ class PickupSlotService
      */
     public function getAvailableSlots(int $dealerId, ?\DateTimeInterface $from = null): array
     {
-        $config = $this->getConfig($dealerId);
+        $config = $this->configService->get($dealerId);
         $tz = $this->timezoneFor($dealerId);
         $now = $from !== null
             ? \DateTimeImmutable::createFromInterface($from)->setTimezone($tz)
@@ -44,14 +51,22 @@ class PickupSlotService
         $schedules = DealerShedulesQuery::create()->filterByDealerId($dealerId)->find();
 
         $days = [];
-        $cursor = new \DateTimeImmutable($now->format('Y-m-d'));
+        $cursor = new \DateTimeImmutable($now->format('Y-m-d'), $tz);
         $scanned = 0;
+
+        // One query for the whole scan window: the quota already consumed on each slot.
+        $taken = $this->takenBySlot(
+            $dealerId,
+            $config,
+            $cursor,
+            $cursor->add(new \DateInterval('P' . self::MAX_DAYS_SCAN . 'D'))
+        );
 
         while (count($days) < $config->getOrderableDays() && $scanned < self::MAX_DAYS_SCAN) {
             $ranges = $this->resolveOpenRanges($schedules, $cursor);
 
             if ($ranges !== []) {
-                $slots = $this->buildSlots($dealerId, $cursor, $ranges, $config, $earliest, $tz);
+                $slots = $this->buildSlots($cursor, $ranges, $config, $earliest, $tz, $taken);
 
                 if ($slots !== []) {
                     $days[] = [
@@ -70,6 +85,82 @@ class PickupSlotService
     }
 
     /**
+     * Strict server-side re-validation of a chosen slot: it is valid only if the slot
+     * engine would offer it right now — same grid, same preparation delay, same
+     * orderable-days window, same remaining capacity. Rejects forged datetimes (past,
+     * off-grid, beyond the window) as well as slots that filled up in the meantime.
+     */
+    public function isSlotAvailable(int $dealerId, \DateTimeInterface $datetime): bool
+    {
+        $target = \DateTimeImmutable::createFromInterface($datetime)->format('Y-m-d H:i:s');
+        $targetDate = substr($target, 0, 10);
+
+        foreach ($this->getAvailableSlots($dealerId) as $day) {
+            if ($day['date'] !== $targetDate) {
+                continue;
+            }
+
+            foreach ($day['slots'] as $slot) {
+                if ($slot['datetime'] === $target) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Lax variant for back-office overrides: the slot only has to start inside an open
+     * range of its day (with room for a full slot). No preparation delay, no window, no
+     * capacity check — the administrator takes responsibility for those.
+     */
+    public function isSlotWithinOpeningHours(int $dealerId, \DateTimeInterface $datetime): bool
+    {
+        $moment = \DateTimeImmutable::createFromInterface($datetime);
+        $config = $this->configService->get($dealerId);
+
+        $schedules = DealerShedulesQuery::create()->filterByDealerId($dealerId)->find();
+        $ranges = $this->resolveOpenRanges($schedules, new \DateTimeImmutable($moment->format('Y-m-d')));
+        $duration = max(1, $config->getSlotDurationMinutes());
+        $slotStart = $moment->format('H:i:s');
+        $slotEnd = $moment->add(new \DateInterval('PT' . $duration . 'M'))->format('H:i:s');
+
+        foreach ($ranges as $range) {
+            if ($slotStart >= $range['begin'] && $slotEnd <= $range['end']) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Remaining capacity of one slot, quota-aware (null = unlimited). Cancelled and
+     * refunded orders do not consume the quota.
+     */
+    public function remainingCapacity(int $dealerId, \DateTimeInterface $slotStart): ?int
+    {
+        $maxPerSlot = $this->configService->get($dealerId)->getMaxOrdersPerSlot();
+
+        if ($maxPerSlot <= 0) {
+            return null;
+        }
+
+        $taken = DealerOrderPickupQuery::create()
+            ->filterByDealerId($dealerId)
+            ->filterByPickupDatetime($slotStart->format('Y-m-d H:i:s'))
+            ->useOrderQuery()
+                ->useOrderStatusQuery()
+                    ->filterByCode([OrderStatus::CODE_CANCELED, OrderStatus::CODE_REFUNDED], Criteria::NOT_IN)
+                ->endUse()
+            ->endUse()
+            ->count();
+
+        return max(0, $maxPerSlot - $taken);
+    }
+
+    /**
      * Resolve the effective open time ranges for a given date:
      * base weekly hours, minus closures (dated or unbounded weekly), plus exceptional openings.
      *
@@ -78,29 +169,11 @@ class PickupSlotService
      */
     private function resolveOpenRanges(iterable $schedules, \DateTimeImmutable $date): array
     {
-        $numDay = (int) $date->format('N') - 1;
-
-        // A schedule row applies on this date when it targets this weekday, OR targets no
-        // weekday (day = null: a period-only entry) and its period covers the date. Null period
-        // bounds are treated as open-ended, so filtering is done in PHP (SQL comparators would
-        // silently drop null bounds).
         $openings = [];
         $closures = [];
         foreach ($schedules as $row) {
-            if ($row->getRecurring()) {
-                $recurringDate = $row->getPeriodBegin();
-                if (!$recurringDate instanceof \DateTimeInterface
-                    || $recurringDate->format('m-d') !== $date->format('m-d')) {
-                    continue;
-                }
-            } else {
-                $day = $row->getDay();
-                if ($day !== null && (int) $day !== $numDay) {
-                    continue;
-                }
-                if (!$this->periodAppliesOn($row->getPeriodBegin(), $row->getPeriodEnd(), $date)) {
-                    continue;
-                }
+            if (!ScheduleApplicability::appliesOn($row, $date)) {
+                continue;
             }
             if ($row->getClosed()) {
                 $closures[] = $row;
@@ -129,18 +202,6 @@ class PickupSlotService
         }
 
         return $open;
-    }
-
-    /**
-     * Whether a schedule row's period covers the given date, treating a null bound as open-ended
-     * (null/null = unbounded weekly recurrence, applies every matching weekday).
-     */
-    private function periodAppliesOn(?\DateTimeInterface $begin, ?\DateTimeInterface $end, \DateTimeImmutable $date): bool
-    {
-        $day = $date->format('Y-m-d');
-
-        return (!$begin instanceof \DateTimeInterface || $begin->format('Y-m-d') <= $day)
-            && (!$end instanceof \DateTimeInterface || $end->format('Y-m-d') >= $day);
     }
 
     /**
@@ -218,15 +279,16 @@ class PickupSlotService
 
     /**
      * @param list<array{begin: string, end: string}> $ranges
+     * @param array<string, int> $taken orders already consuming each slot, keyed by 'Y-m-d H:i:s'
      * @return list<array{time: string, datetime: string, remaining: int|null}>
      */
     private function buildSlots(
-        int $dealerId,
         \DateTimeImmutable $date,
         array $ranges,
         DealerPickupConfig $config,
         \DateTimeImmutable $earliest,
-        \DateTimeZone $tz
+        \DateTimeZone $tz,
+        array $taken
     ): array {
         // Guard against a 0/negative duration that would make the loop below never progress.
         $step = new \DateInterval('PT' . max(1, $config->getSlotDurationMinutes()) . 'M');
@@ -244,7 +306,10 @@ class PickupSlotService
                 }
 
                 if ($slotStart >= $earliest) {
-                    $remaining = $this->remainingCapacity($dealerId, $slotStart, $maxPerSlot);
+                    $remaining = $maxPerSlot > 0
+                        ? max(0, $maxPerSlot - ($taken[$slotStart->format('Y-m-d H:i:s')] ?? 0))
+                        : null;
+
                     if ($remaining === null || $remaining > 0) {
                         $slots[] = [
                             'time' => $slotStart->format('H:i'),
@@ -262,20 +327,42 @@ class PickupSlotService
     }
 
     /**
-     * @return int|null null when the slot has no quota (unlimited), otherwise the remaining places
+     * Orders consuming quota on each slot of the scan window, in a single query.
+     * Cancelled and refunded orders are excluded: they release their slot.
+     *
+     * @return array<string, int> counts keyed by 'Y-m-d H:i:s'
      */
-    private function remainingCapacity(int $dealerId, \DateTimeImmutable $slotStart, int $maxPerSlot): ?int
-    {
-        if ($maxPerSlot <= 0) {
-            return null;
+    private function takenBySlot(
+        int $dealerId,
+        DealerPickupConfig $config,
+        \DateTimeImmutable $windowBegin,
+        \DateTimeImmutable $windowEnd
+    ): array {
+        if ($config->getMaxOrdersPerSlot() <= 0) {
+            return [];
         }
 
-        $taken = DealerOrderPickupQuery::create()
+        $datetimes = DealerOrderPickupQuery::create()
             ->filterByDealerId($dealerId)
-            ->filterByPickupDatetime($slotStart->format('Y-m-d H:i:s'))
-            ->count();
+            ->filterByPickupDatetime([
+                'min' => $windowBegin->format('Y-m-d 00:00:00'),
+                'max' => $windowEnd->format('Y-m-d 23:59:59'),
+            ])
+            ->useOrderQuery()
+                ->useOrderStatusQuery()
+                    ->filterByCode([OrderStatus::CODE_CANCELED, OrderStatus::CODE_REFUNDED], Criteria::NOT_IN)
+                ->endUse()
+            ->endUse()
+            ->select(['pickup_datetime'])
+            ->find();
 
-        return max(0, $maxPerSlot - $taken);
+        $taken = [];
+        foreach ($datetimes as $datetime) {
+            $key = substr((string) $datetime, 0, 19);
+            $taken[$key] = ($taken[$key] ?? 0) + 1;
+        }
+
+        return $taken;
     }
 
     /**
@@ -297,50 +384,5 @@ class PickupSlotService
         } catch (\Exception) {
             return new \DateTimeZone(self::DEFAULT_TIMEZONE);
         }
-    }
-
-    private function getConfig(int $dealerId): DealerPickupConfig
-    {
-        $config = DealerPickupConfigQuery::create()->findPk($dealerId);
-
-        if ($config === null) {
-            $config = (new DealerPickupConfig())
-                ->setDealerId($dealerId)
-                ->setPrepDelayMinutes(0)
-                ->setOrderableDays(7)
-                ->setSlotDurationMinutes(60)
-                ->setMaxOrdersPerSlot(0);
-        }
-
-        return $config;
-    }
-
-    /**
-     * Server-side re-validation of a chosen slot: it must start inside an open range for its day
-     * (with room for a full slot) and still have remaining capacity. Used to reject forged/stale
-     * choices at selection and before persisting the order pickup.
-     */
-    public function isSlotAvailable(int $dealerId, \DateTimeInterface $datetime): bool
-    {
-        $moment = \DateTimeImmutable::createFromInterface($datetime);
-        $config = $this->getConfig($dealerId);
-
-        if ($this->remainingCapacity($dealerId, $moment, $config->getMaxOrdersPerSlot()) === 0) {
-            return false;
-        }
-
-        $schedules = DealerShedulesQuery::create()->filterByDealerId($dealerId)->find();
-        $ranges = $this->resolveOpenRanges($schedules, new \DateTimeImmutable($moment->format('Y-m-d')));
-        $duration = max(1, $config->getSlotDurationMinutes());
-        $slotStart = $moment->format('H:i:s');
-        $slotEnd = $moment->add(new \DateInterval('PT' . $duration . 'M'))->format('H:i:s');
-
-        foreach ($ranges as $range) {
-            if ($slotStart >= $range['begin'] && $slotEnd <= $range['end']) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
