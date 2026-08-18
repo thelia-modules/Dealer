@@ -272,4 +272,5 @@ return array(
     "Whole day" => "Journée entière",
     "Opening hours (free text)" => "Horaires d'ouverture (texte libre)",
     "All other days" => "Tous les autres jours",
+    "NB: when they overlap, closures always take precedence over openings." => "NB : en cas de chevauchement, les fermetures priment toujours sur les ouvertures.",
 );

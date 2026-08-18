@@ -4,6 +4,13 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.5] - 2026-08-18
+
+### Added
+
+- A precedence note under the Exceptions header of the schedules tab: when they overlap,
+  closures always take precedence over openings.
+
 ## [4.0.4] - 2026-08-18
 
 ### Added
