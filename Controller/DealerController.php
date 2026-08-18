@@ -344,19 +344,25 @@ class DealerController extends BaseController
         $rows = \Dealer\Model\DealerContactQuery::create()
             ->filterByDealerId($dealerId)
             ->orderByIsDefault(\Propel\Runtime\ActiveQuery\Criteria::DESC)
+            ->joinWithI18n($locale)
             ->find();
 
+        $contactIds = [];
         /** @var \Dealer\Model\DealerContact $contact */
         foreach ($rows as $contact) {
-            $infos = [];
+            $contactIds[] = $contact->getId();
+        }
 
+        $infosByContactId = [];
+        if ($contactIds !== []) {
             $infoRows = \Dealer\Model\DealerContactInfoQuery::create()
-                ->filterByContactId($contact->getId())
+                ->filterByContactId($contactIds, \Propel\Runtime\ActiveQuery\Criteria::IN)
+                ->joinWithI18n($locale)
                 ->find();
 
             /** @var \Dealer\Model\DealerContactInfo $info */
             foreach ($infoRows as $info) {
-                $infos[] = [
+                $infosByContactId[$info->getContactId()][] = [
                     'id' => $info->getId(),
                     'contact_id' => $info->getContactId(),
                     'type' => $info->getContactType(),
@@ -364,12 +370,15 @@ class DealerController extends BaseController
                     'value' => $info->setLocale($locale)->getValue(),
                 ];
             }
+        }
 
+        /** @var \Dealer\Model\DealerContact $contact */
+        foreach ($rows as $contact) {
             $contacts[] = [
                 'id' => $contact->getId(),
                 'label' => $contact->setLocale($locale)->getLabel(),
                 'is_default' => (int) $contact->getIsDefault() === 1,
-                'infos' => $infos,
+                'infos' => $infosByContactId[$contact->getId()] ?? [],
             ];
         }
 

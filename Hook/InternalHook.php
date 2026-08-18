@@ -190,7 +190,7 @@ class InternalHook extends BaseHook
     {
         $locale = $this->getCurrentLocale();
         $rows = [];
-        foreach (ContentQuery::create()->find() as $content) {
+        foreach (ContentQuery::create()->joinWithI18n($locale)->find() as $content) {
             $rows[] = ['id' => $content->getId(), 'title' => $content->setLocale($locale)->getTitle()];
         }
 
@@ -204,7 +204,7 @@ class InternalHook extends BaseHook
     {
         $locale = $this->getCurrentLocale();
         $rows = [];
-        foreach (FolderQuery::create()->find() as $folder) {
+        foreach (FolderQuery::create()->joinWithI18n($locale)->find() as $folder) {
             $rows[] = ['id' => $folder->getId(), 'title' => $folder->setLocale($locale)->getTitle()];
         }
 
@@ -218,7 +218,7 @@ class InternalHook extends BaseHook
     {
         $locale = $this->getCurrentLocale();
         $rows = [];
-        foreach (BrandQuery::create()->find() as $brand) {
+        foreach (BrandQuery::create()->joinWithI18n($locale)->find() as $brand) {
             $rows[] = ['id' => $brand->getId(), 'title' => $brand->setLocale($locale)->getTitle()];
         }
 
