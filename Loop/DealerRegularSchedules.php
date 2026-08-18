@@ -71,8 +71,10 @@ class DealerRegularSchedules extends BaseLoop implements ArraySearchLoopInterfac
 
         $query = DealerShedulesQuery::create();
 
-        // this is the sql feature for regular schedule
-        $query->filterByPeriodNull();
+        // Regular schedules = the base weekly opening hours: not an exceptional entry,
+        // not a closure. The kind is carried by the `exception` column, not by the
+        // absence of a period.
+        $query->filterByException(false);
         $query->filterByClosed(false);
 
         if ($id = $this->getId()) {
@@ -127,7 +129,9 @@ class DealerRegularSchedules extends BaseLoop implements ArraySearchLoopInterfac
 
                     // if the next result has the same dates, same day, then concat the morning and afternoon hours
                     if (
-                        ($dealerSchedules[$i+1] !== null)
+                        // isset(): reading a missing offset of a Propel collection raises a
+                        // "Only variable references should be returned by reference" notice.
+                        isset($dealerSchedules[$i+1])
                         && ($dealerSchedules[$i]->getDay() == $dealerSchedules[$i+1]->getDay())
                         && ($dealerSchedules[$i]->getDealerId() == $dealerSchedules[$i+1]->getDealerId())
                     ) {

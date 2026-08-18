@@ -7,6 +7,12 @@ use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Flat dealer + weekly opening hours dump, with no consumer left in the module.
+ *
+ * @deprecated use the dealer loops for presentation, or PickupSlotService for the
+ *             effective opening of a date (this class ignores the exceptional entries)
+ */
 class DealerUtils
 {
     public function __construct(private readonly RequestStack $requestStack) {}
@@ -36,10 +42,18 @@ class DealerUtils
         return $dealers;
     }
 
+    /**
+     * The base weekly opening hours only, grouped by weekday: the exceptional entries
+     * (dated, periodic or yearly openings and closures) are out of reach of this format.
+     *
+     * @deprecated use PickupSlotService::getAvailableSlots() to know when a dealer is open
+     */
     public function getDealerSchedules($dealerId)
     {
         $scheduleModels = DealerShedulesQuery::create()
             ->filterByDealerId($dealerId)
+            ->filterByException(false)
+            ->filterByClosed(false)
             ->orderByDay()
             ->orderByBegin()
             ->find();

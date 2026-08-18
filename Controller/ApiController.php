@@ -11,6 +11,7 @@ namespace Dealer\Controller;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerContact;
 use Dealer\Model\DealerQuery;
+use Dealer\Model\DealerShedules;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\Map\TableMap;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -126,6 +127,8 @@ class ApiController extends BaseFrontController
     }
 
     /**
+     * The base weekly opening hours (exception = false).
+     *
      * @param Dealer $dealer
      * @return array
      */
@@ -133,12 +136,15 @@ class ApiController extends BaseFrontController
     {
         $return = [];
         foreach ($dealer->getDefaultSchedules() as $schedules) {
-            $return[] = $schedules->toArray(TableMap::TYPE_FIELDNAME);
+            $return[] = $this->formatSchedule($schedules);
         }
         return $return;
     }
 
     /**
+     * The exceptional entries (exception = true): dated or periodic openings and
+     * closures, including the yearly recurring ones.
+     *
      * @param Dealer $dealer
      * @return array
      */
@@ -146,9 +152,29 @@ class ApiController extends BaseFrontController
     {
         $return = [];
         foreach ($dealer->getExtraSchedules() as $schedules) {
-            $return[] = $schedules->toArray(TableMap::TYPE_FIELDNAME);
+            $return[] = $this->formatSchedule($schedules);
         }
         return $return;
+    }
+
+    /**
+     * Row payload of a schedule. The raw column dump is kept as is for backward
+     * compatibility; `closed`, `exception`, `recurring` and `title` are pinned
+     * explicitly so a consumer can tell an opening from a closure and a yearly
+     * recurrence from a dated one whatever the model exposes.
+     *
+     * @return array
+     */
+    protected function formatSchedule(DealerShedules $schedule)
+    {
+        $dataRow = $schedule->toArray(TableMap::TYPE_FIELDNAME);
+
+        $dataRow["closed"] = (bool) $schedule->getClosed();
+        $dataRow["exception"] = (bool) $schedule->getException();
+        $dataRow["recurring"] = (bool) $schedule->getRecurring();
+        $dataRow["title"] = $schedule->getTitle();
+
+        return $dataRow;
     }
 
     /**
