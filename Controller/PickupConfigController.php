@@ -6,6 +6,7 @@ namespace Dealer\Controller;
 
 use Dealer\Dealer;
 use Dealer\Service\DealerPickupConfigService;
+use Propel\Runtime\Propel;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -13,6 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
+use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 
@@ -36,15 +38,32 @@ class PickupConfigController extends BaseAdminController
             $validatedForm = $this->validateForm($form, 'POST');
             $data = $validatedForm->getData();
 
-            $configService->save(
-                (int) $data['dealer_id'],
-                (int) $data['prep_delay_minutes'],
-                (int) $data['orderable_days'],
-                (int) $data['slot_duration_minutes'],
-                (int) $data['max_orders_per_slot'],
-            );
+            // Config and timezone are edited together: one transaction, both or none.
+            $con = Propel::getConnection();
+            $con->beginTransaction();
 
-            $configService->saveTimezone((int) $data['dealer_id'], (string) $data['timezone']);
+            try {
+                $configService->save(
+                    (int) $data['dealer_id'],
+                    (int) $data['prep_delay_minutes'],
+                    (int) $data['orderable_days'],
+                    (int) $data['slot_duration_minutes'],
+                    (int) $data['max_orders_per_slot'],
+                );
+
+                $configService->saveTimezone((int) $data['dealer_id'], (string) $data['timezone']);
+
+                $con->commit();
+            } catch (\Throwable $transactionError) {
+                $con->rollBack();
+
+                throw $transactionError;
+            }
+
+            $request->getSession()->getFlashBag()->add(
+                'dealer_success',
+                Translator::getInstance()->trans('The pickup settings have been saved.', [], Dealer::MESSAGE_DOMAIN)
+            );
 
             return $this->redirectToDealer((int) $data['dealer_id']);
         } catch (FormValidationException $ex) {

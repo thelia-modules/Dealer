@@ -13,6 +13,7 @@
 
 namespace Dealer\EventListener;
 
+use Dealer\Dealer;
 use Dealer\Event\DealerEvent;
 use Dealer\Event\DealerEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,6 +26,8 @@ use Thelia\Log\Tlog;
  */
 class DealerListener implements EventSubscriberInterface
 {
+    const CONFIG_GOOGLE_API_KEY = "google_api_key";
+    const GEOCODE_TIMEOUT = 3;
 
     /**
      * @inheritdoc
@@ -37,8 +40,14 @@ class DealerListener implements EventSubscriberInterface
     }
 
     public function updateGeo(DealerEvent $event){
-            $this->generateCoordinate($event);
-            $event->getDealer()->save();
+            $dealer = $event->getDealer();
+            if (0.0 !== (float)$dealer->getLatitude() || 0.0 !== (float)$dealer->getLongitude()) {
+                return;
+            }
+
+            if ($this->generateCoordinate($event)) {
+                $dealer->save();
+            }
     }
 
     /**
@@ -67,30 +76,61 @@ class DealerListener implements EventSubscriberInterface
     {
         $url = "https://maps.googleapis.com/maps/api/geocode/json?";
         $url .= "address=" . $this->generateAddress($event);
+        if ($apiKey = Dealer::getConfigValue(self::CONFIG_GOOGLE_API_KEY)) {
+            $url .= "&key=" . urlencode($apiKey);
+        }
         return $url;
     }
 
     /**
      * Get create|update event from Dealer to insert lat/lon param
      * @param DealerEvent $event
+     * @return bool true if coordinates have been set on the dealer
      */
     public function generateCoordinate(DealerEvent $event)
     {
-        if ($url = $this->generateGoogleRequest($event)) {
-            try {
-                $response = file_get_contents($url);
-                if ($response) {
-                    $jsonEncoder = new JsonEncoder();
-                    $data = $jsonEncoder->decode($response, JsonEncoder::FORMAT);
-                    if(isset($data["status"]) && strcmp($data["status"],"OK") == 0){
-                        $loc = $data["results"][0]["geometry"]["location"];
-                        $event->getDealer()->setLatitude($loc["lat"]);
-                        $event->getDealer()->setLongitude($loc["lng"]);
-                    }
-                }
-            } catch (\ErrorException $ex) {
-                Tlog::getInstance()->error("DEALER GOOGLE MAP : " . $ex->getMessage());
+        if (!$url = $this->generateGoogleRequest($event)) {
+            return false;
+        }
+
+        try {
+            $context = stream_context_create([
+                "http" => [
+                    "method" => "GET",
+                    "timeout" => self::GEOCODE_TIMEOUT,
+                ],
+            ]);
+
+            $response = @file_get_contents($url, false, $context);
+            if (!$response) {
+                Tlog::getInstance()->addWarning("DEALER GOOGLE MAP : no response from geocoding service");
+
+                return false;
             }
+
+            $jsonEncoder = new JsonEncoder();
+            $data = $jsonEncoder->decode($response, JsonEncoder::FORMAT);
+            if (!isset($data["status"]) || strcmp($data["status"], "OK") != 0) {
+                Tlog::getInstance()->addWarning("DEALER GOOGLE MAP : geocoding refused (" . ($data["status"] ?? "no status") . ")");
+
+                return false;
+            }
+
+            $loc = $data["results"][0]["geometry"]["location"] ?? [];
+            if (!isset($loc["lat"], $loc["lng"])) {
+                Tlog::getInstance()->addWarning("DEALER GOOGLE MAP : no location in geocoding response");
+
+                return false;
+            }
+
+            $event->getDealer()->setLatitude($loc["lat"]);
+            $event->getDealer()->setLongitude($loc["lng"]);
+
+            return true;
+        } catch (\Throwable $ex) {
+            Tlog::getInstance()->addWarning("DEALER GOOGLE MAP : " . $ex->getMessage());
+
+            return false;
         }
     }
 

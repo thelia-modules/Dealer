@@ -64,20 +64,3 @@ form_action         = {token_url path='/admin/module/Dealer/schedules/delete'}
 
 {* Duplicate Modal *}
 
-{form name="dealer-schedules_clone"}
-{capture "schedules_clone"}
-    {include file="form/dealer-schedules-clone.html" form_name="dealer-schedules_clone"}
-{/capture}
-
-    {include file="includes/generic-create-dialog.html"
-
-    dialog_id       = "dealer-schedules-clone"
-    dialog_title    = {intl l="Clone a schedules" d="dealer.bo.default"}
-    dialog_body     = {$smarty.capture.schedules_clone nofilter}
-dialog_ok_label     = {intl l="Clone"}
-dialog_cancel_label = {intl l="Cancel"}
-
-form_action        = {url path="admin/module/Dealer/schedules/clone"}
-form_enctype       = {form_enctype form=$form}
-}
-{/form}

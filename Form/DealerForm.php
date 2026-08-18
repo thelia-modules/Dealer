@@ -132,14 +132,22 @@ class DealerForm extends BaseForm
 
     protected function getCountries()
     {
-        $countries = CountryQuery::create()->find();
+        $locale = $this->getLocale();
+        $countries = CountryQuery::create()->joinWithI18n($locale)->find();
         $retour = [];
         /** @var Country $country */
         foreach ($countries as $country) {
-            $retour[$country->getTitle()] = $country->getId();
+            $retour[$country->setLocale($locale)->getTitle()] = $country->getId();
         }
 
         return $retour;
+    }
+
+    protected function getLocale(): string
+    {
+        $session = $this->request->hasSession() ? $this->request->getSession() : null;
+
+        return $session?->getLang()?->getLocale() ?? 'en_US';
     }
 
     public static function getName(): string

@@ -16,6 +16,7 @@ namespace Dealer\Loop;
 use Dealer\Dealer;
 use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
+use Dealer\Model\Map\DealerShedulesTableMap;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
@@ -46,11 +47,16 @@ class DealerSchedules extends BaseLoop implements PropelSearchLoopInterface
                 ->set('ID', $schedules->getId())
                 ->set('DEALER_ID', $schedules->getDealerId())
                 ->set('DAY', $schedules->getDay())
-                ->set('DAY_LABEL', $this->getDayLabel($schedules->getDay()))
+                // An exceptional entry may target a date without any weekday.
+                ->set('DAY_LABEL', $schedules->getDay() === null ? null : $this->getDayLabel($schedules->getDay()))
                 ->set('BEGIN', $schedules->getBegin())
                 ->set('END', $schedules->getEnd())
                 ->set('PERIOD_BEGIN', $schedules->getPeriodBegin())
-                ->set('PERIOD_END', $schedules->getPeriodEnd());
+                ->set('PERIOD_END', $schedules->getPeriodEnd())
+                ->set('CLOSED', $schedules->getClosed())
+                ->set('EXCEPTION', $schedules->getException())
+                ->set('RECURRING', $schedules->getRecurring())
+                ->set('TITLE', $schedules->getTitle());
 
 
             $loopResult->addRow($loopResultRow);
@@ -128,12 +134,29 @@ class DealerSchedules extends BaseLoop implements PropelSearchLoopInterface
             $query->filterByDealerId($dealer_id);
         }
 
+        // default_period selects the base weekly hours, its opposite the exceptional
+        // entries: the distinction is carried by the `exception` column, not by the
+        // presence of a period (an exceptional entry may have no period bound at all).
         if ($this->getDefaultPeriod()) {
-            $query->filterByPeriodNull();
+            $query->filterByException(false);
         } else {
-            $query->filterByPeriodNotNull();
+            $query->filterByException(true);
             if ($this->getHidePast()) {
-                $query->filterByPeriodEnd(new \DateTime(), Criteria::GREATER_THAN);
+                // An entry is still relevant when its period has no end (open-ended) or
+                // when it recurs every year; only dated entries already over are hidden.
+                $query
+                    ->condition(
+                        'period_end_future',
+                        DealerShedulesTableMap::COL_PERIOD_END . ' >= ?',
+                        (new \DateTime())->format('Y-m-d'),
+                        \PDO::PARAM_STR
+                    )
+                    ->condition('period_end_open', DealerShedulesTableMap::COL_PERIOD_END . ' ' . Criteria::ISNULL)
+                    ->condition('period_recurring', DealerShedulesTableMap::COL_RECURRING . ' = ?', true, \PDO::PARAM_BOOL)
+                    ->combine(
+                        ['period_end_future', 'period_end_open', 'period_recurring'],
+                        Criteria::LOGICAL_OR
+                    );
             }
         }
 

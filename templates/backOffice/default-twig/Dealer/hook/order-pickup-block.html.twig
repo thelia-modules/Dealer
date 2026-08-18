@@ -1,6 +1,8 @@
 {% set dealer_pickup = dealer_order_pickup(order_id) %}
 {% if dealer_pickup %}
     {% include 'Dealer/hook/order-pickup.html.twig' with {
+        order_id: order_id,
+        dealer_id: dealer_pickup.dealer_id,
         dealer_title: dealer_pickup.dealer_title,
         dealer_address: dealer_pickup.dealer_address,
         pickup_datetime: dealer_pickup.datetime,

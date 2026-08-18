@@ -18,11 +18,9 @@ use Dealer\Event\DealerEvents;
 use Dealer\Event\DealerSchedulesEvent;
 use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
-use Dealer\Model\Map\DealerShedulesTableMap;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Symfony\Component\EventDispatcher\Event;
 use Thelia\Core\Event\ActionEvent;
 use Thelia\Core\Translation\Translator;
 
@@ -57,69 +55,119 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
     }
 
     /**
-     * Ensure a timed slot closes after it opens and does not overlap another slot
-     * of the same day sharing the same period and open/closed nature.
+     * Full consistency check of a schedule row: time range, period range, recurrence
+     * prerequisites, and real calendar overlap detection against the other opening
+     * entries of the dealer (whatever their period or recurrence mode).
      *
-     * @throws \RuntimeException when the slot is invalid
+     * Overlaps are only rejected between entries of the same kind (base vs base,
+     * exceptional opening vs exceptional opening): an exceptional opening overlapping
+     * the base hours is a legitimate extension, and closures are subtractive so they
+     * cannot conflict.
+     *
+     * @throws \RuntimeException when the entry is invalid
      */
     protected function assertValidSchedule(DealerShedules $schedule): void
     {
+        $translator = Translator::getInstance();
         $begin = $schedule->getBegin();
         $end = $schedule->getEnd();
+        $hasBegin = $begin instanceof \DateTimeInterface;
+        $hasEnd = $end instanceof \DateTimeInterface;
+        $isClosed = (bool) $schedule->getClosed();
 
-        // Full-day rows (no explicit hours) carry no time range to validate.
-        if (!$begin instanceof \DateTimeInterface || !$end instanceof \DateTimeInterface) {
-            return;
-        }
-
-        $beginStr = $begin->format('H:i:s');
-        $endStr = $this->normalizeEndTime($end->format('H:i:s'));
-
-        if ($endStr <= $beginStr) {
+        // Only a closure may omit its hours (it then closes the whole day). An opening
+        // without hours would be silently ignored by the slot engine.
+        if ((!$hasBegin || !$hasEnd) && (!$isClosed || $hasBegin !== $hasEnd)) {
             throw new \RuntimeException(
-                Translator::getInstance()->trans(
-                    'The end time (%end) must be after the begin time (%begin).',
-                    ['%begin' => $begin->format('H:i'), '%end' => $end->format('H:i')],
+                $translator->trans(
+                    'An opening entry must define both a begin and an end time.',
+                    [],
                     Dealer::MESSAGE_DOMAIN
                 )
             );
         }
 
+        if ($hasBegin && $hasEnd) {
+            $beginStr = $begin->format('H:i:s');
+            $endStr = $this->normalizeEndTime($end->format('H:i:s'));
+
+            if ($endStr <= $beginStr) {
+                throw new \RuntimeException(
+                    $translator->trans(
+                        'The end time (%end) must be after the begin time (%begin).',
+                        ['%begin' => $begin->format('H:i'), '%end' => $end->format('H:i')],
+                        Dealer::MESSAGE_DOMAIN
+                    )
+                );
+            }
+        }
+
         $periodBegin = $schedule->getPeriodBegin();
         $periodEnd = $schedule->getPeriodEnd();
-        $isRecurring = (bool) $schedule->getRecurring();
 
+        if ($periodBegin instanceof \DateTimeInterface && $periodEnd instanceof \DateTimeInterface
+            && $periodEnd->format('Y-m-d') < $periodBegin->format('Y-m-d')) {
+            throw new \RuntimeException(
+                $translator->trans(
+                    'The period end date (%end) must not be before its begin date (%begin).',
+                    ['%begin' => $periodBegin->format('Y-m-d'), '%end' => $periodEnd->format('Y-m-d')],
+                    Dealer::MESSAGE_DOMAIN
+                )
+            );
+        }
+
+        if ($schedule->getRecurring() && !$periodBegin instanceof \DateTimeInterface) {
+            throw new \RuntimeException(
+                $translator->trans('A yearly recurring entry requires a date.', [], Dealer::MESSAGE_DOMAIN)
+            );
+        }
+
+        if (!$schedule->getException() && $schedule->getDay() === null) {
+            // A base row with no weekday would silently apply every single day.
+            throw new \RuntimeException(
+                $translator->trans('Base opening hours must target a weekday.', [], Dealer::MESSAGE_DOMAIN)
+            );
+        }
+
+        if ($schedule->getException()
+            && $schedule->getDay() === null
+            && !$periodBegin instanceof \DateTimeInterface
+            && !$periodEnd instanceof \DateTimeInterface) {
+            // Such an entry would apply on every single date — a closure created this
+            // way would silently shut the store down for ever.
+            throw new \RuntimeException(
+                $translator->trans(
+                    'An exceptional entry must target a date, a period or a weekday.',
+                    [],
+                    Dealer::MESSAGE_DOMAIN
+                )
+            );
+        }
+
+        if (!$isClosed && $hasBegin && $hasEnd) {
+            $this->assertNoOpeningOverlap($schedule, $beginStr, $endStr);
+        }
+    }
+
+    /**
+     * Reject an opening entry whose time range overlaps another opening entry of the
+     * same kind on at least one real calendar date. Same-kind pairs are compared on
+     * their concrete applicability (weekday, period, recurrence) over a bounded
+     * horizon, so a dated exception is caught against a weekly or yearly one.
+     */
+    private function assertNoOpeningOverlap(DealerShedules $schedule, string $beginStr, string $endStr): void
+    {
         $query = DealerShedulesQuery::create()
             ->filterByDealerId($schedule->getDealerId())
-            ->filterByDay($schedule->getDay())
-            ->filterByClosed($schedule->getClosed());
-
-        if ($isRecurring) {
-            // Recurring entries collide by month/day, whatever year is stored.
-            $query->filterByRecurring(1);
-        } else {
-            $query
-                ->filterByRecurring(0)
-                ->filterByPeriodBegin($periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null)
-                ->filterByPeriodEnd($periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null);
-        }
+            ->filterByClosed(0)
+            ->filterByException($schedule->getException());
 
         if ($schedule->getId()) {
             $query->filterById($schedule->getId(), Criteria::NOT_EQUAL);
         }
 
-        $recurringMonthDay = $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('m-d') : null;
-
         /** @var DealerShedules $existing */
         foreach ($query->find() as $existing) {
-            if ($isRecurring) {
-                $existingBeginDate = $existing->getPeriodBegin();
-                if (!$existingBeginDate instanceof \DateTimeInterface
-                    || $existingBeginDate->format('m-d') !== $recurringMonthDay) {
-                    continue;
-                }
-            }
-
             $existingBegin = $existing->getBegin();
             $existingEnd = $existing->getEnd();
 
@@ -127,23 +175,74 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
                 continue;
             }
 
-            // Two ranges overlap when each starts before the other ends.
-            if ($beginStr < $this->normalizeEndTime($existingEnd->format('H:i:s'))
-                && $existingBegin->format('H:i:s') < $endStr) {
-                throw new \RuntimeException(
-                    Translator::getInstance()->trans(
-                        'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd).',
-                        [
-                            '%begin' => $begin->format('H:i'),
-                            '%end' => $end->format('H:i'),
-                            '%exBegin' => $existingBegin->format('H:i'),
-                            '%exEnd' => $existingEnd->format('H:i'),
-                        ],
+            // Two time ranges overlap when each starts before the other ends.
+            if ($beginStr >= $this->normalizeEndTime($existingEnd->format('H:i:s'))
+                || $existingBegin->format('H:i:s') >= $endStr) {
+                continue;
+            }
+
+            $conflictDate = $this->firstCommonDate($schedule, $existing);
+
+            if ($conflictDate === null) {
+                continue;
+            }
+
+            $parameters = [
+                '%begin' => $schedule->getBegin()->format('H:i'),
+                '%end' => $schedule->getEnd()->format('H:i'),
+                '%exBegin' => $existingBegin->format('H:i'),
+                '%exEnd' => $existingEnd->format('H:i'),
+                '%date' => $conflictDate->format('d/m/Y'),
+            ];
+
+            throw new \RuntimeException(
+                $schedule->getException()
+                    ? Translator::getInstance()->trans(
+                        'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd) on %date.',
+                        $parameters,
                         Dealer::MESSAGE_DOMAIN
                     )
-                );
+                    : Translator::getInstance()->trans(
+                        'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd).',
+                        $parameters,
+                        Dealer::MESSAGE_DOMAIN
+                    )
+            );
+        }
+    }
+
+    /**
+     * First calendar date on which both entries apply, scanned from today over a bounded
+     * horizon (one year, extended to the latest concrete period bound, capped at three
+     * years). Base rows repeat weekly for ever, so any same-weekday pair matches fast;
+     * null means the two applicabilities never meet within the horizon.
+     */
+    private function firstCommonDate(DealerShedules $a, DealerShedules $b): ?\DateTimeImmutable
+    {
+        $cursor = new \DateTimeImmutable('today');
+        $horizon = $cursor->add(new \DateInterval('P1Y'));
+
+        foreach ([$a->getPeriodEnd(), $b->getPeriodEnd(), $a->getPeriodBegin(), $b->getPeriodBegin()] as $bound) {
+            if ($bound instanceof \DateTimeInterface && $bound->format('Y-m-d') > $horizon->format('Y-m-d')) {
+                // A period starting beyond the default horizon must still be scanned:
+                // give it a year of room past its begin date.
+                $horizon = \DateTimeImmutable::createFromInterface($bound)->add(new \DateInterval('P1Y'));
             }
         }
+
+        $cap = $cursor->add(new \DateInterval('P3Y'));
+        if ($horizon > $cap) {
+            $horizon = $cap;
+        }
+
+        while ($cursor <= $horizon) {
+            if (ScheduleApplicability::appliesOn($a, $cursor) && ScheduleApplicability::appliesOn($b, $cursor)) {
+                return $cursor;
+            }
+            $cursor = $cursor->add(new \DateInterval('P1D'));
+        }
+
+        return null;
     }
 
     protected function deleteProcess(ActionEvent $event)
@@ -184,9 +283,15 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         return $event->getDealerSchedules();
     }
 
-    public function deleteFromId($id)
+    public function deleteFromId($id, ?int $dealerId = null)
     {
-        $dealer = DealerShedulesQuery::create()->findOneById($id);
+        $query = DealerShedulesQuery::create()->filterById($id);
+
+        if ($dealerId !== null) {
+            $query->filterByDealerId($dealerId);
+        }
+
+        $dealer = $query->findOne();
 
         if ($dealer) {
             $event = new DealerSchedulesEvent();
@@ -201,9 +306,13 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         $model = new DealerShedules();
 
         if (isset($data['id'])) {
-            $dealer = DealerShedulesQuery::create()->findOneById($data['id']);
-            if ($dealer) {
-                $model = $dealer;
+            $model = DealerShedulesQuery::create()->findOneById($data['id']);
+
+            if ($model === null) {
+                // Updating a row deleted meanwhile must fail, not silently create one.
+                throw new \RuntimeException(
+                    Translator::getInstance()->trans('This schedule entry no longer exists.', [], Dealer::MESSAGE_DOMAIN)
+                );
             }
         }
 
@@ -216,40 +325,50 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
                 $model->setDay((int) $day);
             }
         }
-        if (isset($data['begin'])) {
-            $model->setBegin($data['begin']);
-        }
-        if (isset($data['end'])) {
-            $model->setEnd($data['end']);
-        }
-        if (isset($data['period_begin'])) {
-            $model->setPeriodBegin($data['period_begin']);
-        }
-        if (isset($data['period_end'])) {
-            $model->setPeriodEnd($data['period_end']);
+        // Posted keys always win, an empty value clearing the column: this is what lets
+        // the back-office turn a partial closure into a full-day one, or remove a period.
+        foreach (['begin', 'end', 'period_begin', 'period_end'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $setter = 'set' . str_replace('_', '', ucwords($field, '_'));
+                $model->$setter($data[$field] !== '' ? $data[$field] : null);
+            }
         }
         if (isset($data['dealer_id'])) {
+            if ($model->getDealerId() !== null && (int) $data['dealer_id'] !== (int) $model->getDealerId()) {
+                // A schedule entry never moves between dealers.
+                throw new \RuntimeException(
+                    Translator::getInstance()->trans('This schedule entry belongs to another dealer.', [], Dealer::MESSAGE_DOMAIN)
+                );
+            }
             $model->setDealerId($data['dealer_id']);
         }
         if (isset($data['closed'])) {
-            $model->setClosed($data['closed']);
+            $model->setClosed((bool) $data['closed']);
         }
         if (array_key_exists('recurring', $data)) {
             $model->setRecurring((bool) $data['recurring']);
+        }
+        if (array_key_exists('exception', $data)) {
+            $model->setException((bool) $data['exception']);
         }
         if (array_key_exists('title', $data)) {
             $model->setTitle($data['title'] !== '' ? $data['title'] : null);
         }
 
-
         return $model;
     }
 
+    /*
+     * -----------------------------------------------------------------------------------
+     * Deprecated adapters kept for the legacy Smarty front. They expose day and hour
+     * arrays built from the very same rules as PickupSlotService (base weekly hours,
+     * minus the closures, plus the exceptional openings, yearly recurrence and
+     * open-ended periods included), without its slot grid, preparation delay or quotas.
+     * -----------------------------------------------------------------------------------
+     */
+
     /**
-     * TODO: this legacy day/hour resolution engine is NOT recurring-aware (it ignores the
-     * `recurring` column) and duplicates PickupSlotService. Its only caller is the
-     * GrandPanierBio Smarty plugin, unused by the active flexy front. Migrate that caller to
-     * PickupSlotService (which handles recurrence) and remove these methods.
+     * @deprecated use PickupSlotService::getAvailableSlots()
      *
      * @param $idDealer
      * @param $dateStart
@@ -260,24 +379,40 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
      */
     public function getOpenDays($idDealer, $dateStart, $numberMaxDays, $hardOnly = false)
     {
+        // One query for the whole scan: applicability is then resolved in PHP, date by date.
+        $schedules = DealerShedulesQuery::create()->filterByDealerId($idDealer)->find();
+
+        $date = $this->toDate($dateStart);
         $days = [];
-        $i = 0;
+        $scanned = 0;
 
-        while ($i < self::MAX_DAYS_SEARCH && count($days) < $numberMaxDays) {
+        while ($scanned < self::MAX_DAYS_SEARCH && count($days) < $numberMaxDays) {
+            if ($this->openRangesOn($schedules, $date) !== []) {
+                $numDay = (int) $date->format('N') - 1;
+                $hardHours = $this->hourGridOn($schedules, $date, $numDay, (bool) $hardOnly);
 
-
-            if (null !== $day = $this->findOpenDay($idDealer, $dateStart)) {
-                $day['hardHours'] = $this->findHardHours($idDealer, $day['num_day'], $day['date'], $hardOnly);
-                $day['hours'] = $this->findOpenHours($idDealer, $day['num_day'], $day['date'], $day['hardHours']);
-                $days[] = $day;
+                $days[] = [
+                    'date' => $date->format('Y-m-d'),
+                    'day' => $date->format('l'),
+                    'num_day' => $numDay,
+                    'hardHours' => $hardHours,
+                    'hours' => $this->openHoursOn($schedules, $date, $hardHours),
+                ];
             }
-            $dateStart->add(new \DateInterval('P1D'));
-            $i++;
+
+            $date = $date->add(new \DateInterval('P1D'));
+            ++$scanned;
         }
+
         return $days;
     }
 
     /**
+     * A day is open as soon as one open time range survives the closures of that date,
+     * base hours and exceptional openings taken together.
+     *
+     * @deprecated use PickupSlotService::getAvailableSlots()
+     *
      * @param $idDealer
      * @param $dateDay
      * @return array|null
@@ -285,90 +420,26 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
      */
     public function findOpenDay($idDealer, $dateDay)
     {
-        $numDay = $dateDay->format('N') - 1;
+        $schedules = DealerShedulesQuery::create()->filterByDealerId($idDealer)->find();
+        $date = $this->toDate($dateDay);
 
-        DealerShedulesTableMap::clearInstancePool();
-
-        // Recherche des ouverture classique pour un jour donné
-        $shedules = DealerShedulesQuery::create()
-            ->filterByDealerId($idDealer)
-            ->filterByDay($numDay)
-            ->filterByPeriodNull()
-            ->filterByClosed(0)
-            ->find();
-
-        $days = $shedules->getData();
-
-        if (count($days) > 0) {
-            DealerShedulesTableMap::clearInstancePool();
-            // Recherche des fermetures exeptionnelles pour un jour donné et une date donnée
-            $shedulesClosed = DealerShedulesQuery::create()
-                ->filterByDealerId($idDealer)
-                ->filterByDay($numDay)
-                ->filterByClosed(1)
-                ->filterByPeriodBegin($dateDay, Criteria::LESS_EQUAL)
-                ->filterByPeriodEnd($dateDay, Criteria::GREATER_EQUAL)
-                ->find();
-
-            $daysclosed = $shedulesClosed->getData();
-
-            if (count($daysclosed) == 0) {
-                return [
-                    'date' => $dateDay->format('Y-m-d'),
-                    'day' => $dateDay->format('l'),
-                    'num_day' => $dateDay->format('N') - 1
-                ];
-            }
-
-            //on calcule le nombre d'heure dispo par rapport au nombre d'heure prevu
-            $cptHourClassic = 0;
-            $cptHourExep = 0;
-            /** @var DealerShedules $shedule */
-            foreach ($shedules as $shedule) {
-                $tot = date_diff($shedule->getEnd(), $shedule->getBegin());
-
-                $cptHourClassic += $tot->format('%h');
-            }
-            /** @var DealerShedules $daysclose */
-            foreach ($daysclosed as $daysclose) {
-                $tot = date_diff($daysclose->getEnd(), $daysclose->getBegin());
-
-                $cptHourExep += $tot->format('%h');
-            }
-            if ($cptHourExep < $cptHourClassic) {
-                return [
-                    'date' => $dateDay->format('Y-m-d'),
-                    'day' => $dateDay->format('l'),
-                    'num_day' => $dateDay->format('N') - 1
-                ];
-            }
+        if ($this->openRangesOn($schedules, $date) === []) {
             return null;
         }
 
-        DealerShedulesTableMap::clearInstancePool();
-        // Recherche des ouvertures exeptionnelles pour un jour donné et une date donnée
-        $shedulesOpen = DealerShedulesQuery::create()
-            ->filterByDealerId($idDealer)
-            ->filterByDay($numDay)
-            ->filterByClosed(0)
-            ->filterByPeriodBegin($dateDay, Criteria::LESS_EQUAL)
-            ->filterByPeriodEnd($dateDay, Criteria::GREATER_EQUAL)
-            ->find();
-
-        $daysOpen = $shedulesOpen->getData();
-
-        if (0 != count($daysOpen)) {
-            //une ouverture a été trouvée on prend le jour en question
-            return [
-                'date' => $dateDay->format('Y-m-d'),
-                'day' => $dateDay->format('l'),
-                'num_day' => $dateDay->format('N') - 1
-            ];
-        }
-        return null;
+        return [
+            'date' => $date->format('Y-m-d'),
+            'day' => $date->format('l'),
+            'num_day' => (int) $date->format('N') - 1,
+        ];
     }
 
     /**
+     * Hourly grid of the base opening hours of a weekday, plus the exceptional openings
+     * of $date unless only the hard hours are wanted.
+     *
+     * @deprecated use PickupSlotService::getAvailableSlots()
+     *
      * @param $idDealer
      * @param $numDay
      * @param null $date
@@ -378,110 +449,254 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
      */
     public function findHardHours($idDealer, $numDay, $date = null, $harOnly = false)
     {
-        DealerShedulesTableMap::clearInstancePool();
+        $schedules = DealerShedulesQuery::create()->filterByDealerId($idDealer)->find();
 
-        $shedulesHardDay = DealerShedulesQuery::create()
-            ->filterByDealerId($idDealer)
-            ->filterByDay($numDay)
-            ->filterByPeriodBegin(null)
-            ->filterByPeriodEnd(null)
-            ->find();
-
-        $tabHardHours = [];
-
-        /** @var DealerShedules $range */
-        foreach ($shedulesHardDay->getData() as $range) {
-            $h = $range->getBegin();
-            while ($h <= $range->getEnd()) {
-                $tabHardHours[] = $h->format('H:i:s');
-                $h->add(new \DateInterval('PT1H'));
-            }
-        }
-
-        if ($harOnly === false && $date !== null) {
-            DealerShedulesTableMap::clearInstancePool();
-            $shedulesExpt = DealerShedulesQuery::create()
-                ->filterByDealerId($idDealer)
-                ->filterByDay($numDay)
-                ->filterByClosed(0)
-                ->filterByPeriodBegin($date, Criteria::LESS_EQUAL)
-                ->filterByPeriodEnd($date, Criteria::GREATER_EQUAL)
-                ->find();
-
-            /** @var DealerShedules $sheduleExpt */
-            foreach ($shedulesExpt as $sheduleExpt) {
-                $h = $sheduleExpt->getBegin();
-                while ($h <= $sheduleExpt->getEnd()) {
-                    $htemp = $h->format('H:i:s');
-                    if (!in_array($htemp, $tabHardHours)) {
-                        $tabHardHours[] = $htemp;
-                    }
-                    $h->add(new \DateInterval('PT1H'));
-                }
-            }
-        }
-
-        return $tabHardHours;
+        return $this->hourGridOn(
+            $schedules,
+            $date === null ? null : $this->toDate($date),
+            (int) $numDay,
+            (bool) $harOnly
+        );
     }
 
     /**
+     * The hours of $date really open: the grid received, minus the closures, plus the
+     * exceptional openings (which therefore win over a partial closure).
+     *
+     * $numDay is kept for signature compatibility only: the weekday is read from $date.
+     *
+     * @deprecated use PickupSlotService::getAvailableSlots()
+     *
      * @param $idDealer
      * @param $numDay
      * @param $date
-     * @param null $delay
+     * @param $hardHours
      * @return array
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public
-    function findOpenHours(
+    public function findOpenHours(
         $idDealer,
         $numDay,
         $date,
         $hardHours
     ) {
-        DealerShedulesTableMap::clearInstancePool();
+        $schedules = DealerShedulesQuery::create()->filterByDealerId($idDealer)->find();
 
-        $shedulesExpt = DealerShedulesQuery::create()
-            ->filterByDealerId($idDealer)
-            ->filterByDay($numDay)
-            ->filterByPeriodBegin($date, Criteria::LESS_EQUAL)
-            ->filterByPeriodEnd($date, Criteria::GREATER_EQUAL)
-            ->find();
+        return $this->openHoursOn($schedules, $this->toDate($date), (array) $hardHours);
+    }
 
-        $excludeHours = [];
-        $exeptionOpenHour = [];
+    /**
+     * Effective open time ranges of a date: base hours and exceptional openings, minus
+     * the closures (a closure without hours closes the whole day). Same rules as
+     * PickupSlotService::resolveOpenRanges(), deliberately duplicated so these adapters
+     * stay independent from the slot engine and its configuration.
+     *
+     * Overlapping openings are not merged: subtracting a closure from each range
+     * separately is enough to tell whether anything remains open.
+     *
+     * @param iterable<DealerShedules> $schedules
+     * @return list<array{0: string, 1: string}> H:i:s ranges
+     */
+    private function openRangesOn(iterable $schedules, \DateTimeImmutable $date): array
+    {
+        $open = [];
+        $closures = [];
 
-        /** @var DealerShedules $sheduleExpt */
-        foreach ($shedulesExpt as $sheduleExpt) {
+        foreach ($schedules as $row) {
+            if (!ScheduleApplicability::appliesOn($row, $date)) {
+                continue;
+            }
 
-            $h = $sheduleExpt->getBegin();
-            while ($h <= $sheduleExpt->getEnd()) {
-                if (!$sheduleExpt->getClosed()) {
-                    $exeptionOpenHour[] = $h->format('H:i:s');
-                } else {
-                    $excludeHours[] = $h->format('H:i:s');
+            $begin = $row->getBegin();
+            $end = $row->getEnd();
+            $hasHours = $begin instanceof \DateTimeInterface && $end instanceof \DateTimeInterface;
+
+            if ($row->getClosed()) {
+                if (!$hasHours) {
+                    return [];
                 }
-                $h->add(new \DateInterval('PT1H'));
+
+                $closures[] = [$begin->format('H:i:s'), $this->normalizeEndTime($end->format('H:i:s'))];
+                continue;
+            }
+
+            if ($hasHours) {
+                $open[] = [$begin->format('H:i:s'), $this->normalizeEndTime($end->format('H:i:s'))];
             }
         }
 
-        $tabHours = [];
+        foreach ($closures as [$closeBegin, $closeEnd]) {
+            $remaining = [];
 
-        /** @var DealerShedules $range */
-        foreach ($hardHours as $h) {
-            if (!in_array($h, $excludeHours)) {
-                $tabHours[] = $h;
+            foreach ($open as [$begin, $end]) {
+                // No overlap: keep as is.
+                if ($closeEnd <= $begin || $closeBegin >= $end) {
+                    $remaining[] = [$begin, $end];
+                    continue;
+                }
+                // Left remainder.
+                if ($closeBegin > $begin) {
+                    $remaining[] = [$begin, min($closeBegin, $end)];
+                }
+                // Right remainder.
+                if ($closeEnd < $end) {
+                    $remaining[] = [max($closeEnd, $begin), $end];
+                }
+            }
+
+            $open = $remaining;
+        }
+
+        return $open;
+    }
+
+    /**
+     * @param iterable<DealerShedules> $schedules
+     * @return list<string> hourly steps, 'H:i:s'
+     */
+    private function hourGridOn(iterable $schedules, ?\DateTimeImmutable $date, int $numDay, bool $hardOnly): array
+    {
+        $hours = [];
+
+        foreach ($schedules as $row) {
+            // The base weekly hours: neither an exceptional entry nor a closure.
+            if ($row->getException() || $row->getClosed() || !$this->targetsDay($row, $numDay, $date)) {
+                continue;
+            }
+
+            $hours = array_merge($hours, $this->hourSteps($row));
+        }
+
+        if (!$hardOnly && $date !== null) {
+            foreach ($schedules as $row) {
+                if (!$row->getException() || $row->getClosed() || !ScheduleApplicability::appliesOn($row, $date)) {
+                    continue;
+                }
+
+                $hours = array_merge($hours, $this->hourSteps($row));
             }
         }
 
-        foreach ($exeptionOpenHour as $openHour) {
-            if (!in_array($openHour, $tabHours)) {
-                $tabHours[] = $openHour;
+        return $this->sortedHours($hours);
+    }
+
+    /**
+     * @param iterable<DealerShedules> $schedules
+     * @param list<string> $hardHours
+     * @return list<string> hourly steps, 'H:i:s'
+     */
+    private function openHoursOn(iterable $schedules, \DateTimeImmutable $date, array $hardHours): array
+    {
+        $closures = [];
+        $extraHours = [];
+
+        foreach ($schedules as $row) {
+            if (!ScheduleApplicability::appliesOn($row, $date)) {
+                continue;
+            }
+
+            $begin = $row->getBegin();
+            $end = $row->getEnd();
+            $hasHours = $begin instanceof \DateTimeInterface && $end instanceof \DateTimeInterface;
+
+            if ($row->getClosed()) {
+                if (!$hasHours) {
+                    // No hours on a closure: the whole day is closed, as in PickupSlotService.
+                    return [];
+                }
+
+                $closures[] = [$begin->format('H:i:s'), $this->normalizeEndTime($end->format('H:i:s'))];
+                continue;
+            }
+
+            if ($row->getException()) {
+                $extraHours = array_merge($extraHours, $this->hourSteps($row));
             }
         }
 
-        sort($tabHours);
+        $hours = [];
+        foreach ($hardHours as $hour) {
+            foreach ($closures as [$closeBegin, $closeEnd]) {
+                if ($hour >= $closeBegin && $hour <= $closeEnd) {
+                    continue 2;
+                }
+            }
 
-        return $tabHours;
+            $hours[] = $hour;
+        }
+
+        return $this->sortedHours(array_merge($hours, $extraHours));
+    }
+
+    /**
+     * Does a row target that weekday? With a date at hand the full applicability rules
+     * apply (weekday, period, yearly recurrence); without one, only the weekday can be
+     * compared, a row with no weekday matching every day.
+     */
+    private function targetsDay(DealerShedules $row, int $numDay, ?\DateTimeImmutable $date): bool
+    {
+        if ($date !== null) {
+            return ScheduleApplicability::appliesOn($row, $date);
+        }
+
+        return $row->getDay() === null || (int) $row->getDay() === $numDay;
+    }
+
+    /**
+     * Hourly steps of a time range, end included: the historical grid of the legacy front.
+     *
+     * @return list<string> 'H:i:s'
+     */
+    private function hourSteps(DealerShedules $row): array
+    {
+        $begin = $row->getBegin();
+        $end = $row->getEnd();
+
+        if (!$begin instanceof \DateTimeInterface || !$end instanceof \DateTimeInterface) {
+            return [];
+        }
+
+        $limit = $this->normalizeEndTime($end->format('H:i:s'));
+        $cursor = new \DateTimeImmutable('1970-01-01 ' . $begin->format('H:i:s'));
+        $hours = [];
+
+        while ($cursor->format('H:i:s') <= $limit) {
+            $hours[] = $cursor->format('H:i:s');
+            $next = $cursor->add(new \DateInterval('PT1H'));
+
+            // Stepping past midnight would restart the day: stop there.
+            if ($next->format('H:i:s') <= $cursor->format('H:i:s')) {
+                break;
+            }
+
+            $cursor = $next;
+        }
+
+        return $hours;
+    }
+
+    /**
+     * @param list<string> $hours
+     * @return list<string>
+     */
+    private function sortedHours(array $hours): array
+    {
+        $hours = array_values(array_unique($hours));
+        sort($hours);
+
+        return $hours;
+    }
+
+    /**
+     * Calendar date of a \DateTimeInterface or of a 'Y-m-d' string, time dropped.
+     * The argument is never mutated, unlike the historical implementation.
+     */
+    private function toDate($date): \DateTimeImmutable
+    {
+        $moment = $date instanceof \DateTimeInterface
+            ? \DateTimeImmutable::createFromInterface($date)
+            : new \DateTimeImmutable((string) $date);
+
+        return new \DateTimeImmutable($moment->format('Y-m-d'));
     }
 }

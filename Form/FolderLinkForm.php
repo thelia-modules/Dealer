@@ -55,12 +55,13 @@ class FolderLinkForm extends BaseForm
 
     protected function getAvailableFolder()
     {
-        $folders = FolderQuery::create()->find();
+        $locale = $this->getLocale();
+        $folders = FolderQuery::create()->joinWithI18n($locale)->find();
         $choices = [];
 
         /** @var Folder $folder */
         foreach ($folders as $folder) {
-            $choices[$folder->getTitle()] = $folder->getId();
+            $choices[$folder->setLocale($locale)->getTitle()] = $folder->getId();
         }
 
         return $choices;
@@ -68,12 +69,20 @@ class FolderLinkForm extends BaseForm
 
     protected function getAvailableDealer()
     {
-        $dealers = DealerQuery::create()->find();
+        $locale = $this->getLocale();
+        $dealers = DealerQuery::create()->joinWithI18n($locale)->find();
         $choices = [];
         foreach ($dealers as $dealer) {
-            $choices[$dealer->getTitle()] = $dealer->getId();
+            $choices[$dealer->setLocale($locale)->getTitle()] = $dealer->getId();
         }
 
         return $choices;
+    }
+
+    protected function getLocale(): string
+    {
+        $session = $this->request->hasSession() ? $this->request->getSession() : null;
+
+        return $session?->getLang()?->getLocale() ?? 'en_US';
     }
 }

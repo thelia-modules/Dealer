@@ -11,6 +11,7 @@ namespace Dealer\Loop;
 
 use Dealer\Dealer;
 use Dealer\Model\DealerShedulesQuery;
+use Dealer\Service\ScheduleApplicability;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Core\Template\Element\ArraySearchLoopInterface;
 use Thelia\Core\Template\Element\BaseLoop;
@@ -37,6 +38,8 @@ class DealerExtraSchedules extends BaseLoop implements ArraySearchLoopInterface
                 ->set('BEGIN', $schedules['BEGIN'])
                 ->set('END', $schedules['END'])
                 ->set('ID', $schedules['ID'])
+                ->set('RECURRING', $schedules['RECURRING'])
+                ->set('TITLE', $schedules['TITLE'])
             ;
 
 
@@ -78,10 +81,11 @@ class DealerExtraSchedules extends BaseLoop implements ArraySearchLoopInterface
 
         $query = DealerShedulesQuery::create();
 
-        $query->filterByPeriodNotNull();
-        if ($this->getHidePast()) {
-            $query->filterByPeriodEnd((new \DateTime())->add(\DateInterval::createFromDateString('yesterday')), Criteria::GREATER_THAN);
-        }
+        // Extra schedules = the exceptional entries (dated, periodic, weekly or yearly).
+        // The kind is carried by the `exception` column: an exceptional entry may have no
+        // period bound at all, so filtering on period_begin/period_end would miss it.
+        // `hide_past` is applied in PHP below, once the rows are loaded.
+        $query->filterByException(true);
 
         if ($id = $this->getId()) {
             $query->filterById($id);
@@ -134,6 +138,23 @@ class DealerExtraSchedules extends BaseLoop implements ArraySearchLoopInterface
 
         $dealerSchedules = $query->find();
 
+        if ($this->getHidePast()) {
+            // Recurring-aware "hide past": a yearly entry always comes back, an entry with
+            // no period end never expires, and a dated one survives while its end covers
+            // today. ScheduleApplicability::periodCovers() holds that open-bound rule.
+            $today = new \DateTimeImmutable('today');
+            $stillRelevant = [];
+
+            foreach ($dealerSchedules as $dealerSchedule) {
+                if ($dealerSchedule->getRecurring()
+                    || ScheduleApplicability::periodCovers(null, $dealerSchedule->getPeriodEnd(), $today)) {
+                    $stillRelevant[] = $dealerSchedule;
+                }
+            }
+
+            $dealerSchedules->setData($stillRelevant);
+        }
+
         if ($this->getMergeDay()) {
             $dealerCount = count($dealerSchedules);
 
@@ -145,11 +166,18 @@ class DealerExtraSchedules extends BaseLoop implements ArraySearchLoopInterface
 
                     // if the next result has the same dates, same day, then concat the morning and afternoon hours
                     if (
-                        ($dealerSchedules[$i+1] !== null)
+                        // isset(): reading a missing offset of a Propel collection raises a
+                        // "Only variable references should be returned by reference" notice.
+                        isset($dealerSchedules[$i+1])
                         && ($dealerSchedules[$i]->getDay() == $dealerSchedules[$i+1]->getDay())
                         && ($dealerSchedules[$i]->getDealerId() == $dealerSchedules[$i+1]->getDealerId())
                         && ($dealerSchedules[$i]->getPeriodBegin() == $dealerSchedules[$i+1]->getPeriodBegin())
                         && ($dealerSchedules[$i]->getPeriodEnd() == $dealerSchedules[$i+1]->getPeriodEnd())
+                        // A yearly entry and a dated one never describe the same occurrence.
+                        && ($dealerSchedules[$i]->getRecurring() == $dealerSchedules[$i+1]->getRecurring())
+                        // A full-day closure has no hours to concatenate.
+                        && $dealerSchedules[$i]->getBegin() && $dealerSchedules[$i]->getEnd()
+                        && $dealerSchedules[$i+1]->getBegin() && $dealerSchedules[$i+1]->getEnd()
                     ) {
                         $end = $dealerSchedules[$i+1]->getEnd();
                         if ($dealerSchedules[$i]->getEnd()->format('H\hi') === $dealerSchedules[$i+1]->getBegin()->format('H\hi')) {
@@ -174,7 +202,9 @@ class DealerExtraSchedules extends BaseLoop implements ArraySearchLoopInterface
                         'PERIOD_END' => $dealerSchedules[$i]->getPeriodEnd(),
                         'BEGIN' => $dealerSchedules[$i]->getBegin(),
                         'END' => $end,
-                        'FORMATTED_HOURS' => $formattedHours
+                        'FORMATTED_HOURS' => $formattedHours,
+                        'RECURRING' => $dealerSchedules[$i]->getRecurring(),
+                        'TITLE' => $dealerSchedules[$i]->getTitle()
                     );
                 }
             }
@@ -189,7 +219,12 @@ class DealerExtraSchedules extends BaseLoop implements ArraySearchLoopInterface
                     'END' => $dealerSchedule->getEnd(),
                     'PERIOD_BEGIN' => $dealerSchedule->getPeriodBegin(),
                     'PERIOD_END' => $dealerSchedule->getPeriodEnd(),
-                    'FORMATTED_HOURS' => date_format($dealerSchedule->getBegin(), 'H\hi') . $this->getHourSeparator() . date_format($dealerSchedule->getEnd(), 'H\hi')
+                    // A full-day closure carries no hours.
+                    'FORMATTED_HOURS' => ($dealerSchedule->getBegin() && $dealerSchedule->getEnd())
+                        ? date_format($dealerSchedule->getBegin(), 'H\hi') . $this->getHourSeparator() . date_format($dealerSchedule->getEnd(), 'H\hi')
+                        : null,
+                    'RECURRING' => $dealerSchedule->getRecurring(),
+                    'TITLE' => $dealerSchedule->getTitle()
                 );
             }
         }

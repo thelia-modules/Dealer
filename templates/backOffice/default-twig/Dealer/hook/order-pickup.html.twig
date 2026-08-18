@@ -1,6 +1,9 @@
-<div class="card border-warning mt-3">
-    <div class="card-header d-flex align-items-center gap-2">
-        <i class="bi bi-shop"></i><span>{{ 'Drive pickup'|trans({}, 'dealer.bo.default') }}</span>
+<div class="card border-warning my-3" id="dealer-pickup">
+    <div class="card-header d-flex align-items-center justify-content-between gap-2">
+        <span><i class="bi bi-shop me-1"></i>{{ 'Drive pickup'|trans({}, 'dealer.bo.default') }}</span>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#dealer-pickup-edit">
+            <i class="bi bi-pencil"></i> {{ 'Change the slot'|trans({}, 'dealer.bo.default') }}
+        </button>
     </div>
     <div class="card-body">
         <div class="fw-semibold">{{ dealer_title }}</div>
@@ -8,3 +11,100 @@
         <div class="mt-2"><i class="bi bi-clock me-1"></i>{{ 'Pickup slot'|trans({}, 'dealer.bo.default') }} : <strong>{{ pickup_datetime|date('d/m/Y H:i') }}</strong></div>
     </div>
 </div>
+
+<div class="modal fade" id="dealer-pickup-edit" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="POST" action="{{ token_url('dealer_order_pickup_update') }}" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Change the pickup slot'|trans({}, 'dealer.bo.default') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="order_id" value="{{ order_id }}">
+                <input type="hidden" name="success_url" value="{{ app.request.requestUri }}">
+                <input type="hidden" name="mode" value="slot" data-pickup-mode>
+
+                <p class="form-text">
+                    {{ 'Pick one of the slots currently offered to customers, or force a free datetime (after an exceptional closure, for instance). The customer is not notified automatically: contact them.'|trans({}, 'dealer.bo.default') }}
+                </p>
+
+                <div data-pickup-slot-zone>
+                    <label class="form-label">{{ 'Available slots'|trans({}, 'dealer.bo.default') }}</label>
+                    <select class="form-select" name="pickup_datetime" data-pickup-select>
+                        <option value="">{{ 'Loading…'|trans({}, 'dealer.bo.default') }}</option>
+                    </select>
+                </div>
+
+                <div class="d-none" data-pickup-custom-zone>
+                    <label class="form-label">{{ 'Free datetime'|trans({}, 'dealer.bo.default') }}</label>
+                    <input type="datetime-local" class="form-control" name="custom_datetime" value="{{ pickup_datetime|date('Y-m-d\\TH:i') }}">
+                    <div class="form-text">{{ 'No opening-hours or quota check is applied: you take responsibility for this datetime.'|trans({}, 'dealer.bo.default') }}</div>
+                </div>
+
+                <div class="form-check form-switch mt-3">
+                    <input class="form-check-input" type="checkbox" id="dealer-pickup-custom-toggle" data-pickup-custom-toggle>
+                    <label class="form-check-label" for="dealer-pickup-custom-toggle">{{ 'Force a free datetime'|trans({}, 'dealer.bo.default') }}</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel'|trans }}</button>
+                <button type="submit" class="btn btn-primary">{{ 'Save'|trans }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('dealer-pickup-edit');
+    if (!modal) {
+        return;
+    }
+    var select = modal.querySelector('[data-pickup-select]');
+    var slotZone = modal.querySelector('[data-pickup-slot-zone]');
+    var customZone = modal.querySelector('[data-pickup-custom-zone]');
+    var toggle = modal.querySelector('[data-pickup-custom-toggle]');
+    var modeInput = modal.querySelector('[data-pickup-mode]');
+    var loaded = false;
+
+    toggle.addEventListener('change', function () {
+        slotZone.classList.toggle('d-none', toggle.checked);
+        customZone.classList.toggle('d-none', !toggle.checked);
+        modeInput.value = toggle.checked ? 'custom' : 'slot';
+    });
+
+    modal.addEventListener('show.bs.modal', function () {
+        if (loaded) {
+            return;
+        }
+        fetch('{{ path('dealer_schedules_preview', {dealer_id: dealer_id})|e('js') }}', {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                select.innerHTML = '';
+                if (!data.success || !data.days || !data.days.length) {
+                    var empty = document.createElement('option');
+                    empty.value = '';
+                    empty.textContent = {{ 'No slot currently offered — use the free datetime.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }};
+                    select.appendChild(empty);
+                    return;
+                }
+                loaded = true;
+                data.days.forEach(function (day) {
+                    var group = document.createElement('optgroup');
+                    var date = new Date(day.date + 'T00:00:00');
+                    group.label = date.toLocaleDateString();
+                    day.slots.forEach(function (slot) {
+                        var option = document.createElement('option');
+                        option.value = slot.datetime;
+                        option.textContent = slot.time + (slot.remaining !== null ? ' (' + slot.remaining + ')' : '');
+                        group.appendChild(option);
+                    });
+                    select.appendChild(group);
+                });
+            })
+            .catch(function () {
+                select.innerHTML = '<option value="">—</option>';
+            });
+    });
+});
+</script>

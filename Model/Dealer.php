@@ -90,7 +90,7 @@ class Dealer extends BaseDealer
             } else {
                 $collDealerSheduless = ChildDealerShedulesQuery::create(null, $criteria)
                     ->filterByDealer($this)
-                    ->filterByPeriodNull()
+                    ->filterByException(false)
                     ->find($con);
 
                 if (null !== $criteria) {
@@ -151,7 +151,7 @@ class Dealer extends BaseDealer
             } else {
                 $collDealerSheduless = ChildDealerShedulesQuery::create(null, $criteria)
                     ->filterByDealer($this)
-                    ->filterByPeriodNotNull()
+                    ->filterByException(true)
                     ->find($con);
 
                 if (null !== $criteria) {

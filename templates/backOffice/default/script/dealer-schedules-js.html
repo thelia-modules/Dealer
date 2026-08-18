@@ -65,12 +65,6 @@
             $("#attr-dealer-schedules-day").prop('required', false);
 
         });
-        $('a.dealer-schedules-clone').click(function (ev) {
-            $("#attr-dealer-schedules-clone-id", "#dealer-schedules-clone").val($(this).data('id'));
-            $("#attr-dealer-schedules-period-begin input, #attr-dealer-schedules-period-end input").prop('required', false);
-            $("#attr-dealer-schedules-day").prop('required', false);
-
-        });
 
         {$langcode = {lang attr="code"}|substr:0:2}
         $(document).ready(function () {

@@ -39,6 +39,9 @@ class Dealer extends BaseModule
     const SESSION_PICKUP_DEALER_ID = 'dealer_pickup_dealer_id';
     const SESSION_PICKUP_DATETIME = 'dealer_pickup_datetime';
 
+    /** Delivery module codes (comma-separated) for which the pickup slot is enforced at checkout. */
+    const CONFIG_PICKUP_DELIVERY_MODULES = 'dealer_pickup_delivery_modules';
+
     public function postActivation(ConnectionInterface $con = null): void
     {
         if (!$this->getConfigValue('is_initialized', false)) {
@@ -59,6 +62,10 @@ class Dealer extends BaseModule
 
         //Initialize the module_config
         self::setConfigValue(self::CONFIG_ALLOW_PROFILE_ID, '');
+
+        if (!self::getConfigValue(self::CONFIG_PICKUP_DELIVERY_MODULES)) {
+            self::setConfigValue(self::CONFIG_PICKUP_DELIVERY_MODULES, 'LocalPickup');
+        }
     }
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void

@@ -15,8 +15,12 @@ namespace Dealer\Controller;
 
 use Dealer\Controller\Base\BaseController;
 use Dealer\Dealer;
+use Dealer\Exception\ScheduleWeekValidationException;
 use Dealer\Model\DealerShedules;
+use Dealer\Service\PickupSlotService;
+use Dealer\Service\ScheduleWeekService;
 use Propel\Runtime\Propel;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,6 +29,7 @@ use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
+use Thelia\Log\Tlog;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
 
@@ -178,28 +183,111 @@ class SchedulesController extends BaseController
 
             $con->commit();
 
+            if ($this->getRequest()->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true]);
+            }
+
             // Redirect to the success URL
             return $this->generateRedirect($successUrl);
         } catch (FormValidationException $ex) {
             $con->rollBack();
             // Form cannot be validated
             $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+        } catch (\RuntimeException $ex) {
+            $con->rollBack();
+            // Business validation: the message is meant for the user.
+            $error_msg = $ex->getMessage();
         } catch (\Exception $ex) {
             $con->rollBack();
-            // Any other error
-            $error_msg = $ex->getMessage();
+            Tlog::getInstance()->error('Schedule creation failed: ' . $ex->getMessage());
+            $error_msg = Translator::getInstance()->trans('The schedule could not be saved.', [], Dealer::MESSAGE_DOMAIN);
         }
-        if (false !== $error_msg) {
-            $this->setupFormErrorContext(
-                Translator::getInstance()->trans("%obj creation", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
-                $error_msg,
-                $creationForm,
-                $ex
-            );
 
-            // At this point, the form has error, and should be redisplayed.
-            return $this->generateErrorRedirect($creationForm);
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return new JsonResponse(['success' => false, 'message' => $error_msg], 422);
         }
+
+        // The redirect that follows would lose a ParserContext error (it only lives for
+        // the current request): carry the message through the session like the update path.
+        $this->getRequest()->getSession()->getFlashBag()->add('dealer_error', $error_msg);
+
+        return $this->redirectToDealerEdit($this->resolveDealerId());
+    }
+
+    /**
+     * Replace the whole base weekly grid in one call. Expects a JSON body
+     * {dealer_id: int, week: {0: [{begin, end}, …], …}} and a CSRF token in the
+     * _token query parameter; responds with JSON so the grid can show every
+     * validation error inline, attached to its weekday, without a page reload.
+     */
+    #[Route('/week', name: '_week', methods: ['POST'])]
+    public function saveWeekAction(
+        Request $request,
+        TokenProvider $tokenProvider,
+        ScheduleWeekService $scheduleWeekService
+    ): JsonResponse {
+        if (null !== $this->checkAuth(self::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(), AccessManager::UPDATE)) {
+            return new JsonResponse(['success' => false, 'message' => 'Access denied'], 403);
+        }
+
+        try {
+            $tokenProvider->checkToken((string) $request->query->get('_token'));
+        } catch (\Exception) {
+            return new JsonResponse(['success' => false, 'message' => 'Invalid token'], 403);
+        }
+
+        try {
+            $payload = json_decode($request->getContent(), true, 8, \JSON_THROW_ON_ERROR);
+            $dealerId = (int) ($payload['dealer_id'] ?? 0);
+
+            if ($dealerId <= 0 || !is_array($payload['week'] ?? null)) {
+                throw new \InvalidArgumentException('Invalid payload.');
+            }
+
+            $scheduleWeekService->replaceWeek($dealerId, $payload['week']);
+
+            return new JsonResponse(['success' => true]);
+        } catch (ScheduleWeekValidationException $exception) {
+            return new JsonResponse([
+                'success' => false,
+                'errors' => $exception->getErrorsByDay(),
+            ], 422);
+        } catch (\Exception $exception) {
+            // Business validation messages are meant for the user; anything else is
+            // logged and reported generically (no SQL, paths or token internals leak).
+            Tlog::getInstance()->error('Weekly schedule save failed: ' . $exception->getMessage());
+
+            return new JsonResponse([
+                'success' => false,
+                'message' => $exception instanceof \RuntimeException || $exception instanceof \InvalidArgumentException
+                    ? $exception->getMessage()
+                    : Translator::getInstance()->trans('The schedule could not be saved.', [], Dealer::MESSAGE_DOMAIN),
+            ], 422);
+        }
+    }
+
+    /**
+     * What the customers currently see: the upcoming pickup days and slots computed
+     * by the slot engine, so the manager can check the effect of the hours,
+     * exceptions and pickup settings without leaving the tab.
+     */
+    #[Route('/preview', name: '_preview', methods: ['GET'])]
+    public function previewAction(Request $request, PickupSlotService $pickupSlotService): JsonResponse
+    {
+        if (null !== $this->checkAuth(self::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(), AccessManager::VIEW)) {
+            return new JsonResponse(['success' => false, 'message' => 'Access denied'], 403);
+        }
+
+        $dealerId = (int) $request->query->get('dealer_id');
+
+        if ($dealerId <= 0) {
+            return new JsonResponse(['success' => false, 'message' => 'Missing dealer_id'], 400);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'days' => $pickupSlotService->getAvailableSlots($dealerId),
+        ]);
     }
 
     /**
@@ -218,11 +306,38 @@ class SchedulesController extends BaseController
     }
 
     /**
+     * Deletion with a visible outcome: the parent implementation loses its error in a
+     * redirect chain, this one reports through JSON (AJAX) or the session flash.
      */
     #[Route('/delete', name: '_delete', methods: ['POST'])]
     public function deleteAction(TokenProvider $tokenProvider, RequestStack $requestStack, ParserContext $parserContext)
     {
-        return parent::deleteAction($tokenProvider, $requestStack, $parserContext); // TODO: Change the autogenerated stub
+        if (null !== $response = $this->checkAuth(self::CONTROLLER_CHECK_RESOURCE, Dealer::getModuleCode(), AccessManager::DELETE)) {
+            return $response;
+        }
+
+        try {
+            $tokenProvider->checkToken(
+                (string) $this->getRequest()->query->get('_token')
+            );
+
+            $this->getService()->deleteFromId(
+                $this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME . '_id'),
+                $this->resolveDealerId()
+            );
+
+            if ($this->getRequest()->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true]);
+            }
+        } catch (\Exception $exception) {
+            if ($this->getRequest()->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => false, 'message' => $exception->getMessage()], 422);
+            }
+
+            $this->getRequest()->getSession()->getFlashBag()->add('dealer_error', $exception->getMessage());
+        }
+
+        return $this->redirectToDealerEdit($this->resolveDealerId());
     }
 
     /**
@@ -245,13 +360,25 @@ class SchedulesController extends BaseController
             $this->getService()->updateFromArray($data, $this->getCurrentEditionLocale());
             $con->commit();
 
+            if ($this->getRequest()->isXmlHttpRequest()) {
+                return new JsonResponse(['success' => true]);
+            }
+
             return $this->redirectToDealerEdit((int) ($data['dealer_id'] ?? $this->resolveDealerId()));
         } catch (FormValidationException $ex) {
             $con->rollBack();
             $errorMessage = $this->createStandardFormValidationErrorMessage($ex);
-        } catch (\Exception $ex) {
+        } catch (\RuntimeException $ex) {
             $con->rollBack();
             $errorMessage = $ex->getMessage();
+        } catch (\Exception $ex) {
+            $con->rollBack();
+            Tlog::getInstance()->error('Schedule update failed: ' . $ex->getMessage());
+            $errorMessage = Translator::getInstance()->trans('The schedule could not be saved.', [], Dealer::MESSAGE_DOMAIN);
+        }
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return new JsonResponse(['success' => false, 'message' => $errorMessage], 422);
         }
 
         $this->getRequest()->getSession()->getFlashBag()->add('dealer_error', $errorMessage);
