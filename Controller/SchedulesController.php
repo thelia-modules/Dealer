@@ -29,6 +29,7 @@ use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
+use Thelia\Log\Tlog;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
 
@@ -192,10 +193,14 @@ class SchedulesController extends BaseController
             $con->rollBack();
             // Form cannot be validated
             $error_msg = $this->createStandardFormValidationErrorMessage($ex);
+        } catch (\RuntimeException $ex) {
+            $con->rollBack();
+            // Business validation: the message is meant for the user.
+            $error_msg = $ex->getMessage();
         } catch (\Exception $ex) {
             $con->rollBack();
-            // Any other error
-            $error_msg = $ex->getMessage();
+            Tlog::getInstance()->error('Schedule creation failed: ' . $ex->getMessage());
+            $error_msg = Translator::getInstance()->trans('The schedule could not be saved.', [], Dealer::MESSAGE_DOMAIN);
         }
 
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -227,7 +232,11 @@ class SchedulesController extends BaseController
 
         try {
             $tokenProvider->checkToken((string) $request->query->get('_token'));
+        } catch (\Exception) {
+            return new JsonResponse(['success' => false, 'message' => 'Invalid token'], 403);
+        }
 
+        try {
             $payload = json_decode($request->getContent(), true, 8, \JSON_THROW_ON_ERROR);
             $dealerId = (int) ($payload['dealer_id'] ?? 0);
 
@@ -244,13 +253,15 @@ class SchedulesController extends BaseController
                 'errors' => $exception->getErrorsByDay(),
             ], 422);
         } catch (\Exception $exception) {
+            // Business validation messages are meant for the user; anything else is
+            // logged and reported generically (no SQL, paths or token internals leak).
+            Tlog::getInstance()->error('Weekly schedule save failed: ' . $exception->getMessage());
+
             return new JsonResponse([
                 'success' => false,
-                'message' => Translator::getInstance()->trans(
-                    'The schedule could not be saved: %error',
-                    ['%error' => $exception->getMessage()],
-                    Dealer::MESSAGE_DOMAIN
-                ),
+                'message' => $exception instanceof \RuntimeException || $exception instanceof \InvalidArgumentException
+                    ? $exception->getMessage()
+                    : Translator::getInstance()->trans('The schedule could not be saved.', [], Dealer::MESSAGE_DOMAIN),
             ], 422);
         }
     }
@@ -311,7 +322,8 @@ class SchedulesController extends BaseController
             );
 
             $this->getService()->deleteFromId(
-                $this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME . '_id')
+                $this->getRequest()->request->get(static::CONTROLLER_ENTITY_NAME . '_id'),
+                $this->resolveDealerId()
             );
 
             if ($this->getRequest()->isXmlHttpRequest()) {
@@ -356,9 +368,13 @@ class SchedulesController extends BaseController
         } catch (FormValidationException $ex) {
             $con->rollBack();
             $errorMessage = $this->createStandardFormValidationErrorMessage($ex);
-        } catch (\Exception $ex) {
+        } catch (\RuntimeException $ex) {
             $con->rollBack();
             $errorMessage = $ex->getMessage();
+        } catch (\Exception $ex) {
+            $con->rollBack();
+            Tlog::getInstance()->error('Schedule update failed: ' . $ex->getMessage());
+            $errorMessage = Translator::getInstance()->trans('The schedule could not be saved.', [], Dealer::MESSAGE_DOMAIN);
         }
 
         if ($this->getRequest()->isXmlHttpRequest()) {

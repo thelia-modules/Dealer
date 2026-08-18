@@ -147,8 +147,8 @@ class DealerSchedules extends BaseLoop implements PropelSearchLoopInterface
                 $query
                     ->condition(
                         'period_end_future',
-                        DealerShedulesTableMap::COL_PERIOD_END . ' > ?',
-                        (new \DateTime())->format('Y-m-d H:i:s'),
+                        DealerShedulesTableMap::COL_PERIOD_END . ' >= ?',
+                        (new \DateTime())->format('Y-m-d'),
                         \PDO::PARAM_STR
                     )
                     ->condition('period_end_open', DealerShedulesTableMap::COL_PERIOD_END . ' ' . Criteria::ISNULL)

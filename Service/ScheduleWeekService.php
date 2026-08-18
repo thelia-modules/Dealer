@@ -98,12 +98,12 @@ class ScheduleWeekService
             return null;
         }
 
-        if (preg_match('/^(\d{2}):(\d{2})(?::\d{2})?$/', trim($time), $matches) !== 1
+        if (preg_match('/^(\d{1,2}):(\d{2})(?::\d{2})?$/', trim($time), $matches) !== 1
             || (int) $matches[1] > 23 || (int) $matches[2] > 59) {
             return '';
         }
 
-        return $matches[1] . ':' . $matches[2] . ':00';
+        return sprintf('%02d:%s:00', (int) $matches[1], $matches[2]);
     }
 
     /**

@@ -14,7 +14,7 @@
 
 <div class="modal fade" id="dealer-pickup-edit" tabindex="-1">
     <div class="modal-dialog">
-        <form method="POST" action="/admin/module/Dealer/order-pickup/update?_token={{ assignToken() }}" class="modal-content">
+        <form method="POST" action="{{ token_url('dealer_order_pickup_update') }}" class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{ 'Change the pickup slot'|trans({}, 'dealer.bo.default') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -77,14 +77,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (loaded) {
             return;
         }
-        fetch('/admin/module/Dealer/schedules/preview?dealer_id={{ dealer_id }}', {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+        fetch('{{ path('dealer_schedules_preview', {dealer_id: dealer_id})|e('js') }}', {headers: {'X-Requested-With': 'XMLHttpRequest'}})
             .then(function (response) { return response.json(); })
             .then(function (data) {
                 select.innerHTML = '';
                 if (!data.success || !data.days || !data.days.length) {
                     var empty = document.createElement('option');
                     empty.value = '';
-                    empty.textContent = {{ 'No slot currently offered — use the free datetime.'|trans({}, 'dealer.bo.default')|json_encode|raw }};
+                    empty.textContent = {{ 'No slot currently offered — use the free datetime.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }};
                     select.appendChild(empty);
                     return;
                 }

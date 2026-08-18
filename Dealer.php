@@ -62,6 +62,10 @@ class Dealer extends BaseModule
 
         //Initialize the module_config
         self::setConfigValue(self::CONFIG_ALLOW_PROFILE_ID, '');
+
+        if (!self::getConfigValue(self::CONFIG_PICKUP_DELIVERY_MODULES)) {
+            self::setConfigValue(self::CONFIG_PICKUP_DELIVERY_MODULES, 'LocalPickup');
+        }
     }
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void

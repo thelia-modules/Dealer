@@ -11,6 +11,8 @@ use Dealer\Service\PickupSlotService;
 use Propel\Runtime\Propel;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Contracts\Service\ResetInterface;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Translation\Translator;
@@ -33,7 +35,7 @@ use Thelia\Model\ModuleQuery;
  * pickup modules (config value `dealer_pickup_delivery_modules`, default "LocalPickup"),
  * so a stale session choice cannot block a home delivery order.
  */
-class OrderListener implements EventSubscriberInterface
+class OrderListener implements EventSubscriberInterface, ResetInterface
 {
     private const LOCK_TIMEOUT_SECONDS = 5;
 
@@ -197,6 +199,21 @@ class OrderListener implements EventSubscriberInterface
         );
     }
 
+    /**
+     * The lock is normally released by savePickupSlot(); if the order creation or a
+     * payment listener throws in between, the kernel exception event releases it, and
+     * reset() covers long-running workers where the service instance is reused.
+     */
+    public function releaseSlotLockOnFailure(): void
+    {
+        $this->releaseSlotLock();
+    }
+
+    public function reset(): void
+    {
+        $this->releaseSlotLock();
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -206,6 +223,7 @@ class OrderListener implements EventSubscriberInterface
                 ['assertPickupSlotAvailable', 192],
                 ['savePickupSlot', 64],
             ],
+            KernelEvents::EXCEPTION => ['releaseSlotLockOnFailure', 0],
         ];
     }
 }

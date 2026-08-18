@@ -178,7 +178,7 @@
 {# ====================== EXCEPTION CREATE ====================== #}
 <div class="modal fade dealer-modal" id="dealer-exception-create" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="/admin/module/Dealer/schedules" class="modal-content"
+        <form method="POST" action="{{ path('dealer_schedules_create') }}" class="modal-content"
               data-exception-form data-exc-variant="create">
             <div class="modal-header">
                 <h5 class="modal-title" data-exc-title
@@ -287,7 +287,7 @@
 {# ====================== EXCEPTION UPDATE ====================== #}
 <div class="modal fade dealer-modal" id="dealer-exception-update" tabindex="-1">
     <div class="modal-dialog modal-lg">
-        <form method="POST" action="/admin/module/Dealer/schedules/update" class="modal-content"
+        <form method="POST" action="{{ path('dealer_schedules_update') }}" class="modal-content"
               data-exception-form data-exc-variant="update">
             <div class="modal-header">
                 <h5 class="modal-title">{{ 'Edit the exception'|trans({}, 'dealer.bo.default') }}</h5>
@@ -393,7 +393,7 @@
 {# ====================== EXCEPTION DELETE ====================== #}
 <div class="modal fade dealer-modal" id="dealer-exception-delete" tabindex="-1">
     <div class="modal-dialog">
-        <form method="POST" action="/admin/module/Dealer/schedules/delete?_token={{ assignToken() }}" class="modal-content" data-exception-delete>
+        <form method="POST" action="{{ token_url('dealer_schedules_delete') }}" class="modal-content" data-exception-delete>
             <div class="modal-header">
                 <h5 class="modal-title">{{ 'Delete this exception'|trans({}, 'dealer.bo.default') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

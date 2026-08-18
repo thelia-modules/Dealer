@@ -107,7 +107,6 @@ return array(
     "End" => "End",
     "Every %day" => "Every %day",
     "Every day" => "Every day",
-    "Every other day" => "Every other day",
     "Every week" => "Every week",
     "Every year" => "Every year",
     "Every year on %date" => "Every year on %date",
@@ -207,4 +206,5 @@ return array(
     "When" => "When",
     "Whole day" => "Whole day",
     "Opening hours (free text)" => "Opening hours (free text)",
+    "All other days" => "All other days",
 );

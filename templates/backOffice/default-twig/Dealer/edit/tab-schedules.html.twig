@@ -1,8 +1,8 @@
 <div class="tab-pane fade" id="schedules" role="tabpanel"
      data-schedules-root
      data-dealer-id="{{ dealer_id }}"
-     data-week-url="/admin/module/Dealer/schedules/week?_token={{ assignToken() }}"
-     data-preview-url="/admin/module/Dealer/schedules/preview?dealer_id={{ dealer_id }}"
+     data-week-url="{{ token_url('dealer_schedules_week') }}"
+     data-preview-url="{{ path('dealer_schedules_preview', {dealer_id: dealer_id}) }}"
      data-week="{{ week_schedule|json_encode|e('html_attr') }}"
      data-day-labels="{{ day_labels|json_encode|e('html_attr') }}">
 

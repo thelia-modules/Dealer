@@ -66,5 +66,11 @@ return array(
     "Unknown dealer." => "Magasin inconnu.",
     'Unknown timezone "%timezone".' => "Fuseau horaire inconnu « %timezone ».",
     "Value" => "Valeur",
-    "Zipcode" => "Code Postal"
+    "Zipcode" => "Code Postal",
+    "An exceptional entry must target a date, a period or a weekday." => "Une entrée exceptionnelle doit viser une date, une période ou un jour de la semaine.",
+    "This schedule entry no longer exists." => "Cette entrée d'horaires n'existe plus.",
+    "This schedule entry belongs to another dealer." => "Cette entrée d'horaires appartient à un autre magasin.",
+    "The schedule could not be saved." => "L'horaire n'a pas pu être enregistré.",
+    "The pickup slot could not be updated." => "Le créneau de retrait n'a pas pu être modifié.",
+    "Note: this datetime is outside the store opening hours." => "Attention : cet horaire est en dehors des heures d'ouverture du magasin.",
 );

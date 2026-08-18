@@ -6,19 +6,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     var I18N = {
-        addSlot: {{ 'Add a slot'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        removeSlot: {{ 'Remove this slot'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        closedDay: {{ 'Closed'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        copyTo: {{ 'Copy to…'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        copyAll: {{ 'Every other day'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        saved: {{ 'Weekly hours saved.'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        saveError: {{ 'The weekly hours could not be saved.'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        networkError: {{ 'Network error — please try again.'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        previewEmpty: {{ 'No pickup slot is currently offered: check the hours, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        previewSlots: {{ '%count slots'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        previewLeft: {{ '%count left'|trans({}, 'dealer.bo.default')|json_encode|raw }},
-        unsaved: {{ 'Unsaved changes'|trans({}, 'dealer.bo.default')|json_encode|raw }}
+        addSlot: {{ 'Add a slot'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        removeSlot: {{ 'Remove this slot'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        closedDay: {{ 'Closed'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        copyTo: {{ 'Copy to…'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        copyAll: {{ 'All other days'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        saved: {{ 'Weekly hours saved.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        saveError: {{ 'The weekly hours could not be saved.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        networkError: {{ 'Network error — please try again.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewEmpty: {{ 'No pickup slot is currently offered: check the hours, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewSlots: {{ '%count slots'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewLeft: {{ '%count left'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        unsaved: {{ 'Unsaved changes'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }}
     };
+
+    function esc(value) {
+        var node = document.createElement('span');
+        node.textContent = value == null ? '' : String(value);
+        return node.innerHTML;
+    }
 
     var dayLabels = JSON.parse(root.dataset.dayLabels);
     var week = JSON.parse(root.dataset.week);
@@ -38,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
             '<input type="time" class="form-control" data-slot-begin>' +
             '<span class="input-group-text">–</span>' +
             '<input type="time" class="form-control" data-slot-end>' +
-            '<button type="button" class="btn btn-outline-danger" data-slot-remove title="' + I18N.removeSlot + '">' +
+            '<button type="button" class="btn btn-outline-danger" data-slot-remove title="' + esc(I18N.removeSlot) + '">' +
             '<i class="bi bi-x-lg"></i></button>';
         wrap.querySelector('[data-slot-begin]').value = begin || '';
         wrap.querySelector('[data-slot-end]').value = end || '';
@@ -70,24 +76,24 @@ document.addEventListener('DOMContentLoaded', function () {
         actions.style.width = '14rem';
         actions.innerHTML =
             '<button type="button" class="btn btn-sm btn-outline-primary" data-slot-add>' +
-            '<i class="bi bi-plus-lg"></i> ' + I18N.addSlot + '</button> ' +
+            '<i class="bi bi-plus-lg"></i> ' + esc(I18N.addSlot) + '</button> ' +
             '<div class="btn-group">' +
             '<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">' +
-            I18N.copyTo + '</button>' +
+            esc(I18N.copyTo) + '</button>' +
             '<ul class="dropdown-menu dropdown-menu-end" data-copy-menu></ul>' +
             '</div>';
         tr.appendChild(actions);
 
         var menu = actions.querySelector('[data-copy-menu]');
         var all = document.createElement('li');
-        all.innerHTML = '<button type="button" class="dropdown-item fw-semibold" data-copy-target="all">' + I18N.copyAll + '</button>';
+        all.innerHTML = '<button type="button" class="dropdown-item fw-semibold" data-copy-target="all">' + esc(I18N.copyAll) + '</button>';
         menu.appendChild(all);
         dayLabels.forEach(function (label, target) {
             if (target === day) {
                 return;
             }
             var li = document.createElement('li');
-            li.innerHTML = '<button type="button" class="dropdown-item" data-copy-target="' + target + '">' + label + '</button>';
+            li.innerHTML = '<button type="button" class="dropdown-item" data-copy-target="' + target + '">' + esc(label) + '</button>';
             menu.appendChild(li);
         });
 
@@ -136,9 +142,19 @@ document.addEventListener('DOMContentLoaded', function () {
         showFeedback('warning', I18N.unsaved);
     }
 
-    function showFeedback(kind, html) {
+    function showFeedback(kind, message, withIcon) {
         feedback.classList.remove('d-none');
-        feedback.innerHTML = '<div class="text-' + (kind === 'warning' ? 'warning-emphasis' : (kind === 'success' ? 'success' : 'danger')) + ' mb-0">' + html + '</div>';
+        var wrap = document.createElement('div');
+        wrap.className = 'text-' + (kind === 'warning' ? 'warning-emphasis' : (kind === 'success' ? 'success' : 'danger')) + ' mb-0';
+        if (withIcon) {
+            var icon = document.createElement('i');
+            icon.className = withIcon;
+            wrap.appendChild(icon);
+            wrap.appendChild(document.createTextNode(' '));
+        }
+        wrap.appendChild(document.createTextNode(message));
+        feedback.innerHTML = '';
+        feedback.appendChild(wrap);
     }
 
     function clearErrors() {
@@ -213,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     week[day] = collectDay(day).filter(function (slot) { return slot.begin && slot.end; });
                     renderDaySlots(day);
                 }
-                showFeedback('success', '<i class="bi bi-check-circle"></i> ' + I18N.saved);
+                showFeedback('success', I18N.saved, 'bi bi-check-circle');
                 loadPreview();
             } else {
                 saveBtn.disabled = false;
@@ -243,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(function (response) { return response.json(); })
             .then(function (data) {
                 if (!data.success || !data.days || !data.days.length) {
-                    body.innerHTML = '<div class="alert alert-warning mb-0">' + I18N.previewEmpty + '</div>';
+                    body.innerHTML = '<div class="alert alert-warning mb-0">' + esc(I18N.previewEmpty) + '</div>';
                     return;
                 }
                 var html = '<div class="d-flex flex-wrap gap-2">';
@@ -251,20 +267,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     var date = new Date(day.date + 'T00:00:00');
                     var times = day.slots.map(function (slot) {
                         var badge = slot.remaining !== null
-                            ? ' <span class="badge text-bg-' + (slot.remaining <= 1 ? 'danger' : 'secondary') + '">' + I18N.previewLeft.replace('%count', slot.remaining) + '</span>'
+                            ? ' <span class="badge text-bg-' + (slot.remaining <= 1 ? 'danger' : 'secondary') + '">' + esc(I18N.previewLeft.replace('%count', slot.remaining)) + '</span>'
                             : '';
-                        return '<span class="d-inline-block text-nowrap me-2">' + slot.time + badge + '</span>';
+                        return '<span class="d-inline-block text-nowrap me-2">' + esc(slot.time) + badge + '</span>';
                     }).join('');
                     html += '<div class="border rounded p-2" style="min-width: 11rem">'
-                        + '<div class="fw-semibold text-capitalize">' + dayLabels[day.day] + ' ' + date.toLocaleDateString() + '</div>'
-                        + '<div class="text-muted small">' + I18N.previewSlots.replace('%count', day.slots.length) + '</div>'
+                        + '<div class="fw-semibold text-capitalize">' + esc(dayLabels[day.day]) + ' ' + esc(date.toLocaleDateString()) + '</div>'
+                        + '<div class="text-muted small">' + esc(I18N.previewSlots.replace('%count', day.slots.length)) + '</div>'
                         + '<div class="small mt-1">' + times + '</div>'
                         + '</div>';
                 });
                 body.innerHTML = html + '</div>';
             })
             .catch(function () {
-                body.innerHTML = '<div class="alert alert-warning mb-0">' + I18N.networkError + '</div>';
+                body.innerHTML = '<div class="alert alert-warning mb-0">' + esc(I18N.networkError) + '</div>';
             });
     }
 
@@ -319,6 +335,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (dateLabel) {
                 dateLabel.textContent = dateLabel.getAttribute('data-label-' + mode);
+            }
+            if (dateInput) {
+                dateInput.required = mode !== 'weekly';
             }
             if (periodEndWrap) {
                 periodEndWrap.classList.toggle('d-none', mode !== 'period' && mode !== 'weekly');

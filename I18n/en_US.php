@@ -66,5 +66,11 @@ return array(
     'Unknown timezone "%timezone".' => 'Unknown timezone "%timezone".',
     "Value" => "Value",
     "Wednesday" => "Wednesday",
-    "Zipcode" => "Zipcode"
+    "Zipcode" => "Zipcode",
+    "An exceptional entry must target a date, a period or a weekday." => "An exceptional entry must target a date, a period or a weekday.",
+    "This schedule entry no longer exists." => "This schedule entry no longer exists.",
+    "This schedule entry belongs to another dealer." => "This schedule entry belongs to another dealer.",
+    "The schedule could not be saved." => "The schedule could not be saved.",
+    "The pickup slot could not be updated." => "The pickup slot could not be updated.",
+    "Note: this datetime is outside the store opening hours." => "Note: this datetime is outside the store opening hours.",
 );

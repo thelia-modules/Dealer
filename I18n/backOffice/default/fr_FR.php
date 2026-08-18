@@ -219,7 +219,6 @@ return array(
     "e.g. Public holiday, special event…" => "ex. Jour férié, événement spécial…",
     "Every %day" => "Chaque %day",
     "Every day" => "Tous les jours",
-    "Every other day" => "Tous les autres jours",
     "Every year" => "Chaque année",
     "Every year on %date" => "Chaque année le %date",
     "Exceptions" => "Exceptions (fermetures et ouvertures exceptionnelles)",
@@ -272,4 +271,5 @@ return array(
     "When" => "Quand",
     "Whole day" => "Journée entière",
     "Opening hours (free text)" => "Horaires d'ouverture (texte libre)",
+    "All other days" => "Tous les autres jours",
 );

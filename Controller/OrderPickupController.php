@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Translation\Translator;
+use Thelia\Log\Tlog;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
 
@@ -91,8 +92,26 @@ class OrderPickupController extends BaseAdminController
                     Dealer::MESSAGE_DOMAIN
                 )
             );
-        } catch (\Exception $exception) {
+
+            if ($mode === 'custom'
+                && !$pickupSlotService->isSlotWithinOpeningHours($pickup->getDealerId(), $moment)) {
+                $flashBag->add(
+                    'warning',
+                    $translator->trans(
+                        'Note: this datetime is outside the store opening hours.',
+                        [],
+                        Dealer::MESSAGE_DOMAIN
+                    )
+                );
+            }
+        } catch (\RuntimeException $exception) {
             $flashBag->add('danger', $exception->getMessage());
+        } catch (\Exception $exception) {
+            Tlog::getInstance()->error('Order pickup update failed: ' . $exception->getMessage());
+            $flashBag->add(
+                'danger',
+                $translator->trans('The pickup slot could not be updated.', [], Dealer::MESSAGE_DOMAIN)
+            );
         }
 
         return new RedirectResponse($backUrl);

@@ -129,6 +129,21 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
             );
         }
 
+        if ($schedule->getException()
+            && $schedule->getDay() === null
+            && !$periodBegin instanceof \DateTimeInterface
+            && !$periodEnd instanceof \DateTimeInterface) {
+            // Such an entry would apply on every single date — a closure created this
+            // way would silently shut the store down for ever.
+            throw new \RuntimeException(
+                $translator->trans(
+                    'An exceptional entry must target a date, a period or a weekday.',
+                    [],
+                    Dealer::MESSAGE_DOMAIN
+                )
+            );
+        }
+
         if (!$isClosed && $hasBegin && $hasEnd) {
             $this->assertNoOpeningOverlap($schedule, $beginStr, $endStr);
         }
@@ -207,9 +222,11 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         $cursor = new \DateTimeImmutable('today');
         $horizon = $cursor->add(new \DateInterval('P1Y'));
 
-        foreach ([$a->getPeriodEnd(), $b->getPeriodEnd()] as $bound) {
+        foreach ([$a->getPeriodEnd(), $b->getPeriodEnd(), $a->getPeriodBegin(), $b->getPeriodBegin()] as $bound) {
             if ($bound instanceof \DateTimeInterface && $bound->format('Y-m-d') > $horizon->format('Y-m-d')) {
-                $horizon = \DateTimeImmutable::createFromInterface($bound);
+                // A period starting beyond the default horizon must still be scanned:
+                // give it a year of room past its begin date.
+                $horizon = \DateTimeImmutable::createFromInterface($bound)->add(new \DateInterval('P1Y'));
             }
         }
 
@@ -266,9 +283,15 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         return $event->getDealerSchedules();
     }
 
-    public function deleteFromId($id)
+    public function deleteFromId($id, ?int $dealerId = null)
     {
-        $dealer = DealerShedulesQuery::create()->findOneById($id);
+        $query = DealerShedulesQuery::create()->filterById($id);
+
+        if ($dealerId !== null) {
+            $query->filterByDealerId($dealerId);
+        }
+
+        $dealer = $query->findOne();
 
         if ($dealer) {
             $event = new DealerSchedulesEvent();
@@ -283,9 +306,13 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
         $model = new DealerShedules();
 
         if (isset($data['id'])) {
-            $dealer = DealerShedulesQuery::create()->findOneById($data['id']);
-            if ($dealer) {
-                $model = $dealer;
+            $model = DealerShedulesQuery::create()->findOneById($data['id']);
+
+            if ($model === null) {
+                // Updating a row deleted meanwhile must fail, not silently create one.
+                throw new \RuntimeException(
+                    Translator::getInstance()->trans('This schedule entry no longer exists.', [], Dealer::MESSAGE_DOMAIN)
+                );
             }
         }
 
@@ -307,6 +334,12 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
             }
         }
         if (isset($data['dealer_id'])) {
+            if ($model->getDealerId() !== null && (int) $data['dealer_id'] !== (int) $model->getDealerId()) {
+                // A schedule entry never moves between dealers.
+                throw new \RuntimeException(
+                    Translator::getInstance()->trans('This schedule entry belongs to another dealer.', [], Dealer::MESSAGE_DOMAIN)
+                );
+            }
             $model->setDealerId($data['dealer_id']);
         }
         if (isset($data['closed'])) {
