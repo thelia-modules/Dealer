@@ -23,7 +23,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Template\ParserContext;
-use Thelia\Core\Translation\Translator;
 use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
@@ -189,17 +188,12 @@ class SchedulesController extends BaseController
             // Any other error
             $error_msg = $ex->getMessage();
         }
-        if (false !== $error_msg) {
-            $this->setupFormErrorContext(
-                Translator::getInstance()->trans("%obj creation", ['%obj' => static::CONTROLLER_ENTITY_NAME]),
-                $error_msg,
-                $creationForm,
-                $ex
-            );
 
-            // At this point, the form has error, and should be redisplayed.
-            return $this->generateErrorRedirect($creationForm);
-        }
+        // The redirect that follows would lose a ParserContext error (it only lives for
+        // the current request): carry the message through the session like the update path.
+        $this->getRequest()->getSession()->getFlashBag()->add('dealer_error', $error_msg);
+
+        return $this->redirectToDealerEdit($this->resolveDealerId());
     }
 
     /**

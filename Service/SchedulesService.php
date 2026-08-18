@@ -22,7 +22,6 @@ use Dealer\Model\Map\DealerShedulesTableMap;
 use Dealer\Service\Base\AbstractBaseService;
 use Dealer\Service\Base\BaseServiceInterface;
 use Propel\Runtime\ActiveQuery\Criteria;
-use Symfony\Component\EventDispatcher\Event;
 use Thelia\Core\Event\ActionEvent;
 use Thelia\Core\Translation\Translator;
 
@@ -57,69 +56,104 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
     }
 
     /**
-     * Ensure a timed slot closes after it opens and does not overlap another slot
-     * of the same day sharing the same period and open/closed nature.
+     * Full consistency check of a schedule row: time range, period range, recurrence
+     * prerequisites, and real calendar overlap detection against the other opening
+     * entries of the dealer (whatever their period or recurrence mode).
      *
-     * @throws \RuntimeException when the slot is invalid
+     * Overlaps are only rejected between entries of the same kind (base vs base,
+     * exceptional opening vs exceptional opening): an exceptional opening overlapping
+     * the base hours is a legitimate extension, and closures are subtractive so they
+     * cannot conflict.
+     *
+     * @throws \RuntimeException when the entry is invalid
      */
     protected function assertValidSchedule(DealerShedules $schedule): void
     {
+        $translator = Translator::getInstance();
         $begin = $schedule->getBegin();
         $end = $schedule->getEnd();
+        $hasBegin = $begin instanceof \DateTimeInterface;
+        $hasEnd = $end instanceof \DateTimeInterface;
+        $isClosed = (bool) $schedule->getClosed();
 
-        // Full-day rows (no explicit hours) carry no time range to validate.
-        if (!$begin instanceof \DateTimeInterface || !$end instanceof \DateTimeInterface) {
-            return;
-        }
-
-        $beginStr = $begin->format('H:i:s');
-        $endStr = $this->normalizeEndTime($end->format('H:i:s'));
-
-        if ($endStr <= $beginStr) {
+        // Only a closure may omit its hours (it then closes the whole day). An opening
+        // without hours would be silently ignored by the slot engine.
+        if ((!$hasBegin || !$hasEnd) && (!$isClosed || $hasBegin !== $hasEnd)) {
             throw new \RuntimeException(
-                Translator::getInstance()->trans(
-                    'The end time (%end) must be after the begin time (%begin).',
-                    ['%begin' => $begin->format('H:i'), '%end' => $end->format('H:i')],
+                $translator->trans(
+                    'An opening entry must define both a begin and an end time.',
+                    [],
                     Dealer::MESSAGE_DOMAIN
                 )
             );
         }
 
+        if ($hasBegin && $hasEnd) {
+            $beginStr = $begin->format('H:i:s');
+            $endStr = $this->normalizeEndTime($end->format('H:i:s'));
+
+            if ($endStr <= $beginStr) {
+                throw new \RuntimeException(
+                    $translator->trans(
+                        'The end time (%end) must be after the begin time (%begin).',
+                        ['%begin' => $begin->format('H:i'), '%end' => $end->format('H:i')],
+                        Dealer::MESSAGE_DOMAIN
+                    )
+                );
+            }
+        }
+
         $periodBegin = $schedule->getPeriodBegin();
         $periodEnd = $schedule->getPeriodEnd();
-        $isRecurring = (bool) $schedule->getRecurring();
 
+        if ($periodBegin instanceof \DateTimeInterface && $periodEnd instanceof \DateTimeInterface
+            && $periodEnd->format('Y-m-d') < $periodBegin->format('Y-m-d')) {
+            throw new \RuntimeException(
+                $translator->trans(
+                    'The period end date (%end) must not be before its begin date (%begin).',
+                    ['%begin' => $periodBegin->format('Y-m-d'), '%end' => $periodEnd->format('Y-m-d')],
+                    Dealer::MESSAGE_DOMAIN
+                )
+            );
+        }
+
+        if ($schedule->getRecurring() && !$periodBegin instanceof \DateTimeInterface) {
+            throw new \RuntimeException(
+                $translator->trans('A yearly recurring entry requires a date.', [], Dealer::MESSAGE_DOMAIN)
+            );
+        }
+
+        if (!$schedule->getException() && $schedule->getDay() === null) {
+            // A base row with no weekday would silently apply every single day.
+            throw new \RuntimeException(
+                $translator->trans('Base opening hours must target a weekday.', [], Dealer::MESSAGE_DOMAIN)
+            );
+        }
+
+        if (!$isClosed && $hasBegin && $hasEnd) {
+            $this->assertNoOpeningOverlap($schedule, $beginStr, $endStr);
+        }
+    }
+
+    /**
+     * Reject an opening entry whose time range overlaps another opening entry of the
+     * same kind on at least one real calendar date. Same-kind pairs are compared on
+     * their concrete applicability (weekday, period, recurrence) over a bounded
+     * horizon, so a dated exception is caught against a weekly or yearly one.
+     */
+    private function assertNoOpeningOverlap(DealerShedules $schedule, string $beginStr, string $endStr): void
+    {
         $query = DealerShedulesQuery::create()
             ->filterByDealerId($schedule->getDealerId())
-            ->filterByDay($schedule->getDay())
-            ->filterByClosed($schedule->getClosed());
-
-        if ($isRecurring) {
-            // Recurring entries collide by month/day, whatever year is stored.
-            $query->filterByRecurring(1);
-        } else {
-            $query
-                ->filterByRecurring(0)
-                ->filterByPeriodBegin($periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null)
-                ->filterByPeriodEnd($periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null);
-        }
+            ->filterByClosed(0)
+            ->filterByException($schedule->getException());
 
         if ($schedule->getId()) {
             $query->filterById($schedule->getId(), Criteria::NOT_EQUAL);
         }
 
-        $recurringMonthDay = $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('m-d') : null;
-
         /** @var DealerShedules $existing */
         foreach ($query->find() as $existing) {
-            if ($isRecurring) {
-                $existingBeginDate = $existing->getPeriodBegin();
-                if (!$existingBeginDate instanceof \DateTimeInterface
-                    || $existingBeginDate->format('m-d') !== $recurringMonthDay) {
-                    continue;
-                }
-            }
-
             $existingBegin = $existing->getBegin();
             $existingEnd = $existing->getEnd();
 
@@ -127,23 +161,72 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
                 continue;
             }
 
-            // Two ranges overlap when each starts before the other ends.
-            if ($beginStr < $this->normalizeEndTime($existingEnd->format('H:i:s'))
-                && $existingBegin->format('H:i:s') < $endStr) {
-                throw new \RuntimeException(
-                    Translator::getInstance()->trans(
-                        'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd).',
-                        [
-                            '%begin' => $begin->format('H:i'),
-                            '%end' => $end->format('H:i'),
-                            '%exBegin' => $existingBegin->format('H:i'),
-                            '%exEnd' => $existingEnd->format('H:i'),
-                        ],
+            // Two time ranges overlap when each starts before the other ends.
+            if ($beginStr >= $this->normalizeEndTime($existingEnd->format('H:i:s'))
+                || $existingBegin->format('H:i:s') >= $endStr) {
+                continue;
+            }
+
+            $conflictDate = $this->firstCommonDate($schedule, $existing);
+
+            if ($conflictDate === null) {
+                continue;
+            }
+
+            $parameters = [
+                '%begin' => $schedule->getBegin()->format('H:i'),
+                '%end' => $schedule->getEnd()->format('H:i'),
+                '%exBegin' => $existingBegin->format('H:i'),
+                '%exEnd' => $existingEnd->format('H:i'),
+                '%date' => $conflictDate->format('d/m/Y'),
+            ];
+
+            throw new \RuntimeException(
+                $schedule->getException()
+                    ? Translator::getInstance()->trans(
+                        'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd) on %date.',
+                        $parameters,
                         Dealer::MESSAGE_DOMAIN
                     )
-                );
+                    : Translator::getInstance()->trans(
+                        'The %begin - %end time slot overlaps an existing slot (%exBegin - %exEnd).',
+                        $parameters,
+                        Dealer::MESSAGE_DOMAIN
+                    )
+            );
+        }
+    }
+
+    /**
+     * First calendar date on which both entries apply, scanned from today over a bounded
+     * horizon (one year, extended to the latest concrete period bound, capped at three
+     * years). Base rows repeat weekly for ever, so any same-weekday pair matches fast;
+     * null means the two applicabilities never meet within the horizon.
+     */
+    private function firstCommonDate(DealerShedules $a, DealerShedules $b): ?\DateTimeImmutable
+    {
+        $cursor = new \DateTimeImmutable('today');
+        $horizon = $cursor->add(new \DateInterval('P1Y'));
+
+        foreach ([$a->getPeriodEnd(), $b->getPeriodEnd()] as $bound) {
+            if ($bound instanceof \DateTimeInterface && $bound->format('Y-m-d') > $horizon->format('Y-m-d')) {
+                $horizon = \DateTimeImmutable::createFromInterface($bound);
             }
         }
+
+        $cap = $cursor->add(new \DateInterval('P3Y'));
+        if ($horizon > $cap) {
+            $horizon = $cap;
+        }
+
+        while ($cursor <= $horizon) {
+            if (ScheduleApplicability::appliesOn($a, $cursor) && ScheduleApplicability::appliesOn($b, $cursor)) {
+                return $cursor;
+            }
+            $cursor = $cursor->add(new \DateInterval('P1D'));
+        }
+
+        return null;
     }
 
     protected function deleteProcess(ActionEvent $event)
@@ -216,31 +299,29 @@ class SchedulesService extends AbstractBaseService implements BaseServiceInterfa
                 $model->setDay((int) $day);
             }
         }
-        if (isset($data['begin'])) {
-            $model->setBegin($data['begin']);
-        }
-        if (isset($data['end'])) {
-            $model->setEnd($data['end']);
-        }
-        if (isset($data['period_begin'])) {
-            $model->setPeriodBegin($data['period_begin']);
-        }
-        if (isset($data['period_end'])) {
-            $model->setPeriodEnd($data['period_end']);
+        // Posted keys always win, an empty value clearing the column: this is what lets
+        // the back-office turn a partial closure into a full-day one, or remove a period.
+        foreach (['begin', 'end', 'period_begin', 'period_end'] as $field) {
+            if (array_key_exists($field, $data)) {
+                $setter = 'set' . str_replace('_', '', ucwords($field, '_'));
+                $model->$setter($data[$field] !== '' ? $data[$field] : null);
+            }
         }
         if (isset($data['dealer_id'])) {
             $model->setDealerId($data['dealer_id']);
         }
         if (isset($data['closed'])) {
-            $model->setClosed($data['closed']);
+            $model->setClosed((bool) $data['closed']);
         }
         if (array_key_exists('recurring', $data)) {
             $model->setRecurring((bool) $data['recurring']);
         }
+        if (array_key_exists('exception', $data)) {
+            $model->setException((bool) $data['exception']);
+        }
         if (array_key_exists('title', $data)) {
             $model->setTitle($data['title'] !== '' ? $data['title'] : null);
         }
-
 
         return $model;
     }

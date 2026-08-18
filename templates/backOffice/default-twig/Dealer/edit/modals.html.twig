@@ -189,6 +189,7 @@
                 <input type="hidden" name="{{ schedules_create_fp }}[success_url]" value="{{ schedules_url }}">
                 <input type="hidden" name="{{ schedules_create_fp }}[error_url]" value="{{ schedules_url }}">
                 <input type="hidden" name="{{ schedules_create_fp }}[closed]" value="0" data-fill="closed">
+                <input type="hidden" name="{{ schedules_create_fp }}[exception]" value="0" data-fill="exception">
                 <div class="mb-3" data-schedule-day-field>
                     <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>
                     <select class="form-select" name="{{ schedules_create_fp }}[day][]" multiple>
@@ -279,6 +280,7 @@
                 <input type="hidden" name="{{ schedules_update_fp }}[error_url]" value="{{ schedules_url }}">
                 <input type="hidden" name="{{ schedules_update_fp }}[id]" value="" data-fill="id">
                 <input type="hidden" name="{{ schedules_update_fp }}[closed]" value="0" data-fill="closed">
+                <input type="hidden" name="{{ schedules_update_fp }}[exception]" value="0" data-fill="exception">
                 <input type="hidden" name="{{ schedules_update_fp }}[recurring]" value="0" data-fill="recurring" data-schedule-recurring>
                 <div class="mb-3" data-schedule-day-field>
                     <label class="form-label">{{ 'Day'|trans({}, 'dealer.bo.default') }}</label>

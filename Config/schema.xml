@@ -45,14 +45,20 @@
         <column name="begin" type="TIME"/>
         <column name="end" type="TIME"/>
 
-        <column name="closed" type="BOOLEAN" default="false"/>
+        <column name="closed" type="BOOLEAN" defaultValue="false"/>
+
+        <!-- Distinguishes exceptional entries (openings/closures, dated, periodic or
+             recurring) from the base weekly opening hours. Persisted explicitly: it cannot
+             be inferred reliably from the other columns (a weekly exceptional opening with
+             no period bound would look exactly like a base row). -->
+        <column name="exception" type="BOOLEAN" defaultValue="false"/>
 
         <column name="period_begin" type="DATE"/>
         <column name="period_end" type="DATE"/>
 
         <!-- Annual recurrence: when true, the entry applies every year on period_begin's
              month/day (the year is ignored), e.g. every 25/12. -->
-        <column name="recurring" type="BOOLEAN" default="false"/>
+        <column name="recurring" type="BOOLEAN" defaultValue="false"/>
 
         <column name="title" size="255" type="VARCHAR"/>
 
@@ -96,6 +102,11 @@
             <index-column name="dealer_id"/>
             <index-column name="pickup_datetime"/>
         </index>
+
+        <!-- One pickup reservation per order, enforced by the database. -->
+        <unique name="unique_dealer_order_pickup_order">
+            <unique-column name="order_id"/>
+        </unique>
 
         <behavior name="timestampable"/>
     </table>

@@ -96,6 +96,12 @@ class SchedulesForm extends BaseForm
                 "required" => false,
                 "attr" => array()
             ])
+            ->add("exception", IntegerType::class, [
+                "label" => $this->translator->trans("Exceptional entry", [], Dealer::MESSAGE_DOMAIN),
+                "label_attr" => ["for" => "attr-dealer-schedules-exception"],
+                "required" => false,
+                "attr" => array()
+            ])
             ->add("title", TextType::class, [
                 "label" => $this->translator->trans("Label", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "attr-dealer-schedules-title"],
