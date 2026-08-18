@@ -19,6 +19,7 @@
         <service id="dealer_pickup_slot_service" alias="Dealer\Service\PickupSlotService" public="true"/>
 
         <service id="Dealer\Service\DealerPickupConfigService" class="Dealer\Service\DealerPickupConfigService" public="true"/>
+        <service id="Dealer\Service\ScheduleWeekService" class="Dealer\Service\ScheduleWeekService" public="true"/>
         <service id="dealer_pickup_config_service" alias="Dealer\Service\DealerPickupConfigService" public="true"/>
 
         <service id="Dealer\Form\Type\ScheduleSlotType" class="Dealer\Form\Type\ScheduleSlotType">

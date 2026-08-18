@@ -230,9 +230,12 @@ class DealerController extends BaseController
             ?? \Thelia\Model\LangQuery::create()->findOneByByDefault(true);
         $locale = $editLang?->getLocale() ?? 'en_US';
 
-        // Error flashed by a sub-controller (e.g. schedules) before redirecting here.
+        // Messages flashed by a sub-controller (e.g. schedules) before redirecting here.
         $flashError = $request->hasSession()
             ? ($request->getSession()->getFlashBag()->get('dealer_error')[0] ?? null)
+            : null;
+        $flashSuccess = $request->hasSession()
+            ? ($request->getSession()->getFlashBag()->get('dealer_success')[0] ?? null)
             : null;
 
         $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
@@ -265,6 +268,7 @@ class DealerController extends BaseController
                 'edit_language_locale' => $locale,
                 'update_form' => $updateForm->createView()->getView(),
                 'general_error' => $flashError ?? $this->getParserContext()->get('general_error'),
+                'general_success' => $flashSuccess,
                 // Tab data
                 'contacts' => $this->buildContacts($dealerId, $locale),
                 'contact_create_form' => $contactCreateForm->createView()->getView(),
@@ -272,9 +276,8 @@ class DealerController extends BaseController
                 'contact_info_create_form' => $contactInfoCreateForm->createView()->getView(),
                 'contact_info_update_form' => $contactInfoUpdateForm->createView()->getView(),
                 'contact_info_types' => $this->getContactInfoTypeChoices(),
-                'schedules_default' => $this->buildSchedules($dealerId, $locale, exception: false, closed: false),
-                'schedules_extra' => $this->buildSchedules($dealerId, $locale, exception: true, closed: false),
-                'schedules_closed' => $this->buildSchedules($dealerId, $locale, exception: true, closed: true),
+                'week_schedule' => $this->buildWeekSchedule($dealerId),
+                'schedules_exceptions' => $this->buildExceptions($dealerId, $locale),
                 'schedules_create_form' => $schedulesCreateForm->createView()->getView(),
                 'schedules_update_form' => $schedulesUpdateForm->createView()->getView(),
                 'pickup_config_form' => $pickupConfigForm->createView()->getView(),
@@ -418,7 +421,56 @@ class DealerController extends BaseController
         ];
     }
 
-    private function buildSchedules($dealerId, string $locale, bool $exception, bool $closed): array
+    /**
+     * The base weekly opening hours as the grid consumes them: one entry per weekday
+     * (0 = Monday … 6 = Sunday), each holding its ordered time slots.
+     *
+     * @return array<int, list<array{begin: string, end: string}>>
+     */
+    private function buildWeekSchedule($dealerId): array
+    {
+        $week = array_fill(0, 7, []);
+
+        if ($dealerId === null) {
+            return $week;
+        }
+
+        $rows = \Dealer\Model\DealerShedulesQuery::create()
+            ->filterByDealerId($dealerId)
+            ->filterByException(false)
+            ->filterByClosed(0)
+            ->orderByDay()
+            ->orderByBegin()
+            ->find();
+
+        /** @var \Dealer\Model\DealerShedules $row */
+        foreach ($rows as $row) {
+            $day = $row->getDay();
+            $begin = $row->getBegin();
+            $end = $row->getEnd();
+
+            if ($day === null || $day < 0 || $day > 6
+                || !$begin instanceof \DateTimeInterface || !$end instanceof \DateTimeInterface) {
+                continue;
+            }
+
+            $week[(int) $day][] = [
+                'begin' => $begin->format('H:i'),
+                'end' => $end->format('H:i'),
+            ];
+        }
+
+        return $week;
+    }
+
+    /**
+     * Exceptional entries (closures and exceptional openings together) with everything
+     * the unified back-office list and its edit modal need: the kind, the recurrence
+     * mode and the raw values.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function buildExceptions($dealerId, string $locale): array
     {
         if ($dealerId === null) {
             return [];
@@ -426,17 +478,13 @@ class DealerController extends BaseController
 
         $query = \Dealer\Model\DealerShedulesQuery::create()
             ->filterByDealerId($dealerId)
-            ->filterByException($exception)
-            ->filterByClosed($closed ? 1 : 0);
-
-        if ($exception) {
-            $query->orderByPeriodBegin()->orderByDay()->orderByBegin();
-        } else {
-            $query->orderByDay()->orderByBegin();
-        }
+            ->filterByException(true)
+            ->orderByPeriodBegin()
+            ->orderByDay()
+            ->orderByBegin();
 
         $days = $this->getDayLabels($locale);
-        $schedules = [];
+        $exceptions = [];
 
         /** @var \Dealer\Model\DealerShedules $schedule */
         foreach ($query->find() as $schedule) {
@@ -444,35 +492,38 @@ class DealerController extends BaseController
             $end = $schedule->getEnd();
             $periodBegin = $schedule->getPeriodBegin();
             $periodEnd = $schedule->getPeriodEnd();
+            $day = $schedule->getDay();
 
-            // Exceptional entries carry a date, not a weekday: derive the weekday from a
-            // precise date (begin = end) so the "Day" column is not empty.
-            $dayLabel = $schedule->getDay() !== null ? ($days[$schedule->getDay()] ?? '') : '';
-            if ($dayLabel === ''
-                && $periodBegin instanceof \DateTimeInterface
-                && $periodEnd instanceof \DateTimeInterface
+            if ($schedule->getRecurring()) {
+                $mode = 'yearly';
+            } elseif ($day !== null) {
+                $mode = 'weekly';
+            } elseif ($periodBegin instanceof \DateTimeInterface && $periodEnd instanceof \DateTimeInterface
                 && $periodBegin->format('Y-m-d') === $periodEnd->format('Y-m-d')) {
-                $dayLabel = $days[((int) $periodBegin->format('N')) - 1] ?? '';
+                $mode = 'date';
+            } else {
+                $mode = 'period';
             }
 
-            $recurring = (bool) $schedule->getRecurring();
-
-            $schedules[] = [
+            $exceptions[] = [
                 'id' => $schedule->getId(),
-                'day' => $schedule->getDay(),
-                'day_label' => $recurring ? '' : $dayLabel,
+                'kind' => $schedule->getClosed() ? 'closure' : 'opening',
+                'mode' => $mode,
+                'day' => $day,
+                'day_label' => $day !== null ? ($days[$day] ?? '') : '',
                 'begin' => $begin instanceof \DateTimeInterface ? $begin->format('H:i') : null,
                 'end' => $end instanceof \DateTimeInterface ? $end->format('H:i') : null,
+                'full_day' => !$begin instanceof \DateTimeInterface || !$end instanceof \DateTimeInterface,
                 'period_begin' => $periodBegin instanceof \DateTimeInterface ? $periodBegin->format('Y-m-d') : null,
                 'period_end' => $periodEnd instanceof \DateTimeInterface ? $periodEnd->format('Y-m-d') : null,
-                'recurring' => $recurring,
+                'recurring' => (bool) $schedule->getRecurring(),
                 'title' => $schedule->getTitle(),
                 'closed' => $schedule->getClosed() ? 1 : 0,
-                'exception' => $schedule->getException() ? 1 : 0,
+                'exception' => 1,
             ];
         }
 
-        return $schedules;
+        return $exceptions;
     }
 
     /**

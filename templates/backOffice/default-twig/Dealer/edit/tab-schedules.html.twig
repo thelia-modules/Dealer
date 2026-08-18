@@ -1,136 +1,144 @@
-<div class="tab-pane fade" id="schedules" role="tabpanel">
-    <div class="row">
-        {# DEFAULT SCHEDULES #}
-        <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="mb-0">{{ 'Default Schedules'|trans({}, 'dealer.bo.default') }}</h5>
-                <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
-                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0" data-exception="0"
-                        data-schedule-type="default" data-schedule-period="0"
-                        data-schedule-title="{{ 'Add a default schedule'|trans({}, 'dealer.bo.default') }}">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
+<div class="tab-pane fade" id="schedules" role="tabpanel"
+     data-schedules-root
+     data-dealer-id="{{ dealer_id }}"
+     data-week-url="/admin/module/Dealer/schedules/week?_token={{ assignToken() }}"
+     data-preview-url="/admin/module/Dealer/schedules/preview?dealer_id={{ dealer_id }}"
+     data-week="{{ week_schedule|json_encode|e('html_attr') }}"
+     data-day-labels="{{ day_labels|json_encode|e('html_attr') }}">
+
+    {# ====================== WEEKLY OPENING HOURS GRID ====================== #}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h5 class="mb-0">{{ 'Weekly opening hours'|trans({}, 'dealer.bo.default') }}</h5>
+                <div class="form-text mb-0">{{ 'A day without any time slot is closed. Changes apply after saving.'|trans({}, 'dealer.bo.default') }}</div>
             </div>
-            <table class="table table-sm table-striped">
-                <thead>
-                <tr>
-                    <th>{{ 'Day'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Begin'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
-                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for s in schedules_default %}
-                    <tr>
-                        <td>{{ s.day_label }}</td>
-                        <td>{{ s.begin }}</td>
-                        <td>{{ s.end }}</td>
-                        <td class="text-end">
-                            {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr><td colspan="4"><div class="alert alert-info mb-0">{{ 'There is no Default Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <button type="button" class="btn btn-primary" data-week-save disabled>
+                <span class="spinner-border spinner-border-sm me-1 d-none" data-week-spinner aria-hidden="true"></span>
+                {{ 'Save the weekly hours'|trans({}, 'dealer.bo.default') }}
+            </button>
         </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0" data-week-grid>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer d-none" data-week-feedback></div>
+    </div>
 
-        <div class="col-md-6">
-            {# EXTRA SCHEDULES #}
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="mb-0">{{ 'Extra Schedules'|trans({}, 'dealer.bo.default') }}</h5>
-                <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
-                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="0" data-exception="1"
-                        data-schedule-type="opening" data-schedule-period="1"
-                        data-schedule-title="{{ 'Add an exceptional opening'|trans({}, 'dealer.bo.default') }}">
-                    <i class="bi bi-plus-lg"></i>
+    {# ====================== EXCEPTIONS ====================== #}
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h5 class="mb-0">{{ 'Exceptions'|trans({}, 'dealer.bo.default') }}</h5>
+                <div class="form-text mb-0">{{ 'Public holidays, special events, exceptional openings — one-off, over a period, weekly or every year.'|trans({}, 'dealer.bo.default') }}</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#dealer-exception-create" data-exc-kind="closure">
+                    <i class="bi bi-plus-lg"></i> {{ 'Add a closure'|trans({}, 'dealer.bo.default') }}
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#dealer-exception-create" data-exc-kind="opening">
+                    <i class="bi bi-plus-lg"></i> {{ 'Add an exceptional opening'|trans({}, 'dealer.bo.default') }}
                 </button>
             </div>
-            <table class="table table-sm table-striped">
-                <thead>
-                <tr>
-                    <th>{{ 'Day'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Begin'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
-                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for s in schedules_extra %}
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped align-middle mb-0">
+                    <thead>
                     <tr>
-                        <td>{{ s.day_label }}</td>
-                        <td>{{ s.begin }}</td>
-                        <td>{{ s.end }}</td>
-                        <td>{{ s.period_begin }}</td>
-                        <td>
-                            {% if s.recurring %}
-                                <span class="badge text-bg-info">{{ 'every year'|trans({}, 'dealer.bo.default') }}</span>
-                            {% else %}
-                                {{ s.period_end }}
-                            {% endif %}
-                        </td>
-                        <td>{{ s.title }}</td>
-                        <td class="text-end">
-                            {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
-                        </td>
+                        <th>{{ 'Type'|trans({}, 'dealer.bo.default') }}</th>
+                        <th>{{ 'When'|trans({}, 'dealer.bo.default') }}</th>
+                        <th>{{ 'Hours'|trans({}, 'dealer.bo.default') }}</th>
+                        <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
+                        <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
                     </tr>
-                {% else %}
-                    <tr><td colspan="7"><div class="alert alert-info mb-0">{{ 'There is no Extra Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-            {# CLOSED SCHEDULES #}
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="mb-0">{{ 'Closed Schedules'|trans({}, 'dealer.bo.default') }}</h5>
-                <button type="button" class="btn btn-primary btn-sm dealer-schedules-create-btn"
-                        data-bs-toggle="modal" data-bs-target="#dealer-schedules-create" data-closed="1" data-exception="1"
-                        data-schedule-type="closure" data-schedule-period="1"
-                        data-schedule-title="{{ 'Add an exceptional closure'|trans({}, 'dealer.bo.default') }}">
-                    <i class="bi bi-plus-lg"></i>
-                </button>
+                    </thead>
+                    <tbody>
+                    {% for e in schedules_exceptions %}
+                        <tr>
+                            <td>
+                                {% if e.kind == 'closure' %}
+                                    <span class="badge text-bg-danger">{{ 'Closure'|trans({}, 'dealer.bo.default') }}</span>
+                                {% else %}
+                                    <span class="badge text-bg-success">{{ 'Opening'|trans({}, 'dealer.bo.default') }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if e.mode == 'yearly' %}
+                                    {{ 'Every year on %date'|trans({'%date': e.period_begin ? e.period_begin|date('d/m') : '—'}, 'dealer.bo.default') }}
+                                {% elseif e.mode == 'weekly' %}
+                                    {{ 'Every %day'|trans({'%day': e.day_label}, 'dealer.bo.default') }}
+                                    {%- if e.period_begin and e.period_end %} · {{ 'from %begin to %end'|trans({'%begin': e.period_begin|date('d/m/Y'), '%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
+                                    {%- elseif e.period_begin %} · {{ 'from %begin'|trans({'%begin': e.period_begin|date('d/m/Y')}, 'dealer.bo.default') }}
+                                    {%- elseif e.period_end %} · {{ 'until %end'|trans({'%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
+                                    {%- endif %}
+                                {% elseif e.mode == 'date' %}
+                                    {{ e.period_begin|date('d/m/Y') }}
+                                {% else %}
+                                    {% if e.period_begin and e.period_end %}
+                                        {{ 'from %begin to %end'|trans({'%begin': e.period_begin|date('d/m/Y'), '%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
+                                    {% elseif e.period_begin %}
+                                        {{ 'from %begin'|trans({'%begin': e.period_begin|date('d/m/Y')}, 'dealer.bo.default') }}
+                                    {% elseif e.period_end %}
+                                        {{ 'until %end'|trans({'%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
+                                    {% else %}
+                                        {{ 'Every day'|trans({}, 'dealer.bo.default') }}
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if e.full_day %}
+                                    <span class="text-muted">{{ 'Whole day'|trans({}, 'dealer.bo.default') }}</span>
+                                {% else %}
+                                    {{ e.begin }} – {{ e.end }}
+                                {% endif %}
+                            </td>
+                            <td>{{ e.title }}</td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#dealer-exception-update"
+                                            data-id="{{ e.id }}" data-kind="{{ e.kind }}" data-mode="{{ e.mode }}"
+                                            data-day="{{ e.day is not null ? e.day : '' }}" data-begin="{{ e.begin }}" data-end="{{ e.end }}"
+                                            data-periodbegin="{{ e.period_begin }}" data-periodend="{{ e.period_end }}"
+                                            data-fullday="{{ e.full_day ? 1 : 0 }}" data-title="{{ e.title }}"
+                                            title="{{ 'Edit'|trans }}">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#dealer-exception-delete" data-id="{{ e.id }}"
+                                            title="{{ 'Delete'|trans }}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5">
+                                <div class="text-muted p-2">{{ 'No exception yet. The store follows its weekly hours.'|trans({}, 'dealer.bo.default') }}</div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <table class="table table-sm table-striped">
-                <thead>
-                <tr>
-                    <th>{{ 'Day'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Begin'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'End'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Period Begin'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Period End'|trans({}, 'dealer.bo.default') }}</th>
-                    <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
-                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for s in schedules_closed %}
-                    <tr>
-                        <td>{{ s.day_label }}</td>
-                        <td>{{ s.begin }}</td>
-                        <td>{{ s.end }}</td>
-                        <td>{{ s.period_begin }}</td>
-                        <td>
-                            {% if s.recurring %}
-                                <span class="badge text-bg-info">{{ 'every year'|trans({}, 'dealer.bo.default') }}</span>
-                            {% else %}
-                                {{ s.period_end }}
-                            {% endif %}
-                        </td>
-                        <td>{{ s.title }}</td>
-                        <td class="text-end">
-                            {% include 'Dealer/edit/_schedule-actions.html.twig' with {s: s} only %}
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr><td colspan="7"><div class="alert alert-info mb-0">{{ 'There is no Closed Schedules'|trans({}, 'dealer.bo.default') }}</div></td></tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        </div>
+    </div>
+
+    {# ====================== CUSTOMER PREVIEW ====================== #}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">{{ 'What your customers see'|trans({}, 'dealer.bo.default') }}</h5>
+            <div class="form-text mb-0">{{ 'Upcoming pickup days and slots, computed from the hours above, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default') }}</div>
+        </div>
+        <div class="card-body" data-preview-body>
+            <div class="text-muted">{{ 'Loading…'|trans({}, 'dealer.bo.default') }}</div>
         </div>
     </div>
 </div>

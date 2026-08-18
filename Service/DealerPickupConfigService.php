@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Dealer\Service;
 
+use Dealer\Dealer;
 use Dealer\Model\DealerPickupConfig;
 use Dealer\Model\DealerPickupConfigQuery;
 use Dealer\Model\DealerQuery;
+use Thelia\Core\Translation\Translator;
 
 /**
  * Read/write access to the per-dealer pickup configuration
@@ -52,8 +54,20 @@ class DealerPickupConfigService
     {
         $dealer = DealerQuery::create()->findPk($dealerId);
 
-        if ($dealer === null || !in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
-            return;
+        if ($dealer === null) {
+            throw new \InvalidArgumentException(
+                Translator::getInstance()->trans('Unknown dealer.', [], Dealer::MESSAGE_DOMAIN)
+            );
+        }
+
+        if (!in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
+            throw new \InvalidArgumentException(
+                Translator::getInstance()->trans(
+                    'Unknown timezone "%timezone".',
+                    ['%timezone' => $timezone],
+                    Dealer::MESSAGE_DOMAIN
+                )
+            );
         }
 
         $dealer->setTimezone($timezone)->save();
