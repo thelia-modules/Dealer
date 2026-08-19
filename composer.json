@@ -1,6 +1,5 @@
 {
     "name": "thelia/dealer-module",
-    "version": "dev-twig",
     "license": "GPL-3.0-or-later",
     "type": "thelia-module",
     "authors":[
