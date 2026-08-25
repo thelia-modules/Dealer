@@ -4,6 +4,20 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.6] - 2026-08-25
+
+### Changed
+
+- Full pickup slots are no longer removed from `PickupSlotService::getAvailableSlots()`: they are
+  returned with a new `full` flag so the front-office can show them greyed out and unselectable,
+  and a day whose slots are all taken stays in the list instead of disappearing. Slots before the
+  preparation delay are still hidden — too early is not the same as full.
+- `PickupSlotService::isSlotAvailable()` explicitly rejects a slot flagged `full`, so checkout
+  enforcement and the back-office slot picker stay strict.
+- Back-office: a full slot appears in the order pickup select suffixed `(complet)` and `disabled`
+  (the free datetime remains the way to overbook it), and carries a "Complet" badge in the
+  customer preview of the schedules tab.
+
 ## [4.0.5] - 2026-08-18
 
 ### Added

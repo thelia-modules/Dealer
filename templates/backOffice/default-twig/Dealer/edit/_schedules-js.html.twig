@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         previewEmpty: {{ 'No pickup slot is currently offered: check the hours, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
         previewSlots: {{ '%count slots'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
         previewLeft: {{ '%count left'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewFull: {{ 'Full'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
         unsaved: {{ 'Unsaved changes'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }}
     };
 
@@ -266,9 +267,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 data.days.forEach(function (day) {
                     var date = new Date(day.date + 'T00:00:00');
                     var times = day.slots.map(function (slot) {
-                        var badge = slot.remaining !== null
-                            ? ' <span class="badge text-bg-' + (slot.remaining <= 1 ? 'danger' : 'secondary') + '">' + esc(I18N.previewLeft.replace('%count', slot.remaining)) + '</span>'
-                            : '';
+                        var badge = '';
+                        if (slot.full) {
+                            badge = ' <span class="badge text-bg-danger">' + esc(I18N.previewFull) + '</span>';
+                        } else if (slot.remaining !== null) {
+                            badge = ' <span class="badge text-bg-' + (slot.remaining <= 1 ? 'danger' : 'secondary') + '">' + esc(I18N.previewLeft.replace('%count', slot.remaining)) + '</span>';
+                        }
                         return '<span class="d-inline-block text-nowrap me-2">' + esc(slot.time) + badge + '</span>';
                     }).join('');
                     html += '<div class="border rounded p-2" style="min-width: 11rem">'

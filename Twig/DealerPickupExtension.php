@@ -34,7 +34,10 @@ final class DealerPickupExtension extends AbstractExtension
     }
 
     /**
-     * @return list<array{date: string, day: int, slots: list<array{time: string, datetime: string, remaining: int|null}>}>
+     * The pickup days offered to the customer. Slots flagged 'full' are meant to be
+     * rendered greyed out and unselectable, not hidden.
+     *
+     * @return list<array{date: string, day: int, slots: list<array{time: string, datetime: string, remaining: int|null, full: bool}>}>
      */
     public function getPickupSlots(int $dealerId, string|\DateTimeInterface|null $from = null): array
     {
