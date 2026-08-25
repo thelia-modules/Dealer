@@ -208,4 +208,6 @@ return array(
     "Opening hours (free text)" => "Opening hours (free text)",
     "All other days" => "All other days",
     "NB: when they overlap, closures always take precedence over openings." => "NB: when they overlap, closures always take precedence over openings.",
+    "(full)" => "(full)",
+    "Full" => "Full",
 );

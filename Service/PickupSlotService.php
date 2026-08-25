@@ -33,10 +33,15 @@ class PickupSlotService
     }
 
     /**
+     * The upcoming pickup days, each with the slots the customer may see. A saturated slot
+     * is listed with 'full' set, and a day whose slots are all full is kept: the shop must
+     * look busy, not closed. Only days with no slot at all (closed, or entirely behind the
+     * preparation delay) drop out.
+     *
      * @return list<array{
      *     date: string,
      *     day: int,
-     *     slots: list<array{time: string, datetime: string, remaining: int|null}>
+     *     slots: list<array{time: string, datetime: string, remaining: int|null, full: bool}>
      * }>
      */
     public function getAvailableSlots(int $dealerId, ?\DateTimeInterface $from = null): array
@@ -68,6 +73,8 @@ class PickupSlotService
             if ($ranges !== []) {
                 $slots = $this->buildSlots($cursor, $ranges, $config, $earliest, $tz, $taken);
 
+                // A saturated day keeps its (full) slots, so it stays here; only a day
+                // without any slot at all — closed, or entirely too early — is skipped.
                 if ($slots !== []) {
                     $days[] = [
                         'date' => $cursor->format('Y-m-d'),
@@ -89,6 +96,9 @@ class PickupSlotService
      * engine would offer it right now — same grid, same preparation delay, same
      * orderable-days window, same remaining capacity. Rejects forged datetimes (past,
      * off-grid, beyond the window) as well as slots that filled up in the meantime.
+     *
+     * Full slots are still listed by getAvailableSlots() so the customer can see them
+     * greyed out; they are never selectable, hence the explicit rejection here.
      */
     public function isSlotAvailable(int $dealerId, \DateTimeInterface $datetime): bool
     {
@@ -102,7 +112,7 @@ class PickupSlotService
 
             foreach ($day['slots'] as $slot) {
                 if ($slot['datetime'] === $target) {
-                    return true;
+                    return !$slot['full'];
                 }
             }
         }
@@ -279,8 +289,12 @@ class PickupSlotService
 
     /**
      * @param list<array{begin: string, end: string}> $ranges
+     * A slot whose quota is exhausted is kept in the list, flagged 'full': the customer
+     * must see it, greyed out and unselectable, instead of a hole in the grid. Slots
+     * before the preparation delay stay out — too early is not the same as full.
+     *
      * @param array<string, int> $taken orders already consuming each slot, keyed by 'Y-m-d H:i:s'
-     * @return list<array{time: string, datetime: string, remaining: int|null}>
+     * @return list<array{time: string, datetime: string, remaining: int|null, full: bool}>
      */
     private function buildSlots(
         \DateTimeImmutable $date,
@@ -310,13 +324,12 @@ class PickupSlotService
                         ? max(0, $maxPerSlot - ($taken[$slotStart->format('Y-m-d H:i:s')] ?? 0))
                         : null;
 
-                    if ($remaining === null || $remaining > 0) {
-                        $slots[] = [
-                            'time' => $slotStart->format('H:i'),
-                            'datetime' => $slotStart->format('Y-m-d H:i:s'),
-                            'remaining' => $remaining,
-                        ];
-                    }
+                    $slots[] = [
+                        'time' => $slotStart->format('H:i'),
+                        'datetime' => $slotStart->format('Y-m-d H:i:s'),
+                        'remaining' => $remaining,
+                        'full' => $remaining !== null && $remaining <= 0,
+                    ];
                 }
 
                 $slotStart = $slotEnd;

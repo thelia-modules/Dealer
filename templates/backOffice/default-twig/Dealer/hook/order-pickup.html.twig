@@ -66,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var toggle = modal.querySelector('[data-pickup-custom-toggle]');
     var modeInput = modal.querySelector('[data-pickup-mode]');
     var loaded = false;
+    var fullLabel = {{ '(full)'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }};
 
     toggle.addEventListener('change', function () {
         slotZone.classList.toggle('d-none', toggle.checked);
@@ -96,7 +97,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     day.slots.forEach(function (slot) {
                         var option = document.createElement('option');
                         option.value = slot.datetime;
-                        option.textContent = slot.time + (slot.remaining !== null ? ' (' + slot.remaining + ')' : '');
+                        // A full slot stays listed but cannot be picked here: the free
+                        // datetime below is the deliberate way to overbook it.
+                        option.disabled = !!slot.full;
+                        option.textContent = slot.full
+                            ? slot.time + ' ' + fullLabel
+                            : slot.time + (slot.remaining !== null ? ' (' + slot.remaining + ')' : '');
                         group.appendChild(option);
                     });
                     select.appendChild(group);
