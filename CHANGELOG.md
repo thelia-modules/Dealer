@@ -4,6 +4,20 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.7] - 2026-08-28
+
+### Fixed
+
+- The `dealer.additional` hook is rendered again on the store edit page. The hook has been
+  declared by the module since it shipped — a back-office block hook whose own description reads
+  "Allow you to insert a tab on Dealer edit page" — and the Smarty template has always rendered it
+  through `{hookblock}` / `{forhook}`. The Twig port of that page left it out, so on a Thelia 3
+  shop no module could contribute a tab any more; `TheliaBlocks` had no way to offer its content
+  editor for a store. Tabs now appear between Associated and Users, where the Smarty template
+  puts them, and a fragment carrying an `href` is loaded lazily like on every core edit page.
+  The hook is given both `dealer` — the argument the Smarty template passes — and `id`, the one
+  the core edit pages pass, so a subscriber written against either works.
+
 ## [4.0.6] - 2026-08-25
 
 ### Changed
