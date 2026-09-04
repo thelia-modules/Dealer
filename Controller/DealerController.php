@@ -79,27 +79,10 @@ class DealerController extends BaseController
      */
     protected function hydrateObjectForm($object)
     {
-        // Translated columns are read below: without this the model would answer with
-        // Propel's default locale and hand the form empty strings.
-        $object->setLocale($this->resolveEditionLocale());
-
-        $data = array(
-            "id" => $object->getId(),
-            "title" => $object->getTitle(),
-            "address1" => $object->getAddress1(),
-            "address2" => $object->getAddress2(),
-            "address3" => $object->getAddress3(),
-            "zipcode" => $object->getZipcode(),
-            "city" => $object->getCity(),
-            "country_id" => $object->getCountryId(),
-            "description" => $object->getDescription(),
-            "big_description" => $object->getBigDescription(),
-            "hard_open_hour" => $object->getHardOpenHour(),
-            "latitude" => $object->getLatitude(),
-            "longitude" => $object->getLongitude(),
-        );
-
-        return $this->getUpdateForm($data);
+        // Same data as the edition screen builds, from one place: the form pushed to the
+        // parser context here is the one that screen renders, and a field missing from
+        // either list would come up empty — as `access` did.
+        return $this->getUpdateForm($this->buildDealerFormData($object, $this->resolveEditionLocale()));
     }
 
     const CONTROLLER_ENTITY_NAME = "dealer";
