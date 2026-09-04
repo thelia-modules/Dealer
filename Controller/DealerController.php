@@ -49,8 +49,11 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Template\TemplateHelperInterface;
 use Thelia\Model\CountryQuery;
+use Thelia\Model\Lang;
+use Thelia\Model\LangQuery;
 use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
+use TwigEngine\Service\FormService;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -76,6 +79,10 @@ class DealerController extends BaseController
      */
     protected function hydrateObjectForm($object)
     {
+        // Translated columns are read below: without this the model would answer with
+        // Propel's default locale and hand the form empty strings.
+        $object->setLocale($this->resolveEditionLocale());
+
         $data = array(
             "id" => $object->getId(),
             "title" => $object->getTitle(),
@@ -117,6 +124,7 @@ class DealerController extends BaseController
         #[Autowire(service: 'twig.loader.native_filesystem')]
         private readonly FilesystemLoader $dealerTwigLoader,
         private readonly EventDispatcherInterface $dealerEventDispatcher,
+        private readonly FormService $dealerFormService,
     ) {
     }
 
@@ -151,7 +159,7 @@ class DealerController extends BaseController
 
         $locale = $request->hasSession()
             ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
-            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
+            : (LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
         $query = DealerQuery::create();
 
@@ -214,6 +222,31 @@ class DealerController extends BaseController
     }
 
     /**
+     * Language the edition screens read and write: the one the language switcher asks for,
+     * else the session language, else the shop default.
+     */
+    private function resolveEditionLang(): ?Lang
+    {
+        $request = $this->getRequest();
+
+        $editLanguageId = (int) $request->query->get('edit_language_id', 0);
+        if ($editLanguageId < 1) {
+            $editLanguageId = (int) $request->request->get('edit_language_id', 0);
+        }
+
+        $editLang = $editLanguageId > 0 ? LangQuery::create()->findPk($editLanguageId) : null;
+
+        return $editLang
+            ?? ($request->hasSession() ? $request->getSession()->getLang() : null)
+            ?? LangQuery::create()->findOneByByDefault(true);
+    }
+
+    private function resolveEditionLocale(): string
+    {
+        return $this->resolveEditionLang()?->getLocale() ?? 'en_US';
+    }
+
+    /**
      * Use to get Edit render
      * @return mixed
      */
@@ -224,10 +257,7 @@ class DealerController extends BaseController
         $request = $this->getRequest();
         $dealerId = $request->query->get('dealer_id');
 
-        $editLanguageId = (int) $request->query->get('edit_language_id', 0);
-        $editLang = $editLanguageId > 0 ? \Thelia\Model\LangQuery::create()->findPk($editLanguageId) : null;
-        $editLang ??= ($request->hasSession() ? $request->getSession()->getLang() : null)
-            ?? \Thelia\Model\LangQuery::create()->findOneByByDefault(true);
+        $editLang = $this->resolveEditionLang();
         $locale = $editLang?->getLocale() ?? 'en_US';
 
         // Messages flashed by a sub-controller (e.g. schedules) before redirecting here.
@@ -240,7 +270,12 @@ class DealerController extends BaseController
 
         $dealer = $dealerId !== null ? DealerQuery::create()->findPk($dealerId) : null;
 
-        $updateForm = $this->getUpdateForm($this->buildDealerFormData($dealer));
+        // Rendered through the form service so that a submission the validator rejected comes
+        // back with the typed values and its field errors, instead of the stored ones.
+        $updateFormView = $this->dealerFormService->getFormViewByName(
+            DealerUpdateForm::getName(),
+            $this->buildDealerFormData($dealer, $locale)
+        );
 
         $contactCreateForm = $this->getTheliaFormFactory()->createForm(ContactForm::getName(), data: ['locale' => $locale]);
         $contactUpdateForm = $this->getTheliaFormFactory()->createForm(ContactUpdateForm::getName(), data: ['locale' => $locale]);
@@ -251,7 +286,7 @@ class DealerController extends BaseController
         $pickupConfigForm = $this->getTheliaFormFactory()->createForm(DealerPickupConfigForm::getName(), data: $this->buildPickupConfigData($dealerId));
         $adminLinkForm = $this->getTheliaFormFactory()->createForm(AdminLinkForm::getName());
         $geoForm = $this->getTheliaFormFactory()->createForm(GeoDealerForm::getName(), data: $this->buildGeoFormData($dealer));
-        $seoForm = $this->getTheliaFormFactory()->createForm(DealerMetaSEOForm::getName(), data: $this->buildSeoFormData($dealerId));
+        $seoForm = $this->getTheliaFormFactory()->createForm(DealerMetaSEOForm::getName(), data: $this->buildSeoFormData($dealerId, $locale));
         $imageHeaderForm = $this->getTheliaFormFactory()->createForm(DealerImageHeaderForm::getName());
         $imageBoxForm = $this->getTheliaFormFactory()->createForm(DealerImageBoxForm::getName());
 
@@ -266,7 +301,7 @@ class DealerController extends BaseController
                 ] : null,
                 'edit_language_id' => $editLang?->getId(),
                 'edit_language_locale' => $locale,
-                'update_form' => $updateForm->createView()->getView(),
+                'update_form' => $updateFormView,
                 'general_error' => $flashError ?? $this->getParserContext()->get('general_error'),
                 'general_success' => $flashSuccess,
                 // Tab data
@@ -313,13 +348,14 @@ class DealerController extends BaseController
     /**
      * @return array<string, mixed>
      */
-    private function buildSeoFormData($dealerId): array
+    private function buildSeoFormData($dealerId, string $locale): array
     {
         if ($dealerId === null) {
             return [];
         }
 
         $seo = \Dealer\Model\DealerMetaSeoQuery::create()->findOneByDealerId($dealerId);
+        $seo?->setLocale($locale);
 
         return [
             'dealer_id' => $dealerId,
@@ -640,11 +676,13 @@ class DealerController extends BaseController
     /**
      * @return array<string, mixed>
      */
-    private function buildDealerFormData(?Dealer $dealer): array
+    private function buildDealerFormData(?Dealer $dealer, string $locale): array
     {
         if ($dealer === null) {
             return [];
         }
+
+        $dealer->setLocale($locale);
 
         return [
             'id' => $dealer->getId(),

@@ -15,6 +15,7 @@ namespace Dealer\Form;
 
 use Dealer\Dealer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Form\BaseForm;
@@ -58,25 +59,25 @@ class DealerForm extends BaseForm
                 "constraints" => array(new NotBlank(), ),
                 "attr" => array()
             ))
-            ->add("description", TextType::class, array(
+            ->add("description", TextareaType::class, array(
                 "label" => $this->translator->trans("Description", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.description"],
                 "required" => false,
                 "attr" => array()
             ))
-            ->add("big_description", TextType::class, array(
+            ->add("big_description", TextareaType::class, array(
                 "label" => $this->translator->trans("Complex Description", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.big_description"],
                 "required" => false,
                 "attr" => array()
             ))
-            ->add("hard_open_hour", TextType::class, array(
+            ->add("hard_open_hour", TextareaType::class, array(
                 "label" => $this->translator->trans("Open hour text", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.hard_open_hour"],
                 "required" => false,
                 "attr" => array()
             ))
-            ->add("access", TextType::class, array(
+            ->add("access", TextareaType::class, array(
                 "label" => $this->translator->trans("Access", [], Dealer::MESSAGE_DOMAIN),
                 "label_attr" => ["for" => "dealer.access"],
                 "required" => false,
