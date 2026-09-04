@@ -4,6 +4,24 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.8] - 2026-09-04
+
+### Fixed
+
+- The store edit form is filled with the translated fields of the language being edited. The Twig
+  port read them off the model before any locale was set, so Propel answered with its default one
+  and the name, description, complex description, opening hours and access fields came up empty on
+  a shop whose only translation is French. The name being required, the browser then refused to
+  submit the form and no change could be saved at all; saving after retyping the name would have
+  blanked the other translated fields.
+- The description, complex description, opening hours and access fields are rendered as textareas
+  again, as the Smarty template did: single-line inputs dropped the line breaks of their stored
+  content on every save.
+- A submission the validator rejects comes back with the values that were typed and the message of
+  each field in error, instead of the stored values and a single message at the top of the page.
+- Meta SEO titles, descriptions and keywords are stored under the language being edited rather
+  than Propel's default locale, and the edit screen reads them back from it.
+
 ## [4.0.7] - 2026-08-28
 
 ### Fixed
