@@ -4,6 +4,15 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.9] - 2026-09-04
+
+### Fixed
+
+- The access field of the store edit form is filled again. 4.0.8 renders the form the parser
+  context holds, so that a rejected submission keeps its values; that form is built by
+  `hydrateObjectForm()`, whose field list had never carried `access`. Both paths now build their
+  data in one place.
+
 ## [4.0.8] - 2026-09-04
 
 ### Fixed
