@@ -88,48 +88,59 @@
                             <div class="mb-3">
                                 <label class="form-label">{{ 'Title'|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.title, {attr: {class: 'form-control', placeholder: 'The Dealer title'|trans({}, 'dealer.bo.default')}}) }}
+                                {{ form_errors(update_form.title) }}
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ 'Address1'|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.address1, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(update_form.address1) }}
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ 'Address2'|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.address2, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(update_form.address2) }}
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ 'Address3'|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.address3, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(update_form.address3) }}
                             </div>
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label class="form-label">{{ 'Zipcode'|trans({}, 'dealer.bo.default') }}</label>
                                     {{ form_widget(update_form.zipcode, {attr: {class: 'form-control'}}) }}
+                                    {{ form_errors(update_form.zipcode) }}
                                 </div>
                                 <div class="col-md-5 mb-3">
                                     <label class="form-label">{{ 'City'|trans({}, 'dealer.bo.default') }}</label>
                                     {{ form_widget(update_form.city, {attr: {class: 'form-control'}}) }}
+                                    {{ form_errors(update_form.city) }}
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label">{{ 'Country'|trans({}, 'dealer.bo.default') }}</label>
                                     {{ form_widget(update_form.country_id, {attr: {class: 'form-select'}}) }}
+                                    {{ form_errors(update_form.country_id) }}
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ 'Description'|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.description, {attr: {class: 'form-control', rows: 3}}) }}
+                                {{ form_errors(update_form.description) }}
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ 'Complex Description'|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.big_description, {attr: {class: 'form-control', rows: 3}}) }}
+                                {{ form_errors(update_form.big_description) }}
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ "Opening hours (free text)"|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.hard_open_hour, {attr: {class: 'form-control'}}) }}
+                                {{ form_errors(update_form.hard_open_hour) }}
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">{{ 'Access'|trans({}, 'dealer.bo.default') }}</label>
                                 {{ form_widget(update_form.access, {attr: {class: 'form-control', rows: 3}}) }}
+                                {{ form_errors(update_form.access) }}
                             </div>
 
                             <div class="mt-3">

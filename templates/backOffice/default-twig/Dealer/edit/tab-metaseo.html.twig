@@ -3,6 +3,7 @@
     <form method="POST" action="/admin/module/dealer/seo" class="clearfix">
         <input type="hidden" name="{{ seo_fp }}[_token]" value="{{ seo_form._token.vars.value }}">
         <input type="hidden" name="{{ seo_fp }}[dealer_id]" value="{{ dealer_id }}">
+        <input type="hidden" name="edit_language_id" value="{{ edit_language_id }}">
 
         <div class="mb-3">
             <label class="form-label">{{ 'Slug SEO'|trans({}, 'dealer.bo.default') }}</label>

@@ -37,7 +37,10 @@ class MetaSeoController extends BaseAdminController
                 ->filterByDealerId($databasesConfiguration["dealer_id"])
                 ->findOneOrCreate();
 
+            // The meta fields are translated: without the edition locale they would be stored
+            // under Propel's default one and read back empty by the edition screen.
             $dealerSeo
+                ->setLocale($this->getCurrentEditionLocale())
                 ->setJson( $databasesConfiguration["meta_json"])
                 ->setSlug($databasesConfiguration["slug"])
                 ->setMetaTitle($databasesConfiguration["meta_title"])
