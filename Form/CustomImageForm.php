@@ -19,7 +19,9 @@ class CustomImageForm extends BaseForm
     protected function buildForm()
     {
         $this->formBuilder
-            ->add("file", FileType::class)
+            ->add("file", FileType::class, array("constraints" => array(
+                new Constraints\Image(mimeTypes: array('image/gif', 'image/jpeg', 'image/png', 'image/webp'))
+            )))
             ->add("parent_id", HiddenType::class, array("constraints" => array(new Constraints\NotBlank())))
         ;
     }
