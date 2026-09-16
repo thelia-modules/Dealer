@@ -73,4 +73,5 @@ return array(
     "The schedule could not be saved." => "L'horaire n'a pas pu être enregistré.",
     "The pickup slot could not be updated." => "Le créneau de retrait n'a pas pu être modifié.",
     "Note: this datetime is outside the store opening hours." => "Attention : cet horaire est en dehors des heures d'ouverture du magasin.",
+    "Only JPEG, PNG, GIF and WebP images can be used here." => "Seules les images JPEG, PNG, GIF et WebP peuvent être utilisées ici.",
 );

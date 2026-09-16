@@ -3,6 +3,7 @@
 namespace Dealer\Controller\Image;
 
 use Dealer\Dealer;
+use Dealer\Service\UploadedImageGuard;
 use Dealer\Form\DealerImageBoxForm;
 use Dealer\Form\DealerImageHeaderForm;
 use Dealer\Model\DealerImage;
@@ -247,7 +248,11 @@ class CustomImagesAdminController extends BaseAdminController
 
             $fileCreateOrUpdateEvent = new FileCreateOrUpdateEvent($parentId);
             $fileCreateOrUpdateEvent->setModel($fileModel);
-            $fileCreateOrUpdateEvent->setUploadedFile($imageFile);
+
+            // The stored name, and the one the image cache publishes, comes
+            // from what the browser sent. Rebuild it around the format read
+            // from the file itself.
+            $fileCreateOrUpdateEvent->setUploadedFile((new UploadedImageGuard())->rename($imageFile));
 
             $eventDispatcher->dispatch(
                 $fileCreateOrUpdateEvent,
