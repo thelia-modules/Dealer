@@ -11,6 +11,7 @@ use Dealer\Model\DealerShedules;
 use Dealer\Model\DealerShedulesQuery;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Thelia\Model\OrderStatus;
+use Thelia\Model\OrderStatusQuery;
 
 /**
  * Computes the pickup slots available for a dealer, applying its opening hours,
@@ -26,6 +27,9 @@ class PickupSlotService
     private const MAX_DAYS_SCAN = 60;
 
     private const DEFAULT_TIMEZONE = 'Europe/Paris';
+
+    /** @var int[]|null the statuses that release a slot, resolved once per request */
+    private ?array $releasingStatusIds = null;
 
     public function __construct(
         private readonly DealerPickupConfigService $configService,
@@ -161,9 +165,7 @@ class PickupSlotService
             ->filterByDealerId($dealerId)
             ->filterByPickupDatetime($slotStart->format('Y-m-d H:i:s'))
             ->useOrderQuery()
-                ->useOrderStatusQuery()
-                    ->filterByCode([OrderStatus::CODE_CANCELED, OrderStatus::CODE_REFUNDED], Criteria::NOT_IN)
-                ->endUse()
+                ->filterByStatusId($this->releasingStatusIds(), Criteria::NOT_IN)
             ->endUse()
             ->count();
 
@@ -340,6 +342,40 @@ class PickupSlotService
     }
 
     /**
+     * The statuses an order can be in and still release its pickup slot.
+     *
+     * A shop names its own statuses and says which native status each one stands for, through
+     * `order_status.equivalent_code`. A drive that refuses a payment moves the order to a status of
+     * its own whose equivalence is `canceled`: matched on the literal code alone, that order would
+     * go on holding its slot forever. The core already knows how to read an equivalence, so the
+     * statuses are resolved through it rather than compared again here.
+     *
+     * @return int[]
+     */
+    private function releasingStatusIds(): array
+    {
+        if (null !== $this->releasingStatusIds) {
+            return $this->releasingStatusIds;
+        }
+
+        $this->releasingStatusIds = [];
+
+        foreach (OrderStatusQuery::create()->find() as $status) {
+            if ($status->hasStatusHelper([OrderStatus::CODE_CANCELED, OrderStatus::CODE_REFUNDED])) {
+                $this->releasingStatusIds[] = $status->getId();
+            }
+        }
+
+        // A shop with no cancelled status at all would otherwise be handed an empty NOT IN, which
+        // Propel writes as a condition that matches nothing.
+        if ([] === $this->releasingStatusIds) {
+            $this->releasingStatusIds = [0];
+        }
+
+        return $this->releasingStatusIds;
+    }
+
+    /**
      * Orders consuming quota on each slot of the scan window, in a single query.
      * Cancelled and refunded orders are excluded: they release their slot.
      *
@@ -362,9 +398,7 @@ class PickupSlotService
                 'max' => $windowEnd->format('Y-m-d 23:59:59'),
             ])
             ->useOrderQuery()
-                ->useOrderStatusQuery()
-                    ->filterByCode([OrderStatus::CODE_CANCELED, OrderStatus::CODE_REFUNDED], Criteria::NOT_IN)
-                ->endUse()
+                ->filterByStatusId($this->releasingStatusIds(), Criteria::NOT_IN)
             ->endUse()
             ->select(['pickup_datetime'])
             ->find();

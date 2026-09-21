@@ -4,6 +4,16 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.0.11] - 2026-09-21
+
+### Fixed
+
+- Pickup slot capacity counted the orders of a shop's own cancelled statuses. The exclusion matched
+  the literal codes `canceled` and `refunded`, so a status declaring `equivalent_code = canceled` —
+  what a drive uses for a refused, abandoned or expired payment — kept holding its slot, and nobody
+  could book it again. The statuses that release a slot are now resolved through the core, which
+  already knows how to read an equivalence.
+
 ## [4.0.9] - 2026-09-04
 
 ### Fixed
