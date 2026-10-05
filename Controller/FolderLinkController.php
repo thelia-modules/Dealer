@@ -150,7 +150,7 @@ class FolderLinkController extends BaseController
         try {
             // Check token
             $tokenProvider->checkToken(
-                $requestStack->getCurrentRequest()->query->get("_token")
+                (string) $requestStack->getCurrentRequest()->request->get('_token')
             );
             $data = [
                 "folder_id" => $requestStack->getCurrentRequest()->request->get(static::CONTROLLER_ENTITY_NAME . "_id"),
