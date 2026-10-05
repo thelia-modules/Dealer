@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(root.dataset.weekUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest'},
-            body: JSON.stringify({dealer_id: parseInt(root.dataset.dealerId, 10), week: collectWeek()})
+            body: JSON.stringify({_token: root.dataset.token, dealer_id: parseInt(root.dataset.dealerId, 10), week: collectWeek()})
         }).then(function (response) {
             return response.json().then(function (data) { return {ok: response.ok, data: data}; });
         }).then(function (result) {

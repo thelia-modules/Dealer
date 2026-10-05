@@ -162,7 +162,7 @@ class ContactController extends BaseController
 
         // Check CSRF token
         $tokenProvider->checkToken(
-            (string) $requestStack->getCurrentRequest()->query->get('_token')
+            (string) $requestStack->getCurrentRequest()->request->get('_token')
         );
 
         try {

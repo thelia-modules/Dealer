@@ -44,7 +44,7 @@
                                     {% if is_granted('UPDATE', {resource: 'admin.module', module: 'Dealer'}) %}
                                         <div class="form-check form-switch">
                                             <input class="form-check-input dealer-toggle-visible" type="checkbox"
-                                                   role="switch" data-id="{{ dealer.id }}"{{ dealer.visible ? ' checked' : '' }}>
+                                                   role="switch" data-id="{{ dealer.id }}" data-token="{{ assignToken() }}"{{ dealer.visible ? ' checked' : '' }}>
                                         </div>
                                     {% else %}
                                         <div class="form-check form-switch">
@@ -176,7 +176,8 @@
     <div class="modal fade" id="dealer-delete" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" action="/admin/module/Dealer/dealer/delete?_token={{ assignToken() }}">
+                <form method="post" action="/admin/module/Dealer/dealer/delete">
+                    <input type="hidden" name="_token" value="{{ assignToken() }}">
                     <div class="modal-header">
                         <h5 class="modal-title">{{ 'Delete an entry of Dealer'|trans({}, 'dealer.bo.default') }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
@@ -230,9 +231,12 @@
 
             document.querySelectorAll('.dealer-toggle-visible').forEach(function (el) {
                 el.addEventListener('change', function () {
-                    fetch('/admin/module/Dealer/dealer/toggle-online/' + this.dataset.id + '?_token={{ assignToken() }}', {
+                    var body = new FormData();
+                    body.append('_token', this.dataset.token);
+                    fetch('/admin/module/Dealer/dealer/toggle-online/' + this.dataset.id, {
                         method: 'POST',
-                        headers: {'X-Requested-With': 'XMLHttpRequest'}
+                        headers: {'X-Requested-With': 'XMLHttpRequest'},
+                        body: body
                     });
                 });
             });

@@ -42,7 +42,7 @@ class OrderPickupController extends BaseAdminController
         $flashBag = $request->getSession()->getFlashBag();
 
         try {
-            $tokenProvider->checkToken((string) $request->query->get('_token'));
+            $tokenProvider->checkToken((string) $request->request->get('_token'));
 
             $pickup = DealerOrderPickupQuery::create()->findOneByOrderId($orderId);
 

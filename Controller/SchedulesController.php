@@ -216,8 +216,8 @@ class SchedulesController extends BaseController
 
     /**
      * Replace the whole base weekly grid in one call. Expects a JSON body
-     * {dealer_id: int, week: {0: [{begin, end}, …], …}} and a CSRF token in the
-     * _token query parameter; responds with JSON so the grid can show every
+     * {_token: string, dealer_id: int, week: {0: [{begin, end}, …], …}}, the CSRF token
+     * travelling in the body; responds with JSON so the grid can show every
      * validation error inline, attached to its weekday, without a page reload.
      */
     #[Route('/week', name: '_week', methods: ['POST'])]
@@ -230,8 +230,11 @@ class SchedulesController extends BaseController
             return new JsonResponse(['success' => false, 'message' => 'Access denied'], 403);
         }
 
+        $body = json_decode($request->getContent(), true);
+        $token = \is_array($body) && \is_string($body['_token'] ?? null) ? $body['_token'] : '';
+
         try {
-            $tokenProvider->checkToken((string) $request->query->get('_token'));
+            $tokenProvider->checkToken($token);
         } catch (\Exception) {
             return new JsonResponse(['success' => false, 'message' => 'Invalid token'], 403);
         }
@@ -318,7 +321,7 @@ class SchedulesController extends BaseController
 
         try {
             $tokenProvider->checkToken(
-                (string) $this->getRequest()->query->get('_token')
+                (string) $this->getRequest()->request->get('_token')
             );
 
             $this->getService()->deleteFromId(
