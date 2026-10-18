@@ -23,6 +23,7 @@ use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Core\Translation\Translator;
+use Thelia\Form\Exception\FormValidationException;
 use Thelia\Core\File\FileManager;
 use Thelia\Log\Tlog;
 use Thelia\Model\Lang;
@@ -68,7 +69,7 @@ class CustomImagesAdminController extends BaseAdminController
             if (null !== $response = $this->checkAccessForParentType(AccessManager::UPDATE)) {
                 return $response;
             }
-            return $this->updateFileAction($eventDispatcher, $id,self::PRODUCT_IMAGE_PARENT_TYPE, $type, TheliaEvents::IMAGE_UPDATE);
+            return $this->updateFileAction($fileManager, $eventDispatcher, $id, self::PRODUCT_IMAGE_PARENT_TYPE, $type, TheliaEvents::IMAGE_UPDATE);
         } catch (\Exception $exception) {
             Tlog::getInstance()->error($exception->getMessage());
         }
@@ -283,6 +284,111 @@ class CustomImagesAdminController extends BaseAdminController
         }
     }
 
+
+    /**
+     * Update the metadata (and optionally the file) of a stored image, then redirect.
+     *
+     * The twig back-office core made its FileController final, so the update logic that
+     * used to be inherited lives here.
+     */
+    private function updateFileAction(
+        FileManager $fileManager,
+        EventDispatcherInterface $eventDispatcher,
+        $fileId,
+        string $parentType,
+        string $objectType,
+        string $eventName
+    ) {
+        $message = false;
+
+        $fileModelInstance = $fileManager->getModelInstance($objectType, $parentType);
+        $fileUpdateForm = $this->createForm($fileModelInstance->getUpdateFormId());
+
+        $file = $fileModelInstance->getQueryInstance()->findPk($fileId);
+
+        try {
+            if (null === $file) {
+                throw new \InvalidArgumentException(sprintf('%d %s id does not exist', $fileId, $objectType));
+            }
+
+            $oldFile = clone $file;
+
+            $data = $this->validateForm($fileUpdateForm)->getData();
+
+            $event = new FileCreateOrUpdateEvent(null);
+
+            if (array_key_exists('visible', $data)) {
+                $file->setVisible($data['visible'] ? 1 : 0);
+            }
+
+            $file->setLocale($data['locale']);
+
+            if (array_key_exists('title', $data)) {
+                $file->setTitle($data['title']);
+            }
+            if (array_key_exists('chapo', $data)) {
+                $file->setChapo($data['chapo']);
+            }
+            if (array_key_exists('description', $data)) {
+                $file->setDescription($data['description']);
+            }
+            if (array_key_exists('postscriptum', $data)) {
+                $file->setPostscriptum($data['postscriptum']);
+            }
+
+            if (isset($data['file'])) {
+                $file->setFile($data['file']);
+            }
+
+            $event->setModel($file);
+            $event->setOldModel($oldFile);
+
+            $fileForm = $this->getRequest()->files->get($fileUpdateForm->getName());
+
+            if (isset($fileForm['file'])) {
+                $event->setUploadedFile($fileForm['file']);
+            }
+
+            $eventDispatcher->dispatch($event, $eventName);
+
+            $fileUpdated = $event->getModel();
+
+            $this->adminLogAppend(
+                $parentType,
+                AccessManager::UPDATE,
+                sprintf(
+                    '%s with Ref %s (ID %d) modified',
+                    ucfirst($objectType),
+                    $fileUpdated->getTitle(),
+                    $fileUpdated->getId()
+                ),
+                $fileUpdated->getId()
+            );
+        } catch (FormValidationException $e) {
+            $message = sprintf('Please check your input: %s', $e->getMessage());
+        } catch (\Exception $e) {
+            $message = sprintf('Sorry, an error occurred: %s', $e->getMessage());
+        }
+
+        if ($message !== false) {
+            Tlog::getInstance()->error(sprintf('Error during %s editing : %s.', $objectType, $message));
+
+            $fileUpdateForm->setErrorMessage($message);
+
+            $this->getParserContext()
+                ->addForm($fileUpdateForm)
+                ->setGeneralError($message);
+        }
+
+        $currentRequest = $this->getRequest();
+        if (null !== $file && $currentRequest->attributes->get('save_mode', $currentRequest->query->get('save_mode', $currentRequest->request->get('save_mode'))) === 'close') {
+            return $this->generateRedirect(
+                URL::getInstance()->absoluteUrl($file->getRedirectionUrl(), ['current_tab' => 'images'])
+            );
+        }
+
+        return $this->generateSuccessRedirect($fileUpdateForm);
+    }
 
     /**
      * @param string $access
