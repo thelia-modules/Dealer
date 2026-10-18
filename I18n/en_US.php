@@ -74,4 +74,5 @@ return array(
     "The pickup slot could not be updated." => "The pickup slot could not be updated.",
     "Note: this datetime is outside the store opening hours." => "Note: this datetime is outside the store opening hours.",
     "Only JPEG, PNG, GIF and WebP images can be used here." => "Only JPEG, PNG, GIF and WebP images can be used here.",
+    "Opening hours" => "Opening hours",
 );
