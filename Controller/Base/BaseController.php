@@ -98,6 +98,17 @@ abstract class BaseController extends BaseAdminController
     // PUBLIC METHODS
 
     /**
+     * Redirect to the edition page of the dealer being edited (every Dealer sub-entity is edited from it).
+     */
+    protected function redirectToEditionTemplate(Request $request)
+    {
+        $id = $request->query->get("dealer_id");
+
+        return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
+            ["dealer_id" => $id, ]));
+    }
+
+    /**
      * The default action is displaying the list.
      *
      * @return \Thelia\Core\HttpFoundation\Response the response

@@ -708,14 +708,6 @@ class DealerController extends BaseController
         return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer"));
     }
 
-    protected function redirectToEditionTemplate(Request $request)
-    {
-        $id = $request->query->get("dealer_id");
-
-        return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/module/Dealer/dealer/edit",
-            ["dealer_id" => $id, ]));
-    }
-
     /**
      */
     #[Route('/toggle-online/{id}', name: '_toggle_visible', methods: ['POST'])]
