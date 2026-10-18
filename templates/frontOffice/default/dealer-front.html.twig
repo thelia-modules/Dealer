@@ -10,7 +10,7 @@
 
 {% block structured_data %}
     {% if dealerSeo.META_JSON|default('') is not empty %}
-        <script type="application/ld+json">{{ dealerSeo.META_JSON|raw }}</script>
+        <script type="application/ld+json">{{ dealerSeo.META_JSON|replace({'</': '<\\/'})|raw }}</script>
     {% endif %}
 {% endblock %}
 
