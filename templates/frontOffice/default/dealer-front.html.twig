@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% set dealer = dealer_id ? (loop('dealer.content', 'dealer', {id: dealer_id, limit: 1})|first) : null %}
+{% set dealerSeo = dealer_id ? (loop('dealer.meta_seo', 'dealer_meta_seo', {id: dealer_id})|first) : null %}
+
+{% block title %}{{ dealerSeo.META_TITLE|default(dealer.TITLE|default('')) }}{% endblock %}
+{% block meta_description %}{{ dealerSeo.META_DESC|default('') }}{% endblock %}
+
+{% block body_class %}page-dealer{% endblock %}
+
+{% block structured_data %}
+    {% if dealerSeo.META_JSON|default('') is not empty %}
+        <script type="application/ld+json">{{ dealerSeo.META_JSON|raw }}</script>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    {% if dealer %}
+        {% set dealerBreadcrumb = [] %}
+        {% for folder in loop('store.link', 'folder', {id: 3}) %}
+            {% set dealerBreadcrumb = dealerBreadcrumb|merge([{title: folder.TITLE, url: folder.URL}]) %}
+        {% endfor %}
+        {% set dealerBreadcrumb = dealerBreadcrumb|merge([{title: dealer.TITLE, url: app.request.uri}]) %}
+
+        {% for image in loop('image.header.header', 'custom_images', {image_type: 'imageHeader', product: dealer.ID, width: 1920, height: 375, resize_mode: 'crop'}) %}
+            <div class="Carousel-Banner">
+                <img src="{{ image.IMAGE_URL }}" alt="{{ dealer.TITLE }}" class="Banner-img w-100">
+            </div>
+        {% endfor %}
+
+        <twig:Layouts:Subheader:Base title="{{ dealer.TITLE }}" :breadcrumb="dealerBreadcrumb" :centered="true" />
+
+        <div class="container-m pb-20 lg:pb-30">
+            <div class="grid gap-8 md:grid-cols-2 my-12 text-center">
+                <div class="DealerPreview-opening">
+                    <div class="text-primary uppercase font-medium">{{ 'Opening hours'|trans({}, 'dealer') }}</div>
+                    <div>{{ dealer.HARD_OPEN_HOUR|raw }}</div>
+                </div>
+
+                {% set contacts = loop('dealer.contact', 'dealer_contact', {dealer_id: dealer.ID}) %}
+                {% if contacts is not empty %}
+                    <div class="DealerPreview-phone">
+                        <div class="text-primary uppercase font-medium">{{ 'Contact'|trans({}, 'dealer') }}</div>
+                        <div>
+                            {% for contact in contacts %}
+                                {% for info in loop('dealer.contact.infos', 'dealer_contact_info', {contact_id: contact.ID}) %}
+                                    <div>{{ info.VALUE }}</div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if dealer.BIG_DESCRIPTION is not empty %}
+                <div class="wysiwyg wysiwyg-theme my-12">{{ dealer.BIG_DESCRIPTION|raw }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

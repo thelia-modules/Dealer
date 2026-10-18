@@ -173,7 +173,8 @@ class CustomImagesAdminController extends BaseAdminController
         try {
             $eventDispatcher->dispatch($fileDeleteEvent, TheliaEvents::IMAGE_DELETE);
             $this->adminLogAppend(
-                $this->getAdminResources()->getResource(self::PRODUCT_IMAGE_PARENT_TYPE, ucfirst(Dealer::DOMAIN_NAME)),
+                $this->getAdminResources()->getResource(self::PRODUCT_IMAGE_PARENT_TYPE, static::MODULE_RIGHT),
+                AccessManager::UPDATE,
                 Translator::getInstance()->trans(
                     'Deleting %obj% for %id% with parent id %parentId%',
                     array(
@@ -182,7 +183,6 @@ class CustomImagesAdminController extends BaseAdminController
                         '%parentId%' => $fileDeleteEvent->getFileToDelete()->getParentId(),
                     )
                 ),
-                AccessManager::UPDATE,
                 $fileDeleteEvent->getFileToDelete()->getId()
             );
         } catch (\Exception $e) {
