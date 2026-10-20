@@ -83,7 +83,7 @@ class TheliaAdminHook extends BaseHook
 
     public function onBrandModuleTab(HookRenderEvent $event): void
     {
-        $brandId = $event->getArgument('brand_id');
+        $brandId = $event->getArgument('brand') ?? $event->getArgument('brand_id');
 
         $event->add($this->render('Dealer/hook/brand.html.twig', [
             'dealer_brand_id' => $brandId,
@@ -96,7 +96,7 @@ class TheliaAdminHook extends BaseHook
 
     public function onProductModuleTab(HookRenderEvent $event): void
     {
-        $productId = $event->getArgument('product_id');
+        $productId = $event->getArgument('product') ?? $event->getArgument('product_id');
 
         $event->add($this->render('Dealer/hook/product.html.twig', [
             'dealer_product_id' => $productId,

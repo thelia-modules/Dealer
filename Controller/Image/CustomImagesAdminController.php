@@ -10,6 +10,7 @@ use Dealer\Model\DealerImage;
 use Dealer\Model\DealerImageQuery;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
@@ -28,6 +29,7 @@ use Thelia\Core\File\FileManager;
 use Thelia\Log\Tlog;
 use Thelia\Model\Lang;
 use Thelia\Model\LangQuery;
+use Thelia\Tools\TokenProvider;
 use Thelia\Tools\URL;
 
 /**
@@ -155,12 +157,16 @@ class CustomImagesAdminController extends BaseAdminController
 
     /**
      */
-    #[Route('/{type}/delete/{parentId}/{id}', name: '_delete', methods: ['GET'])]
-    public function deleteCustomImageAction($type, $parentId, $id, EventDispatcherInterface $eventDispatcher, FileManager $fileManager)
+    #[Route('/{type}/delete/{parentId}/{id}', name: '_delete', methods: ['POST'])]
+    public function deleteCustomImageAction($type, $parentId, $id, Request $request, TokenProvider $tokenProvider, EventDispatcherInterface $eventDispatcher, FileManager $fileManager)
     {
         $message = null;
         $this->registerDealerCustomProductImageType($type, $fileManager);
-        $this->checkAccessForParentType(AccessManager::UPDATE);
+        if (null !== $response = $this->checkAccessForParentType(AccessManager::UPDATE)) {
+            return $response;
+        }
+
+        $tokenProvider->checkToken((string) $request->request->get('_token', ''));
 
         $modelInstance = $fileManager->getModelInstance($type, self::PRODUCT_IMAGE_PARENT_TYPE);
         $model = $modelInstance->getQueryInstance()->findPk($id);
