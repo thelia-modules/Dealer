@@ -126,7 +126,7 @@ abstract class AbstractBaseService
      * @param string $eventName a TheliaEvent name, as defined in TheliaEvents class
      * @param ActionEvent $event the action event, or null (a DefaultActionEvent will be dispatched)
      */
-    protected function dispatch($eventName, ActionEvent $event = null)
+    protected function dispatch($eventName, ?ActionEvent $event = null)
     {
         if ($event == null) {
             $event = new DefaultActionEvent();

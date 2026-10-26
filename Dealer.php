@@ -42,7 +42,7 @@ class Dealer extends BaseModule
     /** Delivery module codes (comma-separated) for which the pickup slot is enforced at checkout. */
     const CONFIG_PICKUP_DELIVERY_MODULES = 'dealer_pickup_delivery_modules';
 
-    public function postActivation(ConnectionInterface $con = null): void
+    public function postActivation(?ConnectionInterface $con = null): void
     {
         if (!$this->getConfigValue('is_initialized', false)) {
             $database = new Database($con);
@@ -68,7 +68,7 @@ class Dealer extends BaseModule
         }
     }
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
+    public function update($currentVersion, $newVersion, ?ConnectionInterface $con = null): void
     {
         $finder = Finder::create()
             ->name('*.sql')
