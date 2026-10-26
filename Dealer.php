@@ -6,6 +6,7 @@
 
 namespace Dealer;
 
+use Dealer\DependencyInjection\AdminApiResourcesPass;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Symfony\Component\Finder\Finder;
 use Thelia\Core\Template\TemplateDefinition;
@@ -32,6 +33,13 @@ class Dealer extends BaseModule
     const RESOURCES_USERS = "admin.dealer.users";
     const RESOURCES_MODULE = "admin.dealer.module";
 
+    /** OpenAPI tags, one per admin API resource, grouping the operations in /api/docs. */
+    const API_DOC_TAG_DEALER = 'Dealer';
+    const API_DOC_TAG_CONTACT = 'Dealer contacts';
+    const API_DOC_TAG_CONTACT_INFO = 'Dealer contact details';
+    const API_DOC_TAG_SCHEDULE = 'Dealer schedules';
+    const API_DOC_TAG_PICKUP_CONFIG = 'Dealer pickup config';
+
     // List of admin profile_id allowed to see ALL the dealers (separated by coma)
     const CONFIG_ALLOW_PROFILE_ID = 'admin_profile_id';
 
@@ -42,7 +50,7 @@ class Dealer extends BaseModule
     /** Delivery module codes (comma-separated) for which the pickup slot is enforced at checkout. */
     const CONFIG_PICKUP_DELIVERY_MODULES = 'dealer_pickup_delivery_modules';
 
-    public function postActivation(ConnectionInterface $con = null): void
+    public function postActivation(?ConnectionInterface $con = null): void
     {
         if (!$this->getConfigValue('is_initialized', false)) {
             $database = new Database($con);
@@ -68,7 +76,7 @@ class Dealer extends BaseModule
         }
     }
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
+    public function update($currentVersion, $newVersion, ?ConnectionInterface $con = null): void
     {
         $finder = Finder::create()
             ->name('*.sql')
@@ -184,8 +192,20 @@ class Dealer extends BaseModule
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([__DIR__.'/I18n/*', __DIR__.'/Config/**/*.php', __DIR__.'/Model/*', __DIR__.'/Dealer.php'])
+            ->exclude([
+                __DIR__.'/I18n/*',
+                __DIR__.'/Config/**/*.php',
+                __DIR__.'/Model/*',
+                __DIR__.'/Api/Resource/*',
+                __DIR__.'/DependencyInjection/*',
+                __DIR__.'/Dealer.php',
+            ])
             ->autowire(true)
             ->autoconfigure(true);
+    }
+
+    public static function getCompilers(): array
+    {
+        return [new AdminApiResourcesPass()];
     }
 }

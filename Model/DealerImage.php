@@ -101,7 +101,7 @@ class DealerImage extends BaseDealerImage implements FileModelInterface
         return $this;
     }
 
-    public function preDelete(ConnectionInterface $con = null): bool
+    public function preDelete(?ConnectionInterface $con = null): bool
     {
         $fs = new Filesystem();
         try {

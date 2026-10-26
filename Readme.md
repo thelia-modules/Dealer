@@ -174,6 +174,48 @@ All three require the `admin.dealer.schedules` resource and the corresponding ac
 (`UPDATE` or `VIEW`), and check a CSRF token via `Thelia\Tools\TokenProvider` on the `_token` query
 parameter.
 
+## Admin API
+
+API Platform resources under `/api/admin` (admin JWT, Thelia 3), one per back-office tab that
+carries store data. SEO, images, associations, users and modules are not exposed; stores are not
+created or deleted through the API.
+
+| Resource | Path | Operations | Back-office tab |
+|---|---|---|---|
+| `Dealer` | `/api/admin/dealers[/{id}]` | GET, PATCH | General, Location (the detail also shows contacts, opening hours and pickup settings) |
+| `DealerContact` | `/api/admin/dealer_contacts[/{id}]` | GET, POST, PATCH, DELETE | Contacts |
+| `DealerContactInfo` | `/api/admin/dealer_contact_infos[/{id}]` | GET, POST, PATCH, DELETE | Contacts (phone, e-mail, links) |
+| `DealerSchedule` | `/api/admin/dealer_schedules[/{id}]` | GET, POST, PATCH, DELETE | Schedules, usual and exceptional |
+| `DealerPickupConfig` | `/api/admin/dealer_pickup_configs/{dealerId}` | GET, PATCH | Pickup config |
+
+Each resource needs the back-office right of its tab (`admin.dealer`, `admin.dealer.contact`,
+`admin.dealer.schedules`; `admin.dealer` for the pickup settings), registered in the
+`thelia.api.admin_resources` parameter.
+
+Every read and write is bounded to the stores in scope. The module's own rule is the one of the
+back-office dealer list: a superadmin, or an administrator whose profile is listed in the
+`admin_profile_id` setting, reaches every store; any other administrator only the stores linked
+to them in the "Users" tab. A store out of scope answers 404, like a missing row. A project adds
+its own rule by implementing `Dealer\Api\Scope\DealerScopeInterface`: the stores reachable are the
+intersection of every rule, and when only one store remains, a creation may leave `dealerId` out.
+
+Rules the API keeps from the back office:
+
+* Translated fields go in `i18ns`, keyed by locale. A PATCH writes only the locales and the fields
+  it sends; a locale that is not an active language of the shop is refused.
+* Opening hours are written through `SchedulesService`, its checks included (time and period
+  ranges, recurrence, no overlap between slots of the same kind). A slot states
+  `exceptional: true|false` and cannot change kind afterwards. A closing time of `00:00` is the
+  end of the day. A single exceptional date is sent with `periodEnd` equal to `periodBegin`: a
+  missing end makes the entry open-ended.
+* A contact set as default takes the flag off the store's other contacts.
+* The two descriptions keep their safe HTML elements only. A contact detail has to match its type
+  (e-mail, phone, `http(s)://` link).
+* The pickup settings answer their defaults until the first save; the timezone is written with
+  them.
+
+Validation errors answer 422 with one violation per field.
+
 ## Deprecated
 
 Kept for backward compatibility with the legacy Smarty front and existing integrations, but no

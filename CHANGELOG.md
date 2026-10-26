@@ -4,6 +4,22 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.3.0] - 2026-10-26
+
+### Added
+
+- Admin API (API Platform, Thelia 3) for the store data of the back office: general information
+  and location, contacts and their details, usual and exceptional opening hours, pickup settings.
+  Each resource asks the right of its back-office tab, and reads and writes are bounded to the
+  stores the administrator may reach, as the back-office dealer list bounds them. A project can
+  narrow that scope further with a `Dealer\Api\Scope\DealerScopeInterface` service. See "Admin
+  API" in the readme.
+
+### Fixed
+
+- Nullable parameters declared explicitly (`?ConnectionInterface`, `?ActionEvent`): the implicit
+  form is deprecated in PHP 8.4.
+
 ## [4.0.11] - 2026-09-21
 
 ### Fixed

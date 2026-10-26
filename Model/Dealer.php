@@ -80,7 +80,7 @@ class Dealer extends BaseDealer
      * @return Collection|ChildDealerShedules[] List of ChildDealerShedules objects
      * @throws PropelException
      */
-    public function getDefaultSchedules($criteria = null, ConnectionInterface $con = null)
+    public function getDefaultSchedules($criteria = null, ?ConnectionInterface $con = null)
     {
         $partial = $this->collDealerShedulessPartial && !$this->isNew();
         if (null === $this->collDealerDefaultSheduless || null !== $criteria || $partial) {
@@ -141,7 +141,7 @@ class Dealer extends BaseDealer
      * @return Collection|ChildDealerShedules[] List of ChildDealerShedules objects
      * @throws PropelException
      */
-    public function getExtraSchedules($criteria = null, ConnectionInterface $con = null)
+    public function getExtraSchedules($criteria = null, ?ConnectionInterface $con = null)
     {
         $partial = $this->collDealerShedulessPartial && !$this->isNew();
         if (null === $this->collDealerExtraSheduless || null !== $criteria || $partial) {
