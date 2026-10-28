@@ -57,10 +57,12 @@ final readonly class DealerListRowPresenter
             'id' => $id,
             'title_html' => $this->renderTitle($id, $title, $editUrl),
             'address_html' => $this->renderAddress($dealer, $country, $locale),
-            'visible' => 1 === (int) $dealer->getVisible(),
-            'toggle_url' => $canUpdate
-                ? URL::getInstance()->absoluteUrl(self::LIST_PATH.'/toggle-online/'.$id, $queryParams)
-                : null,
+            'visible_html' => $this->renderVisibilitySwitch(
+                $id,
+                '' !== $title ? $title : '#'.$id,
+                1 === (int) $dealer->getVisible(),
+                $canUpdate ? URL::getInstance()->absoluteUrl(self::LIST_PATH.'/toggle-online/'.$id, $queryParams) : null,
+            ),
             '_actions' => [
                 new RowAction(
                     kind: 'edit',
@@ -79,6 +81,21 @@ final readonly class DealerListRowPresenter
                 ),
             ],
         ];
+    }
+
+    /**
+     * A switch, as the list always had. A click is sent as a POST carrying the back-office token
+     * by the theme's `data-bo-post` controller, which then reloads the list in its state.
+     */
+    private function renderVisibilitySwitch(int $id, string $title, bool $visible, ?string $toggleUrl): string
+    {
+        return \sprintf(
+            '<div class="form-check form-switch d-inline-block mb-0"><input class="form-check-input" type="checkbox" role="switch" id="dealer-visible-%d" aria-label="%s"%s%s data-testid="dealer-visible-switch"></div>',
+            $id,
+            htmlspecialchars($this->translator->trans('Online', [], self::DOMAIN).' : '.$title),
+            $visible ? ' checked' : '',
+            null !== $toggleUrl ? ' data-bo-post data-bo-post-url="'.htmlspecialchars($toggleUrl).'"' : ' disabled',
+        );
     }
 
     private function renderTitle(int $id, string $title, string $editUrl): string

@@ -62,7 +62,7 @@
             {% set dealer_columns = [
                 column_html('title_html', 'Store'|trans({}, 'dealer.bo.default-twig'), 'start', 'title'),
                 column_html('address_html', 'Address'|trans({}, 'dealer.bo.default-twig'), 'start', 'city', visibleFrom: 'md'),
-                column_toggle('visible', 'Online'|trans({}, 'dealer.bo.default-twig'), 'toggle_url'),
+                column_html('visible_html', 'Online'|trans({}, 'dealer.bo.default-twig'), 'center'),
                 column_actions('_actions', 'Actions'|trans),
             ] %}
 
