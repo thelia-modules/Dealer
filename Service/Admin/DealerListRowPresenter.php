@@ -128,14 +128,23 @@ final readonly class DealerListRowPresenter
     }
 
     /**
-     * The flag helper belongs to the back-office theme, and its older releases do not ship it.
+     * The flag before the address, as the orders list shows it before a customer. The helper
+     * belongs to the back-office theme and its older releases do not ship it: the same flag
+     * (two regional indicator symbols) is then built here.
      */
     private function countryFlag(?string $isoAlpha2): string
     {
-        if (null === $isoAlpha2 || !class_exists(CountryFlag::class)) {
+        if (class_exists(CountryFlag::class)) {
+            return CountryFlag::prefix($isoAlpha2);
+        }
+
+        if (null === $isoAlpha2 || 1 !== preg_match('/^[A-Za-z]{2}$/', $isoAlpha2)) {
             return '';
         }
 
-        return CountryFlag::prefix($isoAlpha2);
+        $upper = strtoupper($isoAlpha2);
+        $offset = 0x1F1E6 - \ord('A');
+
+        return mb_chr(\ord($upper[0]) + $offset).mb_chr(\ord($upper[1]) + $offset).' ';
     }
 }

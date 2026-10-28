@@ -4,6 +4,13 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.4.1] - 2026-10-28
+
+### Fixed
+
+- The store list shows the flag of the country before the address, as the orders list shows it
+  before a customer, also with a back-office theme that does not ship its `CountryFlag` helper.
+
 ## [4.4.0] - 2026-10-28
 
 ### Changed
