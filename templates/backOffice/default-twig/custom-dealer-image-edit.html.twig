@@ -1,6 +1,6 @@
 {% extends '@BackOfficeDefaultTwig/base.html.twig' %}
 
-{% block title %}{{ 'Edit an image'|trans({}, 'dealer.bo.default') }}{% endblock %}
+{% block title %}{{ 'Edit an image'|trans({}, 'dealer.bo.default-twig') }}{% endblock %}
 
 {% block body_testid %}dealer-image-edit{% endblock %}
 
@@ -9,9 +9,9 @@
     <div id="wrapper" class="container-fluid">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span class="card-title mb-0">{{ 'Edit image "%name"'|trans({'%name': image_title}, 'dealer.bo.default') }}</span>
+                <span class="card-title mb-0">{{ 'Edit image "%name"'|trans({'%name': image_title}, 'dealer.bo.default-twig') }}</span>
                 <a href="{{ redirect_url }}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left"></i> {{ 'Back'|trans({}, 'dealer.bo.default') }}
+                    <i class="bi bi-arrow-left"></i> {{ 'Back'|trans({}, 'dealer.bo.default-twig') }}
                 </a>
             </div>
             <div class="card-body">
@@ -24,15 +24,15 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <label class="form-label">{{ 'Preview'|trans({}, 'dealer.bo.default') }}:</label>
+                            <label class="form-label">{{ 'Preview'|trans({}, 'dealer.bo.default-twig') }}:</label>
                             <p>
                                 <img src="/{{ image_type }}/{{ image_url }}" alt="{{ image_title }}" class="img-thumbnail"
-                                     onerror="this.src='//placehold.it/300x300&amp;text={{ 'Image file not found'|trans({}, 'dealer.bo.default')|url_encode }}'">
+                                     onerror="this.src='//placehold.it/300x300&amp;text={{ 'Image file not found'|trans({}, 'dealer.bo.default-twig')|url_encode }}'">
                             </p>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label" for="dealer-image-file">{{ 'Replace the image file'|trans({}, 'dealer.bo.default') }}</label>
+                                <label class="form-label" for="dealer-image-file">{{ 'Replace the image file'|trans({}, 'dealer.bo.default-twig') }}</label>
                                 <input type="file" class="form-control" id="dealer-image-file" name="{{ fp }}[file]">
                             </div>
                             {{ form_widget(image_form.title, {label: 'Title'|trans}) }}

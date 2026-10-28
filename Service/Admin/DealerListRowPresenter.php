@@ -18,7 +18,7 @@ use Thelia\Tools\URL;
  */
 final readonly class DealerListRowPresenter
 {
-    private const DOMAIN = 'dealer.bo.default';
+    private const DOMAIN = 'dealer.bo.default-twig';
     private const LIST_PATH = '/admin/module/Dealer/dealer';
     private const GRANTED_SUBJECT = ['resource' => 'admin.module', 'module' => 'Dealer'];
 

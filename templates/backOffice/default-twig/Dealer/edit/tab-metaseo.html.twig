@@ -6,24 +6,24 @@
         <input type="hidden" name="edit_language_id" value="{{ edit_language_id }}">
 
         <div class="mb-3">
-            <label class="form-label">{{ 'Slug SEO'|trans({}, 'dealer.bo.default') }}</label>
+            <label class="form-label">{{ 'Slug SEO'|trans({}, 'dealer.bo.default-twig') }}</label>
             {{ form_widget(seo_form.slug, {attr: {class: 'form-control'}}) }}
         </div>
         <hr>
         <div class="mb-3">
-            <label class="form-label">{{ 'Title SEO'|trans({}, 'dealer.bo.default') }}</label>
+            <label class="form-label">{{ 'Title SEO'|trans({}, 'dealer.bo.default-twig') }}</label>
             {{ form_widget(seo_form.meta_title, {attr: {class: 'form-control'}}) }}
         </div>
         <div class="mb-3">
-            <label class="form-label">{{ 'Description SEO'|trans({}, 'dealer.bo.default') }}</label>
+            <label class="form-label">{{ 'Description SEO'|trans({}, 'dealer.bo.default-twig') }}</label>
             {{ form_widget(seo_form.meta_description, {attr: {class: 'form-control', rows: 3}}) }}
         </div>
         <div class="mb-3">
-            <label class="form-label">{{ 'Keywords SEO'|trans({}, 'dealer.bo.default') }}</label>
+            <label class="form-label">{{ 'Keywords SEO'|trans({}, 'dealer.bo.default-twig') }}</label>
             {{ form_widget(seo_form.meta_keywords, {attr: {class: 'form-control'}}) }}
         </div>
         <div class="mb-3">
-            <label class="form-label">{{ 'Meta json'|trans({}, 'dealer.bo.default') }}</label>
+            <label class="form-label">{{ 'Meta json'|trans({}, 'dealer.bo.default-twig') }}</label>
             {{ form_widget(seo_form.meta_json, {attr: {class: 'form-control', rows: 3}}) }}
         </div>
 

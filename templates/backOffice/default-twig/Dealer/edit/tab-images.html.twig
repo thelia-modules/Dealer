@@ -7,7 +7,7 @@
         {# HEADER (banner) #}
         <div class="col-md-6">
             <div class="card mb-3">
-                <div class="card-header">{{ 'Header Image (banner)'|trans({}, 'dealer.bo.default') }}</div>
+                <div class="card-header">{{ 'Header Image (banner)'|trans({}, 'dealer.bo.default-twig') }}</div>
                 <div class="card-body">
                     <form method="POST" action="/admin/module/dealer/image/header/update" enctype="multipart/form-data">
                         <input type="hidden" name="{{ hdr_fp }}[_token]" value="{{ image_header_form._token.vars.value }}">
@@ -16,7 +16,7 @@
                         <input type="hidden" name="{{ hdr_fp }}[error_url]" value="{{ images_url }}">
                         <div class="input-group">
                             <input type="file" class="form-control" name="{{ hdr_fp }}[file]" required>
-                            <button type="submit" class="btn btn-info"><i class="bi bi-upload"></i> {{ 'Validate'|trans({}, 'dealer.bo.default') }}</button>
+                            <button type="submit" class="btn btn-info"><i class="bi bi-upload"></i> {{ 'Validate'|trans({}, 'dealer.bo.default-twig') }}</button>
                         </div>
                     </form>
 
@@ -24,7 +24,7 @@
                         {% for image in images_header %}
                             {% include 'Dealer/edit/_image-thumb.html.twig' with {image: image, type: 'imageHeader', dealer_id: dealer_id} only %}
                         {% else %}
-                            <span class="text-muted">{{ 'No image yet.'|trans({}, 'dealer.bo.default') }}</span>
+                            <span class="text-muted">{{ 'No image yet.'|trans({}, 'dealer.bo.default-twig') }}</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -34,7 +34,7 @@
         {# BOX #}
         <div class="col-md-6">
             <div class="card mb-3">
-                <div class="card-header">{{ 'Box image'|trans({}, 'dealer.bo.default') }}</div>
+                <div class="card-header">{{ 'Box image'|trans({}, 'dealer.bo.default-twig') }}</div>
                 <div class="card-body">
                     <form method="POST" action="/admin/module/dealer/image/box/update" enctype="multipart/form-data">
                         <input type="hidden" name="{{ box_fp }}[_token]" value="{{ image_box_form._token.vars.value }}">
@@ -43,7 +43,7 @@
                         <input type="hidden" name="{{ box_fp }}[error_url]" value="{{ images_url }}">
                         <div class="input-group">
                             <input type="file" class="form-control" name="{{ box_fp }}[file]" required>
-                            <button type="submit" class="btn btn-info"><i class="bi bi-upload"></i> {{ 'Validate'|trans({}, 'dealer.bo.default') }}</button>
+                            <button type="submit" class="btn btn-info"><i class="bi bi-upload"></i> {{ 'Validate'|trans({}, 'dealer.bo.default-twig') }}</button>
                         </div>
                     </form>
 
@@ -51,7 +51,7 @@
                         {% for image in images_box %}
                             {% include 'Dealer/edit/_image-thumb.html.twig' with {image: image, type: 'imageBox', dealer_id: dealer_id} only %}
                         {% else %}
-                            <span class="text-muted">{{ 'No image yet.'|trans({}, 'dealer.bo.default') }}</span>
+                            <span class="text-muted">{{ 'No image yet.'|trans({}, 'dealer.bo.default-twig') }}</span>
                         {% endfor %}
                     </div>
                 </div>

@@ -1,12 +1,12 @@
 <div class="tab-pane fade" id="contacts" role="tabpanel">
     <div class="d-flex justify-content-end mb-2">
         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#dealer-contact-create">
-            <i class="bi bi-plus-lg"></i> {{ 'Create a new Contact'|trans({}, 'dealer.bo.default') }}
+            <i class="bi bi-plus-lg"></i> {{ 'Create a new Contact'|trans({}, 'dealer.bo.default-twig') }}
         </button>
     </div>
 
     {% if contacts is empty %}
-        <div class="alert alert-info">{{ 'There is no Contact'|trans({}, 'dealer.bo.default') }}</div>
+        <div class="alert alert-info">{{ 'There is no Contact'|trans({}, 'dealer.bo.default-twig') }}</div>
     {% else %}
         <div class="accordion" id="dealer-contacts-accordion">
             {% for contact in contacts %}
@@ -14,7 +14,7 @@
                     <h2 class="accordion-header d-flex align-items-center">
                         <button class="accordion-button {{ loop.first ? '' : 'collapsed' }}" type="button"
                                 data-bs-toggle="collapse" data-bs-target="#contact-collapse-{{ contact.id }}">
-                            {{ contact.label }}{% if contact.is_default %} <span class="badge text-bg-secondary ms-2">{{ 'default'|trans({}, 'dealer.bo.default') }}</span>{% endif %}
+                            {{ contact.label }}{% if contact.is_default %} <span class="badge text-bg-secondary ms-2">{{ 'default'|trans({}, 'dealer.bo.default-twig') }}</span>{% endif %}
                         </button>
                         <span class="ms-2 pe-2">
                             <button type="button" class="btn btn-outline-secondary btn-sm dealer-contact-update-btn"
@@ -35,15 +35,15 @@
                                 <button type="button" class="btn btn-primary btn-sm dealer-contact-info-create-btn"
                                         data-bs-toggle="modal" data-bs-target="#dealer-contact-info-create"
                                         data-contact="{{ contact.id }}">
-                                    <i class="bi bi-plus-lg"></i> {{ 'Create a new Contact Info'|trans({}, 'dealer.bo.default') }}
+                                    <i class="bi bi-plus-lg"></i> {{ 'Create a new Contact Info'|trans({}, 'dealer.bo.default-twig') }}
                                 </button>
                             </div>
                             <table class="table table-sm table-striped">
                                 <thead>
                                 <tr>
-                                    <th>{{ 'Type'|trans({}, 'dealer.bo.default') }}</th>
-                                    <th>{{ 'Value'|trans({}, 'dealer.bo.default') }}</th>
-                                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
+                                    <th>{{ 'Type'|trans({}, 'dealer.bo.default-twig') }}</th>
+                                    <th>{{ 'Value'|trans({}, 'dealer.bo.default-twig') }}</th>
+                                    <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default-twig') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -65,7 +65,7 @@
                                         </td>
                                     </tr>
                                 {% else %}
-                                    <tr><td colspan="3"><div class="alert alert-info mb-0">{{ 'There is no Contact info'|trans({}, 'dealer.bo.default') }}</div></td></tr>
+                                    <tr><td colspan="3"><div class="alert alert-info mb-0">{{ 'There is no Contact info'|trans({}, 'dealer.bo.default-twig') }}</div></td></tr>
                                 {% endfor %}
                                 </tbody>
                             </table>

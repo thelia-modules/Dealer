@@ -13,6 +13,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   sort on the name or the city, pagination, the address and country in one column, the online
   switch posted with the back-office token, and a delete confirmation that names the store.
 
+### Fixed
+
+- The back office is translated again. Its domain, `dealer.bo.default`, belonged to the Smarty
+  templates and was no longer loaded once they were removed: every screen of the module showed
+  its English keys. The catalog moves to `I18n/backOffice/default-twig`, domain
+  `dealer.bo.default-twig`.
+
 ## [4.3.0] - 2026-10-26
 
 ### Added

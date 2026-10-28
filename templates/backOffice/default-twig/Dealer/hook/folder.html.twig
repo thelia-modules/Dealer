@@ -2,7 +2,7 @@
     <div class="col-md-6">
         <div class="card mb-3">
             <div class="card-header">
-                <h3 class="h5 mb-0">{{ 'Link a Folder'|trans({}, 'dealer.bo.default') }}</h3>
+                <h3 class="h5 mb-0">{{ 'Link a Folder'|trans({}, 'dealer.bo.default-twig') }}</h3>
             </div>
             <div class="card-body">
                 <form action="/admin/module/Dealer/folder" method="POST">
@@ -12,7 +12,7 @@
                     <input type="hidden" name="{{ prefix }}[folder_id]" value="{{ dealer_folder_id }}">
                     <div class="mb-3">
                         <label class="form-label" for="dealer-folder-link-dealer">
-                            {{ 'Dealer'|trans({}, 'dealer.bo.default') }} <span class="text-danger">*</span>
+                            {{ 'Dealer'|trans({}, 'dealer.bo.default-twig') }} <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="dealer-folder-link-dealer" name="{{ prefix }}[dealer_id]" required>
                             {% for dealer in dealer_all_dealers %}
@@ -30,7 +30,7 @@
     <div class="col-md-6">
         <div class="card mb-3">
             <div class="card-header">
-                <h3 class="h5 mb-0">{{ 'Folder linked'|trans({}, 'dealer.bo.default') }}</h3>
+                <h3 class="h5 mb-0">{{ 'Folder linked'|trans({}, 'dealer.bo.default-twig') }}</h3>
             </div>
             <div class="card-body">
                 <ul class="list-unstyled mb-0">
@@ -43,7 +43,7 @@
                             </button>
                         </li>
                     {% else %}
-                        <li class="text-muted">{{ 'There is no Folder linked to this dealer'|trans({}, 'dealer.bo.default') }}</li>
+                        <li class="text-muted">{{ 'There is no Folder linked to this dealer'|trans({}, 'dealer.bo.default-twig') }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -58,11 +58,11 @@
             <form method="post" action="/admin/module/Dealer/folder/delete">
                 <input type="hidden" name="_token" value="{{ assignToken() }}">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{ 'Unlink a folder'|trans({}, 'dealer.bo.default') }}</h5>
+                    <h5 class="modal-title">{{ 'Unlink a folder'|trans({}, 'dealer.bo.default-twig') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ 'Close'|trans }}"></button>
                 </div>
                 <div class="modal-body">
-                    {{ 'Do you really want to unlink this folder ?'|trans({}, 'dealer.bo.default') }}
+                    {{ 'Do you really want to unlink this folder ?'|trans({}, 'dealer.bo.default-twig') }}
                     <input type="hidden" name="dealer_folder_link_id" value="{{ dealer_folder_id }}">
                     <input type="hidden" id="dealer_folder_link_delete_id" name="dealer_id" value="">
                     <input type="hidden" name="success_url" value="{{ dealer_current_url }}">

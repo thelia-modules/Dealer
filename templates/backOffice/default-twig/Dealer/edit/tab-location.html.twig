@@ -8,12 +8,12 @@
                 <input type="hidden" name="{{ geo_fp }}[success_url]" value="{{ path('dealer') }}">
 
                 <div class="mb-3">
-                    <label class="form-label">{{ 'Latitude'|trans({}, 'dealer.bo.default') }}</label>
-                    {{ form_widget(geo_form.latitude, {attr: {class: 'form-control', step: 'any', placeholder: 'The Dealer latitude'|trans({}, 'dealer.bo.default')}}) }}
+                    <label class="form-label">{{ 'Latitude'|trans({}, 'dealer.bo.default-twig') }}</label>
+                    {{ form_widget(geo_form.latitude, {attr: {class: 'form-control', step: 'any', placeholder: 'The Dealer latitude'|trans({}, 'dealer.bo.default-twig')}}) }}
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">{{ 'Longitude'|trans({}, 'dealer.bo.default') }}</label>
-                    {{ form_widget(geo_form.longitude, {attr: {class: 'form-control', step: 'any', placeholder: 'The Dealer longitude'|trans({}, 'dealer.bo.default')}}) }}
+                    <label class="form-label">{{ 'Longitude'|trans({}, 'dealer.bo.default-twig') }}</label>
+                    {{ form_widget(geo_form.longitude, {attr: {class: 'form-control', step: 'any', placeholder: 'The Dealer longitude'|trans({}, 'dealer.bo.default-twig')}}) }}
                 </div>
 
                 <div class="mt-3">
@@ -27,11 +27,11 @@
             {% if lat and lng %}
                 <a href="https://www.openstreetmap.org/?mlat={{ lat }}&mlon={{ lng }}#map=16/{{ lat }}/{{ lng }}"
                    target="_blank" rel="noopener" class="btn btn-outline-secondary">
-                    <i class="bi bi-geo-alt"></i> {{ 'View on OpenStreetMap'|trans({}, 'dealer.bo.default') }}
+                    <i class="bi bi-geo-alt"></i> {{ 'View on OpenStreetMap'|trans({}, 'dealer.bo.default-twig') }}
                 </a>
             {% else %}
                 <div class="alert alert-info mb-0">
-                    {{ 'Set a latitude and a longitude to get a map link.'|trans({}, 'dealer.bo.default') }}
+                    {{ 'Set a latitude and a longitude to get a map link.'|trans({}, 'dealer.bo.default-twig') }}
                 </div>
             {% endif %}
         </div>

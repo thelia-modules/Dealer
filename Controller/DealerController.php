@@ -207,7 +207,7 @@ class DealerController extends BaseController
             $visibility = DealerVisibilityFilter::tryFrom($code);
             $chips[] = [
                 'code' => $code,
-                'label' => Translator::getInstance()->trans($label, [], 'dealer.bo.default'),
+                'label' => Translator::getInstance()->trans($label, [], 'dealer.bo.default-twig'),
                 'url' => URL::getInstance()->absoluteUrl(self::LIST_PATH, $filters->withVisibility($visibility)->toQueryParams()),
                 'active' => $filters->visibility === $visibility,
             ];
