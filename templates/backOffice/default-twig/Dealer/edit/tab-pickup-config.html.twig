@@ -7,23 +7,23 @@
                 <input type="hidden" name="{{ pc_fp }}[dealer_id]" value="{{ dealer_id }}">
 
                 <div class="mb-3">
-                    <label class="form-label">{{ 'Store timezone'|trans({}, 'dealer.bo.default') }}</label>
+                    <label class="form-label">{{ 'Store timezone'|trans({}, 'dealer.bo.default-twig') }}</label>
                     {{ form_widget(pickup_config_form.timezone, {attr: {class: 'form-select'}}) }}
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">{{ 'Preparation delay (minutes)'|trans({}, 'dealer.bo.default') }}</label>
+                    <label class="form-label">{{ 'Preparation delay (minutes)'|trans({}, 'dealer.bo.default-twig') }}</label>
                     {{ form_widget(pickup_config_form.prep_delay_minutes, {attr: {min: 0, class: 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">{{ 'Number of orderable days'|trans({}, 'dealer.bo.default') }}</label>
+                    <label class="form-label">{{ 'Number of orderable days'|trans({}, 'dealer.bo.default-twig') }}</label>
                     {{ form_widget(pickup_config_form.orderable_days, {attr: {min: 1, class: 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">{{ 'Slot duration (minutes)'|trans({}, 'dealer.bo.default') }}</label>
+                    <label class="form-label">{{ 'Slot duration (minutes)'|trans({}, 'dealer.bo.default-twig') }}</label>
                     {{ form_widget(pickup_config_form.slot_duration_minutes, {attr: {min: 1, class: 'form-control'}}) }}
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">{{ 'Max orders per slot (0 = unlimited)'|trans({}, 'dealer.bo.default') }}</label>
+                    <label class="form-label">{{ 'Max orders per slot (0 = unlimited)'|trans({}, 'dealer.bo.default-twig') }}</label>
                     {{ form_widget(pickup_config_form.max_orders_per_slot, {attr: {min: 0, class: 'form-control'}}) }}
                 </div>
 
@@ -34,7 +34,7 @@
         </div>
         <div class="col-md-6">
             <div class="alert alert-info mb-0">
-                {{ 'These settings drive the pickup slots offered on the front-office for this store: the preparation delay before the first bookable slot, how many open days to display, the slot granularity, and the maximum number of orders per slot.'|trans({}, 'dealer.bo.default') }}
+                {{ 'These settings drive the pickup slots offered on the front-office for this store: the preparation delay before the first bookable slot, how many open days to display, the slot granularity, and the maximum number of orders per slot.'|trans({}, 'dealer.bo.default-twig') }}
             </div>
         </div>
     </div>

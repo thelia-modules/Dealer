@@ -11,12 +11,12 @@
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
-                <h5 class="mb-0">{{ 'Weekly opening hours'|trans({}, 'dealer.bo.default') }}</h5>
-                <div class="form-text mb-0">{{ 'A day without any time slot is closed. Changes apply after saving.'|trans({}, 'dealer.bo.default') }}</div>
+                <h5 class="mb-0">{{ 'Weekly opening hours'|trans({}, 'dealer.bo.default-twig') }}</h5>
+                <div class="form-text mb-0">{{ 'A day without any time slot is closed. Changes apply after saving.'|trans({}, 'dealer.bo.default-twig') }}</div>
             </div>
             <button type="button" class="btn btn-primary" data-week-save disabled>
                 <span class="spinner-border spinner-border-sm me-1 d-none" data-week-spinner aria-hidden="true"></span>
-                {{ 'Save the weekly hours'|trans({}, 'dealer.bo.default') }}
+                {{ 'Save the weekly hours'|trans({}, 'dealer.bo.default-twig') }}
             </button>
         </div>
         <div class="card-body p-0">
@@ -33,18 +33,18 @@
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <div>
-                <h5 class="mb-0">{{ 'Exceptions'|trans({}, 'dealer.bo.default') }}</h5>
-                <div class="form-text mb-0">{{ 'Public holidays, special events, exceptional openings — one-off, over a period, weekly or every year.'|trans({}, 'dealer.bo.default') }}</div>
-                <div class="form-text mb-0">{{ 'NB: when they overlap, closures always take precedence over openings.'|trans({}, 'dealer.bo.default') }}</div>
+                <h5 class="mb-0">{{ 'Exceptions'|trans({}, 'dealer.bo.default-twig') }}</h5>
+                <div class="form-text mb-0">{{ 'Public holidays, special events, exceptional openings — one-off, over a period, weekly or every year.'|trans({}, 'dealer.bo.default-twig') }}</div>
+                <div class="form-text mb-0">{{ 'NB: when they overlap, closures always take precedence over openings.'|trans({}, 'dealer.bo.default-twig') }}</div>
             </div>
             <div class="d-flex gap-2">
                 <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                         data-bs-target="#dealer-exception-create" data-exc-kind="closure">
-                    <i class="bi bi-plus-lg"></i> {{ 'Add a closure'|trans({}, 'dealer.bo.default') }}
+                    <i class="bi bi-plus-lg"></i> {{ 'Add a closure'|trans({}, 'dealer.bo.default-twig') }}
                 </button>
                 <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
                         data-bs-target="#dealer-exception-create" data-exc-kind="opening">
-                    <i class="bi bi-plus-lg"></i> {{ 'Add an exceptional opening'|trans({}, 'dealer.bo.default') }}
+                    <i class="bi bi-plus-lg"></i> {{ 'Add an exceptional opening'|trans({}, 'dealer.bo.default-twig') }}
                 </button>
             </div>
         </div>
@@ -53,11 +53,11 @@
                 <table class="table table-striped align-middle mb-0">
                     <thead>
                     <tr>
-                        <th>{{ 'Type'|trans({}, 'dealer.bo.default') }}</th>
-                        <th>{{ 'When'|trans({}, 'dealer.bo.default') }}</th>
-                        <th>{{ 'Hours'|trans({}, 'dealer.bo.default') }}</th>
-                        <th>{{ 'Label'|trans({}, 'dealer.bo.default') }}</th>
-                        <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default') }}</th>
+                        <th>{{ 'Type'|trans({}, 'dealer.bo.default-twig') }}</th>
+                        <th>{{ 'When'|trans({}, 'dealer.bo.default-twig') }}</th>
+                        <th>{{ 'Hours'|trans({}, 'dealer.bo.default-twig') }}</th>
+                        <th>{{ 'Label'|trans({}, 'dealer.bo.default-twig') }}</th>
+                        <th class="text-end">{{ 'Actions'|trans({}, 'dealer.bo.default-twig') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -65,37 +65,37 @@
                         <tr>
                             <td>
                                 {% if e.kind == 'closure' %}
-                                    <span class="badge text-bg-danger">{{ 'Closure'|trans({}, 'dealer.bo.default') }}</span>
+                                    <span class="badge text-bg-danger">{{ 'Closure'|trans({}, 'dealer.bo.default-twig') }}</span>
                                 {% else %}
-                                    <span class="badge text-bg-success">{{ 'Opening'|trans({}, 'dealer.bo.default') }}</span>
+                                    <span class="badge text-bg-success">{{ 'Opening'|trans({}, 'dealer.bo.default-twig') }}</span>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if e.mode == 'yearly' %}
-                                    {{ 'Every year on %date'|trans({'%date': e.period_begin ? e.period_begin|date('d/m') : '—'}, 'dealer.bo.default') }}
+                                    {{ 'Every year on %date'|trans({'%date': e.period_begin ? e.period_begin|date('d/m') : '—'}, 'dealer.bo.default-twig') }}
                                 {% elseif e.mode == 'weekly' %}
-                                    {{ 'Every %day'|trans({'%day': e.day_label}, 'dealer.bo.default') }}
-                                    {%- if e.period_begin and e.period_end %} · {{ 'from %begin to %end'|trans({'%begin': e.period_begin|date('d/m/Y'), '%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
-                                    {%- elseif e.period_begin %} · {{ 'from %begin'|trans({'%begin': e.period_begin|date('d/m/Y')}, 'dealer.bo.default') }}
-                                    {%- elseif e.period_end %} · {{ 'until %end'|trans({'%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
+                                    {{ 'Every %day'|trans({'%day': e.day_label}, 'dealer.bo.default-twig') }}
+                                    {%- if e.period_begin and e.period_end %} · {{ 'from %begin to %end'|trans({'%begin': e.period_begin|date('d/m/Y'), '%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default-twig') }}
+                                    {%- elseif e.period_begin %} · {{ 'from %begin'|trans({'%begin': e.period_begin|date('d/m/Y')}, 'dealer.bo.default-twig') }}
+                                    {%- elseif e.period_end %} · {{ 'until %end'|trans({'%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default-twig') }}
                                     {%- endif %}
                                 {% elseif e.mode == 'date' %}
                                     {{ e.period_begin|date('d/m/Y') }}
                                 {% else %}
                                     {% if e.period_begin and e.period_end %}
-                                        {{ 'from %begin to %end'|trans({'%begin': e.period_begin|date('d/m/Y'), '%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
+                                        {{ 'from %begin to %end'|trans({'%begin': e.period_begin|date('d/m/Y'), '%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default-twig') }}
                                     {% elseif e.period_begin %}
-                                        {{ 'from %begin'|trans({'%begin': e.period_begin|date('d/m/Y')}, 'dealer.bo.default') }}
+                                        {{ 'from %begin'|trans({'%begin': e.period_begin|date('d/m/Y')}, 'dealer.bo.default-twig') }}
                                     {% elseif e.period_end %}
-                                        {{ 'until %end'|trans({'%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default') }}
+                                        {{ 'until %end'|trans({'%end': e.period_end|date('d/m/Y')}, 'dealer.bo.default-twig') }}
                                     {% else %}
-                                        {{ 'Every day'|trans({}, 'dealer.bo.default') }}
+                                        {{ 'Every day'|trans({}, 'dealer.bo.default-twig') }}
                                     {% endif %}
                                 {% endif %}
                             </td>
                             <td>
                                 {% if e.full_day %}
-                                    <span class="text-muted">{{ 'Whole day'|trans({}, 'dealer.bo.default') }}</span>
+                                    <span class="text-muted">{{ 'Whole day'|trans({}, 'dealer.bo.default-twig') }}</span>
                                 {% else %}
                                     {{ e.begin }} – {{ e.end }}
                                 {% endif %}
@@ -123,7 +123,7 @@
                     {% else %}
                         <tr>
                             <td colspan="5">
-                                <div class="text-muted p-2">{{ 'No exception yet. The store follows its weekly hours.'|trans({}, 'dealer.bo.default') }}</div>
+                                <div class="text-muted p-2">{{ 'No exception yet. The store follows its weekly hours.'|trans({}, 'dealer.bo.default-twig') }}</div>
                             </td>
                         </tr>
                     {% endfor %}
@@ -136,11 +136,11 @@
     {# ====================== CUSTOMER PREVIEW ====================== #}
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">{{ 'What your customers see'|trans({}, 'dealer.bo.default') }}</h5>
-            <div class="form-text mb-0">{{ 'Upcoming pickup days and slots, computed from the hours above, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default') }}</div>
+            <h5 class="mb-0">{{ 'What your customers see'|trans({}, 'dealer.bo.default-twig') }}</h5>
+            <div class="form-text mb-0">{{ 'Upcoming pickup days and slots, computed from the hours above, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default-twig') }}</div>
         </div>
         <div class="card-body" data-preview-body>
-            <div class="text-muted">{{ 'Loading…'|trans({}, 'dealer.bo.default') }}</div>
+            <div class="text-muted">{{ 'Loading…'|trans({}, 'dealer.bo.default-twig') }}</div>
         </div>
     </div>
 </div>

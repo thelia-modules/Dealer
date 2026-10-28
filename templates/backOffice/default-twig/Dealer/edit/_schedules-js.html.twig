@@ -6,19 +6,19 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     var I18N = {
-        addSlot: {{ 'Add a slot'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        removeSlot: {{ 'Remove this slot'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        closedDay: {{ 'Closed'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        copyTo: {{ 'Copy to…'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        copyAll: {{ 'All other days'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        saved: {{ 'Weekly hours saved.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        saveError: {{ 'The weekly hours could not be saved.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        networkError: {{ 'Network error — please try again.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        previewEmpty: {{ 'No pickup slot is currently offered: check the hours, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        previewSlots: {{ '%count slots'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        previewLeft: {{ '%count left'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        previewFull: {{ 'Full'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
-        unsaved: {{ 'Unsaved changes'|trans({}, 'dealer.bo.default')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }}
+        addSlot: {{ 'Add a slot'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        removeSlot: {{ 'Remove this slot'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        closedDay: {{ 'Closed'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        copyTo: {{ 'Copy to…'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        copyAll: {{ 'All other days'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        saved: {{ 'Weekly hours saved.'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        saveError: {{ 'The weekly hours could not be saved.'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        networkError: {{ 'Network error — please try again.'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewEmpty: {{ 'No pickup slot is currently offered: check the hours, the exceptions and the pickup settings.'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewSlots: {{ '%count slots'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewLeft: {{ '%count left'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        previewFull: {{ 'Full'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }},
+        unsaved: {{ 'Unsaved changes'|trans({}, 'dealer.bo.default-twig')|json_encode(constant('JSON_HEX_TAG') b-or constant('JSON_HEX_AMP') b-or constant('JSON_HEX_APOS') b-or constant('JSON_HEX_QUOT'))|raw }}
     };
 
     function esc(value) {

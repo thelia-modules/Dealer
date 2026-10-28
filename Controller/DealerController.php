@@ -34,6 +34,11 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Dealer\Model\Dealer;
 use Dealer\Model\DealerPickupConfigQuery;
 use Dealer\Model\DealerQuery;
+use Dealer\Service\Admin\DealerListFilters;
+use Dealer\Service\Admin\DealerListRepository;
+use Dealer\Service\Admin\DealerListRowPresenter;
+use Dealer\Service\Admin\DealerVisibilityFilter;
+use BackOfficeDefaultTwigBundle\UiComponents\DataTable\ListSort;
 use Propel\Runtime\Propel;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,6 +92,10 @@ class DealerController extends BaseController
 
     const CONTROLLER_ENTITY_NAME = "dealer";
 
+    private const LIST_PATH = '/admin/module/Dealer/dealer';
+    private const LIST_PAGE_SIZE = 25;
+    private const LIST_STATE_PARAMS = ['q', 'visible', 'order', 'direction', 'page'];
+
     protected function getCreationForm()
     {
         return $this->createForm(DealerForm::getName());
@@ -108,6 +117,8 @@ class DealerController extends BaseController
         private readonly FilesystemLoader $dealerTwigLoader,
         private readonly EventDispatcherInterface $dealerEventDispatcher,
         private readonly FormService $dealerFormService,
+        private readonly DealerListRepository $dealerListRepository,
+        private readonly DealerListRowPresenter $dealerListRowPresenter,
     ) {
     }
 
@@ -138,54 +149,24 @@ class DealerController extends BaseController
     protected function getListRenderTemplate(): Response
     {
         $request = $this->getRequest();
-        $order = $request->query->get('order') ?? 'id';
+        $locale = $request->getLocale();
+        $filters = DealerListFilters::fromRequest($request);
+        $sort = ListSort::fromRequest($request, DealerListRepository::SORT_FIELDS, 'title');
+        $page = max(1, (int) $request->query->get('page', 1));
 
-        $locale = $request->hasSession()
-            ? ($request->getSession()->getLang()?->getLocale() ?? 'en_US')
-            : (LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
-
-        $query = DealerQuery::create();
-
-        switch ($order) {
-            case 'id-reverse':
-                $query->orderById(\Propel\Runtime\ActiveQuery\Criteria::DESC);
-                break;
-            case 'title':
-                $query->useDealerI18nQuery()->orderByTitle()->endUse();
-                break;
-            case 'title-reverse':
-                $query->useDealerI18nQuery()->orderByTitle(\Propel\Runtime\ActiveQuery\Criteria::DESC)->endUse();
-                break;
-            default:
-                $query->orderById();
-                break;
-        }
-
-        $dealers = [];
-        $countries = [];
-
-        /** @var Dealer $dealer */
-        foreach ($query->find() as $dealer) {
-            $countryId = $dealer->getCountryId();
-
-            if ($countryId !== null && !isset($countries[$countryId])) {
-                $country = CountryQuery::create()->findPk($countryId);
-
-                if ($country !== null) {
-                    $countries[$countryId] = $country->setLocale($locale)->getTitle();
-                }
-            }
-
-            $dealers[] = [
-                'id' => $dealer->getId(),
-                'title' => $dealer->setLocale($locale)->getTitle(),
-                'address1' => $dealer->getAddress1(),
-                'zipcode' => $dealer->getZipcode(),
-                'city' => $dealer->getCity(),
-                'country' => $countries[$countryId] ?? '',
-                'visible' => (int) $dealer->getVisible() === 1,
-            ];
-        }
+        $paginated = $this->dealerListRepository->findPaginated($filters, $sort->field, $sort->direction, $locale, $page, self::LIST_PAGE_SIZE);
+        $countries = $this->dealerListRepository->findCountries(
+            array_values(array_filter(array_map(static fn (Dealer $dealer): ?int => $dealer->getCountryId(), $paginated['rows']))),
+            $locale,
+        );
+        $canUpdate = $this->getSecurityContext()->isGranted(
+            ['ADMIN'],
+            [AdminResources::MODULE],
+            [DealerModule::getModuleCode()],
+            [AccessManager::UPDATE],
+        );
+        $currentPage = min($page, $paginated['lastPage']);
+        $listState = $filters->toQueryParams() + ['order' => $sort->field, 'direction' => $sort->direction, 'page' => (string) $currentPage];
 
         $createForm = $this->getTheliaFormFactory()->createForm(DealerForm::getName(), data: [
             'locale' => $locale,
@@ -194,14 +175,45 @@ class DealerController extends BaseController
 
         return new Response(
             $this->dealerTwigEnv->render('dealers.html.twig', [
-                'dealers' => $dealers,
-                'order' => $order,
+                'rows' => $this->dealerListRowPresenter->presentAll($paginated['rows'], $countries, $locale, $canUpdate, $listState),
+                'total' => $paginated['total'],
+                'pages' => $paginated['lastPage'],
+                'current_page' => $currentPage,
+                'sort' => ['field' => $sort->field, 'direction' => $sort->direction],
+                'query_params' => $filters->toQueryParams(),
+                'filters' => [
+                    'search' => $filters->search,
+                    'quick_chips' => $this->buildVisibilityChips($filters),
+                    'clear_all_url' => URL::getInstance()->absoluteUrl(self::LIST_PATH),
+                ],
+                'list_url' => URL::getInstance()->absoluteUrl(self::LIST_PATH),
                 'edit_language_id' => $request->hasSession() ? $request->getSession()->getLang()?->getId() : null,
                 'edit_language_locale' => $locale,
                 'create_form' => $createForm->createView()->getView(),
                 'general_error' => $this->getParserContext()->get('general_error'),
             ])
         );
+    }
+
+    /**
+     * @return list<array{code: string, label: string, url: string, active: bool}>
+     */
+    private function buildVisibilityChips(DealerListFilters $filters): array
+    {
+        $chips = [];
+        $labels = ['all' => 'All', DealerVisibilityFilter::Online->value => 'Online', DealerVisibilityFilter::Offline->value => 'Offline'];
+
+        foreach ($labels as $code => $label) {
+            $visibility = DealerVisibilityFilter::tryFrom($code);
+            $chips[] = [
+                'code' => $code,
+                'label' => Translator::getInstance()->trans($label, [], 'dealer.bo.default-twig'),
+                'url' => URL::getInstance()->absoluteUrl(self::LIST_PATH, $filters->withVisibility($visibility)->toQueryParams()),
+                'active' => $filters->visibility === $visibility,
+            ];
+        }
+
+        return $chips;
     }
 
     /**
@@ -756,7 +768,22 @@ class DealerController extends BaseController
             $retour["error"] = $ex->getMessage();
         }
 
-        return new JsonResponse($retour, $code);
+        $request = $requestStack->getCurrentRequest();
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse($retour, $code);
+        }
+
+        // The switch of the list posts a form: back to the list, in the state it was left.
+        if (200 !== $code) {
+            $this->getParserContext()->set('general_error', $retour["error"]);
+
+            return $this->listAction();
+        }
+
+        return new RedirectResponse(URL::getInstance()->absoluteUrl(
+            self::LIST_PATH,
+            array_intersect_key($request->query->all(), array_flip(self::LIST_STATE_PARAMS)),
+        ));
     }
 
     /**
