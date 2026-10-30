@@ -4,6 +4,17 @@ All notable changes to this module are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [4.4.2] - 2026-10-30
+
+### Security
+
+- The detail of a store (`GET` and `PATCH /api/admin/dealers/{id}`) leaves out the contacts
+  without the view right of `admin.dealer.contact`, and the opening hours without the one of
+  `admin.dealer.schedules`, as their own endpoints and the back-office tabs do.
+- A contact detail written on a contact that does not exist, or on a contact of a store out of
+  scope, answers the same 422 on `contactId`. The 404 it answered named the store of the contact
+  in the second case, which told an administrator which store any contact belonged to.
+
 ## [4.4.1] - 2026-10-28
 
 ### Fixed

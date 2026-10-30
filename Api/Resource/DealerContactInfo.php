@@ -20,6 +20,7 @@ use Dealer\Api\Scope\DealerScopedResourceInterface;
 use Dealer\Api\Translation\PartialTranslationsTrait;
 use Dealer\Dealer as DealerModule;
 use Dealer\Api\State\Processor\DealerScopedPersistProcessor;
+use Dealer\Api\Validator\ContactInScope;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\Map\TableMap;
@@ -45,7 +46,7 @@ use Thelia\Api\Resource\I18nCollection;
             openapi: new OpenApiOperation(
                 tags: [DealerModule::API_DOC_TAG_CONTACT_INFO],
                 summary: 'Add a contact detail to a contact',
-                description: 'contactId must be a contact of a store in scope (404 otherwise).',
+                description: 'contactId must be a contact of a store in scope (422 otherwise).',
             ),
             processor: DealerScopedPersistProcessor::class,
         ),
@@ -90,6 +91,7 @@ class DealerContactInfo extends AbstractTranslatableResource implements DealerSc
     public ?int $id = null;
 
     #[Assert\NotBlank(groups: [self::GROUP_ADMIN_WRITE])]
+    #[ContactInScope(groups: [self::GROUP_ADMIN_WRITE])]
     #[Groups([self::GROUP_ADMIN_READ, self::GROUP_ADMIN_WRITE])]
     public ?int $contactId = null;
 
@@ -174,7 +176,10 @@ class DealerContactInfo extends AbstractTranslatableResource implements DealerSc
             ->endUse();
     }
 
-    /** The store of the contact the detail belongs to; a contact that does not exist is not found. */
+    /**
+     * The store of the contact the detail belongs to. ContactInScope has already refused a contact
+     * that does not exist or belongs to a store out of scope, with one answer for both.
+     */
     public function owningDealerId(): ?int
     {
         $dealerId = DealerContactQuery::create()->filterById((int) $this->contactId)->select(['DealerId'])->findOne();

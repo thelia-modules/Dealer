@@ -190,12 +190,15 @@ created or deleted through the API.
 
 Each resource needs the back-office right of its tab (`admin.dealer`, `admin.dealer.contact`,
 `admin.dealer.schedules`; `admin.dealer` for the pickup settings), registered in the
-`thelia.api.admin_resources` parameter.
+`thelia.api.admin_resources` parameter. The detail of a store embeds its contacts only with the
+view right of `admin.dealer.contact`, and its opening hours only with the one of
+`admin.dealer.schedules`.
 
 Every read and write is bounded to the stores in scope. The module's own rule is the one of the
 back-office dealer list: a superadmin, or an administrator whose profile is listed in the
 `admin_profile_id` setting, reaches every store; any other administrator only the stores linked
-to them in the "Users" tab. A store out of scope answers 404, like a missing row. A project adds
+to them in the "Users" tab. A store out of scope answers 404, like a missing row; a contact
+detail written on a contact out of scope answers 422 on `contactId`, like a missing contact. A project adds
 its own rule by implementing `Dealer\Api\Scope\DealerScopeInterface`: the stores reachable are the
 intersection of every rule, and when only one store remains, a creation may leave `dealerId` out.
 

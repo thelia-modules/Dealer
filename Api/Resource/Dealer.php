@@ -31,7 +31,7 @@ use Thelia\Model\CountryQuery;
 
 /**
  * A store, as the back-office tabs "General" and "Location" show it, plus the read-only view of
- * its contacts, opening hours and pickup settings. The other tabs (SEO, images, associations,
+ * its contacts and opening hours (each with the right of its tab) and pickup settings. The other tabs (SEO, images, associations,
  * users, modules) are not exposed.
  */
 #[ApiResource(
@@ -46,16 +46,17 @@ use Thelia\Model\CountryQuery;
         ),
         new Get(
             uriTemplate: '/admin/dealers/{id}',
-            normalizationContext: ['groups' => [self::GROUP_ADMIN_READ, self::GROUP_ADMIN_READ_SINGLE]],
+            normalizationContext: ['groups' => self::GROUPS_ADMIN_READ_SINGLE],
             openapi: new OpenApiOperation(
                 tags: [DealerModule::API_DOC_TAG_DEALER],
                 summary: 'Store detail',
-                description: 'General information, location, contacts, opening hours and pickup settings of the store.',
+                description: 'General information, location, contacts, opening hours and pickup settings of the store. '
+                    .'The contacts and the opening hours are left out without the right of their tab.',
             ),
         ),
         new Patch(
             uriTemplate: '/admin/dealers/{id}',
-            normalizationContext: ['groups' => [self::GROUP_ADMIN_READ, self::GROUP_ADMIN_READ_SINGLE]],
+            normalizationContext: ['groups' => self::GROUPS_ADMIN_READ_SINGLE],
             openapi: new OpenApiOperation(
                 tags: [DealerModule::API_DOC_TAG_DEALER],
                 summary: 'Update the general information and location of a store',
@@ -76,7 +77,20 @@ class Dealer extends AbstractTranslatableResource implements DealerScopedResourc
 
     public const GROUP_ADMIN_READ = 'admin:dealer:read';
     public const GROUP_ADMIN_READ_SINGLE = 'admin:dealer:read:single';
+    public const GROUP_ADMIN_READ_CONTACTS = 'admin:dealer:read:contacts';
+    public const GROUP_ADMIN_READ_SCHEDULES = 'admin:dealer:read:schedules';
     public const GROUP_ADMIN_WRITE = 'admin:dealer:write';
+
+    /**
+     * The detail of a store. The contacts and the opening hours are dropped from it when the
+     * administrator lacks the right of their tab (DealerTabRightsContextBuilder).
+     */
+    public const GROUPS_ADMIN_READ_SINGLE = [
+        self::GROUP_ADMIN_READ,
+        self::GROUP_ADMIN_READ_SINGLE,
+        self::GROUP_ADMIN_READ_CONTACTS,
+        self::GROUP_ADMIN_READ_SCHEDULES,
+    ];
 
     private const REQUIRED_I18N_FIELD = 'title';
 
@@ -126,11 +140,11 @@ class Dealer extends AbstractTranslatableResource implements DealerScopedResourc
     public I18nCollection $i18ns;
 
     #[Relation(targetResource: DealerContact::class, relationAlias: 'DealerContacts')]
-    #[Groups([self::GROUP_ADMIN_READ_SINGLE])]
+    #[Groups([self::GROUP_ADMIN_READ_CONTACTS])]
     public array $contacts = [];
 
     #[Relation(targetResource: DealerSchedule::class, relationAlias: 'DealerSheduless')]
-    #[Groups([self::GROUP_ADMIN_READ_SINGLE])]
+    #[Groups([self::GROUP_ADMIN_READ_SCHEDULES])]
     public array $schedules = [];
 
     public static function getPropelRelatedTableMap(): ?TableMap
